@@ -1,0 +1,28 @@
+{
+	"name" : "PointDownload",
+	"version" : "1.0.4",
+	"description" : "Get file download link for Point",
+	"background" : { "scripts": ["background.js"] },
+	"browser_action": {
+	      "default_icon": {                    // 可选
+	      "19": "icon_64.png",           // 可选
+	      "38": "icon_64.png"            // 可选
+		},
+	      "default_title": "PointDownload"      // 可选，在工具提示中显示
+    },
+	"icons": { "64": "icon_64.png" },
+	"permissions" : [
+	"nativeMessaging",
+	"contextMenus",
+	"downloads",
+	"storage" ,
+	"webRequest",
+ 	"webRequestBlocking",
+	"tabs",
+	"http://*/*",
+	"https://*/*"
+    ],
+	"minimum_chrome_version" : "6.0.0.0",
+	"manifest_version": 2
+}
+

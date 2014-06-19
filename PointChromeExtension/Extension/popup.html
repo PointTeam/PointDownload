@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+  <head>
+    <title>Set Page Color Popup</title>
+    <style>
+    body {
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      background: white;
+    }
+    
+
+    div:first-child {
+      margin-top: 10px;
+    }
+    div:last-child{
+      margin-bottom: 8px;
+      margin-left: 15px;
+    }
+
+    div {
+      cursor: pointer;
+      text-align: left;
+      padding: 1px 3px;
+      font-family: sans-serif;
+      font-size: 0.8em;
+      width: 150px;
+      margin-top: 6px;
+      //background: #cccccc;
+    }
+    div:hover {
+      background: #00588a;
+    }
+
+    </style>
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <div><input id="enablePointAll" type="checkbox">启用Point插件</input></div>
+    <!--<div><input id="enablePointCurrent" type="checkbox">本页不使用Point插件</input></div>-->
+    <hr width=90% size=1 color=#5151A2 style="FILTER: alpha(opacity=100,finishopacity=0,style=3)">
+    <div id="downloadVideo">&nbsp&nbsp&nbsp&nbsp下载本页视频</div>
+    <hr width=90% size=1 color=#5151A2 style="FILTER: alpha(opacity=100,finishopacity=0,style=3)">
+    <div id="feedback">反馈意见</div>
+  </body>
+</html>

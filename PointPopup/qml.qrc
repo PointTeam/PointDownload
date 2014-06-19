@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>FileNameListPanel.qml</file>
+        <file>SavePathPanel.qml</file>
+        <file>SettingSpinBox.qml</file>
+    </qresource>
+</RCC>

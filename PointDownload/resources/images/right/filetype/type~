@@ -1,0 +1,12 @@
+application/pdf
+application/msword
+application/vnd ms-excel
+application/vnd ms-powerpoint
+application/octet-stream
+application/x-gzip 、application/x-tar、application/x-rar-compressed
+/adobe
+text/plain
+image/
+audio/
+video/
+

@@ -20,13 +20,12 @@
  ***********************************************************************/
 
 import QtQuick 2.0
-import QtQuick.Controls.Styles 1.1
-import QtQuick.Controls 1.0
 import Singleton.DataControler 1.0
 
 Rectangle {
-    width: 100
+    width: 150
     height: 62
+    clip: true
 
     color: "#f1f1f1"
 
@@ -35,30 +34,44 @@ Rectangle {
         text:qsTr("Threads:")
         color: "#6d6f6e"
         font.pixelSize: 10
-        anchors {left: boxThread.left; bottom: boxThread.top; bottomMargin: 3}
+        anchors {left: threadRec.left; bottom: threadRec.top; bottomMargin: 5}
     }
-    SpinBox{
-        id:boxThread
-        decimals: 0
-        value: DataControler.maxThread
-        maximumValue: 10
-        minimumValue: 1
-        stepSize: 1
-        width: 60
-        height: 27
-        anchors {top:parent.top; topMargin: 30; right:parent.horizontalCenter;rightMargin: 25}
-        style: SpinBoxStyle{
-            background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 20
-                border.color: "gray"
-                radius: 3
+    Rectangle{
+        id:threadRec
+        width: 40
+        height: 25
+        border.color: "#c6c4c4"
+        border.width: 2
+        radius: 3
+        anchors {top:parent.top; topMargin: 30; right:parent.horizontalCenter;rightMargin: 20}
+        TextInput{
+            id:threadInput
+            focus: true
+            font.pixelSize: 14
+            selectByMouse: true
+            color: "#6d6f6e"
+            selectionColor: "#488bc5"
+            text:DataControler.maxThread
+            validator: IntValidator { bottom:1; top: 10}
+            anchors {horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter}
+            MouseArea{
+                anchors {bottom: parent.bottom; horizontalCenter: parent.horizontalCenter}
+                height: parent.height / 3
+                width: parent.width
+                onWheel: {
+                    if (wheel.angleDelta.y > 0)
+                    {
+                        if (threadInput.text*1 < 10)
+                            threadInput.text = threadInput.text*1 + 1
+                    }
+                    else
+                    {
+                        if (threadInput.text*1 > 1)
+                            threadInput.text = threadInput.text*1 - 1
+                    }
+                }
             }
-            textColor: "#6d6f6e"
-            selectedTextColor: "#ffffff"
-            selectionColor: "#59add4"
         }
-        font.pixelSize: 13
     }
 
     //
@@ -66,40 +79,57 @@ Rectangle {
         text:qsTr("Speed:")
         color: "#6d6f6e"
         font.pixelSize: 10
-        anchors {left: boxSpeed.left; bottom: boxSpeed.top; bottomMargin: 3}
+        anchors {left: speedRec.left; bottom: speedRec.top; bottomMargin: 5}
     }
-    SpinBox{
-        id:boxSpeed
-        decimals: 0
-        value: DataControler.maxSpeed
-        maximumValue: 10000
-        minimumValue: 0
-        stepSize: 10
-        width: 60
-        height: 27
-        anchors {top:parent.top; topMargin: 30; left:parent.horizontalCenter;leftMargin: 25}
-        style: SpinBoxStyle{
-            background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 20
-                border.color: "gray"
-                radius: 3
+    Rectangle{
+        id:speedRec
+        width: 40
+        height: 25
+        border.color: "#c6c4c4"
+        border.width: 2
+        radius: 3
+        anchors {top:parent.top; topMargin: 30; left:parent.horizontalCenter;leftMargin: 20}
+        TextInput{
+            id:speedInput
+            focus: true
+            font.pixelSize: 14
+            selectByMouse: true
+            color: "#6d6f6e"
+            selectionColor: "#488bc5"
+            text:DataControler.maxSpeed
+            validator: IntValidator { bottom:1; top: 10000}
+            anchors {horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter}
+            MouseArea{
+                anchors {bottom: parent.bottom; horizontalCenter: parent.horizontalCenter}
+                height: parent.height / 3
+                width: parent.width
+                onWheel: {
+                    if (wheel.angleDelta.y > 0)
+                    {
+                        if (speedInput.text*1 < 10000)
+                            speedInput.text = speedInput.text*1 + 100
+                    }
+                    else
+                    {
+                        if (speedInput.text*1 > 100)
+                            speedInput.text = speedInput.text*1 - 100
+                        else if (speedInput.text*1 <= 100 && speedInput.text*1 > 1)
+                            speedInput.text = speedInput.text*1 - 1
+                    }
+                }
             }
-            textColor: "#6d6f6e"
-            selectedTextColor: "#ffffff"
-            selectionColor: "#59add4"
         }
-        font.pixelSize: 13
-
     }
+
+//    }
 
     function getThreadCount()
     {
-        return boxThread.value
+        return threadInput.text
     }
 
     function getSpeed()
     {
-        return boxSpeed.value
+        return speedInput.text
     }
 }

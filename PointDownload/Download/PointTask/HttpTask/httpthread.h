@@ -35,13 +35,15 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
+#include "XMLHandler/xmloperations.h"
 
 
 class HttpThread : public QThread
 {
     Q_OBJECT
 public:
-    HttpThread(short ThreadIndex, qint64 startByte, qint64 endByte, qint64 completeByte, QUrl url, QFile *file);
+    HttpThread(short ThreadIndex, qint64 startByte, qint64 endByte, qint64 completeByte, QUrl url);
+    ~HttpThread();
     void run();
     void stopDownload();
 
@@ -60,6 +62,8 @@ public:
 
 
 private:
+    const QString POINT_FILE_FLAG = ".Point";
+
     QUrl url;
     short ThreadIndex;
     qint64 startByte;
@@ -67,12 +71,14 @@ private:
     qint64 completeBytes;
     qint64 doneBytes;
 
-    QFile *file;                                        //timer to write
+    QFile downloadFile;
     QReadWriteLock lock;
     QNetworkReply * reply;
     QNetworkRequest * request;
     QNetworkAccessManager * manager;
-
+    XMLOperations  xmlOpera;
+private:
+    void initDownloadFile();
 signals:
     void URLChanged(QUrl URL);
     void statusCodeChanged(int code);

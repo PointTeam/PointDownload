@@ -25,7 +25,7 @@
 
 #include <qdebug.h>
 
-HttpThread::HttpThread(short t, qint64 start, qint64 end, qint64 complete, QUrl u, QFile *f)
+HttpThread::HttpThread(short t, qint64 start, qint64 end, qint64 complete, QUrl u)
 {
     moveToThread(this);
     setThreadIndex( t );
@@ -34,12 +34,12 @@ HttpThread::HttpThread(short t, qint64 start, qint64 end, qint64 complete, QUrl 
     setCompeleteBytes( complete>end - start + 1?end - start + 1:complete );
     setDoneByte( 0 );
     setURL( u );
-
-    this->file = f;
 }
 
 void HttpThread::run()
 {
+    initDownloadFile();
+
     manager = new QNetworkAccessManager;
     request = new QNetworkRequest( getURL() );
 
@@ -59,14 +59,21 @@ void HttpThread::run()
     this->exec();
 }
 
+void HttpThread::initDownloadFile()
+{
+    QDir::setCurrent( xmlOpera.getDownloadingNode(url.toString()).savePath);
+    downloadFile.setFileName(xmlOpera.getDownloadingNode(url.toString()).name + POINT_FILE_FLAG);
+    downloadFile.open( QIODevice::ReadWrite );
+}
+
 void HttpThread::writeToFile()
 {
     if ( reply->bytesAvailable() > 30000 )  //100000
     {
         QByteArray tempArry = reply->readAll();
         lock.lockForWrite();
-        file->seek( getStartByte() + getDoneByte());
-        file->write( tempArry );
+        downloadFile.seek( getStartByte() + getDoneByte());
+        downloadFile.write( tempArry );
         lock.unlock();
         setDoneByte( getDoneByte() + tempArry.size() );
         emit this->progressChanged( tempArry.size() );
@@ -85,25 +92,27 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
             emit URLChanged( newUrl );
         }
     }
-    emit statusCodeChanged( statusCode );
+//    emit statusCodeChanged( statusCode );
 
     if (tmpReply->size() > 0)
     {
         QByteArray tempArry = tmpReply->readAll();
 
         lock.lockForWrite();
-        file->seek( getStartByte() + getDoneByte() );
-        file->write( tempArry );
+        downloadFile.seek( getStartByte() + getDoneByte() );
+        downloadFile.write( tempArry );
         lock.unlock();
         setDoneByte( getDoneByte() + tempArry.size() );
         emit this->progressChanged( tempArry.size() );
     }
 
+    downloadFile.close();
     emit finish(  );
 }
 
 void HttpThread::stopDownload()
 {
+    downloadFile.close();
     reply->deleteLater();
     manager->deleteLater();
     this->quit();
@@ -166,3 +175,8 @@ void HttpThread::setDoneByte(qint64 d)
     this->doneBytes = d;
 }
 /*****end  ** getter &s setter **********************************************/
+
+HttpThread::~HttpThread()
+{
+    downloadFile.close();
+}

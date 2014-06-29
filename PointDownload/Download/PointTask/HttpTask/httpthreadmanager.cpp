@@ -25,7 +25,7 @@ HttpThreadManager::HttpThreadManager(PrepareDownloadInfo &info,QObject *parent) 
     QObject(parent),gDownloadInfo(info)
 {
     touchDownloadFile();
-    initDownloadFile();
+//    initDownloadFile();
     initUpdateTimer();
     initData();
 }
@@ -35,7 +35,7 @@ HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
 {
     gDownloadInfo = getPrepareInfoFromXML(URL);
     touchDownloadFile();
-    initDownloadFile();
+//    initDownloadFile();
     initUpdateTimer();
     initData();
 }
@@ -61,7 +61,7 @@ void HttpThreadManager::startDownload()
         qint64 start = (qint64) tmpList.at(i).startBlockIndex.toLongLong(0);
         qint64 end = (qint64) tmpList.at(i).endBlockIndex.toLongLong(0);
 
-        HttpThread * tmpThread = new HttpThread( i, start , end, completed, gDownloadInfo.redirectURl, &downloadFile);
+        HttpThread * tmpThread = new HttpThread( i, start , end, completed, gDownloadInfo.redirectURl);
         threadList.append(tmpThread);
 
         connect(tmpThread,SIGNAL(progressChanged(qint64)),
@@ -148,6 +148,7 @@ void HttpThreadManager::slotThreadFinish()
         slotUpdataXMLFile();
         slotSendDataToUI();
         //重命名文件
+        QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
         downloadFile.rename(gDownloadInfo.fileName + POINT_FILE_FLAG, gDownloadInfo.fileName);
         //向上层发送已完成下载的信号
         emit sDownloadFinish(gDownloadInfo.downloadURL);
@@ -186,12 +187,12 @@ void HttpThreadManager::touchDownloadFile()
     delete file;
 }
 
-void HttpThreadManager::initDownloadFile()
-{
-    QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
-    downloadFile.setFileName(gDownloadInfo.fileName + POINT_FILE_FLAG);
-    downloadFile.open( QIODevice::ReadWrite );
-}
+//void HttpThreadManager::initDownloadFile()
+//{
+//    QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
+//    downloadFile.setFileName(gDownloadInfo.fileName + POINT_FILE_FLAG);
+//    downloadFile.open( QIODevice::ReadWrite );
+//}
 
 void HttpThreadManager::initUpdateTimer()
 {

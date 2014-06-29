@@ -62,7 +62,7 @@ public slots:
     void slotGetNewRedirectURL(QUrl URL);//
 private:
     void touchDownloadFile();
-    void initDownloadFile();
+//    void initDownloadFile();
     void initUpdateTimer();
     void initData();
     void changeStateToDownloading(QString URL);

@@ -68,6 +68,7 @@ void HttpThreadManager::startDownload()
                 this,SLOT(slotProgressChange(qint64)));
         connect(tmpThread,SIGNAL(finish()),this,SLOT(slotThreadFinish()));
         connect(tmpThread, SIGNAL(URLChanged(QUrl)), this, SLOT(slotGetNewRedirectURL(QUrl)));
+        connect(tmpThread, SIGNAL(threadsIslimited()), this, SLOT(slotThreadsIsLimited()));
 
         threadList.at( i )->start();                 //启动线程下载
     }
@@ -175,15 +176,31 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
     startDownload();
 }
 
+void HttpThreadManager::slotThreadsIsLimited()
+{
+    updateXMLTimer->stop();
+    updateDataTimer->stop();
+    stopDownload();
+
+    gDownloadInfo.threadCount = 1;
+
+    xmlOpera.removeDownloadingFileNode(gDownloadInfo.downloadURL);
+
+    startDownload();
+}
+
 void HttpThreadManager::touchDownloadFile()
 {
     if (!QDir::setCurrent(gDownloadInfo.storageDir))
         return;
     QFile * file = new QFile( gDownloadInfo.fileName + POINT_FILE_FLAG );
-    if( file->open( QIODevice::ReadOnly ) )
+    if( file->open( QIODevice::WriteOnly) )
     {
         file->close();
     }
+    else
+        qDebug() << "open file err"<<file->errorString();
+
     delete file;
 }
 

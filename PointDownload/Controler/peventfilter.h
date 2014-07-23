@@ -25,20 +25,49 @@
 #include <QObject>
 #include <QDebug>
 #include <QEvent>
+#include <QQmlEngine>
 #include <QApplication>
 
 class PEventFilter : public QObject
 {
     Q_OBJECT
+
+    //将c++数据暴露给qml使用
+    Q_PROPERTY(int globalX  READ getGlobalX WRITE setGlobalX NOTIFY globalXChange)
+    Q_PROPERTY(int globalY  READ getGlobalY WRITE setGlobalY NOTIFY globalYChange)
 public:
-    explicit PEventFilter(QObject *parent = 0);
+    static PEventFilter * getInstance();
+
+    int getGlobalX();
+    void setGlobalX(int value);
+    int getGlobalY();
+    void setGlobalY(int value);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *ev);
+private:
+    explicit PEventFilter(QObject *parent = 0);
+
+private:
+    static PEventFilter * pEventFilter;
+    int globalX;
+    int globalY;
 
 signals:
+    void globalXChange();
+    void globalYChange();
 
 public slots:
 
 };
+
+//将单例对象注册到qml中使用的回调函数
+static QObject * eventFilterObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return PEventFilter::getInstance();
+}
 
 #endif // PCLOSEEVENTFILTER_H

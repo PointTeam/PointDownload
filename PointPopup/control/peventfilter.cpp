@@ -44,6 +44,27 @@ PEventFilter::PEventFilter(QObject *parent) :
 //构建单例对象
 PEventFilter * PEventFilter::peventFilter = new PEventFilter();
 
+
+int PEventFilter::getGlobalX()
+{
+    return globalX;
+}
+
+void PEventFilter::setGlobalX(int value)
+{
+    globalX = value;
+}
+
+int PEventFilter::getGlobalY()
+{
+    return globalY;
+}
+
+void PEventFilter::setGlobalY(int value)
+{
+    globalY = value;
+}
+
 /**************************************************************************************************
 Function: eventFilter()
 Description:
@@ -74,6 +95,12 @@ bool PEventFilter::eventFilter(QObject *obj, QEvent *event)
         {
             emit sendEscKeyChange();
         }
+    }
+    else if (event->type() == QEvent::MouseMove)
+    {
+        globalX = QCursor::pos().x();
+        globalY = QCursor::pos().y();
+        return QObject::eventFilter(obj, event);
     }
     else
     {

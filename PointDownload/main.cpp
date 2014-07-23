@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
     //这样能保证系统托盘类的初始化在qml初始化之前完成，避免造 成gtk的一些错误
     TopContrl::getInstance()->initTrayIcon();
     DownloadDataSender::getInstance();
+    PEventFilter::getInstance();
 
     //注册的参数格式：import dataControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
@@ -64,9 +65,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 
-//    //添加全局事件过滤
+    //    //添加全局事件过滤
 //    PEventFilter tmpFilter;
 //    app.installEventFilter(&tmpFilter);
+   app.installEventFilter(PEventFilter::getInstance());
+
 
     return app.exec();
 }

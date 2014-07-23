@@ -88,9 +88,13 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
         QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
         if(newUrl.isValid())
         {
-            //qDebug()<<"重定向："<<newUrl;
+            qDebug()<<"重定向："<<newUrl;
             emit URLChanged( newUrl );
         }
+    }
+    if (statusCode == 403 || statusCode == 503)
+    {
+        emit threadsIslimited();
     }
 //    emit statusCodeChanged( statusCode );
 

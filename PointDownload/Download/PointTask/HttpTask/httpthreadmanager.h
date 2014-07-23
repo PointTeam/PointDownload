@@ -59,7 +59,8 @@ public slots:
     void slotProgressChange(qint64 doneSize);//与所有子线程相连，获取下载进度
     void slotThreadFinish();//与所有子线程相连，每个子线程完成后均触发此槽进行统计
 
-    void slotGetNewRedirectURL(QUrl URL);//
+    void slotGetNewRedirectURL(QUrl URL);//url重定向之后再下载
+    void slotThreadsIsLimited();//某些服务器会限制连接数导致不能下载完全，此时使用一个线程下载
 private:
     void touchDownloadFile();
 //    void initDownloadFile();

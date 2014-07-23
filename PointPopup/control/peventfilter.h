@@ -42,9 +42,18 @@ History:
 class PEventFilter : public QObject
 {
     Q_OBJECT
-public:
 
+    //将c++数据暴露给qml使用
+    Q_PROPERTY(int globalX  READ getGlobalX WRITE setGlobalX NOTIFY globalXChange)
+    Q_PROPERTY(int globalY  READ getGlobalY WRITE setGlobalY NOTIFY globalYChange)
+public:
     static PEventFilter * getInstance();        //返回该类的单例对象
+
+    int getGlobalX();
+    void setGlobalX(int value);
+    int getGlobalY();
+    void setGlobalY(int value);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *ev); //过滤事件
 
@@ -52,8 +61,13 @@ signals:
     void sendEnterKeyChange();                  //发送一个信号到qml界面通知其已获得Enter的按下事件
     void sendEscKeyChange();
 
+    void globalXChange();
+    void globalYChange();
 private:
     static PEventFilter * peventFilter;         //单例对象
+    int globalX;
+    int globalY;
+private:
     explicit PEventFilter(QObject *parent = 0); //构造函数
 
 

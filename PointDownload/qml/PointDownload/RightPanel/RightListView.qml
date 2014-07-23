@@ -42,6 +42,7 @@ ListView {
     highlightFollowsCurrentItem: true
     highlightMoveDuration:500
     highlightRangeMode: ListView.StrictlyEnforceRange
+    currentIndex: 1
 
     clip: true
 

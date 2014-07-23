@@ -44,6 +44,6 @@ Rectangle {
         font.pixelSize: 12
         font.family: "URW Bookman L"
         color: "#ffffff"
-        anchors {/*verticalCenter: parent.verticalCenter; */left:buttonIcon.right; leftMargin: 4}
+        anchors {verticalCenter: buttonIcon.verticalCenter; left:buttonIcon.right; leftMargin: 4}
     }
 }

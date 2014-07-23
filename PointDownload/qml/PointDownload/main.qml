@@ -30,6 +30,7 @@ History:
 
 import QtQuick 2.0
 import QtQuick.Window 2.1
+import Singleton.PEventFilter 1.0
 import "LeftPanel"
 import "RightPanel"
 
@@ -55,6 +56,7 @@ Window {
     property int oldY: 0
     x: winx
     y: winy
+
 
     Rectangle {
         id:mainUI
@@ -99,20 +101,13 @@ Window {
             onReleased: {
                 dragIng = "false"
                 mArea.cursorShape=Qt.ArrowCursor
-
-//                nextx = mouseX
-//                nexty = mouseY
-//                winx=winx+nextx-prex -oldX
-//                winy=winy+nexty-prey -oldY
             }
 
             onPositionChanged: {
                 if (dragIng == "true")
                 {
-                    nextx = mouseX
-                    nexty = mouseY
-                    winx=winx+nextx-prex -oldX
-                    winy=winy+nexty-prey -oldY
+                    winx = PEventFilter.globalX- oldX
+                    winy = PEventFilter.globalY - oldY;
                 }
             }
         }
@@ -126,27 +121,20 @@ Window {
 
             onPressed:  {
                 oldX = mouseX;
-                oldY = mouseY;
+                oldY = mouseY + leftPanel.width + 260;
                 dragIng = "true"
                 mArea2.cursorShape=Qt.DragMoveCursor
             }
             onReleased: {
                 dragIng = "false"
                 mArea2.cursorShape=Qt.ArrowCursor
-
-//                nextx = mouseX
-//                nexty = mouseY
-//                winx=winx+nextx-prex -oldX
-//                winy=winy+nexty-prey -oldY
             }
 
             onPositionChanged: {
                 if (dragIng == "true")
                 {
-                    nextx = mouseX
-                    nexty = mouseY
-                    winx=winx+nextx-prex -oldX
-                    winy=winy+nexty-prey -oldY
+                    winx = PEventFilter.globalX- oldX
+                    winy = PEventFilter.globalY - oldY;
                 }
             }
         }

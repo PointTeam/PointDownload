@@ -81,6 +81,7 @@ private:
     void initDownloadFile();
 signals:
     void URLChanged(QUrl URL);
+    void threadsIslimited();
     void statusCodeChanged(int code);
     void progressChanged(qint64);
     void finish();

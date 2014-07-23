@@ -242,10 +242,8 @@ Window {
             onPositionChanged: {
                 if (dragIng == "true")
                 {
-                    nextx = mouseX
-                    nexty = mouseY
-                    winx=winx+nextx-prex -oldX
-                    winy=winy+nexty-prey -oldY
+                    winx = PEventFilter.globalX- oldX
+                    winy = PEventFilter.globalY - oldY;
                 }
             }
         }
@@ -273,10 +271,8 @@ Window {
         onPositionChanged: {
             if (dragIng == "true")
             {
-                nextx = mouseX
-                nexty = mouseY
-                winx=winx+nextx-prex -oldX
-                winy=winy+nexty-prey -oldY
+                winx = PEventFilter.globalX- oldX
+                winy = PEventFilter.globalY - oldY;
             }
         }
     }
@@ -288,7 +284,7 @@ Window {
         hoverEnabled: true
 
         onPressed:  {
-            oldX = mouseX;
+            oldX = mouseX + manRectangle.width + outSpace;
             oldY = mouseY;
             dragIng = "true"
             mArea.cursorShape=Qt.DragMoveCursor
@@ -298,13 +294,12 @@ Window {
             mArea.cursorShape=Qt.ArrowCursor
         }
 
+
         onPositionChanged: {
             if (dragIng == "true")
             {
-                nextx = mouseX
-                nexty = mouseY
-                winx=winx+nextx-prex -oldX
-                winy=winy+nexty-prey -oldY
+                winx = PEventFilter.globalX- oldX
+                winy = PEventFilter.globalY - oldY;
             }
         }
     }
@@ -330,10 +325,8 @@ Window {
         onPositionChanged: {
             if (dragIng == "true")
             {
-                nextx = mouseX
-                nexty = mouseY
-                winx=winx+nextx-prex -oldX
-                winy=winy+nexty-prey -oldY
+                winx = PEventFilter.globalX- oldX
+                winy = PEventFilter.globalY - oldY;
             }
         }
     }
@@ -347,7 +340,7 @@ Window {
 
         onPressed:  {
             oldX = mouseX;
-            oldY = mouseY;
+            oldY = mouseY + manRectangle.height + outSpace;
             dragIng = "true"
             mArea.cursorShape=Qt.DragMoveCursor
         }
@@ -359,10 +352,8 @@ Window {
         onPositionChanged: {
             if (dragIng == "true")
             {
-                nextx = mouseX
-                nexty = mouseY
-                winx=winx+nextx-prex -oldX
-                winy=winy+nexty-prey -oldY
+                winx = PEventFilter.globalX- oldX
+                winy = PEventFilter.globalY - oldY;
             }
         }
     }

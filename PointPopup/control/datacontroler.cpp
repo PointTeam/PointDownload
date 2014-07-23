@@ -101,9 +101,9 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
             + fileURL + "?:?"
             + redirectURL + "?:?"
             + "qrc:/images/right/filetype/" +getIconName() + "?:?"
-            + fileSavePath + "?:?"
-            + maxThread + "?:?"
-            + maxSpeed;
+            + savePath + "?:?"
+            + threads + "?:?"
+            + speed;
 
     localSocket->write(info.toStdString().c_str());
     localSocket->flush();

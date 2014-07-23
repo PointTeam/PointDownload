@@ -25,7 +25,7 @@
 DownloadDataSender::DownloadDataSender(QObject *parent) :
     QObject(parent)
 {
-    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
+    //import时使用Singleton.DataControler
     qmlRegisterSingletonType<DownloadDataSender>("Singleton.DownloadDataSender", 1, 0, "DownloadDataSender", dataObj);
 
     initURLServer();

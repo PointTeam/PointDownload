@@ -79,6 +79,7 @@ private:
     short finishThreadCount;//已完成的线程数，当已完成的和下载前分配的线程个数相同，则下载完成
     qint64 totalDoneSize;                                           //总共已完成的字节数
     qint64 receiveBytesPerSecond;                           //每秒下载的字节数（即速度）
+    bool changeLimited;
 
     QMutex mutex;
     QList<HttpThread *> threadList;

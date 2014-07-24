@@ -61,6 +61,7 @@ public:
     void getPrepareDownloadInfo(PrepareDownloadInfo info);  //获取到从弹出界面传递过来的信息并调用相应的类进行下载处理
 
     void changeMaxJobCount(int newCount);
+
 signals:
     void sAddDownloadingItem(QString infoList);
     void sAddDownloadedItem(QString infolist);

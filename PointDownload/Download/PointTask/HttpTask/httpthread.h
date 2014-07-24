@@ -87,6 +87,7 @@ signals:
     void finish();
 
 public slots:
+    void closeDownloadFile();
     void writeToFile();
     void managerFnish(QNetworkReply * tmpReply);
 };

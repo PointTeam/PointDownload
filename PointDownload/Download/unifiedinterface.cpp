@@ -285,6 +285,7 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
     myProcess->closeWriteChannel();
 }
 
+
 void UnifiedInterface::stopDownloading(QString URL)
 {
     switch(downloadingListMap.value(URL))
@@ -473,6 +474,7 @@ void UnifiedInterface::finishDownloading(QString URL)
     DataFlow::addData(day,edStruct.Size);
 }
 
+
 void UnifiedInterface::redownloadDownloaded(QString URL)
 {
     XMLOperations tmpOpera;
@@ -657,34 +659,18 @@ void UnifiedInterface::initDownloadingStart()
             break;
         SDownloading ingNode = tmpOpera.getDownloadingNode(keys.at(i));
 
-        PrepareDownloadInfo tmpInfo;
-        tmpInfo.downloadURL = ingNode.URL;
-        tmpInfo.fileName = ingNode.name;
-        tmpInfo.fileSize = ingNode.totalSize;
-        tmpInfo.iconPath = ingNode.iconPath;
-        tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toDouble();
-        tmpInfo.redirectURl = ingNode.redirectRUL;
-        tmpInfo.storageDir = ingNode.savePath;
-        tmpInfo.threadCount = QString::number(ingNode.threadList.count());
-        tmpInfo.toolType = downloadingListMap.value(keys.at(i));
-
         if (ingNode.state == "dlstate_downloading")
         {
             jobs ++;
-            switch (downloadingListMap.value(keys.at(i)))
-            {
-            case youget:
-                startYougetDownload(tmpInfo);
-                break;
-            case aria2:
-                startAria2Download(tmpInfo);
-                break;
-            case Point:
-                startPointDownload(tmpInfo);
-                break;
-            default:
-                break;
-            }
+
+            SDownloading tmpStruct;
+            tmpStruct.URL = keys.at(i);
+            tmpStruct.state = "dlstate_suspend";
+
+            XMLOperations xmlOpera;
+            xmlOpera.writeDownloadingConfigFile(tmpStruct);
+
+            resumeDownloading(keys.at(i));
         }
     }
 

@@ -33,17 +33,17 @@
 #include <QDebug>
 #include "XMLHandler/xmloperations.h"
 
-////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//#undef signals
-//extern "C" {
-//  #include <libappindicator/app-indicator.h>
-//  #include <gtk/gtk.h>
+//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#undef signals
+extern "C" {
+  #include <libappindicator/app-indicator.h>
+  #include <gtk/gtk.h>
 
-//  void quitIndicator(GtkMenu *, gpointer);
+  void quitIndicator(GtkMenu *, gpointer);
 
-//}
-//#define signals public
-////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+}
+#define signals public
+//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 const QString ABOUT_PROGRAM_PATH ="/opt/Point/AboutPoint/AboutPoint";
 

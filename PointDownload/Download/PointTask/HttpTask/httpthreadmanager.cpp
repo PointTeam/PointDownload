@@ -34,7 +34,7 @@ HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
     QObject(parent)
 {
     gDownloadInfo = getPrepareInfoFromXML(URL);
-    touchDownloadFile();
+//    touchDownloadFile();
 //    initDownloadFile();
     initUpdateTimer();
     initData();
@@ -142,6 +142,7 @@ void HttpThreadManager::slotProgressChange(qint64 doneSize)
 
 void HttpThreadManager::slotThreadFinish()
 {
+    slotUpdataXMLFile();
     finishThreadCount ++;
     if (finishThreadCount == xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).threadList.count())
     {
@@ -178,11 +179,16 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
 
 void HttpThreadManager::slotThreadsIsLimited()
 {
+    if (changeLimited)
+        return;
+    else
+        changeLimited = true;
+
     updateXMLTimer->stop();
     updateDataTimer->stop();
     stopDownload();
 
-    gDownloadInfo.threadCount = 1;
+    gDownloadInfo.threadCount = "1";
 
     xmlOpera.removeDownloadingFileNode(gDownloadInfo.downloadURL);
 
@@ -224,6 +230,8 @@ void HttpThreadManager::initData()
     finishThreadCount = 0;
     totalDoneSize = xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).readySize.toLongLong();
     receiveBytesPerSecond = 0;
+
+    changeLimited = false;
 }
 
 void HttpThreadManager::changeStateToDownloading(QString URL)

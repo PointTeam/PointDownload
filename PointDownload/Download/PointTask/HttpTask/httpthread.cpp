@@ -38,10 +38,17 @@ HttpThread::HttpThread(short t, qint64 start, qint64 end, qint64 complete, QUrl 
 
 void HttpThread::run()
 {
+    if (getStartByte() >= getEndByte())
+    {
+        emit finish();
+        return;
+    }
+
     initDownloadFile();
 
     manager = new QNetworkAccessManager;
     request = new QNetworkRequest( getURL() );
+
 
     QString strData = QString( "bytes=%1-%2" ).arg(QString::number(getStartByte())).arg(QString::number(getEndByte()));
 
@@ -66,6 +73,11 @@ void HttpThread::initDownloadFile()
     downloadFile.open( QIODevice::ReadWrite );
 }
 
+void HttpThread::closeDownloadFile()
+{
+    downloadFile.close();
+}
+
 void HttpThread::writeToFile()
 {
     if ( reply->bytesAvailable() > 30000 )  //100000
@@ -83,6 +95,7 @@ void HttpThread::writeToFile()
 void HttpThread::managerFnish(QNetworkReply *tmpReply)
 {
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+//    qDebug() << "statucode:"<<statusCode;
     if(statusCode == 302)
     {
         QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
@@ -117,8 +130,8 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
 void HttpThread::stopDownload()
 {
     downloadFile.close();
-    reply->deleteLater();
-    manager->deleteLater();
+//    reply->deleteLater();
+//    manager->deleteLater();
     this->quit();
 }
 
@@ -145,7 +158,7 @@ void HttpThread::setThreadIndex(short t)
 
 qint64 HttpThread::getStartByte()
 {
-    return startByte + getCompleteBytes();
+    return startByte + getCompleteBytes() ;
 }
 void HttpThread::setStartByte(qint64 s)
 {
@@ -182,5 +195,8 @@ void HttpThread::setDoneByte(qint64 d)
 
 HttpThread::~HttpThread()
 {
+    qDebug() << "ggggggggggggggg";
     downloadFile.close();
+    reply->deleteLater();
+    manager->deleteLater();
 }

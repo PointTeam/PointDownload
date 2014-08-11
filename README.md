@@ -21,11 +21,14 @@ PointFirefoxExtension请参考其中的README说明。
 ###关于you-get的支持
 
 本软件支持使用you-get下载在线视频网站的视频，
-关于you-get的详细信息，请参考：[You-Get](https://github.com/soimort/you-get) 
+关于you-get的详细信息，请参考：[You-Get](https://github.com/soimort/you-get)。
 you-get并不属于本程序的任何一部分，在接受you-get提供的服务的同时，请按照you-get作者的要求履行您应履行的义务。
 安装you-get注意事项：
 如果您不能按照[You-Get](https://github.com/soimort/you-get) 页面中描述的方法安装you-get，
 请按照以下操作提示操作：
+
 1.将you-get的源代码解压到任意路径下(请确保读写与执行权限),例如/home/Point/you-get-develop
+
 2.$ cd /usr/local/bin/
+
 3.$ ln -s /home/Point/you-get-develop/you-get you-get

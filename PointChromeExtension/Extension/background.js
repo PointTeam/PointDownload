@@ -81,7 +81,7 @@ function getClickHandler() {
         {
             connectToNativeHost();
             //getDownloadID(info.linkUrl);
-            port.postMessage(info.linkUrl + "?:?Point");
+            port.postMessage(info.linkUrl);
         }
     };
 };
@@ -89,7 +89,7 @@ function getClickHandler() {
 function downloadVideo(url)
 {
     connectToNativeHost();
-    port.postMessage(url + "?:?youget");
+    port.postMessage(url);
 }
 
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
@@ -98,7 +98,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
         if (showPopup)
         {
             connectToNativeHost();
-            port.postMessage(details.url + "?:?Point");
+            port.postMessage(details.url);
             return {redirectUrl:currentPage};
         }
         else
@@ -124,7 +124,7 @@ chrome.downloads.onCreated.addListener(
         if (showPopup)
         {
             connectToNativeHost();
-            port.postMessage(item.url + "?:?Point");
+            port.postMessage(item.url);
             // 取消chrome默认下载
             chrome.downloads.cancel(item.id);
         }

@@ -26,30 +26,10 @@ QT += gui
 QT += multimedia
 #CONFIG += static
 
-##Add support for unity menu------------------------------------------------------------------------------------------------------
-#INCLUDEPATH += "/usr/include/libappindicator-0.1"
-#INCLUDEPATH += "/usr/include/gtk-2.0"
-#INCLUDEPATH += "/usr/include/glib-2.0"
-##INCLUDEPATH += "/usr/lib/i386-linux-gnu/glib-2.0/include"       #i386 use this line
-#INCLUDEPATH += "/usr/lib/x86_64-linux-gnu/glib-2.0/include"    #amd64 use this line
-#INCLUDEPATH += "/usr/include/cairo"
-#INCLUDEPATH += "/usr/include/pango-1.0"
-##INCLUDEPATH += "/usr/lib/i386-linux-gnu/gtk-2.0/include"        #i386 use this line
-#INCLUDEPATH += "/usr/lib/x86_64-linux-gnu/gtk-2.0/include"     #amd64 use this line
-#INCLUDEPATH += "/usr/include/gdk-pixbuf-2.0"
-#INCLUDEPATH += "/usr/include/atk-1.0"
-
-#LIBS += -L/usr/lib/x86_64-linux-gnu -lgobject-2.0
-#LIBS += -L/usr/lib/x86_64-linux-gnu -lappindicator
-#LIBS += -L/usr/lib/x86_64-linux-gnu -lgtk-x11-2.0
-
-##i386 please enable below line and disable the top three lines
-
-##LIBS += -L/usr/lib/i386-linux-gnu -lgobject-2.0
-##LIBS += -L/usr/lib/i386-linux-gnu -lappindicator
-##LIBS += -L/usr/lib/i386-linux-gnu -lgtk-x11-2.0
-
-##Add support for unity menu done--------------------------------------------------------------------------------------------------------
+#Add support for unity menu------------------------------------------------------------------------------------------------------
+CONFIG += link_pkgconfig
+PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1
+#Add support for unity menu done--------------------------------------------------------------------------------------------------------
 
 # Add more folders to ship with the application, here
 folder_01.source = qml/PointDownload

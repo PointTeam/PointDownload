@@ -23,12 +23,12 @@ import QtQuick 2.0
 import Singleton.DataControler 1.0
 
 Rectangle {
+    id:fileNameListPanel
     width: 100
     height: 62
     color: "#ffffff"
     border.width: 2
     border.color: "#c6c4c4"
-
 
     //连接单例的信号
     Connections {
@@ -155,9 +155,12 @@ Rectangle {
 
     function addFileNameList(nameList)
     {
+        nameItemModel.clear()
 
         if (nameList === "")
+        {
             return;
+        }
 
         var infoArry = nameList.split("?:?");
         for (var i = 0; i < infoArry.length; i++)
@@ -184,5 +187,15 @@ Rectangle {
                                 "tmpPath":nameArry[4],
                                 "tmpSize":sizeByte});
         }
+    }
+
+    function clearNameList()
+    {
+        nameItemModel.clear()
+    }
+
+    function getNameListLength()
+    {
+        return nameItemModel.count
     }
 }

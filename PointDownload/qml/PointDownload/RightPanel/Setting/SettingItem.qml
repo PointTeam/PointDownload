@@ -73,7 +73,7 @@ Rectangle {
             onEntered: settingItem.state = "gotMouse"
             onClicked: {
                 if (itemType == "DSPath")
-                    settingCtrl.selectDefaultSavePath();
+                    settingCtrl.selectSavePath("Other");
                 else if (itemType == "ThreadCount")
                 {
                     if (showed == "false")

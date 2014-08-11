@@ -33,12 +33,16 @@ DataControler::DataControler(QObject *parent) :
 
     fileURL = "";
     fileNameList = "";
-    fileSavePath = gXMLOpera.getMainConfig().linuxSavePath;
+    fileSavePath = gSettingHandler.getChildElement(GeneralSettings,"SavePath");
     freeSpace = getLinuxFreeSpace(fileSavePath);
-    maxThread = gXMLOpera.getMainConfig().defaultThreadCount;
-    maxSpeed = gXMLOpera.getMainConfig().downloadSpeed;
+    maxThread = gSettingHandler.getChildElement(GeneralSettings,"DefaultThreadCount");
+    maxSpeed = gSettingHandler.getChildElement(GeneralSettings,"MaxDownloadSpeed");
 
-    toolsType = "aria2";
+    toolsType = gSettingHandler.getChildElement(GeneralSettings,"PriorityTool");
+    setDefaultToolType(gSettingHandler.getChildElement(GeneralSettings,"PriorityTool"));
+    setIsYouGetEnable(gSettingHandler.getChildElement(YouGetSetting,"State")=="Enable"?true:false);
+    setIsAria2Enable(gSettingHandler.getChildElement(Aria2Setting,"State")=="Enable"?true:false);
+    setIsXwareEnable(gSettingHandler.getChildElement(XwareSetting,"State")=="Enable"?true:false);
 
     yougetProcess = NULL;
 }
@@ -54,7 +58,7 @@ void DataControler::selectSavePath(QString buttonName)
 {
     if (buttonName == "Default")
     {
-        setFileSavePath(gXMLOpera.getMainConfig().linuxSavePath);
+        setFileSavePath(gSettingHandler.getChildElement(GeneralSettings,"SavePath"));
         setFreeSpace(getLinuxFreeSpace(fileSavePath));
     }
     else if (buttonName == "Desktop")
@@ -66,7 +70,7 @@ void DataControler::selectSavePath(QString buttonName)
     {
         QString tmpPath =  QFileDialog::getExistingDirectory(0,
                                                           tr("Open Folder"),
-                                                          gXMLOpera.getMainConfig().linuxSavePath,
+                                                          gSettingHandler.getChildElement(GeneralSettings,"SavePath"),
                                                           QFileDialog::ShowDirsOnly);
         if (tmpPath != "")
         {
@@ -76,7 +80,7 @@ void DataControler::selectSavePath(QString buttonName)
     }
 }
 
-void DataControler::sendToMainServer(QString threads, QString speed, QString savePath)
+void DataControler::sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType)
 {
     if (checkIsInDownloading(fileURL))
     {
@@ -85,18 +89,18 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
     else if (checkIsInDownloaded(fileURL))
     {
         //delete xml item
-        QFile::remove(gXMLOpera.getDownloadedNode(fileURL).savePath + "/"
-                      + gXMLOpera.getDownloadedNode(fileURL).name);
-        gXMLOpera.removeDownloadedFileNode(fileURL);
+        QFile::remove(gDownloadHandler.getDownloadedNode(fileURL).savePath + "/"
+                      + gDownloadHandler.getDownloadedNode(fileURL).name);
+        gDownloadHandler.removeDownloadedFileNode(fileURL);
 
     }
     else if (checkIsInDownloadTrash(fileURL))
     {
-        gXMLOpera.removeDownloadTrashFileNode(fileURL);
+        gDownloadHandler.removeDownloadTrashFileNode(fileURL);
     }
 
     //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-    QString info = toolsType + "?:?"
+    QString info = newToolType + "?:?"
             + fileNameList + "?:?"
             + fileURL + "?:?"
             + redirectURL + "?:?"
@@ -111,25 +115,28 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
     qApp->quit();
 }
 
-void DataControler::getURLFromBrowser(QString URLInfo)
+void DataControler::getURLFromBrowser(QString URL)
 {
-    if (URLInfo.contains("?:?"))
-    {
-        setFileURL(URLInfo.split("?:?").at(0));
-        redirectURL = fileURL;
-        toolsType = URLInfo.split("?:?").at(1);
+    setFileURL(URL);
+    redirectURL = fileURL;
+    setToolsType(getDLToolsTypeFromURL(URL));
 
-        if(toolsType == "youget")
-        {
-            QTimer::singleShot(100,this,SLOT(getURLInfoFromYouget()));
-        }
-        else
-        {
-            //此处会导致警告：QString::arg: Argument missing: 无法解析res_nclose中的符号“res_nclose”：libresolv.so.2,
-            //获取http、ftp、Bt等类型的信息
-            //延迟时间，防止qml组件未初始化前就发送了信号
-            QTimer::singleShot(100,this,SLOT(getURLInfo()));
-        }
+    if (toolsType == "")
+    {
+        emit sIsWrongURL();
+        return;
+    }
+
+    if(toolsType == "YouGet")
+    {
+        QTimer::singleShot(100,this,SLOT(getURLInfoFromYouget()));
+    }
+    else
+    {
+        //此处会导致警告：QString::arg: Argument missing: 无法解析res_nclose中的符号“res_nclose”：libresolv.so.2,
+        //获取http、ftp、Bt等类型的信息
+        //延迟时间，防止qml组件未初始化前就发送了信号
+        QTimer::singleShot(100,this,SLOT(getURLInfo()));
     }
 }
 
@@ -151,6 +158,31 @@ QString DataControler::getMaxSpeed()
 QString DataControler::getFreeSpace()
 {
     return freeSpace;
+}
+
+QString DataControler::getToolsType()
+{
+    return toolsType;
+}
+
+QString DataControler::getDefaultToolType()
+{
+    return defaultTool;
+}
+
+bool DataControler::getIsYouGetEnable()
+{
+    return isYouGetEnable;
+}
+
+bool DataControler::getIsAria2Enable()
+{
+    return isAria2Enable;
+}
+
+bool DataControler::getIsXwareEnable()
+{
+    return isXwareEnable;
 }
 
 QString DataControler::getFileSavePath()
@@ -199,6 +231,36 @@ void DataControler::setFreeSpace(QString space)
     emit sFreeSpaceChange();
 }
 
+void DataControler::setToolsType(QString tType)
+{
+    toolsType = tType;
+    //加延时是因为在初始化的时候获取到toolType界面却还未完成初始化
+    QTimer::singleShot(500,this,SIGNAL(sToolsTypeChange()));
+}
+
+void DataControler::setDefaultToolType(QString tType)
+{
+    defaultTool = tType;
+    emit sDefaultToolTypeChange();
+}
+
+void DataControler::setIsYouGetEnable(bool flag)
+{
+    isYouGetEnable = flag;
+    emit sIsYouGetEnableChange();
+}
+
+void DataControler::setIsAria2Enable(bool flag)
+{
+    isAria2Enable = flag;
+    emit sIsAria2EnableChange();
+}
+
+void DataControler::setIsXwareEnable(bool flag)
+{
+    isXwareEnable = flag;
+    emit sIsXwareEnableChange();
+}
 
 QString DataControler::getLinuxFreeSpace(QString path)
 {
@@ -231,10 +293,12 @@ void DataControler::getURLInfoFromYouget()
     connect(yougetProcess,SIGNAL(readyReadStandardError()),
             this,SLOT(getYougetError()));
 
+    SettingXMLHandler tmpHandler;
     QStringList arguments;
+    arguments << tmpHandler.getChildElement(YouGetSetting,"ExecutePath");
     arguments << "-i";
     arguments << fileURL;
-    yougetProcess->start("you-get",arguments);
+    yougetProcess->start("python3",arguments);
 
 }
 
@@ -261,22 +325,26 @@ void DataControler::getURLInfo()
     {
 
     }
+    //确保toolsType参数在获取信息后一定会发送至界面
+    setToolsType(toolsType);
 }
 
 void DataControler::getYougetFeedBack()
 {
     QString outPut = QString(yougetProcess->readAllStandardOutput());
-     int titleIndex = outPut.indexOf("Title:");
-     int typeIndex = outPut.indexOf("Type:");
-     int sizeIndex = outPut.indexOf("Size:");
-     QString tmpTitle = outPut.mid(titleIndex + 12,typeIndex - titleIndex - 13);
-     fileType = outPut.mid(outPut.indexOf("(") + 1,outPut.indexOf(")") - outPut.indexOf("(") - 1);
-     QString tmpSize = outPut.mid(sizeIndex + 12,outPut.lastIndexOf("(") - sizeIndex - 17);
+    if (outPut == "")
+        return;
 
-     //youget返回大小都以MiB计算,要转换成B
-     tmpSize = QString::number(qint64(tmpSize.toDouble() * 1024 * 1024));
+    QStringList tmpList;
+    if (outPut.contains("streams"))
+        tmpList = getMovieYouGetFeedBackInfo(outPut);
+    else
+        tmpList = getNormalYouGetFeedBackInfo(outPut);
 
-     setFileNameList(fileType + "@" + tmpSize + "@" + tmpTitle);
+    if (tmpList.count() != 3)
+        return;
+
+     setFileNameList(tmpList.at(0) + "@" + tmpList.at(1) + "@" + tmpList.at(2));
      emit sFnishGetAllInfo();
 }
 
@@ -285,6 +353,48 @@ void DataControler::getYougetError()
     qDebug() << "++++++++++++++++++++++++++++++++++++++++++++++++++";
     qDebug() << yougetProcess->readAllStandardError();
     qDebug() << "++++++++++++++++++++++++++++++++++++++++++++++++++";
+}
+
+QStringList DataControler::getNormalYouGetFeedBackInfo(QString data)
+{
+    QStringList tmpList;
+    int siteIndex = data.indexOf("Video Site:");
+    int titleIndex = data.indexOf("Title:");
+    int typeIndex = data.indexOf("Type:");
+    int sizeIndex = data.indexOf("Size:");
+
+    QString tmpSite = data.mid(siteIndex + 11, titleIndex - siteIndex - 11);
+    QString tmpTitle = data.mid(titleIndex + 12,typeIndex - titleIndex - 13);
+    fileType = data.mid(data.indexOf("(") + 1,data.indexOf(")") - data.indexOf("(") - 1);
+    QString tmpSize = data.mid(sizeIndex + 12,data.lastIndexOf("(") - sizeIndex - 17);
+
+    //youget返回大小都以MiB计算,要转换成B
+    tmpSize = QString::number(qint64(tmpSize.toDouble() * 1024 * 1024));
+
+    tmpList.append(fileType);
+    tmpList.append(tmpSize);
+    tmpList.append(tmpTitle);
+
+    return tmpList;
+}
+
+QStringList DataControler::getMovieYouGetFeedBackInfo(QString data)
+{
+    QStringList tmpList;
+
+    QString tmpSite = data.mid(data.indexOf("site:") + 20, data.indexOf("title:") - data.indexOf("site") - 21);
+    QString tmpTitle = data.mid(data.indexOf("title:") + 20,data.indexOf("streams:") - data.indexOf("title:") - 21);
+    fileType = data.mid(data.indexOf("container:") + 15,data.indexOf("video-profile:") - data.indexOf("container:") - 22);
+    QString tmpSize = data.mid(data.indexOf("size:") + 15,data.indexOf("MiB") - data.indexOf("size:") - 16);
+
+    //youget返回大小都以MiB计算,要转换成B
+    tmpSize = QString::number(qint64(tmpSize.toDouble() * 1024 * 1024));
+
+    tmpList.append(fileType);
+    tmpList.append(tmpSize);
+    tmpList.append(tmpTitle);
+
+    return tmpList;
 }
 
 bool isConnected = false;
@@ -405,6 +515,12 @@ QString DataControler::getIconName()
     else
         iconName = "noicon";
 
+    //some video site,you-get will got this two type
+    if (fileType == "flv" || fileType == "mp4")
+    {
+        iconName = "video";
+    }
+
     return iconName;
 }
 
@@ -466,7 +582,7 @@ void DataControler::connectToMainProgram()
 
 bool DataControler::checkIsInDownloading(QString URL)
 {
-    QList<SDownloading> tmpList = gXMLOpera.getDownloadingNodes();
+    QList<SDownloading> tmpList = gDownloadHandler.getDownloadingNodes();
 
     for (int i = 0; i < tmpList.count(); i ++)
     {
@@ -481,7 +597,7 @@ bool DataControler::checkIsInDownloading(QString URL)
 
 bool DataControler::checkIsInDownloaded(QString URL)
 {
-    QList<SDownloaded> tmpList = gXMLOpera.getDownloadedNodes();
+    QList<SDownloaded> tmpList = gDownloadHandler.getDownloadedNodes();
 
     for (int i = 0; i < tmpList.count(); i ++)
     {
@@ -496,7 +612,7 @@ bool DataControler::checkIsInDownloaded(QString URL)
 
 bool DataControler::checkIsInDownloadTrash(QString URL)
 {
-    QList<SDownloadTrash> tmpList = gXMLOpera.getDownloadTrashNodes();
+    QList<SDownloadTrash> tmpList = gDownloadHandler.getDownloadTrashNodes();
 
     for (int i = 0; i < tmpList.count(); i ++)
     {
@@ -509,6 +625,47 @@ bool DataControler::checkIsInDownloadTrash(QString URL)
     return false;//at the end got nothing will return false
 }
 
+
+QString DataControler::getDLToolsTypeFromURL(QString URL)
+{
+    QRegExp rx;
+    rx.setPatternSyntax(QRegExp::RegExp);
+
+    QString normalURLRegex = QString("^((https|http|chrome|ftp)?://)")
+            + QString(".*\.(exe|asf|avi|exe|iso|mp3|mpeg|mpg|mpga|ra|rar|rm|rmvb|tar|wma|wmp|wmv|mov|zip|3gp|")
+            + QString("chm|mdf|torrent|jar|msi|arj|bin|dll|psd|hqx|sit|lzh|gz|tgz|xlsx|xls|doc|docx|ppt|pptx|flv|swf|mkv|")
+            + QString("tp|ts|flac|ape|wav|aac|txt|dat|7z|ttf|bat|xv|xvx|pdf|mp4|apk|ipa|epub|mobi|deb|sisx|cab|pxl|run|rpm|deb|dmg)")
+            + QString("($|[?]{1}.*$)");
+
+    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
+            QString("http://v.yinyuetai.com/|") +
+            QString("http://v.youku.com/| ")+
+            QString(" http://v.ku6.com/|")+
+            QString("http://v.163.com/|") +
+            QString("http://v.qq.com/|") +
+            QString("http://www.acfun.com/v/|")+
+            QString("http://bilibili.kankanews.com/video/av|")+
+            QString("http://www.jpopsuki.tv/video/|")+
+            QString("http://video.sina.com.cn/|")+
+            QString("http://tv.sohu.com/|")+
+            QString("http://www.56.com/w|")+
+            QString("http://www.56.com/u|")+
+            QString("http://www.songtaste.com/song/).+");
+
+    rx.setPattern(normalURLRegex);
+    int normalPos = URL.indexOf(rx);
+
+    if (normalPos >= 0)
+        return "Point";
+
+    rx.setPattern(videoURLRegex);
+    int videoPos = URL.indexOf(rx);
+
+    if (videoPos >= 0)
+        return "YouGet";
+    else
+        return "";                  //排除两种可能性外,就是不合法的链接
+}
 
 
 

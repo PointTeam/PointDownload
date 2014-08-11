@@ -35,7 +35,7 @@ History:
 #include <QStandardPaths>
 #include <QDebug>
 #include <sys/vfs.h>
-#include "xmloperations.h"
+#include "settingxmlhandler.h"
 
 class GetSavePathDialog : public QObject
 {

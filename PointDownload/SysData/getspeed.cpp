@@ -137,11 +137,11 @@ QString GetSpeed::getCPU()
 
 QString GetSpeed::getDisk()
 {
-    XMLOperations tmpOper;
+    SettingXMLHandler tmpHandler;
 #ifdef Q_OS_LINUX
-    return getLinuxFolderInfo(tmpOper.getMainConfig().linuxSavePath);
+    return getLinuxFolderInfo(tmpHandler.getChildElement(GeneralSettings,"SavePath"));
 #elif Q_OS_WIN
-    return getWindowsFolderInfo(tmpOper.getMainConfig().windowsSavePath);
+    return getWindowsFolderInfo(tmpHandler.getChildElement(GeneralSettings,"SavePath"));
 #endif
 }
 

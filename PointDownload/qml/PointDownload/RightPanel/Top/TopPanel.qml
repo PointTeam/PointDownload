@@ -32,7 +32,11 @@ import QtQuick 2.0
 import QtQuick.Window 2.0
 import settingControler 1.0
 import Singleton.TopContrl 1.0
+import Singleton.PEventFilter 1.0
 //import "../../ToolTip/CloseTipCreator.js" as CloseTip
+import "../../AboutPoint/AboutPoint.js" as AboutPage
+import "../../Dropzone/Dropzone.js" as DropzonePage
+import "../../Dropzone/SettingWin/SettingWin.js" as SettingScript
 
 Rectangle {
     id: topPanel
@@ -43,7 +47,17 @@ Rectangle {
     //连接单例的信号
     Connections {
         target: TopContrl
-        onSignalShowMainWindow:mainWindow.show()
+        onSignalShowMainWindow:{
+            mainWindow.show()
+            DropzonePage.destroyDropzone()
+        }
+
+        onSignalHideMainWindow:{
+            mainWindow.hide()
+            DropzonePage.showDropzone(topPanel)
+        }
+
+        onSignalShowAboutPoint:AboutPage.showAbout(topPanel)
     }
     SettingControler {
         id: settingCtrl
@@ -107,13 +121,14 @@ Rectangle {
 
             onClicked: {
                 settingCtrl.initData()
-                if (settingCtrl.exitOnClose === "true")
+                if (settingCtrl.exitOnClose)
                 {
                     Qt.quit()
                 }
                 else
                 {
-                    mainWindow.hide()
+//                    mainWindow.hide()
+                    TopContrl.hideMainWindow()
                 }
             }
         }
@@ -135,13 +150,8 @@ Rectangle {
         anchors {right: splitLine2.right; rightMargin: 3; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
-            //可以直接读取到上层目录中的RightMainPanel中的rightView组件
             onClicked: {
-                if (rightView.currentIndex === 0)
-                    rightView.setCurrentPage(1);
-                else
-                    rightView.setCurrentPage(0);
-                TopContrl.showTrayIcon();
+                SettingScript.showSettingWin(topPanel,PEventFilter.globalX,PEventFilter.globalY)
             }
         }
     }

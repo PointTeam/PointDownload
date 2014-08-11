@@ -24,7 +24,7 @@
 
 #include <QObject>
 #include <QFileDialog>
-#include "XMLHandler/xmloperations.h"
+#include "XMLHandler/settingxmlhandler.h"
 #include "Download/unifiedinterface.h"
 
 class SettingControler : public QObject
@@ -34,83 +34,91 @@ class SettingControler : public QObject
     Q_PROPERTY(QString operatingSystem READ getOperatingSystem() WRITE setOperatingSystem() NOTIFY operatingSystemChange())
     Q_PROPERTY(QString version READ getVersion() WRITE setVersion() NOTIFY versionChange())
     Q_PROPERTY(QString savePath READ getSavePath() WRITE setSavePath() NOTIFY savePathChange())
-    Q_PROPERTY(QString beepEnable READ getBeepEnable() WRITE setBeepEnable() NOTIFY beepEnableChange())
+    Q_PROPERTY(bool alertToneEnable READ getAlertToneEnable() WRITE setAlertToneEnable() NOTIFY alertToneEnableChange())
     Q_PROPERTY(QString enableUpload READ getEnableUpload() WRITE setEnableUpload() NOTIFY enableUploadChange())
-    Q_PROPERTY(QString videoDetectType READ getVideoDetectType() WRITE setVideoDetectType() NOTIFY videoDetectTypeChange())
-    Q_PROPERTY(QString audioDetectType READ getAudioDetectType() WRITE setAudioDetectType() NOTIFY audioDetectTypeChange())
-    Q_PROPERTY(QString clipboard READ getClipboard() WRITE setClipboard() NOTIFY ClipboardChange())
-    Q_PROPERTY(QString exitOnClose READ getExitOnClose() WRITE setExitOnClose() NOTIFY exitOnCloseChange())
+    Q_PROPERTY(bool enableDropzone READ getEnableDropzone WRITE setEnableDropzone NOTIFY enableDropzoneChange)
+    Q_PROPERTY(bool exitOnClose READ getExitOnClose() WRITE setExitOnClose() NOTIFY exitOnCloseChange())
     Q_PROPERTY(QString defaultThreadCount READ getDefaultThreadCount() WRITE setDefaultThreadCount() NOTIFY defaultThreadCountChange())
     Q_PROPERTY(QString maxJobCount READ getMaxJobCount() WRITE setMaxJobCount() NOTIFY maxJobCountChange())
     Q_PROPERTY(QString maxDownloadSpeed READ getMaxDSpeed() WRITE setMaxDSpeed() NOTIFY maxDSpeedChange())
+    Q_PROPERTY(QString maxUploadSpeed READ getMaxUSpeed WRITE setMaxUSpeed NOTIFY maxUSpeedChange)
+    Q_PROPERTY(QString priorityTool READ getPriorityTool WRITE setPriorityTool NOTIFY priorityToolChange)
+
+    Q_PROPERTY(QString savePathState READ getSavePathState WRITE setSavePathState NOTIFY savePathStateChange)
 public:
     explicit SettingControler(QObject *parent = 0);
 
     //qml中能直接调用此方法
-    Q_INVOKABLE void updateBeep(QString beep);
-    Q_INVOKABLE void updateExitOnClose(QString flag);
-    Q_INVOKABLE void updateClipboard(QString flag);
-    Q_INVOKABLE void updateThreadCount(QString count);
-    Q_INVOKABLE void updateMaxJobCount(QString count);
-    Q_INVOKABLE void updateDownloadSpeed(QString speed);
     Q_INVOKABLE void initData();
-    Q_INVOKABLE void selectDefaultSavePath();
-
+    Q_INVOKABLE void selectSavePath(QString pathType);//Default,Desktop,Other
+    Q_INVOKABLE void selectPriorityTool(QString tool);//Point,Aria2,Xware
 
     QString getOperatingSystem();
-    void setOperatingSystem(QString sys);
     QString getVersion();
-    void setVersion(QString version);
     QString getSavePath();
-    void setSavePath(QString path);
-    QString getBeepEnable();
-    void setBeepEnable(QString beep);
+    bool getAlertToneEnable();
     QString getEnableUpload();
-    void setEnableUpload(QString upload);
-    QString getVideoDetectType();
-    void setVideoDetectType(QString type);
-    QString getAudioDetectType();
-    void setAudioDetectType(QString tyoe);
-    QString getClipboard();
-    void setClipboard(QString flag);
-    QString getExitOnClose();
-    void setExitOnClose(QString flag);
+    bool getEnableDropzone();
+    bool getExitOnClose();
     QString getDefaultThreadCount();
-    void setDefaultThreadCount(QString count);
     QString getMaxJobCount();
-    void setMaxJobCount(QString count);
     QString getMaxDSpeed();
-    void setMaxDSpeed(QString speed);
+    QString getMaxUSpeed();
+    QString getPriorityTool();
 
+    QString getSavePathState();
+
+    void setOperatingSystem(QString sys);
+    void setVersion(QString version);
+    void setSavePath(QString path);
+    void setAlertToneEnable(bool isEnable);
+    void setEnableUpload(QString upload);
+    void setEnableDropzone(bool flag);
+    void setExitOnClose(bool flag);
+    void setDefaultThreadCount(QString count);
+    void setMaxJobCount(QString count);
+    void setMaxDSpeed(QString speed);
+    void setMaxUSpeed(QString speed);
+    void setPriorityTool(QString tool);
+
+    void setSavePathState(QString pathState);
 signals:
     void operatingSystemChange();
     void versionChange();
     void savePathChange();
-    void beepEnableChange();
+    void alertToneEnableChange();
     void enableUploadChange();
-    void videoDetectTypeChange();
-    void audioDetectTypeChange();
-    void ClipboardChange();
+    void enableDropzoneChange();
     void exitOnCloseChange();
     void defaultThreadCountChange();
     void maxJobCountChange();
     void maxDSpeedChange();
+    void maxUSpeedChange();
+    void priorityToolChange();
 
+    void savePathStateChange();
 private:
     QString operatingSystem;
     QString version;
     QString savePath;
-    QString beepEnable;
+    bool alertToneEnable;
     QString enableUpload;
-    QString videoDetectType;
-    QString audioDetectType;
-    QString clipboard;
-    QString exitOnClose;
+    bool enableDropzone;
+    bool exitOnClose;
     QString defaultThreadCount;
     QString maxJobCount;
     QString maxDownloadSpeed;
+    QString maxUploadSpeed;
+    QString priorityTool;
 
+    QString savePathState; //Default,Desktop,Other
 
+    SettingXMLHandler sHandler;
+
+    const QString DEFAULT_SAVE_PATH =
+            QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0) + "/PointDownload";
+    const QString DESKTOP_SAVE_PATH =
+            QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
 };
 
 #endif // SETTINGCONTROLER_H

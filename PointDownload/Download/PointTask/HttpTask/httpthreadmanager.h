@@ -27,7 +27,7 @@
 #include <QFile>
 #include <QTimer>
 #include "httpthread.h"
-#include "XMLHandler/xmloperations.h"
+#include "XMLHandler/downloadxmlhandler.h"
 #include "Download/DataType.h"
 
 const QString POINT_FILE_FLAG = ".Point";
@@ -83,7 +83,7 @@ private:
 
     QMutex mutex;
     QList<HttpThread *> threadList;
-    XMLOperations  xmlOpera;
+    DownloadXMLHandler  xmlOpera;
     PrepareDownloadInfo gDownloadInfo;
 
     QTimer * updateXMLTimer;//定时更新xml文件的计时器

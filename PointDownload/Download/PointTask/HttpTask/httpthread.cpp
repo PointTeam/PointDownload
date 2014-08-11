@@ -195,7 +195,6 @@ void HttpThread::setDoneByte(qint64 d)
 
 HttpThread::~HttpThread()
 {
-    qDebug() << "ggggggggggggggg";
     downloadFile.close();
     reply->deleteLater();
     manager->deleteLater();

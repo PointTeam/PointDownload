@@ -31,8 +31,8 @@ Rectangle {
     ShortcutButton {
         id: beepButtom
         height: 20
-        buttonText: qsTr("Tone")//"完成提示音"//
-        iconSource: settingCtrl.beepEnable == "true"?"qrc:/images/navigation/Bbluechecked":"qrc:/images/navigation/Bbluenone"
+        buttonText: qsTr("AlertTone")//"完成提示音"//
+        iconSource: settingCtrl.alertToneEnable?"qrc:/images/navigation/Bbluechecked":"qrc:/images/navigation/Bbluenone"
         anchors {top:parent.top; topMargin: 12}
 
         MouseArea {
@@ -41,12 +41,12 @@ Rectangle {
             onClicked: {
                 if (beepButtom.iconSource == "qrc:/images/navigation/Bbluenone")
                 {
-                    settingCtrl.updateBeep("true")
+                    settingCtrl.alertToneEnable = true
                     beepButtom.iconSource = "qrc:/images/navigation/Bbluechecked"
                 }
                 else
                 {
-                    settingCtrl.updateBeep("false")
+                    settingCtrl.alertToneEnable = false
                     beepButtom.iconSource = "qrc:/images/navigation/Bbluenone"
                 }
             }
@@ -57,7 +57,7 @@ Rectangle {
         id: closeExitButton
         height: 20
         buttonText: qsTr("C&Q")//"关闭立即退出"//
-        iconSource: settingCtrl.exitOnClose == "true"?"qrc:/images/navigation/Byellowchecked":"qrc:/images/navigation/Byellownone"
+        iconSource: settingCtrl.exitOnClose?"qrc:/images/navigation/Byellowchecked":"qrc:/images/navigation/Byellownone"
         anchors {top:beepButtom.bottom; topMargin: 10}
 
         MouseArea {
@@ -66,12 +66,12 @@ Rectangle {
             onClicked: {
                 if (closeExitButton.iconSource == "qrc:/images/navigation/Byellownone")
                 {
-                    settingCtrl.updateExitOnClose("true")
+                    settingCtrl.exitOnClose = true
                     closeExitButton.iconSource = "qrc:/images/navigation/Byellowchecked"
                 }
                 else
                 {
-                    settingCtrl.updateExitOnClose("false")
+                    settingCtrl.exitOnClose = false
                     closeExitButton.iconSource = "qrc:/images/navigation/Byellownone"
                 }
             }
@@ -79,26 +79,26 @@ Rectangle {
     }
 
     ShortcutButton {
-        id: startOnPoweronButton
+        id: enableDropzoneButton
         height: 20
-        buttonText: qsTr("Clipboard")//"监控剪切板"//
-        iconSource: settingCtrl.clipboard === "true"?"qrc:/images/navigation/Bredchecked":"qrc:/images/navigation/Brednone"
+        buttonText: qsTr("Dropzone")//"监控剪切板"//
+        iconSource: settingCtrl.enableDropzone?"qrc:/images/navigation/Bredchecked":"qrc:/images/navigation/Brednone"
         anchors {top:closeExitButton.bottom; topMargin: 10}
 
         MouseArea {
             id: startOnPoweronMouse
             anchors.fill: parent
             onClicked: {
-                if (startOnPoweronButton.iconSource == "qrc:/images/navigation/Brednone")
+                if (enableDropzoneButton.iconSource == "qrc:/images/navigation/Brednone")
                 {
-                    settingCtrl.updateClipboard("true")
-                    startOnPoweronButton.iconSource = "qrc:/images/navigation/Bredchecked"
+                    settingCtrl.enableDropzone = true
+                    enableDropzoneButton.iconSource = "qrc:/images/navigation/Bredchecked"
                 }
 
                 else
                 {
-                    settingCtrl.updateClipboard("false")
-                    startOnPoweronButton.iconSource = "qrc:/images/navigation/Brednone"
+                    settingCtrl.enableDropzone = false
+                    enableDropzoneButton.iconSource = "qrc:/images/navigation/Brednone"
                 }
             }
         }

@@ -31,22 +31,44 @@ History:
 
 #include <qobject.h>
 #include <QClipboard>
+#include <QQmlEngine>
 #include <QtWidgets/qapplication.h>
 #include "Controler/downloaddatasender.h"
-#include "XMLHandler/xmloperations.h"
-
 class MonitorClipBoard : public QObject
 {
     Q_OBJECT
+    //将c++数据暴露给qml使用
+    Q_PROPERTY(QString tmpURL  READ getTmpURL WRITE setTmpURL NOTIFY tmpURLChange)
 public:
-    explicit MonitorClipBoard();
+    static MonitorClipBoard * getInstance();
+
+    QString getTmpURL();
+    void setTmpURL(QString URL);
 
 public slots:
     void slot_clipDataChange();
 
+signals:
+    void tmpURLChange();
+
+private:
+    explicit MonitorClipBoard();
+
 private:
     QClipboard * clipBoard;                                        //粘贴板
+    static MonitorClipBoard * monitorClipBord;
+
+    QString tmpURL;
 
 };
+
+//将单例对象注册到qml中使用的回调函数
+static QObject * clipboardObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return MonitorClipBoard::getInstance();
+}
 
 #endif // MONITORCLIPBOARD_H

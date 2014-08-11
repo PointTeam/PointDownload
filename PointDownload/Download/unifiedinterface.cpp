@@ -45,8 +45,8 @@ void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
     deleteFileFromDisk(info.storageDir, info.fileName);
 
     //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
-    XMLOperations tmpOpera;
-    if (tmpOpera.getMainConfig().maxJobCount.toInt() <= downloadingListMap.count())
+    SettingXMLHandler tmphandler;
+    if (tmphandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() <= downloadingListMap.count())
     {
         //移除最慢的一项
         dropSlowest();
@@ -75,7 +75,7 @@ void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
 
 void UnifiedInterface::changeMaxJobCount(int newCount)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     int ingItemCount = tmpOpera.getDownloadingNodes().count();
 
     while (newCount < downloadingListMap.count())
@@ -89,6 +89,24 @@ void UnifiedInterface::changeMaxJobCount(int newCount)
     }
 
     refreshDownloadingItem();
+}
+
+void UnifiedInterface::suspendAllDownloading()
+{
+    QList<QString> keys = downloadingListMap.keys();
+    for (int i = 0; i < keys.count(); i++)
+    {
+        suspendDownloading(keys.at(i));
+    }
+}
+
+void UnifiedInterface::resumeAllDownloading()
+{
+    QList<QString> keys = downloadingListMap.keys();
+    for (int i = 0; i < keys.count(); i++)
+    {
+        resumeDownloading(keys.at(i));
+    }
 }
 
 void UnifiedInterface::controlDownload(DownloadType dtype, OperationType otype, QString URL)
@@ -135,7 +153,7 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
 
 void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     SDownloadThread threadStruct;
     threadStruct.startBlockIndex = "1";
     threadStruct.endBlockIndex = "1";
@@ -147,23 +165,10 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
     {
         //插入xml文件
         SDownloading tmpIngStruct;
-        switch (info.toolType)
-        {
-        case Point:
-            tmpIngStruct.dlToolsType = "Point" ;
-            break;
-        case aria2:
-            tmpIngStruct.dlToolsType = "aria2";
-            break;
-        case youget:
-            tmpIngStruct.dlToolsType = "youget";
-            break;
-        default:
-            break;
-        }
 
+        tmpIngStruct.dlToolsType = "youget";
         tmpIngStruct.name = info.fileName;
-        tmpIngStruct.jobMaxSpeed = info.maxSpeed;
+        tmpIngStruct.jobMaxSpeed = "0";   //you-get无法控制网速
         tmpIngStruct.savePath = info.storageDir;
         tmpIngStruct.enableUpload = "false";
         tmpIngStruct.URL = info.downloadURL;
@@ -183,7 +188,7 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
     else
     {
         //必须要及时改变状态
-        XMLOperations tmpOpera;
+        DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
         tmpStruct.URL = info.downloadURL;
         tmpStruct.state = "dlstate_downloading";
@@ -265,15 +270,6 @@ void UnifiedInterface::handleDownloadTrashControl(OperationType otype, QString U
 
 void UnifiedInterface::handleDownloadSearchControl(QString URL)
 {
-    QString toolType = getDLToolsTypeFromURL(URL);
-
-    if (toolType == "")
-        return;
-    else if (toolType == "Point")
-        URL += "?:?Point";
-    else
-        URL += "?:?youget";
-
     QObject *parent;
     QStringList arguments;
     arguments << "-c";
@@ -306,8 +302,12 @@ void UnifiedInterface::stopDownloading(QString URL)
 
 void UnifiedInterface::suspendDownloading(QString URL)
 {
+    DownloadXMLHandler tmpOpera;
+    //如果已经处于暂停状态则不作处理
+    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_suspend")
+        return;
+
     //在xml文件中将该项标注为暂停
-    XMLOperations tmpOpera;
     SDownloading tmpStruct;
     tmpStruct.URL = URL;
     tmpStruct.state = "dlstate_suspend";
@@ -330,13 +330,14 @@ void UnifiedInterface::suspendDownloading(QString URL)
 
 void UnifiedInterface::resumeDownloading(QString URL)
 {
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
+    DownloadXMLHandler downloadHandler;
     //如果已经处于下载状态则不作处理
-    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_downloading")
+    if (downloadHandler.getDownloadingNode(URL).state == "dlstate_downloading")
         return;
 
     //如果数量超出了最大限制,则把正在下载的最慢的项停下
-    if (tmpOpera.getMainConfig().maxJobCount.toShort() <= downloadingListMap.count())
+    if (tmpHandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() <= downloadingListMap.count())
     {
         dropSlowest();
     }
@@ -345,7 +346,7 @@ void UnifiedInterface::resumeDownloading(QString URL)
     SDownloading tmpStruct;
     tmpStruct.URL = URL;
     tmpStruct.state = "dlstate_downloading";
-    tmpOpera.writeDownloadingConfigFile(tmpStruct);
+    downloadHandler.writeDownloadingConfigFile(tmpStruct);
 
     switch(downloadingListMap.value(URL))
     {
@@ -374,7 +375,7 @@ void UnifiedInterface::priorityDownloading(QString URL)
     {
         //否则启动一个就绪队列的项
         dropSlowest();
-        XMLOperations tmpOpera;
+        DownloadXMLHandler tmpOpera;
         QString toolType = tmpOpera.getDownloadingNode(URL).dlToolsType;
 
         stopDownloading(URL);
@@ -396,7 +397,7 @@ void UnifiedInterface::priorityDownloading(QString URL)
 
 void UnifiedInterface::openFolderDownloading(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     QString tmpPath = tmpOpera.getDownloadingNode(URL).savePath;
 
     if (tmpPath != "")
@@ -405,7 +406,7 @@ void UnifiedInterface::openFolderDownloading(QString URL)
 
 void UnifiedInterface::trashDownloading(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     SDownloading tmpIngStruct;
     SDownloadTrash tmpTrashStruct;
 
@@ -429,7 +430,7 @@ void UnifiedInterface::trashDownloading(QString URL)
 
 void UnifiedInterface::deleteDownloading(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     stopDownloading(URL);
     deleteFileFromDisk(tmpOpera.getDownloadingNode(URL).savePath,tmpOpera.getDownloadingNode(URL).name);
     tmpOpera.removeDownloadingFileNode(URL);
@@ -443,7 +444,7 @@ void UnifiedInterface::deleteDownloading(QString URL)
 void UnifiedInterface::finishDownloading(QString URL)
 {
     //向已下载xml记录文件插入新项
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
 
     SDownloading ingStruct = tmpOpera.getDownloadingNode(URL);
     SDownloaded edStruct;
@@ -477,10 +478,6 @@ void UnifiedInterface::finishDownloading(QString URL)
 
 void UnifiedInterface::redownloadDownloaded(QString URL)
 {
-    XMLOperations tmpOpera;
-    QString toolsType = "?:?" + tmpOpera.getDownloadedNode(URL).dlToolsType;
-    URL += toolsType;
-
     QObject *parent;
     QStringList arguments;
     arguments << "-c";
@@ -496,7 +493,7 @@ void UnifiedInterface::redownloadDownloaded(QString URL)
 
 void UnifiedInterface::openFolderDownloaded(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     QString tmpPath = tmpOpera.getDownloadedNode(URL).savePath;
 
     if (tmpPath != "")
@@ -505,7 +502,7 @@ void UnifiedInterface::openFolderDownloaded(QString URL)
 
 void UnifiedInterface::trashDownloaded(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     SDownloaded tmpEdStruct;
     SDownloadTrash tmpTrashStruct;
 
@@ -525,7 +522,7 @@ void UnifiedInterface::trashDownloaded(QString URL)
 
 void UnifiedInterface::deleteDownloaded(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     deleteFileFromDisk(tmpOpera.getDownloadedNode(URL).savePath,tmpOpera.getDownloadedNode(URL).name);
     tmpOpera.removeDownloadedFileNode(URL);// 把待删除项从XML文件中移除
 
@@ -534,10 +531,6 @@ void UnifiedInterface::deleteDownloaded(QString URL)
 
 void UnifiedInterface::redownloadTrash(QString URL)
 {
-    XMLOperations tmpOpera;
-    QString toolsType = "?:?" + tmpOpera.getDownloadTrashNode(URL).dlToolsType;
-    URL += toolsType;
-
     QObject *parent;
     QStringList arguments;
     arguments << "-c";
@@ -553,7 +546,7 @@ void UnifiedInterface::redownloadTrash(QString URL)
 
 void UnifiedInterface::deleteTrash(QString URL)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     tmpOpera.removeDownloadTrashFileNode(URL);// 把待删除项从XML文件中移除
 
     emit sReturnControlResult(dl_trash,download_delete,URL,true);
@@ -569,7 +562,7 @@ void UnifiedInterface::initDownloadList()
 
 void UnifiedInterface::initDownloadedList()
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     QList<SDownloaded> edList = tmpOpera.getDownloadedNodes();
     for (int i = 0;i < edList.count(); i++)
     {
@@ -587,7 +580,7 @@ void UnifiedInterface::initDownloadedList()
 
 void UnifiedInterface::initdownloadingList()
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     QList<SDownloading> ingList = tmpOpera.getDownloadingNodes();
 
     for (int i = 0;i < ingList.count(); i++)
@@ -623,7 +616,7 @@ void UnifiedInterface::initdownloadingList()
 
 void UnifiedInterface::initTrashList()
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     QList<SDownloadTrash> trashList = tmpOpera.getDownloadTrashNodes();
     for (int i = 0;i < trashList.count(); i++)
     {
@@ -650,14 +643,15 @@ void UnifiedInterface::initTimer()
 
 void UnifiedInterface::initDownloadingStart()
 {
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
+    DownloadXMLHandler downloadHandler;
     QList<QString> keys = downloadingListMap.keys();
     int jobs = 0;
     for (int i = 0; i < keys.count(); i++)
     {
-        if (tmpOpera.getMainConfig().maxJobCount.toInt() < jobs)
+        if (tmpHandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() < jobs)
             break;
-        SDownloading ingNode = tmpOpera.getDownloadingNode(keys.at(i));
+        SDownloading ingNode = downloadHandler.getDownloadingNode(keys.at(i));
 
         if (ingNode.state == "dlstate_downloading")
         {
@@ -667,7 +661,7 @@ void UnifiedInterface::initDownloadingStart()
             tmpStruct.URL = keys.at(i);
             tmpStruct.state = "dlstate_suspend";
 
-            XMLOperations xmlOpera;
+            DownloadXMLHandler xmlOpera;
             xmlOpera.writeDownloadingConfigFile(tmpStruct);
 
             resumeDownloading(keys.at(i));
@@ -677,45 +671,6 @@ void UnifiedInterface::initDownloadingStart()
     refreshDownloadingItem();
 }
 
-QString UnifiedInterface::getDLToolsTypeFromURL(QString URL)
-{
-    QRegExp rx;
-    rx.setPatternSyntax(QRegExp::RegExp);
-
-    QString normalURLRegex = QString("^((https|http|chrome|ftp)?://)")
-            + QString(".*\.(exe|asf|avi|exe|iso|mp3|mpeg|mpg|mpga|ra|rar|rm|rmvb|tar|wma|wmp|wmv|mov|zip|3gp|")
-            + QString("chm|mdf|torrent|jar|msi|arj|bin|dll|psd|hqx|sit|lzh|gz|tgz|xlsx|xls|doc|docx|ppt|pptx|flv|swf|mkv|")
-            + QString("tp|ts|flac|ape|wav|aac|txt|dat|7z|ttf|bat|xv|xvx|pdf|mp4|apk|ipa|epub|mobi|deb|sisx|cab|pxl|run|rpm|deb|dmg)")
-            + QString("($|[?]{1}.*$)");
-
-    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
-            QString("http://v.yinyuetai.com/|") +
-            QString("http://v.youku.com/| ")+
-            QString(" http://v.ku6.com/|")+
-            QString("http://v.163.com/|") +
-            QString("http://www.acfun.com/v/|")+
-            QString("http://bilibili.kankanews.com/video/av|")+
-            QString("http://www.jpopsuki.tv/video/|")+
-            QString("http://video.sina.com.cn/|")+
-            QString("http://tv.sohu.com/|")+
-            QString("http://www.56.com/w|")+
-            QString("http://www.56.com/u|")+
-            QString("http://www.songtaste.com/song/).+");
-
-    rx.setPattern(normalURLRegex);
-    int normalPos = URL.indexOf(rx);
-
-    if (normalPos >= 0)
-        return "Point";
-
-    rx.setPattern(videoURLRegex);
-    int videoPos = URL.indexOf(rx);
-
-    if (videoPos >= 0)
-        return "youget";
-    else
-        return "";                  //排除两种可能性外,就是不合法的链接
-}
 
 bool UnifiedInterface::pingNetWork()
 {
@@ -737,7 +692,7 @@ void UnifiedInterface::suspendWhenOffLine()
 {
     QList<QString> urlList = downloadingListMap.keys();
 
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     for (int i = 0; i < urlList.count(); i ++)
     {
         if (tmpOpera.getDownloadingNode(urlList.at(i)).state == "dlstate_downloading")
@@ -776,7 +731,7 @@ void UnifiedInterface::getSpeedSum()
 
     int speedSum = 0;
 
-    XMLOperations tmpopera;
+    DownloadXMLHandler tmpopera;
     QList<QString> urlList = downloadingListMap.keys();
     for (int i = 0; i < downloadingListMap.count(); i ++)
     {
@@ -829,7 +784,7 @@ void UnifiedInterface::dropSlowest()
 {
     if (downloadingListMap.count() > 0)
     {
-        XMLOperations tmpOpera;
+        DownloadXMLHandler tmpOpera;
         QList<QString> keysList = downloadingListMap.keys();
         QString minURL = downloadingListMap.firstKey();
         qint64 tmpNum = tmpOpera.getDownloadingNode(downloadingListMap.firstKey()).averageSpeed.toLongLong();
@@ -856,12 +811,13 @@ void UnifiedInterface::dropSlowest()
 void UnifiedInterface::startReady()
 {
     //下载项的xml文件中的下载状态会在定时更新xml文件时更新为正在下载
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
+    DownloadXMLHandler downloadHandler;
 
-    if (downloadingListMap.count() >= tmpOpera.getMainConfig().maxJobCount.toShort())
+    if (downloadingListMap.count() >= tmpHandler.getChildElement(GeneralSettings,"MaxJobCount").toInt())
         return;
 
-    QList<SDownloading> ingList = tmpOpera.getDownloadingNodes();
+    QList<SDownloading> ingList = downloadHandler.getDownloadingNodes();
 
     for (int i =0; i < ingList.count(); i ++)
     {

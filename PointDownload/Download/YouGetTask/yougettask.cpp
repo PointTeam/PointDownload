@@ -54,17 +54,26 @@ void YouGetTask::startDownload(PrepareDownloadInfo info)
 
 void YouGetTask::stopDownload(QString URL)
 {
+    if (gProcessMap.value(URL) == NULL)
+        return;
     gProcessMap.value(URL)->stopDownload();
 }
 
 void YouGetTask::suspendDownloading(QString URL)
 {
+    if (gProcessMap.value(URL) == NULL)
+        return
     gProcessMap.value(URL)->stopDownload();
 }
 
 void YouGetTask::resumeDownloading(QString URL)
 {
-    gProcessMap.value(URL)->startDownload();
+    if (gProcessMap.value(URL) == NULL)
+    {
+        startDownload(getPrepareInfoFromXML(URL));
+    }
+    else
+        gProcessMap.value(URL)->startDownload();
 }
 
 void YouGetTask::slotFinishDownload(QString URL)
@@ -74,3 +83,21 @@ void YouGetTask::slotFinishDownload(QString URL)
     emit sFinishYouGetDownload(URL);
 }
 
+PrepareDownloadInfo YouGetTask::getPrepareInfoFromXML(QString URL)
+{
+    DownloadXMLHandler xmlOpera;
+    SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
+
+    PrepareDownloadInfo tmpInfo;
+    tmpInfo.downloadURL = ingNode.URL;
+    tmpInfo.fileName = ingNode.name;
+    tmpInfo.fileSize = ingNode.totalSize;
+    tmpInfo.iconPath = ingNode.iconPath;
+    tmpInfo.maxSpeed = 0;
+    tmpInfo.redirectURl = ingNode.redirectRUL;
+    tmpInfo.storageDir = ingNode.savePath;
+    tmpInfo.threadCount = QString::number(ingNode.threadList.count());
+    tmpInfo.toolType = youget;
+
+    return tmpInfo;
+}

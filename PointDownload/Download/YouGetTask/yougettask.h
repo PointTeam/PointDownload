@@ -27,6 +27,7 @@
 #include <QProcess>
 #include "yougetprocess.h"
 #include "Download/DataType.h"
+#include "XMLHandler/downloadxmlhandler.h"
 
 class YouGetTask : public QObject
 {
@@ -51,6 +52,7 @@ public slots:
 private:
     explicit YouGetTask(QObject *parent = 0);
 
+    PrepareDownloadInfo getPrepareInfoFromXML(QString URL);
 private:
     static YouGetTask * youGetTask;
     //URL,Process

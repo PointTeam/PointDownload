@@ -89,6 +89,17 @@ void MiddleSender::setDataList(QString tmpList)
     emit sendDataListChange();
 }
 
+double MiddleSender::getTotalProgress()
+{
+    return totalProgress;
+}
+
+void MiddleSender::setTotalProgress(double progress)
+{
+    totalProgress = progress;
+    emit sendTotalProgressChange();
+}
+
 void MiddleSender::updateDate()
 {
     GetSpeed geter;
@@ -118,9 +129,25 @@ void MiddleSender::updateDate()
             + DataFlow::getData("星期六") + "#"
             + DataFlow::getData("星期日");
     setDataList(tmpDataList);
+
+    setTotalProgress(statisticsProgress());
 }
 
+//读取正在下载的记录文件，用ready总数据大小除以size总大小得到所有任务的总进度
+double MiddleSender::statisticsProgress()
+{
+    DownloadXMLHandler tmpHandler;
+    QList<SDownloading> nodeList = tmpHandler.getDownloadingNodes();
+    double tmpTotalSize = 1;
+    double tmpReadySize = 1;
+    for (int i = 0; i < nodeList.count(); i ++)
+    {
+        tmpTotalSize += nodeList.at(i).totalSize.toDouble();
+        tmpReadySize += nodeList.at(i).readySize.toDouble();
+    }
 
+    return tmpReadySize / tmpTotalSize;
+}
 
 
 

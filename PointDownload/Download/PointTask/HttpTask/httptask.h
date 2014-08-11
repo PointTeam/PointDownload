@@ -25,7 +25,6 @@
 #include <QObject>
 #include <QMap>
 #include "Download/DataType.h"
-#include "XMLHandler/xmloperations.h"
 #include "httpthreadmanager.h"
 
 class HttpTask : public QObject

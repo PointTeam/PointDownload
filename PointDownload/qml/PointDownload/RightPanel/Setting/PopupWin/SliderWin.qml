@@ -165,11 +165,11 @@ Rectangle {
     {
 
         if (winType == "ThreadCount")
-            settingCtrl.updateThreadCount(valueSlide.value.toString())
+            settingCtrl.defaultThreadCount = valueSlide.value.toString()
         else if (winType == "MaxJobCount")
-            settingCtrl.updateMaxJobCount(valueSlide.value.toString())
+            settingCtrl.maxJobCount = valueSlide.value.toString()
         else if (winType == "MaxDSpeed")
-            settingCtrl.updateDownloadSpeed(valueSlide.value.toString())
+            settingCtrl.maxDownloadSpeed = valueSlide.value.toString()
     }
 
 }

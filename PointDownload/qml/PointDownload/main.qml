@@ -31,6 +31,10 @@ History:
 import QtQuick 2.0
 import QtQuick.Window 2.1
 import Singleton.PEventFilter 1.0
+
+//import "AboutPoint/AboutPoint.js" as AboutPage
+
+import "AboutPoint"
 import "LeftPanel"
 import "RightPanel"
 
@@ -41,7 +45,7 @@ Window {
     color: "#00ffffff"
     title: qsTr(" ")
 //    width: Screen.width / 2                                                   //2014.5.18 edit
-//    height: Screen.height * 3 / 5                                        //2014.5.18 edit
+//    height: Screen.height * 3 / 5                                             //2014.5.18 edit
     width: Screen.width < 1641?820:Screen.width / 2
     height: Screen.height < 800? Screen.height * 4 / 5 : Screen.height * 3 / 5
 
@@ -83,6 +87,21 @@ Window {
             anchors {left: leftPanel.right; top:parent.top}
             height: parent.height
             width: parent.width - leftPanel.width
+            onMiddlePanelPress: {
+                oldX = middleX;
+                oldY = middleY;
+                dragIng = "true"
+            }
+            onMiddlePanelRelease: {
+                dragIng = "false"
+            }
+            onMiddlePanelPositionChange: {
+                if (dragIng == "true")
+                {
+                    winx = PEventFilter.globalX- oldX - leftPanel.width
+                    winy = PEventFilter.globalY - oldY - 45; //45 = topMenu.height
+                }
+            }
         }
 
         MouseArea{
@@ -97,6 +116,7 @@ Window {
                 oldY = mouseY;
                 dragIng = "true"
                 mArea.cursorShape=Qt.DragMoveCursor
+
             }
             onReleased: {
                 dragIng = "false"

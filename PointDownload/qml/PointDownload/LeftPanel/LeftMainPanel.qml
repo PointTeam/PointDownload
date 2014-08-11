@@ -38,7 +38,7 @@ Rectangle {
 
     Image {
         id: iconImg
-        source: "qrc:/images/main/polarbear"
+        source: "qrc:/images/main/point-96-w"
         width: parent.width * 4 / 8
         height: parent.width * 4 / 8
         anchors {horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 10}

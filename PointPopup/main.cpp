@@ -80,7 +80,8 @@ int main(int argc, char *argv[])
     translator.load(QString(":/LANG/PointPopup_") + local);
     app.installTranslator(&translator);
 
-//    QString fileURL = "http://pinyin.sogou.com/linux/download.php?f=linux&bit=64?:?Point";
+//    QString fileURL = "http://v.qq.com/cover/i/iflxiuw0hk8ubfx/l0014bxbwo2.html";
+//    QString fileURL = "http://www.tudou.com/programs/view/QIIUsuQxT0M/";
     QString fileURL = "";
 
     QStringList urlList = QString(argv[argc - 1]).split("#..#");
@@ -89,7 +90,6 @@ int main(int argc, char *argv[])
     if (urlList.at(0) == QString("FIREFOX"))//firefox
     {
         fileURL = QString(urlList.at(1));
-
     }
     else//chrome
     {

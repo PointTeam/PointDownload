@@ -25,7 +25,6 @@
 #include <QObject>
 #include <QTimer>
 #include <QQmlEngine>
-#include "XMLHandler/xmloperations.h"
 #include "Download/unifiedinterface.h"
 #include "urlserver.h"
 
@@ -43,11 +42,14 @@ class DownloadDataSender : public QObject
     Q_PROPERTY(QString downloadSpeed READ getDownloadSpeed WRITE setDownloadSpeed NOTIFY downloadSpeedChange)
     Q_PROPERTY(double completePercentage READ getCompletePercentage WRITE setCompletePercentage NOTIFY completePercentageChange)
     Q_PROPERTY(QString contrlResultType READ getContrlResultType WRITE setContrlResultType NOTIFY contrlResultTypeChange)
+    Q_PROPERTY(bool isAllSuspend READ getIsAllSuspend WRITE setIsAllSuspend NOTIFY isAllSuspendChange)
 
 public:
     static DownloadDataSender * getInstance();
     //qml中能直接调用此方法
     Q_INVOKABLE void controlItem(QString dtype, QString otype, QString URL);//dtype:DownloadType otype:OperationType
+    Q_INVOKABLE void suspendAllDownloading();
+    Q_INVOKABLE void resumeAllDownloading();
 
     //传递到qml用到的get和set函数
     QString getDownloadType();
@@ -59,6 +61,7 @@ public:
     QString getDownloadSpeed();
     double getCompletePercentage();
     QString getContrlResultType();
+    bool getIsAllSuspend();
 
     void setDownloadType(QString type);
     void setDownloadURL(QString url);
@@ -69,6 +72,7 @@ public:
     void setDownloadSpeed(QString speed);
     void setCompletePercentage(double perc);
     void setContrlResultType(QString type);
+    void setIsAllSuspend(bool value);
 
 signals:
     //用于通知qml的信号
@@ -83,6 +87,9 @@ signals:
 
     //监听到控制结果反馈时，将触发qml界面做相应更新,URL使用downloadURL确定,项目类型由downloadType确定
     void contrlResultTypeChange();
+
+    void isAllSuspendChange();
+
     //通知界面更新下载项列表的排列
     void sRefreshDownloadingItem();
 public slots:
@@ -114,6 +121,8 @@ private:
     QString downloadSpeed;      //正在下载项使用,下载速度,经常更新
     double completePercentage;  //正在下载项使用,已完成的百分比,经常更新
     QString contrlResultType;       //控制反馈结果类型
+
+    bool isAllSuspend;          //是否全部都已经被暂停,为弹出窗口提供控制依据
 };
 
 

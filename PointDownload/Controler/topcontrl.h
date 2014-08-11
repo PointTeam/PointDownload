@@ -31,21 +31,20 @@
 #include <QMenu>
 #include <QUrl>
 #include <QDebug>
-#include "XMLHandler/xmloperations.h"
+#include "XMLHandler/settingxmlhandler.h"
 
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#undef signals
-extern "C" {
-  #include <libappindicator/app-indicator.h>
-  #include <gtk/gtk.h>
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//#undef signals
+//extern "C" {
+//  #include <libappindicator/app-indicator.h>
+//  #include <gtk/gtk.h>
 
-  void quitIndicator(GtkMenu *, gpointer);
+//  void quitIndicator(GtkMenu *, gpointer);
 
-}
-#define signals public
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//}
+//#define signals public
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-const QString ABOUT_PROGRAM_PATH ="/opt/Point/AboutPoint/AboutPoint";
 
 class TopContrl : public QObject
 {
@@ -59,14 +58,18 @@ public:
     Q_INVOKABLE void showSaveFolder(QString path);
     Q_INVOKABLE void showSaveFolder();
     Q_INVOKABLE void showTrayIcon();
+    Q_INVOKABLE void updateShowState(bool isShow);
 
 signals:
     void signalShowMainWindow();
+    void signalHideMainWindow();
+    void signalShowAboutPoint();
 
 public slots:
-    void showMainWindow();
-    void showAboutWindow();
-    void checkUpdate();
+    Q_INVOKABLE void showMainWindow();
+    Q_INVOKABLE void hideMainWindow();
+    Q_INVOKABLE void showAboutWindow();
+    Q_INVOKABLE void checkUpdate();
     void completelyExit();
 
 private slots:
@@ -74,6 +77,8 @@ private slots:
 private:
      QSystemTrayIcon * sysTrayIcon;
      QMenu * trayMenu;
+
+     bool isMainWindowShowed;
 private:
      explicit TopContrl(QObject *parent = 0);
 

@@ -29,6 +29,7 @@
 #include <QDebug>
 #include "SysData/dataflow.h"
 #include "SysData/getspeed.h"
+#include "XMLHandler/downloadxmlhandler.h"
 
 class MiddleSender : public QObject
 {
@@ -39,6 +40,7 @@ class MiddleSender : public QObject
     Q_PROPERTY(double upSpeed READ getUpSpeed WRITE setUpSpeed NOTIFY sendUpSpeedChange)
     Q_PROPERTY(double diskUsage READ getDiskUsage WRITE setDiskUsage NOTIFY sendDiskUsageChange)
     Q_PROPERTY(QString dataList  READ getDataList  WRITE setDataList NOTIFY sendDataListChange)
+    Q_PROPERTY(double totalProgress  READ getTotalProgress  WRITE setTotalProgress NOTIFY sendTotalProgressChange)
 
 public:
     explicit MiddleSender(QObject *parent = 0);
@@ -53,6 +55,8 @@ public:
     void setDiskUsage(double usage);
     QString getDataList();
     void setDataList(QString tmpList);
+    double getTotalProgress();
+    void setTotalProgress(double progress);
 
 signals:
     void sendCpuUsageChange();
@@ -60,6 +64,7 @@ signals:
     void sendUpSpeedChange();
     void sendDiskUsageChange();
     void sendDataListChange();
+    void sendTotalProgressChange();
 
 public slots:
     void updateDate();      //由计时器触发的实时刷新使用率的槽
@@ -69,7 +74,11 @@ private:
     double downSpeed;
     double upSpeed;
     double diskUsage;
+    double totalProgress;
     QString dataList;//星期一至星期日的数据列表
+
+private:
+    double statisticsProgress();
 };
 
 #endif // MIDDLESENDER_H

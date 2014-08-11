@@ -49,10 +49,10 @@ Others:
 **************************************************************************************************/
 void GetSavePathDialog::getPathName()
 {
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
     QString tmpPath =  QFileDialog::getExistingDirectory(0,
                                                       tr("Open Folder"),
-                                                      tmpOpera.getMainConfig().linuxSavePath,
+                                                      tmpHandler.getChildElement(GeneralSettings,"SavePath"),
                                                       QFileDialog::ShowDirsOnly);
     if (tmpPath != "")
         setSavePathName(tmpPath);
@@ -165,11 +165,11 @@ Others:
 void GetSavePathDialog::touchSaveFolder()
 {
     QDir localConfigDir;
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
 #ifdef Q_OS_LINUX
-        QString dirName = tmpOpera.getMainConfig().linuxSavePath;
+        QString dirName = tmpHandler.getChildElement(GeneralSettings,"SavePath");
 #elif Q_OS_WIN
-        QString dirName = tmpOpera.getMainConfig().windowsSavePath;
+        QString dirName = tmpHandler.getChildElement(GeneralSettings,"SavePath");
 #endif
 
     //如果路径不存在,则先新建文件夹,通常只会执行一次,即程序初次运行

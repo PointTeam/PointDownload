@@ -25,8 +25,9 @@ QT += qml quick
 SOURCES += main.cpp \
     control/getsavepathdialog.cpp \
     control/peventfilter.cpp \
-    control/xmloperations.cpp \
-    control/datacontroler.cpp
+    control/datacontroler.cpp \
+    control/settingxmlhandler.cpp \
+    control/downloadxmlhandler.cpp
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -37,19 +38,21 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-OTHER_FILES +=
+OTHER_FILES += \
 
 HEADERS += \
     control/getsavepathdialog.h \
     control/peventfilter.h \
-    control/xmloperations.h \
-    control/datacontroler.h
+    control/datacontroler.h \
+    control/settingxmlhandler.h \
+    control/downloadxmlhandler.h
 
 lupdate_only{
 SOURCES = main.qml \
           FileNameListPanel.qml\
           SavePathPanel.qml\
             SettingSpinBox.qml\
+    DownloadToolsPanel.qml\
     control/datacontroler.cpp\
     control/getsavepathdialog.cpp
 }

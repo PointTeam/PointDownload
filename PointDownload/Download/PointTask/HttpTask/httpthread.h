@@ -35,7 +35,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
-#include "XMLHandler/xmloperations.h"
+#include "XMLHandler/downloadxmlhandler.h"
 
 
 class HttpThread : public QThread
@@ -76,7 +76,7 @@ private:
     QNetworkReply * reply;
     QNetworkRequest * request;
     QNetworkAccessManager * manager;
-    XMLOperations  xmlOpera;
+    DownloadXMLHandler  xmlOpera;
 private:
     void initDownloadFile();
 signals:

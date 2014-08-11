@@ -47,8 +47,6 @@ void URLServer::runServer()
 
 void URLServer::serverNewConnectionHandler()
 {
-//    qDebug() << "New Connection";
-
     QLocalSocket * socket = localServer->nextPendingConnection();
     connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadyReadHandler()));
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
@@ -67,14 +65,16 @@ void URLServer::socketReadyReadHandler()
         QStringList infoList = urlInfo.split("?:?");
 
         //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-//        qDebug() << "infoList: "<<infoList;
+        qDebug() << "infoList: "<<infoList;
         if (infoList.count() == 8)
         {
             PrepareDownloadInfo dlInfo;
             if (infoList.at(0) == "Point")
                 dlInfo.toolType = Point;
-            else if (infoList.at(0) == "youget")
+            else if (infoList.at(0) == "YouGet")
                 dlInfo.toolType = youget;
+            else if (infoList.at(0) == "Xware")
+                dlInfo.toolType = Xware;
             else
                 dlInfo.toolType = aria2;
 

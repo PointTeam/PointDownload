@@ -34,29 +34,29 @@ TopContrl * TopContrl::getInstance()
 }
 
 
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-void gtkShowMainWindow(GtkMenu *menu, gpointer data)
-{
-    TopContrl::getInstance()->showMainWindow();
-}
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//void gtkShowMainWindow(GtkMenu *menu, gpointer data)
+//{
+//    TopContrl::getInstance()->showMainWindow();
+//}
 
-void gtkShowAboutWindow(GtkMenu *menu, gpointer data)
-{
-    TopContrl::getInstance()->showAboutWindow();
-}
+//void gtkShowAboutWindow(GtkMenu *menu, gpointer data)
+//{
+//    TopContrl::getInstance()->showAboutWindow();
+//}
 
-void gtkCheckUpdate(GtkMenu *menu, gpointer data)
-{
-    TopContrl::getInstance()->checkUpdate();
-}
+//void gtkCheckUpdate(GtkMenu *menu, gpointer data)
+//{
+//    TopContrl::getInstance()->checkUpdate();
+//}
 
-void gtkCompletelyExit(GtkMenu *menu, gpointer data)
-{
-    Q_UNUSED(menu);
-    //做相应的数据保存处理后再退出
-    qApp->quit();
-}
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//void gtkCompletelyExit(GtkMenu *menu, gpointer data)
+//{
+//    Q_UNUSED(menu);
+//    //做相应的数据保存处理后再退出
+//    qApp->quit();
+//}
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 TopContrl::TopContrl(QObject *parent) :
@@ -66,6 +66,7 @@ TopContrl::TopContrl(QObject *parent) :
     qmlRegisterSingletonType<TopContrl>("Singleton.TopContrl", 1, 0, "TopContrl", pTopContrlObj);
 
     //initTrayIcon(); 改为由main函数调用，以保证此类初始化在qml初始化之前
+    updateShowState(true);
 }
 
 void TopContrl::showSaveFolder(QString path)
@@ -75,9 +76,9 @@ void TopContrl::showSaveFolder(QString path)
 
 void TopContrl::showSaveFolder()
 {
-    XMLOperations tmpOpera;
+    SettingXMLHandler tmpHandler;
     //fromLocalFile:解决中文路径无法打开问题
-    QDesktopServices::openUrl(QUrl::fromLocalFile(tmpOpera.getMainConfig().linuxSavePath));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(tmpHandler.getChildElement(GeneralSettings,"SavePath")));
 }
 
 void TopContrl::showTrayIcon()
@@ -88,31 +89,35 @@ void TopContrl::showTrayIcon()
     }
 }
 
+void TopContrl::updateShowState(bool isShow)
+{
+    isMainWindowShowed = isShow;
+}
 
 void TopContrl::initTrayIcon()
 {
     if (QSystemTrayIcon::isSystemTrayAvailable())
     {
-//        showQtTrayIcon();
-//    }
-        //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        QString desktop;
-        bool is_unity;
-
-        desktop = getenv("XDG_CURRENT_DESKTOP");
-        is_unity = (desktop.toLower() == "unity");
-
-        if(is_unity)
-        {
-            showUnityAppIndicator();
-        }
-        else
-        {
-            showQtTrayIcon();
-        }
-
+        showQtTrayIcon();
     }
-    //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//        //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//        QString desktop;
+//        bool is_unity;
+
+//        desktop = getenv("XDG_CURRENT_DESKTOP");
+//        is_unity = (desktop.toLower() == "unity");
+
+//        if(is_unity)
+//        {
+//            showUnityAppIndicator();
+//        }
+//        else
+//        {
+//            showQtTrayIcon();
+//        }
+
+//    }
+//    //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }
 
 void TopContrl::createTrayAction()
@@ -146,49 +151,49 @@ void TopContrl::createTrayAction()
 }
 
 
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-void TopContrl::showUnityAppIndicator()
-{
-    AppIndicator *indicator;
-    GtkWidget *menu;
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//void TopContrl::showUnityAppIndicator()
+//{
+//    AppIndicator *indicator;
+//    GtkWidget *menu;
 
-    //action
-    GtkWidget * showMainWinAction = gtk_menu_item_new_with_label("Open Main Windown");
-    GtkWidget * aboutAction = gtk_menu_item_new_with_label("About");
-    GtkWidget * checkUpdateAction = gtk_menu_item_new_with_label("Check Update");
-    GtkWidget * separator = gtk_separator_menu_item_new();
-    GtkWidget * exitAction = gtk_menu_item_new_with_label("Quit");
+//    //action
+//    GtkWidget * showMainWinAction = gtk_menu_item_new_with_label("Open Main Windown");
+//    GtkWidget * aboutAction = gtk_menu_item_new_with_label("About");
+//    GtkWidget * checkUpdateAction = gtk_menu_item_new_with_label("Check Update");
+//    GtkWidget * separator = gtk_separator_menu_item_new();
+//    GtkWidget * exitAction = gtk_menu_item_new_with_label("Quit");
 
-    menu = gtk_menu_new();
+//    menu = gtk_menu_new();
 
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), showMainWinAction);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), aboutAction);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), checkUpdateAction);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), separator);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), exitAction);
+//    gtk_menu_shell_append(GTK_MENU_SHELL(menu), showMainWinAction);
+//    gtk_menu_shell_append(GTK_MENU_SHELL(menu), aboutAction);
+//    gtk_menu_shell_append(GTK_MENU_SHELL(menu), checkUpdateAction);
+//    gtk_menu_shell_append(GTK_MENU_SHELL(menu), separator);
+//    gtk_menu_shell_append(GTK_MENU_SHELL(menu), exitAction);
 
-    //connect signal
-    g_signal_connect(showMainWinAction, "activate", G_CALLBACK(gtkShowMainWindow), qApp);
-    g_signal_connect(aboutAction, "activate", G_CALLBACK(gtkShowAboutWindow), qApp);
-    g_signal_connect(checkUpdateAction, "activate", G_CALLBACK(gtkCheckUpdate), qApp);
-    g_signal_connect(exitAction, "activate", G_CALLBACK(gtkCompletelyExit), qApp);
+//    //connect signal
+//    g_signal_connect(showMainWinAction, "activate", G_CALLBACK(gtkShowMainWindow), qApp);
+//    g_signal_connect(aboutAction, "activate", G_CALLBACK(gtkShowAboutWindow), qApp);
+//    g_signal_connect(checkUpdateAction, "activate", G_CALLBACK(gtkCheckUpdate), qApp);
+//    g_signal_connect(exitAction, "activate", G_CALLBACK(gtkCompletelyExit), qApp);
 
-    gtk_widget_show(showMainWinAction);
-    gtk_widget_show(aboutAction);
-    gtk_widget_show(checkUpdateAction);
-    gtk_widget_show(separator);
-    gtk_widget_show(exitAction);
+//    gtk_widget_show(showMainWinAction);
+//    gtk_widget_show(aboutAction);
+//    gtk_widget_show(checkUpdateAction);
+//    gtk_widget_show(separator);
+//    gtk_widget_show(exitAction);
 
-    indicator = app_indicator_new(
-    "unique-application-name",
-        "/opt/Point/PointDownload/point.png",
-      APP_INDICATOR_CATEGORY_APPLICATION_STATUS
-    );
+//    indicator = app_indicator_new(
+//    "unique-application-name",
+//        "/opt/Point/PointDownload/point.png",
+//      APP_INDICATOR_CATEGORY_APPLICATION_STATUS
+//    );
 
-    app_indicator_set_status(indicator, APP_INDICATOR_STATUS_ACTIVE);
-    app_indicator_set_menu(indicator, GTK_MENU(menu));
-}
-//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//    app_indicator_set_status(indicator, APP_INDICATOR_STATUS_ACTIVE);
+//    app_indicator_set_menu(indicator, GTK_MENU(menu));
+//}
+////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 void TopContrl::showQtTrayIcon()
 {
@@ -198,7 +203,7 @@ void TopContrl::showQtTrayIcon()
 
     sysTrayIcon = new QSystemTrayIcon(0);
     sysTrayIcon->setContextMenu(trayMenu);
-    sysTrayIcon->setIcon(QIcon(":/images/main/polarbear"));
+    sysTrayIcon->setIcon(QIcon(":/images/main/point-24-b"));
     sysTrayIcon->setVisible(true);
     sysTrayIcon->show();
 
@@ -208,17 +213,19 @@ void TopContrl::showQtTrayIcon()
 
 void TopContrl::showMainWindow()
 {
+    isMainWindowShowed = true;
     emit signalShowMainWindow();
+}
+
+void TopContrl::hideMainWindow()
+{
+    isMainWindowShowed = false;
+    emit signalHideMainWindow();
 }
 
 void TopContrl::showAboutWindow()
 {
-    QObject *parent;
-    QStringList arguments;
-    arguments << "-c";
-
-    QProcess *myProcess = new QProcess(parent);
-    myProcess->start(ABOUT_PROGRAM_PATH,arguments);
+    emit signalShowAboutPoint();
 }
 
 void TopContrl::checkUpdate()
@@ -232,11 +239,21 @@ void TopContrl::completelyExit()
     qApp->quit();
 }
 
-
 void TopContrl::getTrayAction(QSystemTrayIcon::ActivationReason reason)
 {
     if (reason == QSystemTrayIcon::Trigger)
-        emit signalShowMainWindow();
+    {
+        if (!isMainWindowShowed)
+        {
+            emit signalShowMainWindow();
+            updateShowState(true);
+        }
+        else
+        {
+            emit signalHideMainWindow();
+            updateShowState(false);
+        }
+    }
 }
 
 

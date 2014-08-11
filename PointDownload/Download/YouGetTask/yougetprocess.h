@@ -27,10 +27,8 @@
 #include <QTimer>
 #include <QDebug>
 #include "Download/DataType.h"
-#include "XMLHandler/xmloperations.h"
-
-//const QString YOUGET_PATH = "/opt/Point/PointPlugs/YouGet/you-get";
-const QString YOUGET_PATH = "you-get";
+#include "XMLHandler/downloadxmlhandler.h"
+#include "XMLHandler/settingxmlhandler.h"
 
 const int UPDATE_INTERVAL = 1000;
 

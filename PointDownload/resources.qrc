@@ -27,8 +27,9 @@
         <file alias="downarrow">resources/images/navigation/downarrow.png</file>
     </qresource>
     <qresource prefix="/images/main">
-        <file alias="polarbear">resources/images/main/polarbear.png</file>
         <file alias="triangle">resources/images/main/triangle.png</file>
+        <file alias="point-24-b">resources/images/main/point-24.png</file>
+        <file alias="point-96-w">resources/images/main/point-96-w.png</file>
     </qresource>
     <qresource prefix="/images/right">
         <file alias="uncheck">resources/images/right/uncheck.png</file>
@@ -109,6 +110,31 @@
         <file>qml/PointDownload/LeftPanel/NavigationButton.qml</file>
         <file>qml/PointDownload/LeftPanel/ShortcutBar.qml</file>
         <file>qml/PointDownload/LeftPanel/ShortcutButton.qml</file>
+        <file>qml/PointDownload/AboutPoint/AboutPanel.qml</file>
+        <file>qml/PointDownload/AboutPoint/HelpUsPanle.qml</file>
+        <file>qml/PointDownload/AboutPoint/LeftSlider.qml</file>
+        <file>qml/PointDownload/AboutPoint/RightView.qml</file>
+        <file>qml/PointDownload/AboutPoint/SoftwarePanel.qml</file>
+        <file>qml/PointDownload/AboutPoint/AboutMain.qml</file>
+        <file>qml/PointDownload/AboutPoint/AboutPoint.js</file>
+        <file>qml/PointDownload/Dropzone/Dropzone.js</file>
+        <file>qml/PointDownload/Dropzone/Dropzone.qml</file>
+        <file>qml/PointDownload/Dropzone/InnerCircle/InnerMainCircle.qml</file>
+        <file>qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml</file>
+        <file>qml/PointDownload/Dropzone/OuterCircle/SectorWidget.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/SettingWin.js</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/SettingWin.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/SettingMainItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/SettingBody.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/YouGetSettingPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/GenericSetting/SavePathItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/GenericSetting/PriorityToolItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/GenericSetting/InputItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/SwitchItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/Help/HelpItem.qml</file>
     </qresource>
     <qresource prefix="/images/setting">
         <file alias="MDSpeed">resources/images/setting/MDSpeed.png</file>
@@ -126,5 +152,34 @@
     <qresource prefix="/tone">
         <file>resources/Tone/complete.ogg</file>
         <file>resources/Tone/001.ogg</file>
+    </qresource>
+    <qresource prefix="/images/aboutpoint">
+        <file alias="arrow-lightblue">resources/images/aboutpoint/arrow-lightblue.png</file>
+        <file alias="arrow-lightpurple">resources/images/aboutpoint/arrow-lightpurple.png</file>
+        <file alias="arrow-red">resources/images/aboutpoint/arrow-red.png</file>
+        <file alias="arrow-white">resources/images/aboutpoint/arrow-white.png</file>
+        <file alias="button">resources/images/aboutpoint/button.png</file>
+        <file alias="quit">resources/images/aboutpoint/quit.png</file>
+    </qresource>
+    <qresource prefix="/images/dropzone">
+        <file alias="newjob">resources/images/dropzone/newjob.png</file>
+        <file alias="tback">resources/images/dropzone/tback.png</file>
+        <file alias="maxsize">resources/images/dropzone/maxsize.png</file>
+        <file alias="quit">resources/images/dropzone/quit.png</file>
+        <file alias="setting">resources/images/dropzone/setting.png</file>
+        <file alias="startall">resources/images/dropzone/startall.png</file>
+        <file alias="stopall">resources/images/dropzone/stopall.png</file>
+        <file alias="storage">resources/images/dropzone/storage.png</file>
+        <file alias="enable">resources/images/dropzone/enable.png</file>
+        <file alias="doing">resources/images/dropzone/doing.png</file>
+        <file alias="disable">resources/images/dropzone/disable.png</file>
+        <file alias="checked">resources/images/dropzone/checked.png</file>
+        <file alias="uncheck">resources/images/dropzone/uncheck.png</file>
+        <file alias="off">resources/images/dropzone/off.png</file>
+        <file alias="on">resources/images/dropzone/on.png</file>
+        <file alias="itemback">resources/images/dropzone/itemback.png</file>
+        <file alias="about">resources/images/dropzone/help/about.png</file>
+        <file alias="checkupdate">resources/images/dropzone/help/checkupdate.png</file>
+        <file alias="skills">resources/images/dropzone/help/skills.png</file>
     </qresource>
 </RCC>

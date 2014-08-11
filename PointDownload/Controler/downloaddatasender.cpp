@@ -30,6 +30,8 @@ DownloadDataSender::DownloadDataSender(QObject *parent) :
 
     initURLServer();
     initConnection();
+
+    isAllSuspend = false;
 }
 
 DownloadDataSender * DownloadDataSender::downloadDataSender = NULL;
@@ -85,6 +87,18 @@ void DownloadDataSender::controlItem(QString dtype, QString otype, QString URL)
     }
 }
 
+void DownloadDataSender::suspendAllDownloading()
+{
+    UnifiedInterface::getInstance()->suspendAllDownloading();
+    isAllSuspend = true;
+}
+
+void DownloadDataSender::resumeAllDownloading()
+{
+    UnifiedInterface::getInstance()->resumeAllDownloading();
+    isAllSuspend = false;
+}
+
 QString DownloadDataSender::getDownloadType()
 {
     return downloadType;
@@ -128,6 +142,11 @@ double DownloadDataSender::getCompletePercentage()
 QString DownloadDataSender::getContrlResultType()
 {
     return contrlResultType;
+}
+
+bool DownloadDataSender::getIsAllSuspend()
+{
+    return isAllSuspend;
 }
 
 void DownloadDataSender::setDownloadType(QString type)
@@ -182,6 +201,12 @@ void DownloadDataSender::setContrlResultType(QString type)
 {
     contrlResultType = type;
     emit contrlResultTypeChange();
+}
+
+void DownloadDataSender::setIsAllSuspend(bool value)
+{
+    isAllSuspend = value;
+    emit isAllSuspendChange();
 }
 
 void DownloadDataSender::addDownloadingItem(QString infoList)

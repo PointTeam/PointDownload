@@ -28,14 +28,15 @@
 #include <QDebug>
 #include "Controler/middlesender.h"
 #include "Controler/peventfilter.h"
-#include "Controler/settingcontroler.h"
+#include "Controler/SettingWin/settingcontroler.h"
+#include "Controler/SettingWin/dropzonesettingcontroler.h"
 #include "Controler/topcontrl.h"
 
 #include "Controler/monitorClipBoard.h"
 #include "Controler/downloaddatasender.h"
 #include "qtsinglecoreapplication.h"
 
-#include "Download/unifiedinterface.h"
+#include "Controler/SettingWin/yougetsettingcontroler.h"
 
 int main(int argc, char *argv[])
 {
@@ -45,7 +46,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-//    QApplication app(argc,argv);
     QString local = QLocale::system().name();
     QTranslator translator;
     translator.load(QString(":/languages/:/languages/resources/LANG/PointDownload_") + local);
@@ -55,21 +55,19 @@ int main(int argc, char *argv[])
     TopContrl::getInstance()->initTrayIcon();
     DownloadDataSender::getInstance();
     PEventFilter::getInstance();
+    MonitorClipBoard::getInstance();
+    DropzoneSettingControler::getInstance();
 
     //注册的参数格式：import dataControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
+    qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
     qmlRegisterType<MiddleSender>("middleSender", 1, 0, "MiddleSender");
 
-    MonitorClipBoard * clipBoard  ;
-    clipBoard = new MonitorClipBoard;
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 
-    //    //添加全局事件过滤
-//    PEventFilter tmpFilter;
-//    app.installEventFilter(&tmpFilter);
+   //添加全局事件过滤
    app.installEventFilter(PEventFilter::getInstance());
-
 
     return app.exec();
 }

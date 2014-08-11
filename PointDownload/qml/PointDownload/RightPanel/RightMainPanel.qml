@@ -36,11 +36,15 @@ import "Bottom"
 import "../LeftPanel"
 
 Rectangle {
+    id: rightMainPanel
     width: 700
     height: parent.height
 
-    id: rightMainPanel
     color: "#ecf2f6"
+
+    signal middlePanelPress(int middleX,int middleY)
+    signal middlePanelRelease()
+    signal middlePanelPositionChange()
 
     //顶部功能按钮
     TopPanel {
@@ -55,6 +59,24 @@ Rectangle {
         id: infoMenu
         y: topMenu.height
         anchors {left: parent.left;}
+
+        MouseArea{
+            id:middleMouse
+            anchors.fill: parent
+            anchors.bottomMargin: 20
+            onPressed:  {
+                rightMainPanel.middlePanelPress(mouseX,mouseY)
+                middleMouse.cursorShape=Qt.DragMoveCursor
+            }
+            onReleased: {
+                rightMainPanel.middlePanelRelease()
+                middleMouse.cursorShape=Qt.ArrowCursor
+            }
+
+            onPositionChanged: {
+                rightMainPanel.middlePanelPositionChange()
+            }
+        }
     }
 
     //包括设置面板跟下载项listview的一个总listview

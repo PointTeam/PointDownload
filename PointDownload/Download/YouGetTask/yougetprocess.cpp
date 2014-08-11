@@ -30,26 +30,22 @@ YouGetProcess::YouGetProcess(PrepareDownloadInfo info,QObject *parent) :
 
 void YouGetProcess::startDownload()
 {
-
+    SettingXMLHandler tmpHandler;
     tmpProcess = new QProcess(0);
     connect(tmpProcess,SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
     connect(tmpProcess, SIGNAL(started()), this, SLOT(yougetStarted()));
     QStringList arguments;
 
-//        arguments << "-S";
-//    arguments << "-f";                          //覆盖源文件
+    arguments << tmpHandler.getChildElement(YouGetSetting,"ExecutePath");
     arguments << gInfo.downloadURL;
     tmpProcess->setWorkingDirectory(gInfo.storageDir);
-    tmpProcess->start(YOUGET_PATH,arguments);
+    tmpProcess->start("python3",arguments);
 }
 
 void YouGetProcess::stopDownload()
 {
     tmpProcess->terminate();
-//    delete tmpProcess;
-//    tmpProcess = NULL;
-//    tmpProcess->deleteLater();
 }
 
 void YouGetProcess::yougetStarted()
@@ -87,10 +83,11 @@ void YouGetProcess::getTimerUpdate()
     //下载已完成则结束进程
     if (tmpInfo.downloadPercent == 100)
     {
-        emit sFinishYouGetDownload(gInfo.downloadURL);
-
+        updateTimer->stop();
         tmpProcess->terminate();
         this->deleteLater();
+
+        emit sFinishYouGetDownload(gInfo.downloadURL);
     }
 
     //send to yougettask
@@ -108,7 +105,7 @@ void YouGetProcess::getTimerUpdate()
 
 void YouGetProcess::updateXMLFile(DownloadingItemInfo info)
 {
-    XMLOperations tmpOpera;
+    DownloadXMLHandler tmpOpera;
     SDownloading tmpStruct = tmpOpera.getDownloadingNode(info.downloadURL);
     //计算平均速度，用作优先下载的判断条件
     tmpStruct.averageSpeed = QString::number(qint64((info.downloadPercent / 100 * tmpStruct.totalSize.toDouble()//当前完成大小

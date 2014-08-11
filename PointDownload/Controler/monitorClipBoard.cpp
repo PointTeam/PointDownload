@@ -19,22 +19,40 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 #include "monitorClipBoard.h"
+#include <QtQml>
 #include "qdebug.h"
 
 MonitorClipBoard::MonitorClipBoard()
 {
+    //import时使用Singleton.MonitorClipBoard
+    qmlRegisterSingletonType<MonitorClipBoard>("Singleton.MonitorClipBoard", 1, 0, "MonitorClipBoard", clipboardObj);
+
+    setTmpURL("");
     clipBoard = QApplication::clipboard();
     connect( clipBoard, SIGNAL( dataChanged() ), this, SLOT( slot_clipDataChange() ) );
 }
 
+MonitorClipBoard * MonitorClipBoard::monitorClipBord = NULL;
+MonitorClipBoard * MonitorClipBoard::getInstance()
+{
+    if (monitorClipBord == NULL)
+        monitorClipBord = new MonitorClipBoard();
+    return monitorClipBord;
+}
+
 void MonitorClipBoard::slot_clipDataChange()
 {
-    QString URL = clipBoard->text();
+    setTmpURL(clipBoard->text());
+}
 
-    XMLOperations tmpOPera;
-    if (tmpOPera.getMainConfig().clipboard == "true")
-    {
-        //在统一处理时判断是否是合法的URL
-        DownloadDataSender::getInstance()->controlItem("dl_search","download_redownloed",URL);
-    }
+
+QString MonitorClipBoard::getTmpURL()
+{
+    return tmpURL;
+}
+
+void MonitorClipBoard::setTmpURL(QString URL)
+{
+    tmpURL = URL;
+    emit tmpURLChange();
 }

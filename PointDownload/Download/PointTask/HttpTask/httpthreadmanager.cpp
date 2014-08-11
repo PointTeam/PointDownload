@@ -303,9 +303,7 @@ void HttpThreadManager::inserToXMLFile(PrepareDownloadInfo &info)
 
 PrepareDownloadInfo HttpThreadManager::getPrepareInfoFromXML(QString URL)
 {
-    XMLOperations tmpOpera;
-
-    SDownloading ingNode = tmpOpera.getDownloadingNode(URL);
+    SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
 
     PrepareDownloadInfo tmpInfo;
     tmpInfo.downloadURL = ingNode.URL;

@@ -27,7 +27,7 @@ import Singleton.PEventFilter 1.0
 Window {
     visible: true
     width: 400
-    height: 530
+    height: 545
     color: "#69b4ad"
     flags: Qt.FramelessWindowHint
 
@@ -41,6 +41,7 @@ Window {
     property int oldX: 0
     property int oldY: 0
     property int outSpace: 20
+    property string newToolType
 
     x: winx
     y: winy
@@ -54,6 +55,11 @@ Window {
             okRec.enabled = true
             loadingImg.visible = false
         }
+        onSIsWrongURL:{
+            okRec.color = "#c6c4c4"
+            okRec.enabled = false
+            loadingImg.visible = false
+        }
     }
 
     //连接单例的信号
@@ -64,7 +70,8 @@ Window {
             {
                 DataControler.sendToMainServer(settingSpinBox.getThreadCount(),
                                                settingSpinBox.getSpeed(),
-                                               savePanel.getSavePath())
+                                               savePanel.getSavePath(),
+                                               newToolType)
 
                 Qt.quit()
             }
@@ -119,6 +126,10 @@ Window {
                 selectionColor: "#59add4"
                 selectByMouse: true
                 anchors {fill:parent; leftMargin: 5; topMargin: 2;}
+                onTextChanged: {
+                    fileListPanel.clearNameList()
+                    DataControler.getURLFromBrowser(text)
+                }
             }
         }
 
@@ -130,12 +141,25 @@ Window {
             anchors {horizontalCenter: parent.horizontalCenter; top:urlPanel.bottom; topMargin: 25}
         }
 
+        DownloadToolsPanel{
+            id:toolsPanel
+            width: parent.width - 40
+            height: 40
+            anchors {left: fileListPanel.left; top:fileListPanel.bottom;topMargin: 5}
+            onUpdateToolType: {
+                if (newTType=="")
+                    newToolType = DataControler.defaultTool
+                else
+                    newToolType = newTType
+            }
+        }
+
         //存储设置
         SavePathPanel{
             id:savePanel
             width: parent.width - 40
             height: 40
-            anchors {horizontalCenter: parent.horizontalCenter; top: fileListPanel.bottom; topMargin: 20}
+            anchors {horizontalCenter: parent.horizontalCenter; top: toolsPanel.bottom; topMargin: 20}
         }
 
         Rectangle{
@@ -187,7 +211,8 @@ Window {
                     onClicked: {
                         DataControler.sendToMainServer(settingSpinBox.getThreadCount(),
                                                        settingSpinBox.getSpeed(),
-                                                       savePanel.getSavePath())
+                                                       savePanel.getSavePath(),
+                                                       newToolType)
                     }
                 }
             }
@@ -229,8 +254,8 @@ Window {
             hoverEnabled: true
 
             onPressed:  {
-                oldX = mouseX;
-                oldY = mouseY;
+                oldX = mouseX + outSpace;
+                oldY = mouseY + outSpace;
                 dragIng = "true"
                 mArea.cursorShape=Qt.DragMoveCursor
             }

@@ -47,7 +47,8 @@ History:
 #include "YouGetTask/yougettask.h"
 #include "PointTask/pointtask.h"
 #include "SysData/dataflow.h"
-#include "XMLHandler/xmloperations.h"
+#include "XMLHandler/downloadxmlhandler.h"
+#include "XMLHandler/settingxmlhandler.h"
 
 const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
 
@@ -62,6 +63,8 @@ public:
 
     void changeMaxJobCount(int newCount);
 
+    void suspendAllDownloading();
+    void resumeAllDownloading();
 signals:
     void sAddDownloadingItem(QString infoList);
     void sAddDownloadedItem(QString infolist);
@@ -135,9 +138,6 @@ private:
     void startReady();
     void refreshDownloadingItem();
     PrepareDownloadInfo getPrepareInfoFromSDownloading(SDownloading infoStruct);
-
-    //url查询处理
-    QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 
     //断网处理
     bool pingNetWork();

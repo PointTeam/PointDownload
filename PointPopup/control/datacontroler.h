@@ -32,11 +32,10 @@
 #include <QTimer>
 #include <QProcess>
 #include <sys/vfs.h>
-#include "xmloperations.h"
+#include "downloadxmlhandler.h"
+#include "settingxmlhandler.h"
 
 const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
-//const QString MAIN_PROGRAM_PATH =
-//        "/home/Match/桌面/build-PointDownload-Desktop_Qt_5_3_0_GCC_64bit-Release/PointDownload";
 
 class DataControler : public QObject
 {
@@ -47,16 +46,21 @@ class DataControler : public QObject
     Q_PROPERTY(QString maxSpeed READ getMaxSpeed WRITE setMaxSpeed NOTIFY sMaxSpeedChange)
     Q_PROPERTY(QString maxThread READ getMaxThread WRITE setMaxThread NOTIFY sMaxThreadChange)
     Q_PROPERTY(QString freeSpace READ getFreeSpace WRITE setFreeSpace NOTIFY sFreeSpaceChange)
+    Q_PROPERTY(QString toolsType READ getToolsType WRITE setToolsType NOTIFY sToolsTypeChange)
+    Q_PROPERTY(QString defaultTool READ getDefaultToolType WRITE setDefaultToolType NOTIFY sDefaultToolTypeChange)
+    Q_PROPERTY(bool isYouGetEnable READ getIsYouGetEnable WRITE setIsYouGetEnable NOTIFY sIsYouGetEnableChange)
+    Q_PROPERTY(bool isAria2Enable READ getIsAria2Enable WRITE setIsAria2Enable NOTIFY sIsAria2EnableChange)
+    Q_PROPERTY(bool isXwareEnable READ getIsXwareEnable WRITE setIsXwareEnable NOTIFY sIsXwareEnableChange)
 
 public:
     static DataControler * getInstance();
 
     //qml中能直接调用此方法,将数据发送到服务端
     Q_INVOKABLE void selectSavePath(QString buttonName);
-    Q_INVOKABLE void sendToMainServer(QString threads, QString speed, QString savePath);
+    Q_INVOKABLE void sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType);
 
     //从浏览器（谷歌、火狐），或者从主程序取得下载URL和下载类型的值
-    void getURLFromBrowser(QString URLInfo);
+    Q_INVOKABLE void getURLFromBrowser(QString URL);
 
     QString getFileURL();
     QString getFileNameList();
@@ -64,6 +68,11 @@ public:
     QString getMaxThread();
     QString getMaxSpeed();
     QString getFreeSpace();
+    QString getToolsType();
+    QString getDefaultToolType();
+    bool getIsYouGetEnable();
+    bool getIsAria2Enable();
+    bool getIsXwareEnable();
 
     void setFileURL(QString URL);
     void setFileNameList(QString nameList);
@@ -71,6 +80,11 @@ public:
     void setMaxThread(QString count);
     void setMaxSpeed(QString speed);
     void setFreeSpace(QString space);
+    void setToolsType(QString tType);
+    void setDefaultToolType(QString tType);
+    void setIsYouGetEnable(bool flag);
+    void setIsAria2Enable(bool flag);
+    void setIsXwareEnable(bool flag);
 
 signals:
     void sFileURLChange();
@@ -79,8 +93,14 @@ signals:
     void sMaxThreadChange();
     void sMaxSpeedChange();
     void sFreeSpaceChange();
+    void sToolsTypeChange();
+    void sDefaultToolTypeChange();
+    void sIsYouGetEnableChange();
+    void sIsAria2EnableChange();
+    void sIsXwareEnableChange();
 
     void sFnishGetAllInfo();
+    void sIsWrongURL();
 public slots:
 
 private slots:
@@ -89,6 +109,9 @@ private slots:
 
     void getYougetFeedBack();
     void getYougetError();
+    QStringList getNormalYouGetFeedBackInfo(QString data);
+    QStringList getMovieYouGetFeedBackInfo(QString data);
+
 
     void mainProgramStarted();                  //主程序启动后，连接主程序
 private:
@@ -109,10 +132,15 @@ private:
     bool checkIsInDownloading(QString URL);     //查看URL是否已经在正在下载列表
     bool checkIsInDownloaded(QString URL);      //查看URL是否已经在已完成下载列表
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
+
+
+    //url查询处理
+    QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 private:
     static DataControler * dataControler;
 
-    XMLOperations gXMLOpera;
+    SettingXMLHandler gSettingHandler;
+    DownloadXMLHandler gDownloadHandler;
 
     //将要发送到qml界面上的数据
     QString fileURL;
@@ -121,6 +149,10 @@ private:
     QString maxThread;
     QString maxSpeed;
     QString freeSpace;      //对应路径的剩余空间
+    QString defaultTool;
+    bool isYouGetEnable;
+    bool isAria2Enable;
+    bool isXwareEnable;
 
     //需要传递到主程序但无需显示到qml的数据
     QString toolsType;

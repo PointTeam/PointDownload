@@ -1,6 +1,9 @@
 #PointDownload
+
 PointDownload is a software that can help you download various kinds of documents efficiently.The current version supports HTTP, besides, the future one will support ED2K, BT and FTP,etc.The operating systems,LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04,are supported by the current version.
+
 点载,是一个能帮助你方便地从网络上下载各种文件的软件。当前版本支持HTTP协议的下载，但是很快将会支持ED2K、BT和FTP等协议的下载。当前支持的操作系统有：LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04.
+
 
 ##开发指南
 
@@ -14,7 +17,6 @@ PointPopup是下载前配置弹出窗，负责接受浏览器插件传递的URL�
 用户确定下载后将信息传递给主程序，由主程序进行下载；
 PointChromeExtension模块请参考其中的README说明；
 PointFirefoxExtension请参考其中的README说明。
-
 
 ###关于you-get的支持
 

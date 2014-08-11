@@ -1,10 +1,10 @@
 #PointDownload
-	**PointDownload is a software that can help you download various kinds of documents efficiently.
+	PointDownload is a software that can help you download various kinds of documents efficiently.
 The current version supports HTTP, besides, the future one will support ED2K, BT and FTP,etc.
-The operating systems,LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04,are supported by the current version.**
+The operating systems,LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04,are supported by the current version.
 
-	**点载,是一个能帮助你方便地从网络上下载各种文件的软件。当前版本支持HTTP协议的下载，但是很快将
-会支持ED2K、BT和FTP等协议的下载。当前支持的操作系统有：LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04.**
+	点载,是一个能帮助你方便地从网络上下载各种文件的软件。当前版本支持HTTP协议的下载，但是很快将
+会支持ED2K、BT和FTP等协议的下载。当前支持的操作系统有：LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04.
 
 #开发指南
 ##开发环境：Qt5.2.1

@@ -31,6 +31,23 @@ CONFIG += link_pkgconfig
 PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1
 #Add support for unity menu done--------------------------------------------------------------------------------------------------------
 
+#Get distributions type
+DISTRIBUTION_NAME = $$system(cat /etc/os-release)
+contains(DISTRIBUTION_NAME,suse){DEFINES+=LINUX_LIKE_SUSE}
+contains(DISTRIBUTION_NAME,debian){DEFINES+=LINUX_LIKE_DEBIAN}
+ exists(/etc/arch-release ) {DEFINES+=LINUX_LIKE_ARCH}
+ exists(/etc/redhat-release ) {DEFINES+=LINUX_LIKE_REDHAT}
+ exists(/etc/gentoo-release ) {DEFINES+=LINUX_LIKE_GENTOO}
+
+#Get Desktop Environment
+DESKTOP_ENVIRONMENT = $$system(echo $DESKTOP_SESSION)
+contains(DESKTOP_ENVIRONMENT,[Dd]eepin){DEFINES+=DESKTOP_ENV_DEEPIN}
+contains(DESKTOP_ENVIRONMENT,[Uu]buntu){DEFINES+=DESKTOP_ENV_UBUNTU}
+contains(DESKTOP_ENVIRONMENT,[Xx]fce){DEFINES+=DESKTOP_ENV_XFCE}
+contains(DESKTOP_ENVIRONMENT,[Kk]de){DEFINES+=DESKTOP_ENV_KDE}
+contains(DESKTOP_ENVIRONMENT,[Gg]nome){DEFINES+=DESKTOP_ENV_GNOME}
+
+
 # Add more folders to ship with the application, here
 folder_01.source = qml/PointDownload
 folder_01.target = qml

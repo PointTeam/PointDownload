@@ -63,7 +63,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
     qmlRegisterType<MiddleSender>("middleSender", 1, 0, "MiddleSender");
 
-
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 
    //添加全局事件过滤

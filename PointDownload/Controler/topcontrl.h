@@ -33,17 +33,19 @@
 #include <QDebug>
 #include "XMLHandler/settingxmlhandler.h"
 
-////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//#undef signals
-//extern "C" {
-//  #include <libappindicator/app-indicator.h>
-//  #include <gtk/gtk.h>
+//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#ifdef DESKTOP_ENV_UBUNTU
+#undef signals
+extern "C" {
+  #include <libappindicator/app-indicator.h>
+  #include <gtk/gtk.h>
 
-//  void quitIndicator(GtkMenu *, gpointer);
+  void quitIndicator(GtkMenu *, gpointer);
 
-//}
-//#define signals public
-////for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+}
+#define signals public
+#endif
+//for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 class TopContrl : public QObject

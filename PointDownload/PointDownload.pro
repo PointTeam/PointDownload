@@ -41,12 +41,13 @@ contains(DISTRIBUTION_NAME,debian){DEFINES+=LINUX_LIKE_DEBIAN}
 
 #Get Desktop Environment
 DESKTOP_ENVIRONMENT = $$system(echo $DESKTOP_SESSION)
-contains(DESKTOP_ENVIRONMENT,[Dd]eepin){DEFINES+=DESKTOP_ENV_DEEPIN}
 contains(DESKTOP_ENVIRONMENT,[Uu]buntu){DEFINES+=DESKTOP_ENV_UBUNTU}
-contains(DESKTOP_ENVIRONMENT,[Xx]fce){DEFINES+=DESKTOP_ENV_XFCE}
-contains(DESKTOP_ENVIRONMENT,[Kk]de){DEFINES+=DESKTOP_ENV_KDE}
-contains(DESKTOP_ENVIRONMENT,[Gg]nome){DEFINES+=DESKTOP_ENV_GNOME}
 
+#is gksudo or kdesu  exist
+GKSUDO_EXIST = $$system(command -v gksudo)
+contains(GKSUDO_EXIST,gksudo){DEFINES+=GKSUDO_EXIST}
+KDESU_EXIST = $$system(command -v kdesu)
+contains(KDESU_EXIST,kdesu){DEFINES+=KDESU_EXIST}
 
 # Add more folders to ship with the application, here
 folder_01.source = qml/PointDownload

@@ -29,7 +29,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
-import middleSender 1.0
+import Singleton.MiddleSender 1.0
 
 Rectangle {
     id: histogramPanel
@@ -51,8 +51,8 @@ Rectangle {
     height: 100
     color: "#ecf2f6"
 
-    MiddleSender{
-        id:msender
+    Connections{
+        target:MiddleSender
         onSendDataListChange: {
             usageHeight1 = getValueFromDataList(0);
             usageHeight2 = getValueFromDataList(1);
@@ -180,7 +180,7 @@ Rectangle {
 
     function getValueFromDataList(index)
     {
-        var infoArry = msender.dataList.split("#");
+        var infoArry = MiddleSender.dataList.split("#");
         if (index >= 0 && index <= 6)
         {
             return (infoArry[index] / (1024 * 1024 * 1024)) * (textRec.height + 25) / 10

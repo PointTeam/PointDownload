@@ -20,10 +20,14 @@
  ***********************************************************************/
 
 #include "middlesender.h"
+#include <QtQml>
 
 MiddleSender::MiddleSender(QObject *parent) :
     QObject(parent)
 {
+    //import时使用Singleton.MiddleSender
+    qmlRegisterSingletonType<MiddleSender>("Singleton.MiddleSender", 1, 0, "MiddleSender", middleObj);
+
     QTimer * refreshTimer = new QTimer();
     connect(refreshTimer, SIGNAL(timeout()), this, SLOT(updateDate()));
     refreshTimer->start(REFRESH_TIMER);
@@ -32,6 +36,14 @@ MiddleSender::MiddleSender(QObject *parent) :
     downSpeed = 0;
     upSpeed = 0;
     diskUsage = 0;
+}
+
+MiddleSender * MiddleSender::middleSender = NULL;
+MiddleSender * MiddleSender::getInstance()
+{
+    if (middleSender == NULL)
+        middleSender = new MiddleSender();
+    return middleSender;
 }
 
 double MiddleSender::getCpuUsage()

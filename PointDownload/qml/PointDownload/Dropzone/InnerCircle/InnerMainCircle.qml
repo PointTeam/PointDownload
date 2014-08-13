@@ -59,6 +59,7 @@ Image{
             height: parent.height
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
+            font.pixelSize: 12
             color: "#ffffff"
             anchors {horizontalCenter: innerRec.horizontalCenter;verticalCenter: innerRec.verticalCenter}
         }
@@ -128,9 +129,9 @@ Image{
     function updateSpeedValue(speedValue)
     {
         if (speedValue > 1024)
-            downloadSpeed = speedValue / 1024 + "MB/S"
+            downloadSpeed = (speedValue / 1024).toFixed(1) + "MB/S"
         else
-            downloadSpeed = speedValue + "KB/S"
+            downloadSpeed = (speedValue).toFixed(1) + "KB/S"
     }
 
     function updatePercentage()

@@ -24,8 +24,8 @@ import QtQuick.Window 2.1
 import QtGraphicalEffects 1.0
 import Singleton.PEventFilter 1.0
 import Singleton.TopContrl 1.0
+import Singleton.MiddleSender 1.0
 
-import middleSender 1.0
 import "InnerCircle"
 import "OuterCircle"
 
@@ -51,7 +51,7 @@ Window {
 
     Timer{
         id:updateTimer
-        interval: (middleSend.totalProgress>0 && middleSend.totalProgress < 1)?20 / middleSend.totalProgress : 1000
+        interval: (MiddleSender.totalProgress>0 && MiddleSender.totalProgress < 1)?20 / MiddleSender.totalProgress : 1000
         repeat: true
         running: true
         triggeredOnStart: true
@@ -67,10 +67,10 @@ Window {
         }
     }
 
-    MiddleSender {
-        id: middleSend
+    Connections {
+        target: MiddleSender
         onSendTotalProgressChange: {
-            if (middleSend.totalProgress == 1)
+            if (MiddleSender.totalProgress == 1)
             {
                 innerMainCircle.percentageColor = "#1b9ad6"
                 innerMainCircle.updatePercentage()
@@ -78,11 +78,11 @@ Window {
             else
                 innerMainCircle.percentageColor = "#ffffff"
 
-            innerMainCircle.percentage = middleSend.totalProgress * 100
+            innerMainCircle.percentage = MiddleSender.totalProgress * 100
         }
 
         onSendDownSpeedChange: {
-            innerMainCircle.updateSpeedValue(middleSend.downSpeed)
+            innerMainCircle.updateSpeedValue(MiddleSender.downSpeed)
         }
     }
 

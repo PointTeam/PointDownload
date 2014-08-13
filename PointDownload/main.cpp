@@ -57,11 +57,11 @@ int main(int argc, char *argv[])
     PEventFilter::getInstance();
     MonitorClipBoard::getInstance();
     DropzoneSettingControler::getInstance();
+    MiddleSender::getInstance();
 
     //注册的参数格式：import dataControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
-    qmlRegisterType<MiddleSender>("middleSender", 1, 0, "MiddleSender");
 
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));

@@ -43,7 +43,7 @@ QStringList GetSpeed::getFileInfo(QString fileName)
         do
         {
             fileText = stream.readLine();
-            list1 += fileText;
+            list1.append(fileText);
         } while (!fileText.isNull());
         //QApplication::restoreOverrideCursor();
         file.close();
@@ -65,8 +65,8 @@ QStringList GetSpeed::getNWS()
 
     for(int i=0;i<strList.length();i++)
     {
-        if (strList.at(i).contains("eth", Qt::CaseInsensitive) ||
-                strList.at(i).contains("wlan", Qt::CaseInsensitive) ||
+        if (strList.at(i).contains("ppp", Qt::CaseInsensitive) ||
+                strList.at(i).contains("wl", Qt::CaseInsensitive) ||
                 strList.at(i).contains("usb", Qt::CaseInsensitive))
         {
             dowNum+=strList.at(i).split(" ",QString::SkipEmptyParts).at(1).toDouble();

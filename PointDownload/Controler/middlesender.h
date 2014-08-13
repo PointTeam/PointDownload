@@ -22,10 +22,11 @@
 #ifndef MIDDLESENDER_H
 #define MIDDLESENDER_H
 
-#define REFRESH_TIMER 2000
+#define REFRESH_TIMER 1000
 
 #include <QObject>
 #include <QTimer>
+#include <QQmlEngine>
 #include <QDebug>
 #include "SysData/dataflow.h"
 #include "SysData/getspeed.h"
@@ -43,7 +44,7 @@ class MiddleSender : public QObject
     Q_PROPERTY(double totalProgress  READ getTotalProgress  WRITE setTotalProgress NOTIFY sendTotalProgressChange)
 
 public:
-    explicit MiddleSender(QObject *parent = 0);
+    static MiddleSender * getInstance();
 
     double getCpuUsage();
     void setCpuUsage(double usage);
@@ -77,8 +78,19 @@ private:
     double totalProgress;
     QString dataList;//星期一至星期日的数据列表
 
+    static MiddleSender * middleSender;
 private:
+    explicit MiddleSender(QObject *parent = 0);
+
     double statisticsProgress();
 };
 
+//将单例对象注册到qml中使用的回调函数
+static QObject * middleObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return MiddleSender::getInstance();
+}
 #endif // MIDDLESENDER_H

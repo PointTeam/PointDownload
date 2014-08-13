@@ -29,7 +29,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
-import middleSender 1.0
+import Singleton.MiddleSender 1.0
 
 Rectangle {
     id: middlePanel
@@ -40,18 +40,18 @@ Rectangle {
 
     property real testHeight: 0
 
-    MiddleSender {
-        id: middleSend
+    Connections {
+        target: MiddleSender
         onSendCpuUsageChange: {
-            cpuCircle.percentage = middleSend.cpuUsage;
+            cpuCircle.percentage = MiddleSender.cpuUsage;
             cpuCircle.updatePercentage();
         }
         onSendDiskUsageChange: {
-            diskCircle.percentage = middleSend.diskUsage;
+            diskCircle.percentage = MiddleSender.diskUsage;
             diskCircle.updatePercentage();
         }
         onSendDownSpeedChange: {
-            netCircle.percentage = 100 * middleSend.downSpeed / (middleSend.downSpeed + middleSend.upSpeed);
+            netCircle.percentage = 100 * MiddleSender.downSpeed / (MiddleSender.downSpeed + MiddleSender.upSpeed);
             netCircle.updatePercentage();
         }
     }
@@ -60,7 +60,7 @@ Rectangle {
     InfoCircle {
         id: cpuCircle
         ///theRadius: 80
-        mainTitle: middleSend.cpuUsage + "%"
+        mainTitle: MiddleSender.cpuUsage + "%"
         subTitle: "CPU USAGE"
         anchors {top:parent.top; topMargin: 20; left: parent.left; leftMargin: 18}
     }
@@ -70,7 +70,7 @@ Rectangle {
         id: netCircle
         ///theRadius: 80
         percentageColor: "#15a4fa"
-        mainTitle: middleSend.downSpeed
+        mainTitle: MiddleSender.downSpeed.toFixed(1)
         subTitle: "NET SPEED"
         anchors {top:parent.top; topMargin: 20;left: cpuCircle.right; leftMargin: 18}
     }
@@ -80,7 +80,7 @@ Rectangle {
         id: diskCircle
         ///theRadius: 80
         percentageColor: "#ae69af"
-        mainTitle: middleSend.diskUsage + "%"
+        mainTitle: MiddleSender.diskUsage + "%"
         subTitle: "DISK USAGE"
         anchors {top:parent.top; topMargin: 20;left: netCircle.right; leftMargin: 18}
     }

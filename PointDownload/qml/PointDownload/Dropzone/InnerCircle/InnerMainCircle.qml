@@ -73,6 +73,7 @@ Image{
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             color: "#ffffff"
+            font.pixelSize: 12
             enabled: false
             visible: false
             anchors {horizontalCenter: innerRec.horizontalCenter;verticalCenter: innerRec.verticalCenter}

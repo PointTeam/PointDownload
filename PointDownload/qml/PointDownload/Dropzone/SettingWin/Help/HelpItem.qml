@@ -5,8 +5,6 @@ Rectangle {
     property string iconImg:""
     property string title:""
 
-    height: 60
-    width: 60
     radius: height
     color: "#464852"
 

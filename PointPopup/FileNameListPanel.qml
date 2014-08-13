@@ -41,6 +41,7 @@ Rectangle {
     Rectangle{
         id: fileListTitleRec
         anchors {left: fileItemView.left; bottom: fileItemView.top; bottomMargin: 15}
+
         Image{
             id:checkImg
             width: 12
@@ -141,7 +142,6 @@ Rectangle {
         spacing: 15
         delegate: listDelegate
     }
-
 
     function updateCheckState(iconPath)
     {

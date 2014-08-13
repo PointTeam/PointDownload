@@ -135,6 +135,10 @@
         <file>qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml</file>
         <file>qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml</file>
         <file>qml/PointDownload/Dropzone/SettingWin/Help/HelpItem.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/XwareSetting/LoginPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/XwareSetting/LogoutPage.qml</file>
+        <file>qml/PointDownload/Dropzone/SettingWin/XwareSetting/ValueInputBox.qml</file>
     </qresource>
     <qresource prefix="/images/setting">
         <file alias="MDSpeed">resources/images/setting/MDSpeed.png</file>
@@ -181,5 +185,7 @@
         <file alias="about">resources/images/dropzone/help/about.png</file>
         <file alias="checkupdate">resources/images/dropzone/help/checkupdate.png</file>
         <file alias="skills">resources/images/dropzone/help/skills.png</file>
+        <file alias="login-back">resources/images/dropzone/login-back.png</file>
+        <file alias="user&amp;passwd">resources/images/dropzone/user&amp;passwd.png</file>
     </qresource>
 </RCC>

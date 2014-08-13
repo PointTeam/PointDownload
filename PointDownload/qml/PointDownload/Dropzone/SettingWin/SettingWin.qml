@@ -31,7 +31,7 @@ Window {
 
     color: "#00000000"
     width: 260
-    height: 350
+    height: 320
 //    opacity: 0.8
 
     property string dragIng: "false"

@@ -30,13 +30,14 @@
 #include "Controler/peventfilter.h"
 #include "Controler/SettingWin/settingcontroler.h"
 #include "Controler/SettingWin/dropzonesettingcontroler.h"
+#include "Controler/SettingWin/yougetsettingcontroler.h"
+#include "Controler/SettingWin/xwaresettingcontroler.h"
 #include "Controler/topcontrl.h"
 
 #include "Controler/monitorClipBoard.h"
 #include "Controler/downloaddatasender.h"
 #include "qtsinglecoreapplication.h"
 
-#include "Controler/SettingWin/yougetsettingcontroler.h"
 
 int main(int argc, char *argv[])
 {
@@ -59,9 +60,10 @@ int main(int argc, char *argv[])
     DropzoneSettingControler::getInstance();
     MiddleSender::getInstance();
 
-    //注册的参数格式：import dataControler 1.0
+    //注册的参数格式：import settingControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
+    qmlRegisterType<XwareSettingControler>("xwareSettingControler", 1, 0, "XwareSettingControler");
 
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));

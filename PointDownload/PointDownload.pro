@@ -79,7 +79,8 @@ SOURCES += main.cpp \
     XMLHandler/settingxmlhandler.cpp \
     Controler/SettingWin/settingcontroler.cpp \
     Controler/SettingWin/yougetsettingcontroler.cpp \
-    Controler/SettingWin/dropzonesettingcontroler.cpp
+    Controler/SettingWin/dropzonesettingcontroler.cpp \
+    Controler/SettingWin/xwaresettingcontroler.cpp
 
 # Installation path
 # target.path =
@@ -113,7 +114,8 @@ HEADERS += \
     XMLHandler/settingxmlhandler.h \
     Controler/SettingWin/settingcontroler.h \
     Controler/SettingWin/yougetsettingcontroler.h \
-    Controler/SettingWin/dropzonesettingcontroler.h
+    Controler/SettingWin/dropzonesettingcontroler.h \
+    Controler/SettingWin/xwaresettingcontroler.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS = PointDownload_zh_CN.ts

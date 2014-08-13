@@ -2,8 +2,6 @@ import QtQuick 2.0
 import Singleton.TopContrl 1.0
 
 Rectangle {
-    width: 100
-    height: 62
     color: "#3b5a6f"
 
     HelpItem{
@@ -11,7 +9,7 @@ Rectangle {
         iconImg: "qrc:/images/dropzone/about"
         title: qsTr("About")
         width: 60
-        height: 60
+        height: parent.height - 20
         anchors {left: parent.left; leftMargin: 10; top:parent.top;topMargin: 10}
         MouseArea{
             anchors.fill: parent
@@ -28,7 +26,7 @@ Rectangle {
         iconImg: "qrc:/images/dropzone/checkupdate"
         title: qsTr("Update")
         width: 60
-        height: 60
+        height: parent.height - 20
         anchors {left: aboutItem.right; leftMargin: 20; top:parent.top;topMargin: 10}
         MouseArea{
             anchors.fill: parent
@@ -45,7 +43,7 @@ Rectangle {
         iconImg: "qrc:/images/dropzone/skills"
         title: qsTr("Skills")
         width: 60
-        height: 60
+        height: parent.height - 20
         anchors {right: parent.right; rightMargin: 10; top:parent.top;topMargin: 10}
         MouseArea{
             anchors.fill: parent

@@ -2,6 +2,7 @@ import QtQuick 2.0
 import youGetSettingControler 1.0
 import "GenericSetting"
 import "DropzoneSetting"
+import "XwareSetting"
 import "Help"
 
 Rectangle {
@@ -19,20 +20,55 @@ Rectangle {
     VisualItemModel
     {
         id: itemModel
-
-        Rectangle{
-            id:extensionRec
+        //generic-------------------------------------------------
+        Rectangle {
+            id:genericRec
 
             width: settingBodyRec.width
             height: 40
 
+
             SettingMainItem{
-                id:extensionItem
-                width: parent.width
+                id:genericsettingsItem
+                width: settingBodyRec.width
                 height: 40
-                itemTitle: "Browser plugin"
-                anchors {top: extensionRec.top}
+                itemTitle: qsTr("Generic settings")
+                anchors {top: genericRec.top}
+
+                //折叠事件
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        if (genericRec.height == 300)
+                        {
+                            genericRec.height = 40
+                            geSettingPage.itemHeight = 0
+                            geSettingPage.height = 0
+                        }
+                        else
+                        {
+                            genericRec.height = 300
+                            geSettingPage.itemHeight = 30
+                            geSettingPage.height = 260
+                        }
+                    }
+                }
             }
+
+            GenericSettingPage{
+                id:geSettingPage
+                width: parent.width
+                anchors.top:genericsettingsItem.bottom
+
+                Behavior on height {
+                    NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
+                }
+            }
+
+            Behavior on height {
+                NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
+            }
+
         }
 
         //youget----------------------------------------------------------------------
@@ -107,13 +143,75 @@ Rectangle {
             }
         }
 
-        SettingMainItem{
-            id:xwareItem
+        Rectangle{
+            id:xwareRec
+
             width: settingBodyRec.width
             height: 40
-            itemTitle: "Xware(Thunder)"
-            enableButtonIcon: "qrc:/images/dropzone/disable"
-            anchors {top: yougetRec.bottom}
+
+            SettingMainItem{
+                id:xwareItem
+                width: settingBodyRec.width
+                height: 40
+                itemTitle: "Xware(Thunder)"
+                enableButtonIcon: "qrc:/images/dropzone/disable"
+                anchors {top: xwareRec.top}
+
+                //折叠事件
+                MouseArea{
+                    anchors.fill: parent
+                    anchors.rightMargin: 40
+                    onClicked: {
+                        if (xwSettingPage.xwareEnable)
+                        {
+                            if (xwareRec.height == 220)
+                            {
+                                xwareRec.height = 40
+                                xwSettingPage.height = 0
+                            }
+                            else
+                            {
+                                xwareRec.height = 220
+                                xwSettingPage.height = 180
+                            }
+                        }
+                    }
+                }
+                MouseArea{
+                    anchors.right: parent.right
+                    width: 40
+                    height: parent.height
+                    onClicked: {
+                        if (xwareItem.enableButtonIcon == "qrc:/images/dropzone/disable")
+                        {
+                            xwareItem.enableButtonIcon = "qrc:/images/dropzone/enable"
+                            xwSettingPage.enableXware()
+                        }
+                        else
+                        {
+                            xwareItem.enableButtonIcon = "qrc:/images/dropzone/disable"
+                            xwSettingPage.disableXware()
+
+                            xwareRec.height = 40
+                            xwSettingPage.height = 0
+                        }
+                    }
+                }
+            }
+
+            XwareSettingPage{
+                id:xwSettingPage
+                width: parent.width
+                anchors.top:xwareItem.bottom
+
+                Behavior on height {
+                    NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
+                }
+            }
+
+            Behavior on height {
+                NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
+            }
         }
 
         SettingMainItem{
@@ -122,7 +220,7 @@ Rectangle {
             height: 40
             itemTitle: "Aria2"
             enableButtonIcon: "qrc:/images/dropzone/disable"
-            anchors {top: xwareItem.bottom}
+            anchors {top: xwareRec.bottom}
         }
 
         Rectangle{
@@ -163,59 +261,17 @@ Rectangle {
                 id:dzSettingPage
                 width: parent.width
                 anchors.top:dropzonItem.bottom
-            }
 
-            Behavior on height {
-                NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
-            }
-        }
-
-        //generic-------------------------------------------------
-        Rectangle {
-            id:genericRec
-
-            width: settingBodyRec.width
-            height: 40
-
-
-            SettingMainItem{
-                id:genericsettingsItem
-                width: settingBodyRec.width
-                height: 40
-                itemTitle: qsTr("Generic settings")
-                anchors {top: genericRec.top}
-
-                //折叠事件
-                MouseArea{
-                    anchors.fill: parent
-                    onClicked: {
-                        if (genericRec.height == 300)
-                        {
-                            genericRec.height = 40
-                            geSettingPage.itemHeight = 0
-                            geSettingPage.height = 0
-                        }
-                        else
-                        {
-                            genericRec.height = 300
-                            geSettingPage.itemHeight = 30
-                            geSettingPage.height = 260
-                        }
-                    }
+                Behavior on height {
+                    NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
                 }
             }
 
-            GenericSettingPage{
-                id:geSettingPage
-                width: parent.width
-                anchors.top:genericsettingsItem.bottom
-            }
-
             Behavior on height {
                 NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
             }
-
         }
+
 
         Rectangle {
             id:helpRec
@@ -252,12 +308,17 @@ Rectangle {
                 id:helpPage
                 width: parent.width
                 anchors.top:helpItem.bottom
+
+                Behavior on height {
+                    NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
+                }
             }
 
             Behavior on height {
                 NumberAnimation{duration: 300;easing.type: Easing.OutCubic}
             }
         }
+
     }
 
 

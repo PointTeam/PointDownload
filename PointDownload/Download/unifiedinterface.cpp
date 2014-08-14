@@ -558,6 +558,7 @@ void UnifiedInterface::initDownloadList()
     initdownloadingList();
     initTrashList();
     initConnection();
+    qDebug() << "initDownloadList....";
 }
 
 void UnifiedInterface::initDownloadedList()
@@ -639,6 +640,7 @@ void UnifiedInterface::initTimer()
 
     pingTimer = new QTimer();
     connect(pingTimer, SIGNAL(timeout()), this, SLOT(pingOutSide()));
+    qDebug() << "initTimer";
 }
 
 void UnifiedInterface::initDownloadingStart()
@@ -669,6 +671,7 @@ void UnifiedInterface::initDownloadingStart()
     }
 
     refreshDownloadingItem();
+    qDebug() << "initDownloadingStart";
 }
 
 

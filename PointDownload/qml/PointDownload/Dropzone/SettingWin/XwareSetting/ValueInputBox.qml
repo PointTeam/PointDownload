@@ -90,7 +90,10 @@ FocusScope {
 
     function getInputText()
     {
-        return textInput.text
+        if (textInput.text != '')
+            return textInput.text
+        else
+            return defaultText;
     }
 
     function clearInputText()

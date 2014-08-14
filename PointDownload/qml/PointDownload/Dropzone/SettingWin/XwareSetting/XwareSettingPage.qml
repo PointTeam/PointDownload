@@ -28,17 +28,71 @@ Rectangle{
 
         LoginPage{
             id:loginPage
+            visible: xwareCotrl.isSignIn?false:true
             width: parent.width * 4 / 5
             height:  parent.height * 2 /  5
             anchors {top: parent.top; topMargin: 10; horizontalCenter: parent.horizontalCenter}
         }
 
-//        Rectangle{
-//            id:licenseRec
-//            width: parent.width * 3 / 4
-//            height: parent.height / 6
-//            anchors {top: loginPage.bottom; horizontalCenter: parent.horizontalCenter}
-//        }
+        LogoutPage{
+            id:logoutPage
+            visible: xwareCotrl.isSignIn?true:false
+            width: parent.width * 4 / 5
+            height:  parent.height * 2 /  5
+            anchors {top: parent.top; topMargin: 10; horizontalCenter: parent.horizontalCenter}
+        }
+
+        Image{
+            id:remeberInfoCheckImg
+            source: xwareCotrl.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
+            width: 10
+            height: parent.height / 18
+            anchors {left: loginPage.left; top: loginPage.bottom; topMargin: 15}
+
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (remeberInfoCheckImg.source == "qrc:/images/navigation/Breduncheck")
+                    {
+                        remeberInfoCheckImg.source = "qrc:/images/navigation/Brednone"
+                        xwareCotrl.automaticLogin = false
+                    }
+                    else
+                    {
+                        remeberInfoCheckImg.source = "qrc:/images/navigation/Breduncheck"
+                        xwareCotrl.automaticLogin = true
+                    }
+                }
+            }
+        }
+        Text{
+            text:qsTr("Automatic Login")
+            color: "gray"
+            font.pixelSize: 10
+            verticalAlignment: Text.AlignVCenter
+            height: remeberInfoCheckImg.height
+            visible: height == 0?false:true
+            anchors {left: remeberInfoCheckImg.right;leftMargin: 5; top: remeberInfoCheckImg.top}
+        }
+        Text{
+            text:qsTr("Thunder License?")
+            color: "gray"
+            font.pixelSize: 10
+            verticalAlignment: Text.AlignVCenter
+            height: remeberInfoCheckImg.height
+            visible: height == 0?false:true
+            anchors {right: loginPage.right; top: remeberInfoCheckImg.top}
+
+            MouseArea{
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: parent.color = "#ffffff"
+                onExited: parent.color = "gray"
+                onClicked: {
+                    console.log("Show Thunder License...")
+                }
+            }
+        }
 
         Rectangle{
             id:logButton
@@ -46,12 +100,12 @@ Rectangle{
             radius: height / 5
             width: parent.width * 4 / 5
             height: parent.height / 5
-            anchors {bottom: parent.bottom; bottomMargin: 20; horizontalCenter: parent.horizontalCenter}
+            anchors {top: remeberInfoCheckImg.bottom; topMargin: 20; horizontalCenter: parent.horizontalCenter}
 
             Text{
                 id:logText
                 color: "#ffffff"
-                text:qsTr(xwareCotrl.isSignIn?"Sign out" : "Sign in")
+                text:xwareCotrl.isSignIn?qsTr("Sign out") : qsTr("Sign in")
                 visible: parent.height == 0?false:true
                 width: parent.width / 2
                 height: parent.height
@@ -82,4 +136,18 @@ Rectangle{
         xwareCotrl.disableXware()
     }
 
+    function isXwareEnable()
+    {
+        return xwareCotrl.xwareEnable
+    }
+
+    function getDefaultUserName()
+    {
+        return xwareCotrl.userName
+    }
+
+    function getDefaultUserPasswd()
+    {
+        return xwareCotrl.userPasswd
+    }
 }

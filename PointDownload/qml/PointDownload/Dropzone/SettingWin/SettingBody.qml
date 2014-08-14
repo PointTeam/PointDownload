@@ -154,7 +154,7 @@ Rectangle {
                 width: settingBodyRec.width
                 height: 40
                 itemTitle: "Xware(Thunder)"
-                enableButtonIcon: "qrc:/images/dropzone/disable"
+                enableButtonIcon: xwSettingPage.isXwareEnable()?"qrc:/images/dropzone/enable":"qrc:/images/dropzone/disable"
                 anchors {top: xwareRec.top}
 
                 //折叠事件

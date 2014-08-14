@@ -160,6 +160,7 @@ void SettingXMLHandler::touchPointSettingFile()
         xwareSettingsNode.appendChild(createChildElement("Logged","False"));
         xwareSettingsNode.appendChild(createChildElement("UserName"," "));
         xwareSettingsNode.appendChild(createChildElement("UserPasswd"," "));
+        xwareSettingsNode.appendChild(createChildElement("AutomaticLogin","True"));
 
         //you-get node
         QDomElement youGetSettingsNode = domDocument.createElement("YouGetSetting");

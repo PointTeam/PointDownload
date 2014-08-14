@@ -59,6 +59,9 @@ int main(int argc, char *argv[])
     MonitorClipBoard::getInstance();
     DropzoneSettingControler::getInstance();
     MiddleSender::getInstance();
+    //如果符合条件，则自动登陆xware
+    XwareSettingControler xCtrl;
+    xCtrl.tryAutomaticLogin();
 
     //注册的参数格式：import settingControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");

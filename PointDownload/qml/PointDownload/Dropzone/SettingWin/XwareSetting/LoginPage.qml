@@ -13,7 +13,7 @@ Rectangle {
 
         ValueInputBox{
             id:usernameBox
-            defaultText: qsTr("Thunder User Name")
+            defaultText: xwareSettingPage.getDefaultUserName() === ""? qsTr("Thunder User Name") : xwareSettingPage.getDefaultUserName()
             width: parent.width * 3 / 4
             height: parent.height / 3
             anchors {right: parent.right; top:parent.top; topMargin: 10}
@@ -22,13 +22,14 @@ Rectangle {
 
         ValueInputBox{
             id:passwdBox
-            defaultText: qsTr("Password")
+            defaultText: xwareSettingPage.getDefaultUserPasswd() === ""?qsTr("Password"):xwareSettingPage.getDefaultUserPasswd()
             width: parent.width * 3 / 4
             height: parent.height / 3
             anchors {right: parent.right; bottom: parent.bottom; bottomMargin: 5}
             onFinishInput: loginPage.finishInputInfo()
         }
     }
+
 
     function getUsername()
     {

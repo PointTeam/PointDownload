@@ -187,5 +187,6 @@
         <file alias="skills">resources/images/dropzone/help/skills.png</file>
         <file alias="login-back">resources/images/dropzone/login-back.png</file>
         <file alias="user&amp;passwd">resources/images/dropzone/user&amp;passwd.png</file>
+        <file alias="thunder64">resources/images/dropzone/thunder64.png</file>
     </qresource>
 </RCC>

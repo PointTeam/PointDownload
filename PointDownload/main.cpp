@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
     qmlRegisterType<XwareSettingControler>("xwareSettingControler", 1, 0, "XwareSettingControler");
 
-
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 
    //添加全局事件过滤

@@ -208,7 +208,7 @@ void SettingControler::initData()
     setEnableUpload(sHandler.getChildElement(GeneralSettings,"EnableUpload"));
     setExitOnClose(sHandler.getChildElement(GeneralSettings,"ExitOnClose")=="True"?true:false);
     setDefaultThreadCount(sHandler.getChildElement(GeneralSettings,"DefaultThreadCount"));
-    setMaxJobCount(sHandler.getChildElement(GeneralSettings,"MaxJobCount"));
+    maxJobCount = sHandler.getChildElement(GeneralSettings,"MaxJobCount");
     setMaxDSpeed(sHandler.getChildElement(GeneralSettings,"MaxDownloadSpeed"));
     setMaxUSpeed(sHandler.getChildElement(GeneralSettings,"MaxUploadSpeed"));
     setEnableDropzone(sHandler.getChildElement(DropzoneSetting,"State")=="Enable"?true:false);

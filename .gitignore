@@ -4,6 +4,8 @@
 *.bug
 *.new
 build-*
+#chrome extension
+*.crx
 # C++ objects and libs
 
 *.slo

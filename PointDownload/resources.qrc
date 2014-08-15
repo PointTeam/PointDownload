@@ -41,6 +41,8 @@
         <file alias="suspend">resources/images/right/suspend.png</file>
         <file alias="trash">resources/images/right/trash.png</file>
         <file alias="priority">resources/images/right/Priority.png</file>
+        <file alias="hightspeed">resources/images/right/hightspeed.png</file>
+        <file alias="offlinedownload">resources/images/right/offlinedownload.png</file>
     </qresource>
     <qresource prefix="/images/right/filetype">
         <file alias="xml">resources/images/right/filetype/xml.png</file>

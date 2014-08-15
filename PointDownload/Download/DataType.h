@@ -55,6 +55,8 @@ enum OperationType
     download_trash,
     download_delete,
     download_openFolder,
+    download_offlineDownload,
+    download_hightSpeedChannel,
     download_finishDownload
 };
 
@@ -71,6 +73,8 @@ struct DownloadingItemInfo
     QString downloadURL;
     QString downloadSpeed;
     QString uploadSpeed;
+    QString thunderOfflineSpeed;
+    QString thunderHightSpeed;
     DownloadState downloadState;
     double downloadPercent;
 };

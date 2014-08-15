@@ -112,6 +112,8 @@ private:
     void openFolderDownloading(QString URL);
     void trashDownloading(QString URL);
     void deleteDownloading(QString URL);
+    void offlineDownloadDownloading(QString URL);
+    void hightSpeedChannelDownloading(QString URL);
     void finishDownloading(QString URL);
 
     //对已下载完成的处理

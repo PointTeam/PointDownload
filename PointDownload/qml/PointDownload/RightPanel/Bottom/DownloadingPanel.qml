@@ -50,6 +50,13 @@ Rectangle {
         onDownloadSpeedChange: {
             DownloadingScript.updateNetSpeed(DownloadDataSender.downloadURL, DownloadDataSender.downloadSpeed)
         }
+        onThunderOfflineSpeedChange:{
+            DownloadingScript.updateOfflineSpeed(DownloadDataSender.downloadURL,DownloadDataSender.thunderOfflineSpeed)
+        }
+        onThunderHightSpeedChange:{
+            DownloadingScript.updateHightSpeed(DownloadDataSender.downloadURL,DownloadDataSender.thunderHightSpeed)
+        }
+
         onCompletePercentageChange:{
             if (DownloadDataSender.completePercentage === 100)
             {
@@ -91,6 +98,8 @@ Rectangle {
             fileState: tmpState
             fileURL: tmpURL
             netSpeed: tmpSpeed
+            thunderOfflineSpeed: tmpOfflineSpeed
+            thunderHightSpeed: tmpHightSpeed
             fileSize: tmpSize
             dlToolsType:tmpDLToolsType
             // Animate adding and removing of items:

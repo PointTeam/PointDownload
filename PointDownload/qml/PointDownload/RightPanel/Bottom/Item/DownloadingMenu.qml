@@ -37,20 +37,14 @@ Rectangle {
     property int menuLeftMargin: 25
     property string downloadURL: ""
     property string downloadState: ""
+    property string offlineSpeed:""
+    property string hightSpeed:""
 
     width: parent.width
     height: 40
     radius: 4
     opacity: 0.8
     color: "#ffffff"
-
-    //        download_suspend,
-    //        download_resume,
-    //        download_redownload,
-    //        download_priority,
-    //        download_trash,
-    //        download_delete,
-    //        download_openFolder
 
     MenuButton {
         id: menuSuspend
@@ -191,5 +185,71 @@ Rectangle {
                 DownloadDataSender.controlItem("dl_downloading","download_delete",downloadURL)
             }
         }
+    }
+
+    MenuButton{
+        id:menuOfflineDownload
+        visible: downloadingItem.dlToolsType == "Xware"?true:false
+        height: parent.height - 10
+        iconPath: "qrc:/images/right/offlinedownload"
+        anchors {right:offlineDownloadText.left; rightMargin: 6; verticalCenter: parent.verticalCenter}
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                Tooltip.fadeInDelay = 200;
+                Tooltip.fadeOutDelay = 200;
+                Tooltip.tip = qsTr("Thunder Offline Download");
+                Tooltip.showTipe(menuOfflineDownload);
+                parent.opacity = 0.8;
+            }
+            onExited: {
+               Tooltip.close();
+                parent.opacity = 1;
+            }
+            onClicked: DownloadDataSender.controlItem("dl_downloading","download_offlineDownload",downloadURL)
+        }
+    }
+    Text{
+        id:offlineDownloadText
+        text: offlineSpeed
+        visible: parent.height == 0?false:true
+        font.pixelSize: 11
+        color: "#48484b"
+        horizontalAlignment: Text.AlignHCenter
+        anchors {right:menuHightSpeed.left; rightMargin: 30; verticalCenter: parent.verticalCenter}
+    }
+
+    MenuButton{
+        id:menuHightSpeed
+        visible: downloadingItem.dlToolsType == "Xware"?true:false
+        height: parent.height - 10
+        iconPath: "qrc:/images/right/hightspeed"
+        anchors {right: hightSpeedText.left;rightMargin: 6; verticalCenter: parent.verticalCenter}
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                Tooltip.fadeInDelay = 200;
+                Tooltip.fadeOutDelay = 200;
+                Tooltip.tip = qsTr("Thunder High-speed Channel");
+                Tooltip.showTipe(menuHightSpeed);
+                parent.opacity = 0.8;
+            }
+            onExited: {
+               Tooltip.close();
+                parent.opacity = 1;
+            }
+            onClicked: DownloadDataSender.controlItem("dl_downloading","download_hightSpeedChannel",downloadURL)
+        }
+    }
+    Text{
+        id:hightSpeedText
+        text: hightSpeed
+        visible: parent.height == 0?false:true
+        font.pixelSize: 11
+        color: "#48484b"
+        horizontalAlignment: Text.AlignHCenter
+        anchors {right:parent.right; rightMargin: 30; verticalCenter: parent.verticalCenter}
     }
 }

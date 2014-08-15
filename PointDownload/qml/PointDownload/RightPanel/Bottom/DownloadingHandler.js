@@ -48,6 +48,34 @@ function updateNetSpeed(url,netSpeed)
     }
 }
 
+function updateOfflineSpeed(url,speed)
+{
+    for (var i = 0; i < ingItemModel.count; i ++)
+    {
+        var tmpObj;
+        tmpObj = ingItemModel.get(i);
+        if (tmpObj.tmpURL === url)
+        {
+            ingItemModel.setProperty(i,"tmpOfflineSpeed",speed);
+            break;
+        }
+    }
+}
+
+function updateHightSpeed(url,speed)
+{
+    for (var i = 0; i < ingItemModel.count; i ++)
+    {
+        var tmpObj;
+        tmpObj = ingItemModel.get(i);
+        if (tmpObj.tmpURL === url)
+        {
+            ingItemModel.setProperty(i,"tmpHightSpeed",speed);
+            break;
+        }
+    }
+}
+
 function updateFileState(url,state)
 {
     for (var i = 0; i < ingItemModel.count; i ++)
@@ -102,7 +130,9 @@ function addNewItem(infoList)
                         "tmpSize":sizeByte,
                         "tmpPercentage":infoArry[9] === undefined ? 0 : parseFloat(infoArry[9],10),
                         "tmpState":infoArry[10] === undefined ? "dlstate_downloading" : infoArry[10],
-                        "tmpSpeed": "0KB/S"});
+                        "tmpSpeed": "0KB/S",
+                        "tmpOfflineSpeed":"",
+                        "tmpHightSpeed":""});
     //把已下载项中的数据删除，包括界面
     downloadedPage.moveItem(infoArry[2]);
     //删除垃圾箱里的数据，包括界面

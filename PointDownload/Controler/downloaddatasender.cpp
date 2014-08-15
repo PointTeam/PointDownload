@@ -71,6 +71,10 @@ void DownloadDataSender::controlItem(QString dtype, QString otype, QString URL)
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_delete, URL);
         else if (otype == "download_openFolder")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_openFolder, URL);
+        else if (otype == "download_offlineDownload")
+            UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_offlineDownload,URL);
+        else if (otype == "download_hightSpeedChannel")
+            UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_hightSpeedChannel,URL);
         else if (otype == "download_finishDownload")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_finishDownload, URL);
     }
@@ -134,6 +138,16 @@ QString DownloadDataSender::getDownloadSpeed()
     return downloadSpeed;
 }
 
+QString DownloadDataSender::getThunderOfflineSpeed()
+{
+    return thunderOfflineSpeed;
+}
+
+QString DownloadDataSender::getThunderHightSpeed()
+{
+    return thunderHightSpeed;
+}
+
 double DownloadDataSender::getCompletePercentage()
 {
     return completePercentage;
@@ -189,6 +203,18 @@ void DownloadDataSender::setDownloadSpeed(QString speed)
 {
     downloadSpeed = speed;
     emit downloadSpeedChange();
+}
+
+void DownloadDataSender::setThunderOfflineSpeed(QString speed)
+{
+    thunderOfflineSpeed = speed;
+    emit thunderOfflineSpeedChange();
+}
+
+void DownloadDataSender::setThunderHightSpeed(QString speed)
+{
+    thunderHightSpeed = speed;
+    emit thunderHightSpeedChange();
 }
 
 void DownloadDataSender::setCompletePercentage(double perc)

@@ -40,6 +40,8 @@ class DownloadDataSender : public QObject
     Q_PROPERTY(QString btInfo READ getBTInfo WRITE setBTInfo NOTIFY btInfoChange)
     Q_PROPERTY(QString downloadState READ getDownloadState WRITE setDownloadState NOTIFY downloadStateChange)
     Q_PROPERTY(QString downloadSpeed READ getDownloadSpeed WRITE setDownloadSpeed NOTIFY downloadSpeedChange)
+    Q_PROPERTY(QString thunderOfflineSpeed READ getThunderOfflineSpeed WRITE setThunderOfflineSpeed NOTIFY thunderOfflineSpeedChange)
+    Q_PROPERTY(QString thunderHightSpeed READ getThunderHightSpeed WRITE setThunderHightSpeed NOTIFY thunderHightSpeedChange)
     Q_PROPERTY(double completePercentage READ getCompletePercentage WRITE setCompletePercentage NOTIFY completePercentageChange)
     Q_PROPERTY(QString contrlResultType READ getContrlResultType WRITE setContrlResultType NOTIFY contrlResultTypeChange)
     Q_PROPERTY(bool isAllSuspend READ getIsAllSuspend WRITE setIsAllSuspend NOTIFY isAllSuspendChange)
@@ -59,6 +61,8 @@ public:
     QString getBTInfo();
     QString getDownloadState();
     QString getDownloadSpeed();
+    QString getThunderOfflineSpeed();
+    QString getThunderHightSpeed();
     double getCompletePercentage();
     QString getContrlResultType();
     bool getIsAllSuspend();
@@ -70,6 +74,8 @@ public:
     void setBTInfo(QString info);
     void setDownloadState(QString state);
     void setDownloadSpeed(QString speed);
+    void setThunderOfflineSpeed(QString speed);
+    void setThunderHightSpeed(QString speed);
     void setCompletePercentage(double perc);
     void setContrlResultType(QString type);
     void setIsAllSuspend(bool value);
@@ -83,6 +89,8 @@ signals:
     void btInfoChange();
     void downloadStateChange();
     void downloadSpeedChange();
+    void thunderOfflineSpeedChange();
+    void thunderHightSpeedChange();
     void completePercentageChange();
 
     //监听到控制结果反馈时，将触发qml界面做相应更新,URL使用downloadURL确定,项目类型由downloadType确定
@@ -119,6 +127,8 @@ private:
     QString btInfo;                     //正在下载项使用,BT下载信息，因为BT都含有较为多的信息
     QString downloadState;     //正在下载项使用,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
     QString downloadSpeed;      //正在下载项使用,下载速度,经常更新
+    QString thunderOfflineSpeed; //迅雷离线速度
+    QString thunderHightSpeed;  //迅雷高速通道速度
     double completePercentage;  //正在下载项使用,已完成的百分比,经常更新
     QString contrlResultType;       //控制反馈结果类型
 

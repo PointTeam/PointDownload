@@ -39,6 +39,8 @@ Rectangle {
     property string fileName: ""
     property string fileURL: ""
     property string fileState: "dlstate_suspend"  // "Downloading" or "Ready"
+    property string thunderOfflineSpeed:""
+    property string thunderHightSpeed:""
     property string netSpeed: ""
     property string fileSize: ""
     property string dlToolsType: ""
@@ -138,6 +140,9 @@ Rectangle {
         height: 0
         downloadURL: fileURL//for control button
         downloadState: fileState
+        offlineSpeed: thunderOfflineSpeed
+        hightSpeed: thunderHightSpeed
+
         anchors {bottom: parent.bottom; left: parent.left}
 
         SequentialAnimation {

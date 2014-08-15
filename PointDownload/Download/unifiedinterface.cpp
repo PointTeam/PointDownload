@@ -224,6 +224,12 @@ void UnifiedInterface::handleDownloadingControl(OperationType otype, QString URL
     case download_delete:
         deleteDownloading(URL);
         break;
+    case download_offlineDownload:
+        offlineDownloadDownloading(URL);
+        break;
+    case download_hightSpeedChannel:
+        hightSpeedChannelDownloading(URL);
+        break;
     case download_finishDownload:
         finishDownloading(URL);
         break;
@@ -441,6 +447,16 @@ void UnifiedInterface::deleteDownloading(QString URL)
     refreshDownloadingItem();
 }
 
+void UnifiedInterface::offlineDownloadDownloading(QString URL)
+{
+    qDebug() << "离线加速未实现，请在此处实现。。。";
+}
+
+void UnifiedInterface::hightSpeedChannelDownloading(QString URL)
+{
+    qDebug() << "高速通道未实现，请在此处实现。。。";
+}
+
 void UnifiedInterface::finishDownloading(QString URL)
 {
     //向已下载xml记录文件插入新项
@@ -558,7 +574,6 @@ void UnifiedInterface::initDownloadList()
     initdownloadingList();
     initTrashList();
     initConnection();
-    qDebug() << "initDownloadList....";
 }
 
 void UnifiedInterface::initDownloadedList()
@@ -640,7 +655,6 @@ void UnifiedInterface::initTimer()
 
     pingTimer = new QTimer();
     connect(pingTimer, SIGNAL(timeout()), this, SLOT(pingOutSide()));
-    qDebug() << "initTimer";
 }
 
 void UnifiedInterface::initDownloadingStart()
@@ -671,7 +685,6 @@ void UnifiedInterface::initDownloadingStart()
     }
 
     refreshDownloadingItem();
-    qDebug() << "initDownloadingStart";
 }
 
 

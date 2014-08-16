@@ -109,6 +109,11 @@ void UnifiedInterface::resumeAllDownloading()
     }
 }
 
+int UnifiedInterface::getJobCount()
+{
+    return downloadingListMap.count();
+}
+
 void UnifiedInterface::controlDownload(DownloadType dtype, OperationType otype, QString URL)
 {
     switch (dtype)

@@ -65,6 +65,10 @@ function getFileInfo(url)
         var tmpObj;
         var totalSize = 0;
         tmpObj = edItemModel.get(i);
+
+        if (tmpObj.tmpURL !== url)
+            break;
+
         if (tmpObj.tmpSize.indexOf("GB") > 0)
         {
             totalSize =    tmpObj.tmpSize.substring(0,tmpObj.tmpSize.indexOf("GB") - 1) * 1024 * 1024 * 1024
@@ -82,13 +86,11 @@ function getFileInfo(url)
             totalSize =    tmpObj.tmpSize.substring(0,tmpObj.tmpSize.indexOf("B")- 1 ) * 1
         }
 
-        if (tmpObj.tmpURL === url)
-        {
-            return tmpObj.tmpDLToolsType + "?:?"
-                    + tmpObj.tmpName + "?:?"
-                    + tmpObj.tmpURL + "?:?"
-                    + tmpObj.tmpPath + "?:?"
-                    + totalSize;
-        }
+
+        return tmpObj.tmpDLToolsType + "?:?"
+                + tmpObj.tmpName + "?:?"
+                + tmpObj.tmpURL + "?:?"
+                + tmpObj.tmpPath + "?:?"
+                + totalSize;
     }
 }

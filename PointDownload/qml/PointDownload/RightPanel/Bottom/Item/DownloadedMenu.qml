@@ -29,7 +29,7 @@ History:
 
 import QtQuick 2.0
 import Singleton.DownloadDataSender 1.0
-import "../../../ToolTip/ToolTipCreator.js" as Tooltip
+import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
     id: edMenu
@@ -43,15 +43,6 @@ Rectangle {
     opacity: 0.8
     color: "#ffffff"
 
-
-    //        download_suspend,
-    //        download_resume,
-    //        download_redownload,
-    //        download_priority,
-    //        download_trash,
-    //        download_delete,
-    //        download_openFolder
-
     MenuButton {
         id: menuReDownload
         height: parent.height - 10
@@ -61,14 +52,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Redownload")//"重新下载";
-                Tooltip.showTipe(menuReDownload);
+                MenuToolTip.showMenuToolTip(menuReDownload,qsTr("Redownload"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+                MenuToolTip.close()
                 parent.opacity = 1;
             }
             onClicked:
@@ -87,14 +75,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Open Storage Folder")//"打开存放目录";
-                Tooltip.showTipe(menuFolder);
+                MenuToolTip.showMenuToolTip(menuFolder,qsTr("Open Storage Folder"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+               MenuToolTip.close();
                 parent.opacity = 1;
             }
             onClicked: DownloadDataSender.controlItem("dl_downloaded","download_openFolder",downloadURL)
@@ -109,14 +94,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Double Click Will Move To Trash")//"双击移动到回收站";
-                Tooltip.showTipe(menuTrash);
+                MenuToolTip.showMenuToolTip(menuTrash,qsTr("Double Click Will Move To Trash"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+               MenuToolTip.close();
                 parent.opacity = 1;
             }
             onDoubleClicked:
@@ -138,14 +120,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Double Click Will Delete,Including File")//"双击删除，包括文件";
-                Tooltip.showTipe(menuDelete);
+                MenuToolTip.showMenuToolTip(menuDelete,qsTr("Double Click Will Delete,Including File"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+               MenuToolTip.close();
                 parent.opacity = 1;
             }
             onDoubleClicked:

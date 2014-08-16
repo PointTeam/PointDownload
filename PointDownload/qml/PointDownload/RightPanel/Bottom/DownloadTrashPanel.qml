@@ -36,11 +36,6 @@ Rectangle {
             if (DownloadDataSender.downloadType === "dl_trash")
                 TrashScript.addNewItem(DownloadDataSender.fileInfo)
         }
-        onContrlResultTypeChange: {
-            if (DownloadDataSender.downloadType === "dl_trash")
-                if (DownloadDataSender.contrlResultType === "download_delete")
-                    TrashScript.removeItem(DownloadDataSender.downloadURL)
-        }
     }
 
     ListModel {

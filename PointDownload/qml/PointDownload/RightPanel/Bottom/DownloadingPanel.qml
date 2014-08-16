@@ -41,9 +41,7 @@ Rectangle {
         onContrlResultTypeChange: {
             if (DownloadDataSender.downloadType === "dl_downloading")
             {
-                if (DownloadDataSender.contrlResultType === "download_trash" || DownloadDataSender.contrlResultType === "download_delete")
-                    DownloadingScript.removeItem(DownloadDataSender.downloadURL)
-                else if (DownloadDataSender.contrlResultType === "download_priority")
+                if (DownloadDataSender.contrlResultType === "download_priority")
                     sortTimer.start();
             }
         }

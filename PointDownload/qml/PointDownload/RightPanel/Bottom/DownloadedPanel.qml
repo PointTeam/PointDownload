@@ -20,10 +20,9 @@
  ***********************************************************************/
 
 import QtQuick 2.0
+import Singleton.DownloadDataSender 1.0
 import "DownloadedHandler.js" as DownloadedScript
 import "Item"
-//import QtQuick.Controls 1.1
-import Singleton.DownloadDataSender 1.0
 
 Rectangle {
     id: downloadedPanel
@@ -37,11 +36,6 @@ Rectangle {
         onFileInfoChange: {
             if (DownloadDataSender.downloadType === "dl_downloaded")
                 DownloadedScript.addNewItem(DownloadDataSender.fileInfo)
-        }
-        onContrlResultTypeChange: {
-            if (DownloadDataSender.downloadType === "dl_downloaded")
-                if (DownloadDataSender.contrlResultType === "download_trash" || DownloadDataSender.contrlResultType === "download_delete")
-                    DownloadedScript.removeItem(DownloadDataSender.downloadURL)
         }
     }
 

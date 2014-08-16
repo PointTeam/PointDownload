@@ -28,7 +28,7 @@ History:
 
 import QtQuick 2.0
 import Singleton.DownloadDataSender 1.0
-import "../../../ToolTip/ToolTipCreator.js" as Tooltip
+import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
     id: trashMenu
@@ -51,14 +51,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Redownload")//"重新下载";
-                Tooltip.showTipe(menuReDownload);
+                MenuToolTip.showMenuToolTip(menuReDownload,qsTr("Redownload"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+               MenuToolTip.close();
                 parent.opacity = 1;
             }
             onClicked:
@@ -78,14 +75,11 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                Tooltip.fadeInDelay = 200;
-                Tooltip.fadeOutDelay = 200;
-                Tooltip.tip = qsTr("Double Click Will Delete")//" 双击彻底删除";
-                Tooltip.showTipe(menuDelete);
+                MenuToolTip.showMenuToolTip(menuDelete,qsTr("Double Click Will Delete"))
                 parent.opacity = 0.8;
             }
             onExited: {
-               Tooltip.close();
+               MenuToolTip.close();
                 parent.opacity = 1;
             }
             onDoubleClicked:

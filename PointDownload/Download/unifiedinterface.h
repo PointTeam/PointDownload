@@ -65,6 +65,7 @@ public:
 
     void suspendAllDownloading();
     void resumeAllDownloading();
+    int getJobCount();
 signals:
     void sAddDownloadingItem(QString infoList);
     void sAddDownloadedItem(QString infolist);

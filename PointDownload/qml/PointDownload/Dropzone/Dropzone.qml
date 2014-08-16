@@ -25,6 +25,7 @@ import QtGraphicalEffects 1.0
 import Singleton.PEventFilter 1.0
 import Singleton.TopContrl 1.0
 import Singleton.MiddleSender 1.0
+import Singleton.DropzoneSettingControler 1.0
 
 import "InnerCircle"
 import "OuterCircle"
@@ -36,11 +37,11 @@ Window {
     color: "#00000000"
     width: 170
     height: 170
-//    opacity: 0.8
+    opacity: DropzoneSettingControler.opacity/10
 
     property string dragIng: "false"
-    property int winx:Screen.width - width * 2
-    property int winy:height
+    property int winx:DropzoneSettingControler.winX
+    property int winy:DropzoneSettingControler.winY
     property int oldWinx: 0
     property int oldWiny:0
     property int oldX: 0
@@ -150,6 +151,9 @@ Window {
                 {
                     winx = PEventFilter.globalX- oldX
                     winy = PEventFilter.globalY - oldY;
+
+                    DropzoneSettingControler.winX = winx
+                    DropzoneSettingControler.winY = winy
                 }
             }
 

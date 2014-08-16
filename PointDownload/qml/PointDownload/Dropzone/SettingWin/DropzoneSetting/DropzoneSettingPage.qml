@@ -59,11 +59,11 @@ Rectangle{
         id:showCPUUsageSwitch
         height: itemHeight
         width: parent.width
-        title: qsTr("Show CPU Usage")
-        itemState: DropzoneSettingControler.showCpuUsage
+        title: qsTr("Show Storage Usage")
+        itemState: DropzoneSettingControler.showStorageUsage
         anchors {top: showJobCountSwitch.bottom; topMargin: 5}
         onSwitchValueChanged: {
-                DropzoneSettingControler.showCpuUsage = switchState
+                DropzoneSettingControler.showStorageUsage = switchState
         }
     }
 

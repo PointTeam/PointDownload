@@ -7,6 +7,7 @@ DropzoneSettingControler::DropzoneSettingControler(QObject *parent) :
     qmlRegisterSingletonType<DropzoneSettingControler>("Singleton.DropzoneSettingControler", 1, 0, "DropzoneSettingControler", dzSettingCtrlObj);
 
     initData();
+    initTimer();
 }
 
 DropzoneSettingControler * DropzoneSettingControler::dropzoneSettingControler = NULL;
@@ -22,7 +23,27 @@ void DropzoneSettingControler::initData()
     setOpacity(gHandler.getChildElement(DropzoneSetting,"Opacity").toInt());
     setInfoInterval(gHandler.getChildElement(DropzoneSetting,"InfoInterval").toInt());
     setShowJobCount(gHandler.getChildElement(DropzoneSetting,"ShowJobCount")=="True"?true:false);
-    setShowCpuUsage(gHandler.getChildElement(DropzoneSetting,"ShowCPUUsage")=="True"?true:false);
+    setShowStorageUsage(gHandler.getChildElement(DropzoneSetting,"ShowStorageUsage")=="True"?true:false);
+    setWinX(gHandler.getChildElement(DropzoneSetting,"WinX").toInt());
+    setWinY(gHandler.getChildElement(DropzoneSetting,"WinY").toInt());
+}
+
+void DropzoneSettingControler::initTimer()
+{
+    QTimer * refreshTimer = new QTimer();
+    connect(refreshTimer, SIGNAL(timeout()), this , SLOT(slotUpdateJobCount()));
+    connect(refreshTimer, SIGNAL(timeout()), this, SLOT(slotUpdateStorageUsage()));
+    refreshTimer->start(REFRESH_INTERVAL);
+}
+
+void DropzoneSettingControler::slotUpdateJobCount()
+{
+    emit sNewJobCount(UnifiedInterface::getInstance()->getJobCount());
+}
+
+void DropzoneSettingControler::slotUpdateStorageUsage()
+{
+    emit sNewStorageUsage(MiddleSender::getInstance()->getDiskUsage());
 }
 
 int DropzoneSettingControler::getOpacity()
@@ -40,9 +61,19 @@ bool DropzoneSettingControler::getShowJobCount()
     return showJobCount;
 }
 
-bool DropzoneSettingControler::getShowCpuUsage()
+bool DropzoneSettingControler::getShowStorageUsage()
 {
-    return showCpuUsage;
+    return showStorageUsage;
+}
+
+int DropzoneSettingControler::getWinX()
+{
+    return winX;
+}
+
+int DropzoneSettingControler::getWinY()
+{
+    return winY;
 }
 
 void DropzoneSettingControler::setOpacity(int tmpOpacity)
@@ -73,17 +104,29 @@ void DropzoneSettingControler::setShowJobCount(bool flag)
     emit sShowJobCountChange();
 }
 
-void DropzoneSettingControler::setShowCpuUsage(bool flag)
+void DropzoneSettingControler::setShowStorageUsage(bool flag)
 {
     if (flag)
-        gHandler.setChildElement(DropzoneSetting,"ShowCPUUsage","True");
+        gHandler.setChildElement(DropzoneSetting,"ShowStorageUsage","True");
     else
-        gHandler.setChildElement(DropzoneSetting,"ShowCPUUsage","False");
-    showCpuUsage = flag;
-    emit sShowCpuUsageChange();
+        gHandler.setChildElement(DropzoneSetting,"ShowStorageUsage","False");
+    showStorageUsage = flag;
+    emit sShowStorageUsageChange();
 }
 
+void DropzoneSettingControler::setWinX(int x)
+{
+    winX = x;
+    gHandler.setChildElement(DropzoneSetting,"WinX",QString::number(x));
+    emit sWinXChange();
+}
 
+void DropzoneSettingControler::setWinY(int y)
+{
+    winY = y;
+    gHandler.setChildElement(DropzoneSetting,"WinY",QString::number(y));
+    emit sWinYChange();
+}
 
 
 

@@ -64,13 +64,13 @@ Image{
         onTriggered: {
             if (stateIndex >= states.length)
                 stateIndex = 0
-            if (!DropzoneSettingControler.showStorageUsage && states[stateIndex].name == "showStorageUsage")
+            if (!DropzoneSettingControler.showStorageUsage && states[stateIndex].name === "showStorageUsage")
             {
                 //如果不显示存储信息，则直接跳过
                 stateIndex ++;
             }
 
-            if (!DropzoneSettingControler.showJobCount && states[stateIndex].name == "showJobCount")
+            if (!DropzoneSettingControler.showJobCount && states[stateIndex].name === "showJobCount")
             {
                 stateIndex ++;
             }
@@ -175,21 +175,18 @@ Image{
         State {
             name: "showSpeed"
             PropertyChanges {target: speedText; opacity:1}
-            PropertyChanges {target: tipsText; opacity:0}
             PropertyChanges {target: storageUsageText; opacity:0}
             PropertyChanges {target: jobCountText; opacity:0}
         },
         State{
             name: "showStorageUsage"
             PropertyChanges {target: speedText; opacity:0}
-            PropertyChanges {target: tipsText; opacity:0}
             PropertyChanges {target: storageUsageText; opacity:1}
             PropertyChanges {target: jobCountText; opacity:0}
         },
         State{
             name: "showJobCount"
             PropertyChanges {target: speedText; opacity:0}
-            PropertyChanges {target: tipsText; opacity:0}
             PropertyChanges {target: storageUsageText; opacity:0}
             PropertyChanges {target: jobCountText; opacity:1}
         }
@@ -198,7 +195,6 @@ Image{
     State{
         name: "showTip"
         PropertyChanges {target: speedText; opacity:0}
-        PropertyChanges {target: tipsText; opacity:1}
         PropertyChanges {target: storageUsageText; opacity:0}
         PropertyChanges {target: jobCountText; opacity:0}
     }
@@ -216,23 +212,21 @@ Image{
 
     function showButtonTips(buttonTips)
     {
-        speedText.enabled = false
+        updateTimer.stop()
         speedText.visible = false
-
-        tipsText.enabled = true
+        storageUsageText.visible = false
+        jobCountText.visible = false
         tipsText.visible = true
         tipsText.text = buttonTips
     }
 
     function hideButtonTips()
     {
-
-        speedText.enabled = true
+        updateTimer.start()
         speedText.visible = true
-
-        tipsText.enabled = false
+        storageUsageText.visible = true
+        jobCountText.visible = true
         tipsText.visible = false
-        tipsText.text = ""
     }
 
     function updateSpeedValue(speedValue)

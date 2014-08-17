@@ -19,22 +19,22 @@ Rectangle{
         }
     }
 
-    Text{
-        id:titleText
-        width: parent.width
-        height: 15
-        text: qsTr("Download Tools:")
-        font.pixelSize: 12
-        color: "#008dac"
-        anchors {left: parent.left}
-    }
+//    Text{
+//        id:titleText
+//        width: parent.width
+//        height: 15
+//        text: qsTr("Download Tools:")
+//        font.pixelSize: 12
+//        color: "#008dac"
+//        anchors {left: parent.left}
+//    }
 
     Image{
         id:pointCheckImg
         width: 12
         height: 12
         source: DataControler.defaultTool==="Point"?"qrc:///images/checked":"qrc:///images/uncheck"
-        anchors {left: parent.left;leftMargin: 2; top: titleText.bottom; topMargin: 5}
+        anchors {left: parent.left;leftMargin: 2; top: parent.top; topMargin: 5}
 
         MouseArea{
             anchors.fill: parent
@@ -66,7 +66,7 @@ Rectangle{
         height: 12
         source: DataControler.defaultTool==="Aria2"?"qrc:///images/checked":"qrc:///images/uncheck"
         enabled: DataControler.isAria2Enable?true:false
-        anchors {left: pointText.right;leftMargin: 20; top: titleText.bottom; topMargin: 5}
+        anchors {left: pointText.right;leftMargin: 20; top: parent.top; topMargin: 5}
 
         MouseArea{
             anchors.fill: parent
@@ -98,7 +98,7 @@ Rectangle{
         height: 12
         source: DataControler.defaultTool==="Xware"?"qrc:///images/checked":"qrc:///images/uncheck"
         enabled: DataControler.isXwareEnable?true:false
-        anchors {left: aria2Text.right;leftMargin: 20; top: titleText.bottom; topMargin: 5}
+        anchors {left: aria2Text.right;leftMargin: 20; top: parent.top; topMargin: 5}
 
         MouseArea{
             anchors.fill: parent

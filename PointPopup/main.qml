@@ -114,8 +114,8 @@ Window {
         Rectangle{
             id:urlPanel
             width: parent.width - 40
-            height: 20
-            radius: 5
+            height: 22
+            radius: 2
             clip: true
             border.width: 2
             border.color: "#c6c4c4"
@@ -125,10 +125,23 @@ Window {
                 color: "#6d6f6e"
                 selectionColor: "#59add4"
                 selectByMouse: true
-                anchors {fill:parent; leftMargin: 5; topMargin: 2;}
+                anchors {fill:parent; leftMargin: 5; topMargin: 2; rightMargin: parent.height}
                 onTextChanged: {
                     fileListPanel.clearNameList()
                     DataControler.getURLFromBrowser(text)
+                }
+            }
+            Image{
+                width: parent.height
+                height: parent.height
+                source: "qrc:/images/bt-24"
+                anchors {right: parent.right; verticalCenter:parent.verticalCenter }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                            //点击之后调用分析bt的方法并返回数据到弹出窗
+                    }
                 }
             }
         }
@@ -159,7 +172,7 @@ Window {
             id:savePanel
             width: parent.width - 40
             height: 40
-            anchors {horizontalCenter: parent.horizontalCenter; top: toolsPanel.bottom; topMargin: 20}
+            anchors {horizontalCenter: parent.horizontalCenter; top: toolsPanel.bottom; topMargin: 10}
         }
 
         Rectangle{
@@ -178,14 +191,6 @@ Window {
                 height: 25
                 anchors {left: parent.left;leftMargin: 20; verticalCenter: parent.verticalCenter}
             }
-
-//            Text{
-//                id:loadingText
-//                text:"Loading..."
-//                font.pixelSize: 12
-//                color: "#008dac"
-//                anchors{left: parent.left;leftMargin: 20; verticalCenter: parent.verticalCenter}
-//            }
 
             //确定按钮
             Rectangle{

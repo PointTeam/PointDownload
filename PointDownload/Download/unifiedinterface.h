@@ -49,6 +49,7 @@ History:
 #include "SysData/dataflow.h"
 #include "XMLHandler/downloadxmlhandler.h"
 #include "XMLHandler/settingxmlhandler.h"
+#include "Download/XwareTask/xwaretask.h"
 
 const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
 
@@ -97,6 +98,7 @@ private:
     void startPointDownload(PrepareDownloadInfo info);
     void startAria2Download(PrepareDownloadInfo info);
     void startYougetDownload(PrepareDownloadInfo info);
+    void startXwareDownload(PrepareDownloadInfo info);
 
     //分类处理
     void handleDownloadingControl(OperationType otype, QString URL);

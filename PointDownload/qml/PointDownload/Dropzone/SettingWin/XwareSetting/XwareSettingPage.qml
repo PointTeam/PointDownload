@@ -6,12 +6,21 @@ Rectangle{
 
     XwareSettingControler{
         id:xwareCotrl
-        onSSignInFinish: {
-            logText.text = qsTr("Sign out")
+        onSIsSignInChange: {
+            if (isSignIn)
+            {
+                loginPage.visible = false
+                logoutPage.visible = true
+                logText.text = qsTr("Sign out")
+            }
+            else
+            {
+                loginPage.visible = true
+                logoutPage.visible = false
+                logText.text = qsTr("Sign in")
+            }
         }
-        onSSignOutFinish: {
-            logText.text = qsTr("Sign in")
-        }
+
         onSXwareEnableChange: xwareSettingPage.xwareEnableChange(xwareEnable)
     }
 
@@ -39,7 +48,7 @@ Rectangle{
             visible: xwareCotrl.isSignIn?true:false
             width: parent.width * 4 / 5
             height:  parent.height * 2 /  5
-            anchors {top: parent.top; topMargin: 10; horizontalCenter: parent.horizontalCenter}
+            anchors {top: parent.top; topMargin: 5; horizontalCenter: parent.horizontalCenter}
         }
 
         Image{
@@ -47,7 +56,7 @@ Rectangle{
             source: xwareCotrl.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
             width: 10
             height: parent.height / 18
-            anchors {left: loginPage.left; top: loginPage.bottom; topMargin: 15}
+            anchors {left: loginPage.left; top: loginPage.bottom; topMargin: 20}
 
             MouseArea{
                 anchors.fill: parent
@@ -120,7 +129,11 @@ Rectangle{
                     if (xwareCotrl.isSignIn)
                         xwareCotrl.signOutXware()
                     else
+                    {
+                        xwareCotrl.userName = loginPage.getUsername();
+                        xwareCotrl.userPasswd = loginPage.getPassword();
                         xwareCotrl.signInXware(loginPage.getUsername(),loginPage.getPassword())
+                    }
                 }
             }
         }

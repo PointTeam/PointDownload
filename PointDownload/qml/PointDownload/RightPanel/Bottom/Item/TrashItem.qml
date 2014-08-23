@@ -71,6 +71,8 @@ Rectangle {
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 13
+            clip: true
+            width: parent.width < 200 ? 100 : parent.width - 200
             anchors {left: trIcon.right; leftMargin: 13; top: parent.top; topMargin: 17}
         }
 

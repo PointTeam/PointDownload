@@ -22,6 +22,8 @@ Rectangle {
 
         ValueInputBox{
             id:passwdBox
+            showPasswd: false
+            showDefaultPasswd: false
             defaultText: xwareSettingPage.getDefaultUserPasswd() === ""?qsTr("Password"):xwareSettingPage.getDefaultUserPasswd()
             width: parent.width * 3 / 4
             height: parent.height / 3

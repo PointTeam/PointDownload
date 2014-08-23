@@ -26,6 +26,9 @@ URLServer::URLServer(QObject *parent) :
 {
     localServer = new QLocalServer(this);
     connect(localServer, SIGNAL(newConnection()), this, SLOT(serverNewConnectionHandler()));
+    connect(XwarePopulateObject::getInstance(), SIGNAL(sFeedbackURLParse(QString)), this, SLOT(taskParseFeedback(QString)));
+
+    XwareParseURLHander = "XwareParseURLOrBT:";
 }
 
 URLServer::~URLServer()
@@ -48,6 +51,7 @@ void URLServer::runServer()
 void URLServer::serverNewConnectionHandler()
 {
     QLocalSocket * socket = localServer->nextPendingConnection();
+    tmp_socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadyReadHandler()));
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
 }
@@ -61,11 +65,21 @@ void URLServer::socketReadyReadHandler()
 
         QString urlInfo = stream.readAll();
 
+        // debug
+//        qDebug()<<"read msg from popup window: "<<urlInfo;
+
+        // parse URL and BT file
+        if(urlInfo.startsWith(XwareParseURLHander))
+        {
+            // take URL from msg
+            taskParseHandle(urlInfo.split(XwareParseURLHander).at(1));
+            return;
+        }
+
         //取出数据，调用统一接口启动下载
         QStringList infoList = urlInfo.split("?:?");
 
         //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-        qDebug() << "infoList: "<<infoList;
         if (infoList.count() == 8)
         {
             PrepareDownloadInfo dlInfo;
@@ -96,7 +110,36 @@ void URLServer::socketReadyReadHandler()
             urlInfo = infoList.at(0)  + "?:?" + dlInfo.fileName + "?:?" + dlInfo.downloadURL + "?:?"
                     + dlInfo.redirectURl + "?:?" + dlInfo.iconPath + "?:?" + dlInfo.fileSize + "?:?" + dlInfo.storageDir + "?:?"
                     + dlInfo.threadCount + "?:?" + QString::number(dlInfo.maxSpeed) + "?:?0";
+
             emit getNewURL(urlInfo);                //此信号连接到downloadingsender类
         }
     }
 }
+
+void URLServer::taskParseFeedback(QString taskInfo)
+{
+    // debug
+//    qDebug()<<"write to popup window : "<<taskInfo;
+    tmp_socket->write(taskInfo.toStdString().c_str());
+    tmp_socket->flush();
+}
+
+void URLServer::taskParseHandle(QString taskInfo)
+{
+    if(taskInfo == "")
+    {
+        return;
+    }
+
+    // BT
+    if(taskInfo.startsWith("file:"))
+    {
+        XwarePopulateObject::getInstance()->btParse(taskInfo);
+    }
+    else
+    {
+        // common  URL
+        XwarePopulateObject::getInstance()->urlParse(taskInfo);
+    }
+}
+

@@ -66,6 +66,9 @@ void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
     case youget:
         startYougetDownload(info);
         break;
+    case Xware:
+        startXwareDownload(info);
+        break;
     default:
         break;
     }
@@ -201,6 +204,56 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
     YouGetTask::getInstance()->startDownload(info);
 }
 
+void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
+{
+    DownloadXMLHandler tmpOpera;
+    SDownloadThread threadStruct;
+    threadStruct.startBlockIndex = "1";
+    threadStruct.endBlockIndex = "1";
+    threadStruct.completedBlockCount = "1";
+    QList<SDownloadThread> tmpList;
+    tmpList.append(threadStruct);
+
+    if (!tmpOpera.urlExit(info.downloadURL,"ing"))
+    {
+        //插入xml文件
+        SDownloading tmpIngStruct;
+
+        tmpIngStruct.dlToolsType = "xware";
+        tmpIngStruct.name = info.fileName;
+        tmpIngStruct.jobMaxSpeed = "0";   // xware 暂时不作网速控制
+        tmpIngStruct.savePath = info.storageDir;
+        tmpIngStruct.enableUpload = "false";
+        tmpIngStruct.URL = info.downloadURL;
+        tmpIngStruct.redirectRUL = info.redirectURl;
+        tmpIngStruct.blockCount = "1";
+        tmpIngStruct.blockSize = "1";
+        tmpIngStruct.totalSize = info.fileSize;
+        tmpIngStruct.readySize = "0";
+        tmpIngStruct.autoOpenFolder = "false";
+        tmpIngStruct.state = "dlstate_downloading";
+        tmpIngStruct.averageSpeed = "0";
+        tmpIngStruct.iconPath = info.iconPath;
+        tmpIngStruct.threadList = tmpList;
+
+        tmpOpera.insertDownloadingNode(tmpIngStruct);
+    }
+    else
+    {
+        //必须要及时改变状态
+        DownloadXMLHandler tmpOpera;
+        SDownloading tmpStruct;
+        tmpStruct.URL = info.downloadURL;
+        tmpStruct.state = "dlstate_downloading";
+
+        tmpOpera.writeDownloadingConfigFile(tmpStruct);
+    }
+
+
+    //启动下载
+    XwareTask::getInstance()->addNewDownload(info);
+}
+
 
 void UnifiedInterface::handleDownloadingControl(OperationType otype, QString URL)
 {
@@ -298,6 +351,9 @@ void UnifiedInterface::stopDownloading(QString URL)
     case Point:
         PointTask::getInstance()->stopDownload(URL);
         break;
+    case Xware:
+        XwareTask::getInstance()->stopDownload(URL);
+        break;
     default:
         break;
     }
@@ -327,6 +383,10 @@ void UnifiedInterface::suspendDownloading(QString URL)
     case Point:
         PointTask::getInstance()->suspendDownloading(URL);
         break;
+    case Xware:
+        qDebug()<<"xxxxxxx  suspend  xxxxxxx";
+        XwareTask::getInstance()->suspendDownloading(URL);
+        break;
     default:
         break;
     }
@@ -336,6 +396,7 @@ void UnifiedInterface::suspendDownloading(QString URL)
 
 void UnifiedInterface::resumeDownloading(QString URL)
 {
+    qDebug() << "resumeDownloading...............................................";
     SettingXMLHandler tmpHandler;
     DownloadXMLHandler downloadHandler;
     //如果已经处于下载状态则不作处理
@@ -361,6 +422,10 @@ void UnifiedInterface::resumeDownloading(QString URL)
         break;
     case Point:
         PointTask::getInstance()->resumeDownloading(URL);
+        break;
+    case Xware:
+        qDebug()<<"xxxxxxx  resume  xxxxxxx";
+        XwareTask::getInstance()->resumeDownloading(URL);
         break;
     default:
         break;
@@ -390,10 +455,18 @@ void UnifiedInterface::priorityDownloading(QString URL)
         {
             startPointDownload(getPrepareInfoFromSDownloading(tmpOpera.getDownloadingNode(URL)));
         }
+
         else if (toolType == "aria2")
         {
             startAria2Download(getPrepareInfoFromSDownloading(tmpOpera.getDownloadingNode(URL)));
         }
+
+        // added by choldrim , not sure
+        else if (toolType == "Xware")
+        {
+            startXwareDownload(getPrepareInfoFromSDownloading(tmpOpera.getDownloadingNode(URL)));
+        }
+
         else
             startYougetDownload(getPrepareInfoFromSDownloading(tmpOpera.getDownloadingNode(URL)));
     }
@@ -449,12 +522,17 @@ void UnifiedInterface::deleteDownloading(QString URL)
 
 void UnifiedInterface::offlineDownloadDownloading(QString URL)
 {
-    qDebug() << "离线加速未实现，请在此处实现。。。";
+
+    qDebug()<<"-------------------- UnifiedInterface::offlineDownloadDownloading -----------------------";
+
+    XwareTask::getInstance()->entryOfflineChannel(URL);
 }
 
 void UnifiedInterface::hightSpeedChannelDownloading(QString URL)
 {
-    qDebug() << "高速通道未实现，请在此处实现。。。";
+    qDebug()<<"-------------------- UnifiedInterface::hightSpeedChannelDownloading -----------------------";
+
+    XwareTask::getInstance()->entryHighSpeedChannel(URL);
 }
 
 void UnifiedInterface::finishDownloading(QString URL)
@@ -611,7 +689,7 @@ void UnifiedInterface::initdownloadingList()
                 + QString::number(ingList.at(i).threadList.count()) + "?:?"
                 + ingList.at(i).jobMaxSpeed + "?:?"
                 + QString::number((100 * ingList.at(i).readySize.toLongLong()
-                                         / ingList.at(i).totalSize.toLongLong()),'f',1) + "?:?"//ready percentage
+                                         / ingList.at(i).totalSize.toLongLong()),'f',1) + "?:?" // ready percentage
                 + ingList.at(i).state;
         emit sAddDownloadingItem(info);
 
@@ -620,6 +698,11 @@ void UnifiedInterface::initdownloadingList()
             dlToolsType = Point;
         else if (ingList.at(i).dlToolsType == "aria2")
             dlToolsType = aria2;
+
+        // added by choldrim , not sure
+        else if (ingList.at(i).dlToolsType == "Xware")
+            dlToolsType = Xware;
+
         else
             dlToolsType = youget;
 
@@ -706,6 +789,7 @@ bool UnifiedInterface::pingNetWork()
 
 void UnifiedInterface::suspendWhenOffLine()
 {
+    qDebug() << "suspendWhenOffLine==============================";
     QList<QString> urlList = downloadingListMap.keys();
 
     DownloadXMLHandler tmpOpera;
@@ -776,6 +860,13 @@ void UnifiedInterface::initConnection()
     connect(PointTask::getInstance(), SIGNAL(sPointError(QString,QString,DownloadToolsType)),
             this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
     connect(PointTask::getInstance(), SIGNAL(sFinishPointDownload(QString)),
+            this, SLOT(downloadFinish(QString)));
+
+    connect(XwareTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
+            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
+    connect(XwareTask::getInstance(), SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
+            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(XwareTask::getInstance(), SIGNAL(sFinishXwareDownload(QString)),
             this, SLOT(downloadFinish(QString)));
 }
 
@@ -849,6 +940,14 @@ void UnifiedInterface::startReady()
                 downloadingListMap.insert(ingList.at(i).URL, aria2);
                 startAria2Download(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
+
+            // added by choldrim , not sure
+            else if (ingList.at(i).dlToolsType == "Xware")
+            {
+                downloadingListMap.insert(ingList.at(i).URL, Xware);
+                startXwareDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
+            }
+
             else if (ingList.at(i).dlToolsType == "youget")
             {
                 downloadingListMap.insert(ingList.at(i).URL, youget);
@@ -874,6 +973,14 @@ void UnifiedInterface::startReady()
                 downloadingListMap.insert(ingList.at(i).URL, aria2);
                 startAria2Download(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
+
+            // added by choldrim , not sure
+            else if (ingList.at(i).dlToolsType == "Xware")
+            {
+                downloadingListMap.insert(ingList.at(i).URL, Xware);
+                startXwareDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
+            }
+
             else if (ingList.at(i).dlToolsType == "youget")
             {
                 downloadingListMap.insert(ingList.at(i).URL, youget);
@@ -904,6 +1011,11 @@ PrepareDownloadInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloadin
         tmpInfo.toolType = Point;
     else if (infoStruct.dlToolsType == "aria2")
         tmpInfo.toolType = aria2;
+
+    // added by choldrim , not sure
+    else if (infoStruct.dlToolsType == "xware")
+        tmpInfo.toolType = Xware;
+
     else
         tmpInfo.toolType = youget;
 

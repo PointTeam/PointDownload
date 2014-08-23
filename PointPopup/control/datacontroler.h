@@ -32,6 +32,7 @@
 #include <QTimer>
 #include <QProcess>
 #include <sys/vfs.h>
+#include <QTextStream>
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 
@@ -112,8 +113,11 @@ private slots:
     QStringList getNormalYouGetFeedBackInfo(QString data);
     QStringList getMovieYouGetFeedBackInfo(QString data);
 
-
     void mainProgramStarted();                  //主程序启动后，连接主程序
+
+    void readMsgFromMainProgram();       // ( added by choldrim )
+    void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
+
 private:
     explicit DataControler(QObject *parent = 0);
 
@@ -133,6 +137,9 @@ private:
     bool checkIsInDownloaded(QString URL);      //查看URL是否已经在已完成下载列表
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
+    QString getFileTypeByName(QString fileName);   // get file mine type by file name
+    QString convertToByteUnit(QString size);  // convert a big unit to byte unit, eg: 2KB ==> 2048
+    bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
 
     //url查询处理
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
@@ -144,7 +151,7 @@ private:
 
     //将要发送到qml界面上的数据
     QString fileURL;
-    QString fileNameList;   //BT文件中可能包含多个文件,split by ?:?: type@size@name?:?type@size...
+    QString fileNameList;   //BT文件中可能包含多个文件,split by "#:#" type@size@name#:#type@size...
     QString fileSavePath;   //默认从系统文件读取，但是也可以从文件选择框选择
     QString maxThread;
     QString maxSpeed;
@@ -161,7 +168,11 @@ private:
 
     QProcess * yougetProcess;
 
-    QLocalSocket *localSocket;
+    QLocalSocket * localSocket;
+
+    QString xwareSpliterBtwData;
+    QString xwareSpliterEnd;
+    QString XwareParseURLHander;
 };
 
 //将单例对象注册到qml中使用的回调函数

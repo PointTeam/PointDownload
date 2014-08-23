@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "XMLHandler/settingxmlhandler.h"
+#include "Download/XwareTask/xwarecontroller.h"
 
 class XwareSettingControler : public QObject
 {
@@ -22,6 +23,7 @@ public:
 
     //在main函数调用
     void tryAutomaticLogin();
+
 public:
     bool getXwareEnable();
     bool getIsSignIn();
@@ -34,6 +36,7 @@ public:
     void setAutomaticLogin(bool flag);
     void setUserName(QString tmpName);
     void setUserPasswd(QString tmpPasswd);
+
 signals:
     void sXwareEnableChange();
     void sIsSignInChange();
@@ -47,6 +50,10 @@ signals:
     void sSignInError();
     void sSignOutFinish();
     void sSignOutError();
+
+private slots:
+    void loginResultHandle(XwareLoginResultType rs);
+
 private:
     void initData();
 
@@ -56,6 +63,7 @@ private:
     bool automaticLogin;
     QString userName;
     QString userPasswd;
+
 };
 
 #endif // XWARESETTINGCONTROLER_H

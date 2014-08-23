@@ -3,33 +3,46 @@
 XwareSettingControler::XwareSettingControler(QObject *parent) :
     QObject(parent)
 {
+    connect(XwareController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
+            this, SLOT(loginResultHandle(XwareLoginResultType)));
     initData();
 }
 
 void XwareSettingControler::enableXware()
 {
-
+    XwareController::getInstance()->addXwareFirmware();
+    setXwareEnable(true);
 }
 
 void XwareSettingControler::disableXware()
 {
-
+    XwareController::getInstance()->removeXwareFirmware();
+    setXwareEnable(false);
 }
 
 void XwareSettingControler::signInXware(QString username, QString passwd)
 {
 
+
+    XwareController::getInstance()->login(username, passwd);
 }
 
 void XwareSettingControler::signOutXware()
 {
-
+    XwareController::getInstance()->logout();
 }
 
 void XwareSettingControler::tryAutomaticLogin()
 {
+//    qDebug()<<isSignIn<<userName<<userPasswd<<automaticLogin;
+
+    setIsSignIn(false);   // added by Choldrim
+
     if (!isSignIn && userName != "" & userPasswd != "" & automaticLogin)
-        signInXware(userName,userPasswd);
+    {
+        //signInXware(userName,userPasswd);
+        XwareController::getInstance()->tryAutomaticLogin(userName, userPasswd);
+    }
 }
 
 bool XwareSettingControler::getXwareEnable()
@@ -82,6 +95,7 @@ void XwareSettingControler::setIsSignIn(bool flag)
         tmpHandler.setChildElement(XwareSetting,"Logged","False");
 
     emit sIsSignInChange();
+    emit sSignInFinish();
 }
 
 void XwareSettingControler::setAutomaticLogin(bool flag)
@@ -116,6 +130,27 @@ void XwareSettingControler::setUserPasswd(QString tmpPasswd)
     userPasswd = tmpPasswd;
 
     emit sUserPasswdChange();
+}
+
+void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
+{
+
+//    qDebug()<<"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+    if(rs == x_LoginSuccess)
+    {
+        // save state
+        setIsSignIn(true);
+    }
+    else if(rs == x_Logout)
+    {
+        // save state
+        setIsSignIn(false);
+    }
+    else if(rs == x_LoginTimeOut)
+    {
+        // time out
+    }
 }
 
 void XwareSettingControler::initData()

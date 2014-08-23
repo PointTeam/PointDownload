@@ -158,8 +158,8 @@ void SettingXMLHandler::touchPointSettingFile()
         xwareSettingsNode.appendChild(createChildElement("State","Disable"));
         xwareSettingsNode.appendChild(createChildElement("Version","1.10.16"));
         xwareSettingsNode.appendChild(createChildElement("Logged","False"));
-        xwareSettingsNode.appendChild(createChildElement("UserName"," "));
-        xwareSettingsNode.appendChild(createChildElement("UserPasswd"," "));
+        xwareSettingsNode.appendChild(createChildElement("UserName","Thunder User Name"));
+        xwareSettingsNode.appendChild(createChildElement("UserPasswd","UGFzc3dvcmQ="));
         xwareSettingsNode.appendChild(createChildElement("AutomaticLogin","True"));
 
         //you-get node

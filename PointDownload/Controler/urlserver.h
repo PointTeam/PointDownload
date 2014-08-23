@@ -42,9 +42,15 @@ signals:
 private slots:
     void serverNewConnectionHandler();
     void socketReadyReadHandler();
+    void taskParseFeedback(QString taskInfo);
 
 private:
+      // taskInfo: margent, ftp, BT file, or other which can not be handle by the popup window
+    void taskParseHandle(QString taskInfo);
     QLocalServer * localServer;
+
+    QLocalSocket * tmp_socket;
+    QString XwareParseURLHander;
 
 };
 

@@ -32,6 +32,7 @@ import QtQuick 2.0
 FocusScope {
     property string defaultText : "Download URL";
     property bool showPasswd:true
+    property bool showDefaultPasswd:true
 
     clip: true
 
@@ -39,10 +40,12 @@ FocusScope {
 
     signal finishInput()
 
-    Text {
+    TextInput {
         id: defaultInputText
         width: parent.width
         height: parent.height
+        enabled: false
+        echoMode: showDefaultPasswd?TextInput.Normal : TextInput.Password
         anchors { left: parent.left; leftMargin:2 }
         verticalAlignment: Text.AlignVCenter
         text: defaultText

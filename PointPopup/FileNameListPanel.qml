@@ -162,7 +162,7 @@ Rectangle {
             return;
         }
 
-        var infoArry = nameList.split("?:?");
+        var infoArry = nameList.split("#:#");
         for (var i = 0; i < infoArry.length; i++)
         {
             var nameArry = infoArry[i].split("@");
@@ -178,6 +178,11 @@ Rectangle {
                     sizeByte = (nameArry[1] / 1024).toFixed(1) + " KB"
                 else
                     sizeByte = (nameArry[1] / 1).toFixed(1) + " B"
+            }
+            // added by choldrim
+            else
+            {
+                continue;
             }
 
             //从已下载项和垃圾桶传过来的值中没有下载百分比(nameArry[7])的数据

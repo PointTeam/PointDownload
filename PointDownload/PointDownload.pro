@@ -24,6 +24,7 @@ QT += core
 QT += quick
 QT += gui
 QT += multimedia
+QT += webkitwidgets
 #CONFIG += static
 
 #Add support for unity menu------------------------------------------------------------------------------------------------------
@@ -80,7 +81,13 @@ SOURCES += main.cpp \
     Controler/SettingWin/settingcontroler.cpp \
     Controler/SettingWin/yougetsettingcontroler.cpp \
     Controler/SettingWin/dropzonesettingcontroler.cpp \
-    Controler/SettingWin/xwaresettingcontroler.cpp
+    Controler/SettingWin/xwaresettingcontroler.cpp \
+    Download/XwareTask/xwarecontroller.cpp \
+    Download/XwareTask/xwarepopulateobject.cpp \
+    Download/XwareTask/xwaretask.cpp \
+    Download/XwareTask/xwarewebcontroller.cpp \
+    Download/XwareTask/mynetworkaccessmanager.cpp \
+    Download/XwareTask/mywebview.cpp
 
 # Installation path
 # target.path =
@@ -115,7 +122,15 @@ HEADERS += \
     Controler/SettingWin/settingcontroler.h \
     Controler/SettingWin/yougetsettingcontroler.h \
     Controler/SettingWin/dropzonesettingcontroler.h \
-    Controler/SettingWin/xwaresettingcontroler.h
+    Controler/SettingWin/xwaresettingcontroler.h \
+    Download/XwareTask/XwareConstants.h \
+    Download/XwareTask/xwarecontroller.h \
+    Download/XwareTask/XwareDataType.h \
+    Download/XwareTask/xwarepopulateobject.h \
+    Download/XwareTask/xwaretask.h \
+    Download/XwareTask/xwarewebcontroller.h \
+    Download/XwareTask/mynetworkaccessmanager.h \
+    Download/XwareTask/mywebview.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS = PointDownload_zh_CN.ts

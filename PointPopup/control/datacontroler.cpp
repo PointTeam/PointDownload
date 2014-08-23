@@ -45,6 +45,10 @@ DataControler::DataControler(QObject *parent) :
     setIsXwareEnable(gSettingHandler.getChildElement(XwareSetting,"State")=="Enable"?true:false);
 
     yougetProcess = NULL;
+
+    xwareSpliterBtwData = "#..#";
+    xwareSpliterEnd = "#.^_^.#";
+    XwareParseURLHander = "XwareParseURLOrBT:";
 }
 
 //保证单例对象先于qml组件之前构建
@@ -131,12 +135,16 @@ void DataControler::getURLFromBrowser(QString URL)
     {
         QTimer::singleShot(100,this,SLOT(getURLInfoFromYouget()));
     }
-    else
+    else if(toolsType == "Point")
     {
         //此处会导致警告：QString::arg: Argument missing: 无法解析res_nclose中的符号“res_nclose”：libresolv.so.2,
         //获取http、ftp、Bt等类型的信息
         //延迟时间，防止qml组件未初始化前就发送了信号
         QTimer::singleShot(100,this,SLOT(getURLInfo()));
+    }
+    else if(toolsType == "Xware")
+    {
+        QTimer::singleShot(100,this,SLOT(getXwareURLOrBtInfo()));
     }
 }
 
@@ -314,17 +322,11 @@ void DataControler::getURLInfo()
         setFileNameList(tmpNameList);
         emit sFnishGetAllInfo();
     }
-    else if(fileURL.contains("ftp://"))
-    {
-        //必须要执行getHttpFileTypeSize函数，保证如果有重定向可以根据重定向后再去取名字
-        QString tmpNameList = getFtpFileTypeSize(fileURL) + "@" + getHttpFtpFileName(redirectURL);
-        setFileNameList(tmpNameList);
-        emit sFnishGetAllInfo();
-    }
-    else if (fileURL.contains(".torrent"))
-    {
 
-    }
+//    else if (fileURL.contains(".torrent"))
+//    {
+
+//    }
     //确保toolsType参数在获取信息后一定会发送至界面
     setToolsType(toolsType);
 }
@@ -406,7 +408,46 @@ void DataControler::mainProgramStarted()
         localSocket = new QLocalSocket();
         connectToMainProgram();
         isConnected = true;
+
+        //============ choldrim add =====================//
+        connect(localSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromMainProgram()));
+        //=============================================//
     }
+}
+
+
+void DataControler::readMsgFromMainProgram()
+{
+    QTextStream stream(localSocket);
+    QString msg = stream.readAll();
+
+    // debug
+    qDebug()<<"recieve parse url or bt file result : "<<msg;
+
+    QStringList files = msg.split(xwareSpliterEnd);
+    QString allFileInfo = "";
+    foreach (QString file, files)
+    {
+        if(file.length() == 0)continue;
+
+        // format: fileName #..# fileSize
+        QStringList fileInfoList = file.split(xwareSpliterBtwData);
+
+        // get mine type by name
+        QString fileType = getFileTypeByName(fileInfoList.at(0));
+
+        QString fileSize = convertToByteUnit(fileInfoList.at(1));
+
+        // changed to type@size@name?:?
+        QString singleFileInfo = fileType + "@" + fileSize + "@" + fileInfoList.at(0) + "#:#";
+        allFileInfo += singleFileInfo;
+    }
+
+    qDebug()<<"all file info:" << allFileInfo;
+
+    setFileNameList(allFileInfo);
+    emit sFnishGetAllInfo();
+
 }
 
 QString DataControler::getHttpFileTypeSize(QString URL)
@@ -625,13 +666,85 @@ bool DataControler::checkIsInDownloadTrash(QString URL)
     return false;//at the end got nothing will return false
 }
 
+QString DataControler::getFileTypeByName(QString fileName)
+{
+    QString vidioRexStr = QString(".*\.(asf|avi|wm|wmp|wmv|ram|rm|rmvb|rp|rt|")
+            + QString("smil|scm|dat|m1v|m2v|m2p|m2ts|mp2v|mpe|mpeg|")
+            + QString("mpeg1|mpeg2|mpg|mpv2|pss|pva|tp|tpr|ts|m4b|")
+            + QString("m4p|m4v|mp4|mpeg4|3g2|3gp|3gp2|3gpp|mov|qt|")
+            + QString("flv|f4v|hlv|ifo|vob|amv|csf|divx|evo|mkv|mod|")
+            + QString("pmp|vp6|vik|mts|xvx|xv|xlmv|ogm|ogv|ogx|dvd)$");
+    QRegExp rex(vidioRexStr);
+    if(rex.exactMatch(fileName))
+    {
+        QString suffix = fileName.section("\.", -1);
+        return "video/"+suffix;
+    }
+
+    // tmp
+    return "Unknow";
+}
+
+QString DataControler::convertToByteUnit(QString size)
+{
+    if(size.contains("T"))
+    {
+        double num = size.split("G").at(0).toDouble();
+        return QString::number(num * 1024.0 * 1024.0 * 1024.0 * 1024.0);
+    }
+
+    if(size.contains("G"))
+    {
+        double num = size.split("G").at(0).toDouble();
+        return QString::number(num * 1024.0 * 1024.0 * 1024.0);
+    }
+
+    if(size.contains("M"))
+    {
+        double num = size.split("M").at(0).toDouble();
+        return QString::number(num * 1024.0 * 1024.0);
+    }
+
+    if(size.contains("K"))
+    {
+        double num = size.split("K").at(0).toDouble();
+        return QString::number(num * 1024.0);
+    }
+
+    return QString::number(size.split("B").at(0).toDouble());
+}
+
+bool DataControler::isXwareParseType(QString task)
+{
+    QString str = QString("^(ftp|magnet|ed2k|thunder|mms|rtsp)?:.*");
+    QRegExp rex(str);
+    return rex.exactMatch(task);
+}
+
+void DataControler::getXwareURLOrBtInfo()
+{
+    // debug
+
+    fileURL = XwareParseURLHander + fileURL;
+
+    // send this url or bt file to main window, and let it is parsed by xware
+    localSocket->write(fileURL.toStdString().c_str());
+    localSocket->flush();
+
+    // restore URL
+    fileURL = fileURL.split(XwareParseURLHander).at(1);
+    localSocket->waitForReadyRead();
+
+    setToolsType(toolsType);
+}
+
 
 QString DataControler::getDLToolsTypeFromURL(QString URL)
 {
     QRegExp rx;
     rx.setPatternSyntax(QRegExp::RegExp);
 
-    QString normalURLRegex = QString("^((https|http|chrome|ftp)?://)")
+    QString normalURLRegex = QString("^((https|http|chrome)?://)")
             + QString(".*\.(exe|asf|avi|exe|iso|mp3|mpeg|mpg|mpga|ra|rar|rm|rmvb|tar|wma|wmp|wmv|mov|zip|3gp|")
             + QString("chm|mdf|torrent|jar|msi|arj|bin|dll|psd|hqx|sit|lzh|gz|tgz|xlsx|xls|doc|docx|ppt|pptx|flv|swf|mkv|")
             + QString("tp|ts|flac|ape|wav|aac|txt|dat|7z|ttf|bat|xv|xvx|pdf|mp4|apk|ipa|epub|mobi|deb|sisx|cab|pxl|run|rpm|deb|dmg)")
@@ -663,7 +776,12 @@ QString DataControler::getDLToolsTypeFromURL(QString URL)
 
     if (videoPos >= 0)
         return "YouGet";
-    else
+
+    if(isXwareParseType(URL))
+    {
+        return "Xware";
+    }
+
         return "";                  //排除两种可能性外,就是不合法的链接
 }
 

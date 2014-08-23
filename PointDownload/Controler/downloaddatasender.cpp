@@ -208,12 +208,18 @@ void DownloadDataSender::setDownloadSpeed(QString speed)
 void DownloadDataSender::setThunderOfflineSpeed(QString speed)
 {
     thunderOfflineSpeed = speed;
+
+    qDebug()<<"thunderOfflineSpeedChange ============>"<<speed;
+
     emit thunderOfflineSpeedChange();
 }
 
 void DownloadDataSender::setThunderHightSpeed(QString speed)
 {
     thunderHightSpeed = speed;
+
+    qDebug()<<"thunderOfflineSpeedChange ============>"<<speed;
+
     emit thunderHightSpeedChange();
 }
 
@@ -258,6 +264,17 @@ void DownloadDataSender::slotGetDownloadingInfo(DownloadingItemInfo infoList)
     setDownloadURL(infoList.downloadURL);
     setDownloadSpeed(infoList.downloadSpeed);
     setCompletePercentage(infoList.downloadPercent);
+
+    if(infoList.thunderHightSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara())
+    {
+        setThunderHightSpeed(infoList.thunderHightSpeed);
+    }
+
+    if(infoList.thunderOfflineSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara())
+    {
+        setThunderHightSpeed(infoList.thunderOfflineSpeed);
+    }
+
     switch(infoList.downloadState)
     {
     case dlstate_downloading:

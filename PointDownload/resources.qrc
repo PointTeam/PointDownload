@@ -191,4 +191,8 @@
         <file alias="user&amp;passwd">resources/images/dropzone/user&amp;passwd.png</file>
         <file alias="thunder64">resources/images/dropzone/thunder64.png</file>
     </qresource>
+    <qresource prefix="/xware">
+        <file>resources/xware/xware_login.js</file>
+        <file>resources/xware/xware_main.js</file>
+    </qresource>
 </RCC>

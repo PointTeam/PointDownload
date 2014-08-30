@@ -142,9 +142,10 @@ void SettingXMLHandler::touchPointSettingFile()
         QDomElement dropzoneSetting = domDocument.createElement("DropzoneSetting");
         dropzoneSetting.appendChild(createChildElement("State","Enable"));
         dropzoneSetting.appendChild(createChildElement("Opacity","10"));
-        dropzoneSetting.appendChild(createChildElement("Position","0,0"));
+        dropzoneSetting.appendChild(createChildElement("WinX","0"));
+        dropzoneSetting.appendChild(createChildElement("WinY","0"));
         dropzoneSetting.appendChild(createChildElement("ShowJobCount","True"));
-        dropzoneSetting.appendChild(createChildElement("ShowCPUUsage","False"));
+        dropzoneSetting.appendChild(createChildElement("ShowStorageUsage","False"));
         dropzoneSetting.appendChild(createChildElement("InfoInterval","2000"));
 
         //Aria2 node

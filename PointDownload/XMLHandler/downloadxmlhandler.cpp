@@ -515,7 +515,7 @@ SDownloading DownloadXMLHandler::getDownloadingNode(QString URL)
     QList<SDownloading> tmpList = getDownloadingNodes();
     for (int i = 0; i < tmpList.count(); i ++)
     {
-        if (tmpList.at(i).URL == URL)
+        if (tmpList.at(i).URL == URL || tmpList.at(i).redirectRUL == URL)
         {
             tmpNode = tmpList.at(i);
             break;

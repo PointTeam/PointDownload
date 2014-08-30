@@ -527,16 +527,11 @@ void UnifiedInterface::deleteDownloading(QString URL)
 
 void UnifiedInterface::offlineDownloadDownloading(QString URL)
 {
-
-    qDebug()<<"-------------------- UnifiedInterface::offlineDownloadDownloading -----------------------";
-
     XwareTask::getInstance()->entryOfflineChannel(URL);
 }
 
 void UnifiedInterface::hightSpeedChannelDownloading(QString URL)
 {
-    qDebug()<<"-------------------- UnifiedInterface::hightSpeedChannelDownloading -----------------------";
-
     XwareTask::getInstance()->entryHighSpeedChannel(URL);
 }
 
@@ -656,7 +651,6 @@ void UnifiedInterface::initDownloadList()
     initDownloadedList();
     initdownloadingList();
     initTrashList();
-    initConnection();
 }
 
 void UnifiedInterface::initDownloadedList()
@@ -836,49 +830,26 @@ void UnifiedInterface::pingOutSide()
 
 void UnifiedInterface::getSpeedSum()
 {
-    if (downloadingListMap.count() <= 0)
-        return;
+//    if (downloadingListMap.count() <= 0)
+//        return;
 
-    int speedSum = 0;
+//    int speedSum = 0;
 
-    DownloadXMLHandler tmpopera;
-    QList<QString> urlList = downloadingListMap.keys();
-    for (int i = 0; i < downloadingListMap.count(); i ++)
-    {
-        speedSum += tmpopera.getDownloadingNode(urlList.at(i)).averageSpeed.toInt();
-    }
+//    DownloadXMLHandler tmpopera;
+//    QList<QString> urlList = downloadingListMap.keys();
+//    for (int i = 0; i < downloadingListMap.count(); i ++)
+//    {
+//        speedSum += tmpopera.getDownloadingNode(urlList.at(i)).averageSpeed.toInt();
+//    }
 
-    if (speedSum == 0)//断网状态
-    {
-        pingTimer->start(PING_INTERVAL);
-        speedSumTimer->stop();
-        suspendWhenOffLine();
-    }
+//    if (speedSum == 0)//断网状态
+//    {
+//        pingTimer->start(PING_INTERVAL);
+//        speedSumTimer->stop();
+//        suspendWhenOffLine();
+//    }
 }
 
-void UnifiedInterface::initConnection()
-{
-    connect(YouGetTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(YouGetTask::getInstance(), SIGNAL(sYouGetError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(YouGetTask::getInstance(), SIGNAL(sFinishYouGetDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
-
-    connect(PointTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(PointTask::getInstance(), SIGNAL(sPointError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(PointTask::getInstance(), SIGNAL(sFinishPointDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
-
-    connect(XwareTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(XwareTask::getInstance(), SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(XwareTask::getInstance(), SIGNAL(sFinishXwareDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
-}
 
 void UnifiedInterface::deleteFileFromDisk(QString path, QString fileName)
 {

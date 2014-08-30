@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "Download/DataType.h"
+#include "Download/unifiedinterface.h"
 #include "xwarecontroller.h"
 #include "xwarewebcontroller.h"
 #include "XMLHandler/downloadxmlhandler.h"
@@ -38,8 +39,9 @@ private slots:
 
 private:
     explicit XwareTask(QObject *parent = 0);
-    void updateXMLFile(DownloadingItemInfo info);
 
+    void updateXMLFile(DownloadingItemInfo info);
+    void initConnection();
 private:
     static XwareTask *xwareTask;
 

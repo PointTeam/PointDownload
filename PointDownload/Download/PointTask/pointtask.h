@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QMap>
 #include "Download/DataType.h"
+#include "Download/unifiedinterface.h"
 #include "HttpTask/httptask.h"
 
 class PointTask : public QObject

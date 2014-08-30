@@ -33,7 +33,6 @@ History:
 #include <QClipboard>
 #include <QQmlEngine>
 #include <QtWidgets/qapplication.h>
-#include "Controler/downloaddatasender.h"
 class MonitorClipBoard : public QObject
 {
     Q_OBJECT

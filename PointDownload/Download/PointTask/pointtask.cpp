@@ -135,6 +135,14 @@ void PointTask::initConnection()
             this, SIGNAL(sPointError(QString,QString,DownloadToolsType)));
     //完成下载的信号连接
     connect(HttpTask::getInstance(), SIGNAL(sDownloadFinish(QString)), this, SLOT(slotFinishDownload(QString)));
+
+
+    connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
+            UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
+    connect(this, SIGNAL(sPointError(QString,QString,DownloadToolsType)),
+            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(this, SIGNAL(sFinishPointDownload(QString)),
+            UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
 }
 
 ProtocalType PointTask::getProtocalTypeFromURL(QString URL)

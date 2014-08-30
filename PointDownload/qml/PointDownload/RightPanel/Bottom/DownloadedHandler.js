@@ -67,7 +67,7 @@ function getFileInfo(url)
         tmpObj = edItemModel.get(i);
 
         if (tmpObj.tmpURL !== url)
-            break;
+            continue;
 
         if (tmpObj.tmpSize.indexOf("GB") > 0)
         {
@@ -85,7 +85,6 @@ function getFileInfo(url)
         {
             totalSize =    tmpObj.tmpSize.substring(0,tmpObj.tmpSize.indexOf("B")- 1 ) * 1
         }
-
 
         return tmpObj.tmpDLToolsType + "?:?"
                 + tmpObj.tmpName + "?:?"

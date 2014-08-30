@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import Singleton.PEventFilter 1.0
 import Singleton.TopContrl 1.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 import Singleton.MonitorClipBoard 1.0
 import "../SettingWin/SettingWin.js" as SettingScript
 
@@ -46,7 +46,7 @@ Image{
         id:jobControlSector
         startAngle: showMainSector.startAngle
         endAngle: showMainSector.endAngle
-        iconPath: DownloadDataSender.isAllSuspend?"qrc:/images/dropzone/startall":"qrc:/images/dropzone/stopall"
+        iconPath: /*DownloadDataSender.isAllSuspend?"qrc:/images/dropzone/startall":*/"qrc:/images/dropzone/stopall"
         MouseArea{
             width: parent.width / 3
             height: 30
@@ -55,12 +55,12 @@ Image{
             onClicked: {
                 if (jobControlSector.iconPath == "qrc:/images/dropzone/startall")
                 {
-                    DownloadDataSender.resumeAllDownloading()
+                    DLDataConverter.resumeAllDownloading()
                     jobControlSector.iconPath = "qrc:/images/dropzone/stopall"
                 }
                 else
                 {
-                    DownloadDataSender.suspendAllDownloading()
+                    DLDataConverter.suspendAllDownloading()
                     jobControlSector.iconPath = "qrc:/images/dropzone/startall"
                 }
                 updateMenuState()
@@ -87,7 +87,7 @@ Image{
             anchors {horizontalCenter: parent.horizontalCenter}
             onClicked: {
                 updateMenuState()
-                DownloadDataSender.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
+                DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
             }
             onEntered: outerImg.menuButtonHover(qsTr("NewTask"))
             onExited:outerImg.menuButtonHover("")

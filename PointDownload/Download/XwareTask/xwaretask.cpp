@@ -11,6 +11,9 @@ XwareTask::XwareTask(QObject *parent) :
     connect(XwareController::getInstance(), SIGNAL(sFinishDownload(QString)),
             this, SIGNAL(sFinishXwareDownload(QString)));
 
+    //match add,2014.8.30
+    initConnection();
+
     xmlUpdateInterval = 0;
 }
 
@@ -124,3 +127,12 @@ void XwareTask::updateXMLFile(DownloadingItemInfo info)
     tmpOpera.writeDownloadingConfigFile(tmpStruct);
 }
 
+void XwareTask::initConnection()
+{
+    connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
+            UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
+    connect(this, SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
+            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(this, SIGNAL(sFinishXwareDownload(QString)),
+            UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
+}

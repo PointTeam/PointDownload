@@ -22,8 +22,7 @@
 import QtQuick 2.0
 import "DownloadingHandler.js" as DownloadingScript
 import "Item"
-//import QtQuick.Controls 1.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 
 Rectangle {
     id: downloadingPanel
@@ -31,51 +30,50 @@ Rectangle {
 
     //连接单例的信号
     Connections {
-        target: DownloadDataSender
-        //当c++中的DownloadDataSender类触发以下信号时，更改相应属性
-
-        onFileInfoChange: {
-            if (DownloadDataSender.downloadType === "dl_downloading")
-                DownloadingScript.addNewItem(DownloadDataSender.fileInfo)
+        target: DLDataConverter
+        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
+        onSFileInfoChange: {
+            if (dlType === "dl_downloading")
+                DownloadingScript.addNewItem(fileInfo)
         }
-        onContrlResultTypeChange: {
-            if (DownloadDataSender.downloadType === "dl_downloading")
-            {
-                if (DownloadDataSender.contrlResultType === "download_priority")
-                    sortTimer.start();
-            }
+        onSDLSpeedChange: {
+            DownloadingScript.updateNetSpeed(dlURL, dlSpeed)
         }
-        onDownloadSpeedChange: {
-            DownloadingScript.updateNetSpeed(DownloadDataSender.downloadURL, DownloadDataSender.downloadSpeed)
+        onSThunderOfflineSpeedChange:{
+            DownloadingScript.updateOfflineSpeed(dlURL, offlineSpeed)
         }
-        onThunderOfflineSpeedChange:{
-            DownloadingScript.updateOfflineSpeed(DownloadDataSender.downloadURL,DownloadDataSender.thunderOfflineSpeed)
+        onSThunderHightSpeedChange:{
+            DownloadingScript.updateHightSpeed(dlURL,hightSpeed)
         }
-        onThunderHightSpeedChange:{
-            DownloadingScript.updateHightSpeed(DownloadDataSender.downloadURL,DownloadDataSender.thunderHightSpeed)
+        onSDLStateChange: {
+            DownloadingScript.updateFileState(dlURL, dlState)
         }
-
-        onCompletePercentageChange:{
-            if (DownloadDataSender.completePercentage === 100)
-            {
-                if (DownloadDataSender.downloadURL == "")
-                    return;
-                //处理qml显示界面
-                downloadedPage.addItem(getFileInfo(DownloadDataSender.downloadURL))
-                downloadingPage.moveItem(DownloadDataSender.downloadURL)
-                //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_downloading","download_finishDownload",DownloadDataSender.downloadURL)
-            }
-            DownloadingScript.updatePercentage(DownloadDataSender.downloadURL, DownloadDataSender.completePercentage)
-        }
-        onDownloadStateChange: {
-            DownloadingScript.updateFileState(DownloadDataSender.downloadURL, DownloadDataSender.downloadState)
-        }
-        onFileNameChange:{
-            DownloadingScript.updateFileName(DownloadDataSender.downloadURL,DownloadDataSender.fileName);
+        onSFileNameChange:{
+            if (dlType == "dl_downloading")
+            DownloadingScript.updateFileName(dlURL,fileName);
         }
         onSRefreshDownloadingItem:{
             DownloadingScript.moveItemToTop();
+        }
+        onSDLProgressChange:{
+            if (progress >= 100)
+            {
+                if (dlURL == "")
+                    return;
+                //处理qml显示界面
+                downloadedPage.addItem(getFileInfo(dlURL))
+                downloadingPage.moveItem(dlURL)
+                //调用C++类做文件处理
+                DLDataConverter.controlItem("dl_downloading","download_finishDownload",dlURL)
+            }
+            DownloadingScript.updatePercentage(dlURL, progress)
+        }
+        onSControlFeedback: {
+//            if (DownloadDataSender.downloadType === "dl_downloading")
+//            {
+//                if (DownloadDataSender.contrlResultType === "download_priority")
+//                    sortTimer.start();
+//            }
         }
     }
 

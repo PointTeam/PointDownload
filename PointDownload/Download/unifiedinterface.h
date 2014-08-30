@@ -72,6 +72,7 @@ signals:
     void sAddDownloadedItem(QString infolist);
     void sAddDownloadTrashItem(QString infoList);
 
+    //实时数据
     void sRealTimeData(DownloadingItemInfo info);
     //动作反馈信号
     void sReturnControlResult(DownloadType dtype,OperationType otype, QString URL,bool result);
@@ -133,7 +134,6 @@ private:
     void initDownloadedList();
     void initdownloadingList();
     void initTrashList();
-    void initConnection();
 
     void deleteFileFromDisk(QString path, QString fileName);
 

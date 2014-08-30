@@ -109,7 +109,7 @@ void XwareTask::updateRealTimeData(DownloadingItemInfo info)
 void XwareTask::updateXMLFile(DownloadingItemInfo info)
 {
 
-//    qDebug()<<"updateXMLFile";
+    qDebug()<<"updateXMLFile";
 
     DownloadXMLHandler tmpOpera;
     SDownloading tmpStruct = tmpOpera.getDownloadingNode(info.downloadURL);
@@ -119,7 +119,7 @@ void XwareTask::updateXMLFile(DownloadingItemInfo info)
                                                     ) / UPDATE_XML_INTERVAL));
     tmpStruct.readySize = QString::number(qint64(info.downloadPercent / 100 * tmpStruct.totalSize.toLongLong()));
 
-    qDebug()<<"****************************  readySize :"<<tmpStruct.readySize<<"*****************************";
+    qDebug()<<"****************************  readySize :"<<tmpStruct.readySize<<" *****************************";
 
     tmpOpera.writeDownloadingConfigFile(tmpStruct);
 }

@@ -679,6 +679,12 @@ void UnifiedInterface::initdownloadingList()
 
     for (int i = 0;i < ingList.count(); i++)
     {
+        qint64 totalSize = ingList.at(i).totalSize.toLongLong();
+        qint64 readySize = ingList.at(i).readySize.toLongLong();
+        double percentage = 0;
+        if (totalSize != 0)
+            percentage =100 *  readySize / (double)totalSize;
+
         QString info =  ingList.at(i).dlToolsType + "?:?"
                 + ingList.at(i).name + "?:?"
                 + ingList.at(i).URL + "?:?"
@@ -688,8 +694,7 @@ void UnifiedInterface::initdownloadingList()
                 + ingList.at(i).savePath + "?:?"
                 + QString::number(ingList.at(i).threadList.count()) + "?:?"
                 + ingList.at(i).jobMaxSpeed + "?:?"
-                + QString::number((100 * ingList.at(i).readySize.toLongLong()
-                                         / ingList.at(i).totalSize.toLongLong()),'f',1) + "?:?" // ready percentage
+                + QString::number(percentage,'f',1) + "?:?" // ready percentage
                 + ingList.at(i).state;
         emit sAddDownloadingItem(info);
 

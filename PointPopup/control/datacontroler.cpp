@@ -48,7 +48,7 @@ DataControler::DataControler(QObject *parent) :
 
     xwareSpliterBtwData = "#..#";
     xwareSpliterEnd = "#.^_^.#";
-    XwareParseURLHander = "XwareParseURLOrBT:";
+    xwareParseURLHander = "XwareParseURLOrBT:";
 }
 
 //保证单例对象先于qml组件之前构建
@@ -690,28 +690,28 @@ QString DataControler::convertToByteUnit(QString size)
     if(size.contains("T"))
     {
         double num = size.split("G").at(0).toDouble();
-        return QString::number(num * 1024.0 * 1024.0 * 1024.0 * 1024.0);
+        return QString::number((long long)num * 1024 * 1024 * 1024 * 1024);
     }
 
     if(size.contains("G"))
     {
         double num = size.split("G").at(0).toDouble();
-        return QString::number(num * 1024.0 * 1024.0 * 1024.0);
+        return QString::number((long long)num * 1024 * 1024 * 1024);
     }
 
     if(size.contains("M"))
     {
         double num = size.split("M").at(0).toDouble();
-        return QString::number(num * 1024.0 * 1024.0);
+        return QString::number((long long)num * 1024 * 1024);
     }
 
     if(size.contains("K"))
     {
         double num = size.split("K").at(0).toDouble();
-        return QString::number(num * 1024.0);
+        return QString::number((long long)num * 1024);
     }
 
-    return QString::number(size.split("B").at(0).toDouble());
+    return QString::number(size.split("B").at(0).toLongLong());
 }
 
 bool DataControler::isXwareParseType(QString task)
@@ -725,14 +725,14 @@ void DataControler::getXwareURLOrBtInfo()
 {
     // debug
 
-    fileURL = XwareParseURLHander + fileURL;
+    fileURL = xwareParseURLHander + fileURL;
 
     // send this url or bt file to main window, and let it is parsed by xware
     localSocket->write(fileURL.toStdString().c_str());
     localSocket->flush();
 
     // restore URL
-    fileURL = fileURL.split(XwareParseURLHander).at(1);
+    fileURL = fileURL.split(xwareParseURLHander).at(1);
     localSocket->waitForReadyRead();
 
     setToolsType(toolsType);

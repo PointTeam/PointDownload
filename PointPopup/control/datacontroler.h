@@ -138,7 +138,7 @@ private:
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
     QString getFileTypeByName(QString fileName);   // get file mine type by file name
-    QString convertToByteUnit(QString size);  // convert a big unit to byte unit, eg: 2KB ==> 2048
+    QString convertToByteUnit(QString size);  //  将大单位（如：GB）转换成小单元B，返回值是不带单位的纯数字字符串, eg: 2KB ==> 2048
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
 
     //url查询处理
@@ -172,7 +172,7 @@ private:
 
     QString xwareSpliterBtwData;
     QString xwareSpliterEnd;
-    QString XwareParseURLHander;
+    QString xwareParseURLHander;    // this hander is added to the URL that need be parsed by xware
 };
 
 //将单例对象注册到qml中使用的回调函数

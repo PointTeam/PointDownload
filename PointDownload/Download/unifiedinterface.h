@@ -61,6 +61,7 @@ public:
     static UnifiedInterface * getInstance();            //获取此类的单例对象
 
     void getPrepareDownloadInfo(PrepareDownloadInfo info);  //获取到从弹出界面传递过来的信息并调用相应的类进行下载处理
+    void cleanDownloadFinishItem(QString dlURL);
 
     void changeMaxJobCount(int newCount);
 

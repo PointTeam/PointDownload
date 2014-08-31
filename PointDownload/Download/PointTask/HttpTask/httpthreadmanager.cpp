@@ -131,6 +131,7 @@ void HttpThreadManager::slotUpdataXMLFile()
 
 void HttpThreadManager::slotRetryDownload()
 {
+    qDebug() << "slotRetryDownload.............";
     stopDownload();
     startDownload();
 }
@@ -156,6 +157,9 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
     finishThreadCount ++;
     if (finishThreadCount == xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).threadList.count())
     {
+        updateDataTimer->stop();
+        updateXMLTimer->stop();
+
         //最后一次更新xml文件
         slotUpdataXMLFile();
         slotSendDataToUI();
@@ -165,9 +169,6 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
         downloadFile.rename(gDownloadInfo.fileName + POINT_FILE_FLAG, gDownloadInfo.fileName);
         //向上层发送已完成下载的信号
         emit sDownloadFinish(gDownloadInfo.downloadURL);
-
-        updateDataTimer->stop();
-        updateXMLTimer->stop();
     }
 }
 

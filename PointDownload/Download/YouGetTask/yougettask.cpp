@@ -81,7 +81,7 @@ void YouGetTask::slotFinishDownload(QString URL)
 {
     gProcessMap.remove(URL);
 
-    emit sFinishYouGetDownload(URL);
+    UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 }
 
 PrepareDownloadInfo YouGetTask::getPrepareInfoFromXML(QString URL)
@@ -110,6 +110,4 @@ void YouGetTask::initConnection()
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
     connect(this, SIGNAL(sYouGetError(QString,QString,DownloadToolsType)),
             UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(this, SIGNAL(sFinishYouGetDownload(QString)),
-            UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
 }

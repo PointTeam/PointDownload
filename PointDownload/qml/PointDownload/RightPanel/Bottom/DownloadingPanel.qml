@@ -63,8 +63,6 @@ Rectangle {
                 //处理qml显示界面
                 downloadedPage.addItem(getFileInfo(dlURL))
                 downloadingPage.moveItem(dlURL)
-                //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_downloading","download_finishDownload",dlURL)
             }
             DownloadingScript.updatePercentage(dlURL, progress)
         }

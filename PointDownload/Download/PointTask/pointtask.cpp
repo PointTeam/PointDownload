@@ -124,7 +124,7 @@ void PointTask::slotFinishDownload(QString URL)
 {
     pointTaskMap.remove(URL);
 
-    emit sFinishPointDownload(URL);
+    UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 }
 
 void PointTask::initConnection()
@@ -141,8 +141,6 @@ void PointTask::initConnection()
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
     connect(this, SIGNAL(sPointError(QString,QString,DownloadToolsType)),
             UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(this, SIGNAL(sFinishPointDownload(QString)),
-            UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
 }
 
 ProtocalType PointTask::getProtocalTypeFromURL(QString URL)

@@ -49,7 +49,7 @@ Rectangle {
     MenuButton {
         id: menuSuspend
         height: parent.height - 10
-        iconPath: downloadState === "Downloading"? "qrc:/images/right/suspend" :
+        iconPath: downloadState === "dlstate_downloading"? "qrc:/images/right/suspend" :
                                                               "qrc:/images/right/resume";
         anchors {left: parent.left;leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {

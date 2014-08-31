@@ -75,6 +75,40 @@ void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
     refreshDownloadingItem();
 }
 
+void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
+{
+    //向已下载xml记录文件插入新项
+    DownloadXMLHandler tmpOpera;
+
+    SDownloading ingStruct = tmpOpera.getDownloadingNode(dlURL);
+    SDownloaded edStruct;
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    edStruct.completeDate = current_date_time.toString( "yyyy:MM:dd:hh:mm" );
+    edStruct.dlToolsType = ingStruct.dlToolsType;
+    edStruct.exist = "true";
+    edStruct.iconPath = ingStruct.iconPath;
+    edStruct.name = ingStruct.name;
+    edStruct.savePath = ingStruct.savePath;
+    edStruct.Size = ingStruct.totalSize;
+    edStruct.URL = ingStruct.URL;
+
+    if (edStruct.name != "")
+        tmpOpera.insertDownloadedNode(edStruct);
+
+    //删除正在下载的项
+    tmpOpera.removeDownloadingFileNode(dlURL);
+
+    downloadingListMap.remove(dlURL);
+    //取出一个合适的项进行下载
+    startReady();
+
+    refreshDownloadingItem();
+
+    //统计流量
+    QString day = current_date_time.toString("dddd");
+    DataFlow::addData(day,edStruct.Size);
+}
+
 void UnifiedInterface::changeMaxJobCount(int newCount)
 {
     DownloadXMLHandler tmpOpera;

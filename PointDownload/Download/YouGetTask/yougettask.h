@@ -45,7 +45,6 @@ public:
 signals:
     void sRealTimeData(DownloadingItemInfo info);
     void sYouGetError(QString URL,QString err, DownloadToolsType toolType);
-    void sFinishYouGetDownload(QString URL);
 
 public slots:
     void slotFinishDownload(QString URL);

@@ -26,7 +26,6 @@ UnifiedInterface::UnifiedInterface(QObject *parent) :
 {
     QTimer::singleShot(500, this, SLOT(initDownloadList()));
     QTimer::singleShot(501, this, SLOT(initDownloadingStart()));
-    QTimer::singleShot(501, this, SLOT(initTimer()));
 }
 
 UnifiedInterface * UnifiedInterface::unifiedInterface = NULL;
@@ -734,16 +733,6 @@ void UnifiedInterface::initTrashList()
     }
 }
 
-void UnifiedInterface::initTimer()
-{
-    speedSumTimer = new QTimer();
-    connect(speedSumTimer, SIGNAL(timeout()), this, SLOT(getSpeedSum()));
-    speedSumTimer->start(SUM_INTERVAL);
-
-    pingTimer = new QTimer();
-    connect(pingTimer, SIGNAL(timeout()), this, SLOT(pingOutSide()));
-}
-
 void UnifiedInterface::initDownloadingStart()
 {
     SettingXMLHandler tmpHandler;
@@ -773,83 +762,6 @@ void UnifiedInterface::initDownloadingStart()
 
     refreshDownloadingItem();
 }
-
-
-bool UnifiedInterface::pingNetWork()
-{
-    QProcess pingProc;
-    pingProc.start("ping www.baidu.com\n");
-    while ( pingProc.waitForFinished( 300 ) )
-        break;
-
-    QString result = QString( pingProc.readAll() );
-    pingProc.close();
-
-    if ( result == "" )
-        return false;
-    else
-        return true;
-}
-
-void UnifiedInterface::suspendWhenOffLine()
-{
-    qDebug() << "suspendWhenOffLine==============================";
-    QList<QString> urlList = downloadingListMap.keys();
-
-    DownloadXMLHandler tmpOpera;
-    for (int i = 0; i < urlList.count(); i ++)
-    {
-        if (tmpOpera.getDownloadingNode(urlList.at(i)).state == "dlstate_downloading")
-        {
-            suspendList.append(urlList.at(i));
-            suspendDownloading(urlList.at(i));
-        }
-    }
-}
-
-void UnifiedInterface::resumeWhenOnLine()
-{
-    for (int i = 0; i < suspendList.count(); i ++)
-    {
-        resumeDownloading(suspendList.at(i));
-    }
-
-    suspendList.clear();
-}
-
-void UnifiedInterface::pingOutSide()
-{
-    if (pingNetWork())
-    {
-        //ping通则恢复下载
-        resumeWhenOnLine();
-        speedSumTimer->start(SUM_INTERVAL);
-        pingTimer->stop();
-    }
-}
-
-void UnifiedInterface::getSpeedSum()
-{
-//    if (downloadingListMap.count() <= 0)
-//        return;
-
-//    int speedSum = 0;
-
-//    DownloadXMLHandler tmpopera;
-//    QList<QString> urlList = downloadingListMap.keys();
-//    for (int i = 0; i < downloadingListMap.count(); i ++)
-//    {
-//        speedSum += tmpopera.getDownloadingNode(urlList.at(i)).averageSpeed.toInt();
-//    }
-
-//    if (speedSum == 0)//断网状态
-//    {
-//        pingTimer->start(PING_INTERVAL);
-//        speedSumTimer->stop();
-//        suspendWhenOffLine();
-//    }
-}
-
 
 void UnifiedInterface::deleteFileFromDisk(QString path, QString fileName)
 {

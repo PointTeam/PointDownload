@@ -25,7 +25,6 @@ HttpThreadManager::HttpThreadManager(PrepareDownloadInfo &info,QObject *parent) 
     QObject(parent),gDownloadInfo(info)
 {
     touchDownloadFile();
-//    initDownloadFile();
     initUpdateTimer();
     initData();
 }
@@ -34,8 +33,6 @@ HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
     QObject(parent)
 {
     gDownloadInfo = getPrepareInfoFromXML(URL);
-//    touchDownloadFile();
-//    initDownloadFile();
     initUpdateTimer();
     initData();
 }
@@ -66,7 +63,7 @@ void HttpThreadManager::startDownload()
 
         connect(tmpThread,SIGNAL(progressChanged(qint64)),
                 this,SLOT(slotProgressChange(qint64)));
-        connect(tmpThread,SIGNAL(finish()),this,SLOT(slotThreadFinish()));
+        connect(tmpThread,SIGNAL(finish(int)),this,SLOT(slotThreadFinish(int)));
         connect(tmpThread, SIGNAL(URLChanged(QUrl)), this, SLOT(slotGetNewRedirectURL(QUrl)));
         connect(tmpThread, SIGNAL(threadsIslimited()), this, SLOT(slotThreadsIsLimited()));
 
@@ -132,6 +129,12 @@ void HttpThreadManager::slotUpdataXMLFile()
     }
 }
 
+void HttpThreadManager::slotRetryDownload()
+{
+    stopDownload();
+    startDownload();
+}
+
 void HttpThreadManager::slotProgressChange(qint64 doneSize)
 {
     mutex.lock();
@@ -140,8 +143,15 @@ void HttpThreadManager::slotProgressChange(qint64 doneSize)
     mutex.unlock();
 }
 
-void HttpThreadManager::slotThreadFinish()
+void HttpThreadManager::slotThreadFinish(int statusCode)
 {
+    if (statusCode == 0)
+    {
+        finishThreadCount = 0;
+        QTimer::singleShot(RETRY_DOWNLOAD_INTERVAL, this, SLOT(slotRetryDownload()));
+        return;
+    }
+
     slotUpdataXMLFile();
     finishThreadCount ++;
     if (finishThreadCount == xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).threadList.count())
@@ -150,6 +160,7 @@ void HttpThreadManager::slotThreadFinish()
         slotUpdataXMLFile();
         slotSendDataToUI();
         //重命名文件
+        QFile downloadFile;
         QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
         downloadFile.rename(gDownloadInfo.fileName + POINT_FILE_FLAG, gDownloadInfo.fileName);
         //向上层发送已完成下载的信号
@@ -209,13 +220,6 @@ void HttpThreadManager::touchDownloadFile()
 
     delete file;
 }
-
-//void HttpThreadManager::initDownloadFile()
-//{
-//    QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
-//    downloadFile.setFileName(gDownloadInfo.fileName + POINT_FILE_FLAG);
-//    downloadFile.open( QIODevice::ReadWrite );
-//}
 
 void HttpThreadManager::initUpdateTimer()
 {

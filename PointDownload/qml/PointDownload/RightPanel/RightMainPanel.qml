@@ -99,4 +99,9 @@ Rectangle {
     {
         return rightView.getDownloadListCount(downloadType)
     }
+
+    function refresh()
+    {
+        rightView.refresh()
+    }
 }

@@ -5,9 +5,9 @@ import Singleton.DLDataConverter 1.0
 import Singleton.MonitorClipBoard 1.0
 import "../SettingWin/SettingWin.js" as SettingScript
 
-Image{
-    id:outerImg
-    source: "qrc:/images/dropzone/tback"
+Item{
+    id:outerViewItem
+//    source: "qrc:/images/dropzone/tback"
 
     property bool menuShowed:false
     property real animationDuration: 700
@@ -37,8 +37,8 @@ Image{
                 TopContrl.showMainWindow()
                 TopContrl.updateShowState(true)
             }
-            onEntered: outerImg.menuButtonHover(qsTr("Main"))
-            onExited:outerImg.menuButtonHover("")
+            onEntered: outerViewItem.menuButtonHover(qsTr("Main"))
+            onExited:outerViewItem.menuButtonHover("")
         }
     }
 
@@ -67,11 +67,11 @@ Image{
             }
             onEntered: {
                 if (jobControlSector.iconPath == "qrc:/images/dropzone/startall")
-                    outerImg.menuButtonHover(qsTr("Resume All"))
+                    outerViewItem.menuButtonHover(qsTr("Resume All"))
                 else
-                    onEntered: outerImg.menuButtonHover(qsTr("SuspendAll"))
+                    onEntered: outerViewItem.menuButtonHover(qsTr("SuspendAll"))
             }
-            onExited:outerImg.menuButtonHover("")
+            onExited:outerViewItem.menuButtonHover("")
         }
     }
 
@@ -89,8 +89,8 @@ Image{
                 updateMenuState()
                 DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
             }
-            onEntered: outerImg.menuButtonHover(qsTr("NewTask"))
-            onExited:outerImg.menuButtonHover("")
+            onEntered: outerViewItem.menuButtonHover(qsTr("NewTask"))
+            onExited:outerViewItem.menuButtonHover("")
         }
     }
 
@@ -108,8 +108,8 @@ Image{
                 updateMenuState()
                 destroyTimer.start()
             }
-            onEntered: outerImg.menuButtonHover(qsTr("Quit"))
-            onExited:outerImg.menuButtonHover("")
+            onEntered: outerViewItem.menuButtonHover(qsTr("Quit"))
+            onExited:outerViewItem.menuButtonHover("")
         }
     }
 
@@ -128,8 +128,8 @@ Image{
                 updateMenuState()
             }
 
-            onEntered: outerImg.menuButtonHover(qsTr("Storage"))
-            onExited:outerImg.menuButtonHover("")
+            onEntered: outerViewItem.menuButtonHover(qsTr("Storage"))
+            onExited:outerViewItem.menuButtonHover("")
         }
 
     }
@@ -145,13 +145,13 @@ Image{
             hoverEnabled: true
             anchors {horizontalCenter: parent.horizontalCenter}
             onClicked: {
-                SettingScript.showSettingWin(outerImg
-                                             ,PEventFilter.globalX>270?PEventFilter.globalX-270:PEventFilter.globalX + outerImg.width - 20
+                SettingScript.showSettingWin(outerViewItem
+                                             ,PEventFilter.globalX>270?PEventFilter.globalX-270:PEventFilter.globalX + outerViewItem.width - 20
                                              ,PEventFilter.globalY)
                 updateMenuState()
             }
-            onEntered: outerImg.menuButtonHover(qsTr("Setting"))
-            onExited:outerImg.menuButtonHover("")
+            onEntered: outerViewItem.menuButtonHover(qsTr("Setting"))
+            onExited:outerViewItem.menuButtonHover("")
         }
     }
 
@@ -211,12 +211,12 @@ Image{
     {
         if (menuShowed)
         {
-            outerImg.state = "hideAllMenu"
+            outerViewItem.state = "hideAllMenu"
             menuShowed = false
         }
         else
         {
-            outerImg.state = "showAllMenu"
+            outerViewItem.state = "showAllMenu"
             menuShowed = true
         }
     }

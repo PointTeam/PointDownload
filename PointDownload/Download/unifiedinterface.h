@@ -89,10 +89,7 @@ private slots:
     //获取初始化信息，显示到界面
     void initDownloadList();
     void initDownloadingStart();//根据最大任务限制，启动上次退出时正在下载的下载项
-    void initTimer();
 
-    void pingOutSide();                 //由pingTimer触发
-    void getSpeedSum();              //获取正在下载项的所有项目的平均速度的总和
 private:
     //构造函数
     explicit UnifiedInterface(QObject *parent = 0);
@@ -144,21 +141,10 @@ private:
     void refreshDownloadingItem();
     PrepareDownloadInfo getPrepareInfoFromSDownloading(SDownloading infoStruct);
 
-    //断网处理
-    bool pingNetWork();
-    void suspendWhenOffLine();      //断网时暂停正在下载的项并存入suspendListmap中
-    void resumeWhenOnLine();
 private:
     static UnifiedInterface * unifiedInterface;        //全局唯一对象
     //Map:URL,Otype
     QMap<QString,DownloadToolsType>  downloadingListMap;
-    QStringList suspendList; //断网时存储暂停项的list
-
-    QTimer * pingTimer;//定时ping外面的时钟
-    QTimer * speedSumTimer;//定时加和正在下载项的平均速度,如果加和速度为0,则设为断网状态,需要ping外面服务器
-
-    const int PING_INTERVAL = 5000;
-    const int SUM_INTERVAL = 10000;
 };
 
 #endif // UNIFIEDINTERFACE_H

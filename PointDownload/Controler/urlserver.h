@@ -27,6 +27,7 @@
 #include <QLocalSocket>
 #include "Download/DataType.h"
 #include "Download/unifiedinterface.h"
+#include "Download/XwareTask/XwareConstants.h"
 
 class URLServer : public QObject
 {

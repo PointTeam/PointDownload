@@ -134,9 +134,6 @@ void XwareSettingControler::setUserPasswd(QString tmpPasswd)
 
 void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
 {
-
-//    qDebug()<<"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-
     if(rs == x_LoginSuccess)
     {
         // save state

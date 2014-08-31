@@ -1,18 +1,12 @@
 #include "xwarewebcontroller.h"
 
-//#define DOWNLOAD_LIST_FEEDBACK_TIME 1000
-#define MAIN_URL_3 "http://yuancheng.xunlei.com/3/"
-#define LOGIN_URL  "http://yuancheng.xunlei.com/login.html"
-#define LOGIN_MAX_TRY 3
-#define LOGIN_DEFAULT_INTERVAL 1000
-
 
 XwareWebController::XwareWebController(QObject *parent) :
     QObject(parent)
 {
-    webview = new MyWebView;
+    webview = new MyWebView();
     isLogined = false;
-    loginCtrlTimer = new QTimer;
+    loginCtrlTimer = new QTimer();
     loginTimeCount = 0;
     isHasAutoLoginTask = false;
 
@@ -26,7 +20,7 @@ XwareWebController::XwareWebController(QObject *parent) :
     connect(webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(populateQtObject()));
 
     // url change
-    connect(webview, SIGNAL(urlChanged(QUrl)), this, SLOT(webUrlChanged()), Qt::QueuedConnection);
+    connect(webview, SIGNAL(urlChanged(QUrl)), this, SLOT(webUrlChanged(QUrl)), Qt::QueuedConnection);
 
     // login control timer
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
@@ -34,9 +28,6 @@ XwareWebController::XwareWebController(QObject *parent) :
 
 void XwareWebController::startLoginCtrlTimer()
 {
-    ++loginTimeCount;
-    XwarePopulateObject::getInstance()->login(userName, userPwd);
-
     if(loginTimeCount > LOGIN_MAX_TRY)
     {
         loginTimeCount = 0;
@@ -45,14 +36,19 @@ void XwareWebController::startLoginCtrlTimer()
         // emit this to javascript
         emit sLoginResult(x_LoginTimeOut);
 
-        qDebug()<<"login time out !!";
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"xware login time out !!";
     }
+
+    ++loginTimeCount;
+    XwarePopulateObject::getInstance()->login(userName, userPwd);
 }
 
 XwareWebController * XwareWebController::xwareWebController = NULL;
 XwareWebController::~XwareWebController()
 {
-    qDebug()<<"~XwareWebController()  was be called !!";
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"~XwareWebController()  was be called !!";
 }
 
 XwareWebController * XwareWebController::getInstance()
@@ -64,8 +60,8 @@ XwareWebController * XwareWebController::getInstance()
 
 void XwareWebController::executeJS(QString js)
 {
-    // debug
-    qDebug()<<"execute js ==> "<<js;
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"execute js ==> "<<js;
 
     webview->page()->mainFrame()->evaluateJavaScript(js);
 }
@@ -79,7 +75,7 @@ void XwareWebController::login(QString userName, QString pwd)
 {
     this->userName = userName;
     this->userPwd = pwd;
-    startLoginCtrlTimer();
+//    startLoginCtrlTimer();
     loginCtrlTimer->start(LOGIN_DEFAULT_INTERVAL);
 }
 
@@ -111,19 +107,21 @@ void XwareWebController::loadingFinished()
     {
         isLogined = true;
         isHasAutoLoginTask = false;
-        loginTimeCount = 0;
-        loginCtrlTimer->stop();
         emit sLoginResult(x_LoginSuccess);
+
+        qDebug()<<"[info] finish login !";
     }
     else if(currentPageURL() == LOGIN_URL)
     {
         if(isLogined)
         {
-            emit sLoginResult(x_Logout);
+            emit sLoginResult(x_Logout);  // logout xware
             isLogined = false;
+
+            qDebug()<<"[info] logout ";
         }
 
-        // 仅用在程序刚启动并且有记录到自动登录时
+        // 仅在程序刚启动并且有自动登录记录时调用
         if(isHasAutoLoginTask)
         {
             this->login(userName, userPwd);
@@ -135,8 +133,8 @@ void XwareWebController::populateQtObject()
 {
     if ((currentPageURL() == MAIN_URL_3) || (currentPageURL() == LOGIN_URL))
     {
-        // debug
-        qDebug()<<"populate object to ==>" << currentPageURL();
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"populate object to ==>" << currentPageURL();
 
         // (1) populate QT object into javascript
         webview->page()->mainFrame()->addToJavaScriptWindowObject("Point", XwarePopulateObject::getInstance());
@@ -155,7 +153,8 @@ void XwareWebController::populateQtObject()
         QFile file(filePath);
         if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            qDebug()<<"open error";
+            if(XWARE_CONSTANTS_STRUCT.DEBUG)
+                qDebug()<<"open error";
             return;
         }
         QTextStream textInput(&file);
@@ -165,15 +164,28 @@ void XwareWebController::populateQtObject()
     }
 }
 
-void XwareWebController::webUrlChanged()
+void XwareWebController::webUrlChanged(QUrl url)
 {
-    // debug
-    qDebug()<<"URL changed ==>" << currentPageURL() ;
+   if(XWARE_CONSTANTS_STRUCT.DEBUG)
+       qDebug()<<"URL changed ==>" << url.toString() ;
 
-    if(currentPageURL() != MAIN_URL_3 &&  currentPageURL() != LOGIN_URL)
+   if(url.toString() == LOGIN_URL)
+   {
+       qDebug()<<"[xware info] login page ready ! ";
+   }
+
+   if(url.toString() == MAIN_URL_3)
+   {
+       loginTimeCount = 0;
+       loginCtrlTimer->stop();
+       qDebug()<<"[xware info] login success, initialise ...";
+   }
+
+    if(url.toString() != MAIN_URL_3 &&  currentPageURL() != LOGIN_URL)
     {
             webview->triggerPageAction(QWebPage::Stop);
             webview->page()->mainFrame()->load(QUrl(MAIN_URL_3));
     }
+
 }
 

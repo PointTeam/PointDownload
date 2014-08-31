@@ -36,7 +36,7 @@ public:
 
 signals:
     void sLoginResult(XwareLoginResultType);
-    void sRealTimeDataChanged(DownloadingItemInfo);
+//    void sRealTimeDataChanged(DownloadingItemInfo);
     void sAddXwareSupportResult(int);     // add xware support result (to the setting dialog)
     void sFinishDownload(QString);
 
@@ -54,6 +54,7 @@ private:
     bool tryToClearXwareCfg(QString cfgPath);
     QString getCodeFromJson();          // get local peer id(machine code) from json , from "http://127.0.0.1:9000/getsysinfo"
     void bindCodeToXware(QString code);
+    bool tryToMakeDir(QString dirPath);
 //    void parseTask(QString taskInfo);   //
 
 private:

@@ -6,6 +6,8 @@
 
 static struct XwareConstants
 {
+    // is output the debug info
+    const bool DEBUG = false;
 
     int  ETM_PORT;  // default port
 
@@ -20,8 +22,16 @@ static struct XwareConstants
     QString XWARE_WORK_DIR;
     QString XWARE_ETM_PATH;
 
+    // xware firmware location
+    QString XWARE_FIRMWARE_LOCATION;
+
     // url
     QString URLSTR;
+
+    // msg spliter
+    const QString spliterBtwData = "#..#";
+    const QString spliterEnd = "#.^_^.#";
+    const QString defaultPara = "--";
 
     XwareConstants()
     {
@@ -37,6 +47,9 @@ static struct XwareConstants
         XWARE_HOME = POINT_CFG_DIR + "XwarePlugin/";
         XWARE_WORK_DIR = XWARE_HOME + "Xware/";
         XWARE_ETM_PATH = XWARE_WORK_DIR + "EmbedThunderManager";
+
+        // xware firmware location
+        XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip";
 
         // url
         URLSTR = "http://127.0.0.1:" + QString::number(ETM_PORT) + "/";

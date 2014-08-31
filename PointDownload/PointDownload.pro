@@ -87,7 +87,8 @@ SOURCES += main.cpp \
     Download/XwareTask/xwaretask.cpp \
     Download/XwareTask/xwarewebcontroller.cpp \
     Download/XwareTask/mynetworkaccessmanager.cpp \
-    Download/XwareTask/mywebview.cpp
+    Download/XwareTask/mywebview.cpp \
+    Download/XwareTask/xwaretaskentity.cpp
 
 # Installation path
 # target.path =
@@ -130,7 +131,8 @@ HEADERS += \
     Download/XwareTask/xwaretask.h \
     Download/XwareTask/xwarewebcontroller.h \
     Download/XwareTask/mynetworkaccessmanager.h \
-    Download/XwareTask/mywebview.h
+    Download/XwareTask/mywebview.h \
+    Download/XwareTask/xwaretaskentity.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS = PointDownload_zh_CN.ts

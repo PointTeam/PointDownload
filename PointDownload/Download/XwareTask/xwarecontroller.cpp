@@ -12,8 +12,8 @@ XwareController::XwareController(QObject *parent) :
             this, SLOT(tryToStartAndBindXware(QStringList)));
 
     // real data time
-    connect(XwarePopulateObject::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)));
+//    connect(XwarePopulateObject::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
+//            this, SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)));
 
     // finish a downloading task
     connect(XwarePopulateObject::getInstance(), SIGNAL(sFinishDownload(QString)),
@@ -23,7 +23,8 @@ XwareController::XwareController(QObject *parent) :
 XwareController * XwareController::xwareController = NULL;
 XwareController::~XwareController()
 {
-    qDebug()<<"~XwareController()  was be called !!";
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"~XwareController()  was be called !!";
 }
 
 XwareController * XwareController::getInstance()
@@ -39,7 +40,7 @@ QString XwareController::getValueFromEtmcfg(QString key)
     QFile file(XWARE_CONSTANTS_STRUCT.XWARE_ETM_CFG);
     if(!file.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"open xware etm.cfg file error !!";
+        qDebug()<<"[error]open xware etm.cfg file error !!";
         return value;
     }
     QTextStream ts(&file);
@@ -58,15 +59,17 @@ QString XwareController::getValueFromEtmcfg(QString key)
 
 bool XwareController::startETM()
 {
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"kill all ETM process";
+
     // kill all ETM process
-    qDebug()<<"kill all ETM process";
     system("pkill Embed");
 
-    ETMProcess = new QProcess;
+    ETMProcess = new QProcess();
     QStringList args;
     args<<"--verbose";
-    // debug
-    qDebug()<< "start ETM ==>"<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<< "start ETM ==>"<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
     ETMProcess->setWorkingDirectory(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR); // set work directory
     ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH);
     ETMProcess->setArguments(args);
@@ -79,11 +82,13 @@ bool XwareController::startETM()
 
     if(ETMProcess->state() == QProcess::Running)
     {
-        qDebug()<<"ETM has been started successfully!!";
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"ETM has been started successfully!!";
         return true;
     }
 
-    qDebug()<<"fail to start ETM successfully!!";
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"fail to start ETM successfully!!";
     return false;
 }
 
@@ -104,7 +109,6 @@ bool XwareController::tryToClearXwareCfg(QString cfgPath)
             // romve all file (not include dir)
             if(file != "\." && file != "\..")
             {
-//                qDebug()<<"deleting : "<<file;
                 tag = xwareCfgDir.remove(file);
                 if(!tag)break;
             }
@@ -117,8 +121,8 @@ QString XwareController::getCodeFromJson()
 {
     QUrl url(XWARE_CONSTANTS_STRUCT.URLSTR + "getsysinfo");
 
-    // debug
-    qDebug()<<url.toString();
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<url.toString();
 
     QEventLoop loop;
     QNetworkAccessManager manager;
@@ -145,6 +149,12 @@ void XwareController::bindCodeToXware(QString code)
     XwareWebController::getInstance()->executeJS("pointBindNewMachine(\""+ code +"\");");
 }
 
+bool XwareController::tryToMakeDir(QString dirPath)
+{
+    QDir dir;
+    return dir.mkpath(dirPath);
+}
+
 void XwareController::login(QString userName, QString pwd)
 {
     XwareWebController::getInstance()->login(userName, pwd);
@@ -163,14 +173,16 @@ void XwareController::startFeedbackDloadList()
 
 void XwareController::addXwareFirmware()
 {
+    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
+
     // changed work dir
     QDir::setCurrent(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
 
-    QProcess *pro = new QProcess;
+    QProcess *pro = new QProcess();
     pro->setProgram(QString("wget"));
     pro->setWorkingDirectory(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
     QStringList arg;
-    arg<<QString("https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip");
+    arg<<XWARE_CONSTANTS_STRUCT.XWARE_FIRMWARE_LOCATION;
     pro->setArguments(arg);
     pro->start();
 
@@ -183,21 +195,13 @@ void XwareController::addXwareFirmware()
 void XwareController::removeXwareFirmware()
 {
     // remove xware firmware
-    QDir xwareCfgDir(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
+    QDir xwareCfgDir(XWARE_CONSTANTS_STRUCT.XWARE_HOME);
     bool tag = true;
     if(xwareCfgDir.exists())
     {
-        QStringList list =  xwareCfgDir.entryList();
-        foreach(QString file , list)
-        {
-            // romve all file (not include dir)
-            if(file != "\." && file != "\..")
-            {
-                qDebug()<<"deleting : "<<file;
-                tag = xwareCfgDir.remove(file);
-                if(!tag)break;
-            }
-        }
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"remove xware home";
+         xwareCfgDir.removeRecursively();
     }
 
 }
@@ -259,7 +263,6 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         //  try to delete local xware config
         if (!tryToClearXwareCfg(XWARE_CONSTANTS_STRUCT.XWARE_CFG_DIR))
         {
-            // debug
             qDebug()<<"[error] occur a failure error when delete xware config !!";
         }
 
@@ -276,11 +279,12 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         loop.exec();
 
         // (6) bind code
-        qDebug()<<"binding code !!";
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"binding code !!";
         QString jsonCode = getCodeFromJson(); // peer id
         if(jsonCode == "")
         {
-            qDebug()<<"empty, get code from json unsuccessfully , return";
+            qDebug()<<"[error]empty, get code from json unsuccessfully , return";
             return;
         }
         bindCodeToXware(jsonCode);
@@ -324,8 +328,8 @@ QString XwareController::getLocalPeerId()
 {
     QString peerId = "";
     peerId = getValueFromEtmcfg("rc.peerid");
-    // debug
-    qDebug()<<"get local machine peer id: "<<peerId;
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"get local machine peer id: "<<peerId;
     return peerId;
 }
 

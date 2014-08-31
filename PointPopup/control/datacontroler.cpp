@@ -420,9 +420,19 @@ void DataControler::readMsgFromMainProgram()
 {
     QTextStream stream(localSocket);
     QString msg = stream.readAll();
+    msg = msg.trimmed();
 
     // debug
-    qDebug()<<"recieve parse url or bt file result : "<<msg;
+//    qDebug()<<"recieve parse url or bt file result : "<<msg;
+
+    if(msg.startsWith("XwareMsgType"))
+    {
+        if(msg.split(xwareSpliterBtwData).at(1) == "XwareNotStart")
+        {
+            qDebug()<<"[info]xware doesn't start now, you need to login thunder and try again later";
+            return;
+        }
+    }
 
     QStringList files = msg.split(xwareSpliterEnd);
     QString allFileInfo = "";
@@ -438,7 +448,7 @@ void DataControler::readMsgFromMainProgram()
 
         QString fileSize = convertToByteUnit(fileInfoList.at(1));
 
-        // changed to type@size@name?:?
+        // changed to type@size@name#:#
         QString singleFileInfo = fileType + "@" + fileSize + "@" + fileInfoList.at(0) + "#:#";
         allFileInfo += singleFileInfo;
     }
@@ -723,8 +733,6 @@ bool DataControler::isXwareParseType(QString task)
 
 void DataControler::getXwareURLOrBtInfo()
 {
-    // debug
-
     fileURL = xwareParseURLHander + fileURL;
 
     // send this url or bt file to main window, and let it is parsed by xware

@@ -73,8 +73,8 @@ void HttpThreadManager::startDownload()
         threadList.at( i )->start();                 //启动线程下载
     }
 
-    updateXMLTimer->start(UPDATE_XML_INTERVAL);                          //每5秒更新一次xml文件，记录下载信息
-    updateDataTimer->start(UPDATE_DATA_INTERVAL);                        //每秒更新一次下载状态并发送下载信息到界面上
+    updateXMLTimer->start(UPDATE_XML_INTERVAL);         //每UPDATE_XML_INTERVAL秒更新一次xml文件，记录下载信息
+    updateDataTimer->start(UPDATE_DATA_INTERVAL);       //每秒更新一次下载状态并发送下载信息到界面上
 }
 
 void HttpThreadManager::stopDownload()

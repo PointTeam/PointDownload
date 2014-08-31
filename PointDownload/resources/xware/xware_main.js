@@ -6,23 +6,23 @@ var pointReflashDownloadListIntervalId = 0;  // timer id (feedback the tasks inf
 var pointIsReflashDownloadListTimerStarted = false;  // is the timer start
 
 // ======================= Bind Singals ======================= //
-Point.sGetAllBindedPeerIds.connect(pointSlotGetAllBindedPeerIds);
-Point.sReflashDownloadList.connect(pointSlotReflashDownloadList);
+Point.sJSGetAllBindedPeerIds.connect(pointSlotGetAllBindedPeerIds);
+Point.sJSReflashDownloadList.connect(pointSlotReflashDownloadList);
 
 // add new task
-Point.sAddNewDownloadTask.connect(pointAddNewDownloadTask);
-Point.sAddNewBTDownloadTask.connect(pointAddNewBTDownloadTask);
+Point.sJSAddNewDownloadTask.connect(pointAddNewDownloadTask);
+//Point.sAddNewBTDownloadTask.connect(pointAddNewBTDownloadTask);
 
 // task controller
-Point.sSuspendDownloadingTask.connect(pointSuspendDownloadingTask);
-Point.sResumeDownloadingTask.connect(pointResumeDownloadingTask);
-Point.sRemoveDownloadingTask.connect(pointRemoveDownloadingTask);
-Point.sEntryOfflineChannel.connect(pointEntryOfflineChannel);
-Point.sEntryHighSpeedChannel.connect(pointEntryHighSpeedChannel);
-Point.sUrlParse.connect(pointUrlParse);
+Point.sJSSuspendDownloadingTask.connect(pointSuspendDownloadingTask);
+Point.sJSResumeDownloadingTask.connect(pointResumeDownloadingTask);
+Point.sJSRemoveDownloadingTask.connect(pointRemoveDownloadingTask);
+Point.sJSEntryOfflineChannel.connect(pointEntryOfflineChannel);
+Point.sJSEntryHighSpeedChannel.connect(pointEntryHighSpeedChannel);
+Point.sJSUrlParse.connect(pointUrlParse);
 
 // logout
-Point.sLogout.connect(pointLogout);
+Point.sJSLogout.connect(pointLogout);
 // ======================================================== //
 
 // parse url like magent, ftp ...

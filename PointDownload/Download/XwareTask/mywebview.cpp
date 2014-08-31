@@ -2,5 +2,5 @@
 
 MyWebView::MyWebView()
 {
-    this->page()->setNetworkAccessManager(new MyNetworkAccessManager);
+    this->page()->setNetworkAccessManager(new MyNetworkAccessManager());
 }

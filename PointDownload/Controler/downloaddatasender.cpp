@@ -265,14 +265,14 @@ void DownloadDataSender::slotGetDownloadingInfo(DownloadingItemInfo infoList)
     setDownloadSpeed(infoList.downloadSpeed);
     setCompletePercentage(infoList.downloadPercent);
 
-    if((infoList.thunderHightSpeed != "")
-            && (infoList.thunderHightSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
+    if((infoList.thunderHightSpeed != "") &&
+             (infoList.thunderHightSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
     {
         setThunderHightSpeed(infoList.thunderHightSpeed);
     }
 
-    if((infoList.thunderOfflineSpeed != "")
-            && (infoList.thunderOfflineSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
+    if((infoList.thunderOfflineSpeed != "") &&
+             (infoList.thunderOfflineSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
     {
         setThunderHightSpeed(infoList.thunderOfflineSpeed);
     }

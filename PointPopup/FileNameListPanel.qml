@@ -180,10 +180,10 @@ Rectangle {
                     sizeByte = (nameArry[1] / 1).toFixed(1) + " B"
             }
             // added by choldrim
-            else
-            {
-                continue;
-            }
+//            else
+//            {
+//                continue;
+//            }
 
             //从已下载项和垃圾桶传过来的值中没有下载百分比(nameArry[7])的数据
             nameItemModel.append({"tmpType":nameArry[0],

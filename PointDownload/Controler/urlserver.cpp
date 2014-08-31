@@ -131,6 +131,15 @@ void URLServer::taskParseHandle(QString taskInfo)
         return;
     }
 
+    // xware not start or not login
+    if(XwareWebController::getInstance()->currentPageURL() != MAIN_URL_3)
+    {
+        QString msgType("XwareMsgType");
+        QString msgConten("XwareNotStart");
+        taskParseFeedback(msgType + XWARE_CONSTANTS_STRUCT.spliterBtwData + msgConten);
+        return;
+    }
+
     // BT
     if(taskInfo.startsWith("file:"))
     {

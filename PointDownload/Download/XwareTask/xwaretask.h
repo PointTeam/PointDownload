@@ -5,8 +5,8 @@
 #include "Download/DataType.h"
 #include "xwarecontroller.h"
 #include "xwarewebcontroller.h"
-#include "XMLHandler/downloadxmlhandler.h"
 #include "XMLHandler/settingxmlhandler.h"
+#include "xwaretaskentity.h"
 
 class XwareTask : public QObject
 {
@@ -38,12 +38,9 @@ private slots:
 
 private:
     explicit XwareTask(QObject *parent = 0);
-    void updateXMLFile(DownloadingItemInfo info);
 
 private:
     static XwareTask *xwareTask;
-
-    short xmlUpdateInterval;
 
 };
 

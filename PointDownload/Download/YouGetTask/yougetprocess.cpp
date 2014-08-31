@@ -25,7 +25,7 @@ YouGetProcess::YouGetProcess(PrepareDownloadInfo info,QObject *parent) :
     QObject(parent),gInfo(info)
 {
     lastDataSize = "0";
-    xmlUpdateInterval = 0;
+    xmlUpdateInterval = 1;
 }
 
 void YouGetProcess::startDownload()
@@ -96,7 +96,7 @@ void YouGetProcess::getTimerUpdate()
     //update xml file
     if (xmlUpdateInterval == UPDATE_XML_INTERVAL)
     {
-        xmlUpdateInterval = 0;
+        xmlUpdateInterval = 1;
         updateXMLFile(tmpInfo);
     }
     else

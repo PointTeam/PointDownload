@@ -1,17 +1,15 @@
 #include "xwaretask.h"
 
-#define UPDATE_XML_INTERVAL 3
+#define UPDATE_XML_INTERVAL 0
 
 XwareTask::XwareTask(QObject *parent) :
     QObject(parent)
 {
-    connect(XwareController::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
+    connect(XwareTaskEntity::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
             this, SLOT(updateRealTimeData(DownloadingItemInfo)));
 
     connect(XwareController::getInstance(), SIGNAL(sFinishDownload(QString)),
             this, SIGNAL(sFinishXwareDownload(QString)));
-
-    xmlUpdateInterval = 0;
 }
 
 XwareTask * XwareTask::xwareTask = NULL;
@@ -42,7 +40,7 @@ void XwareTask::stopDownload(QString URL)
 
 void XwareTask::suspendDownloading(QString URL)
 {
-    QString tid = XwarePopulateObject::getInstance()->getTaskIdByUrl(URL);
+    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
@@ -55,7 +53,7 @@ void XwareTask::suspendDownloading(QString URL)
 
 void XwareTask::resumeDownloading(QString URL)
 {
-    QString tid = XwarePopulateObject::getInstance()->getTaskIdByUrl(URL);
+    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
@@ -68,7 +66,7 @@ void XwareTask::resumeDownloading(QString URL)
 
 void XwareTask::entryOfflineChannel(QString URL)
 {
-    QString tid = XwarePopulateObject::getInstance()->getTaskIdByUrl(URL);
+    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
@@ -81,7 +79,7 @@ void XwareTask::entryOfflineChannel(QString URL)
 
 void XwareTask::entryHighSpeedChannel(QString URL)
 {
-    QString tid = XwarePopulateObject::getInstance()->getTaskIdByUrl(URL);
+    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
@@ -95,32 +93,5 @@ void XwareTask::entryHighSpeedChannel(QString URL)
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)
 {
     emit sRealTimeData(info);
-
-    //update xml file
-    if (xmlUpdateInterval == UPDATE_XML_INTERVAL)
-    {
-        xmlUpdateInterval = 0;
-        updateXMLFile(info);
-    }
-    else
-        xmlUpdateInterval ++;
-}
-
-void XwareTask::updateXMLFile(DownloadingItemInfo info)
-{
-
-    qDebug()<<"updateXMLFile";
-
-    DownloadXMLHandler tmpOpera;
-    SDownloading tmpStruct = tmpOpera.getDownloadingNode(info.downloadURL);
-    //计算平均速度，用作优先下载的判断条件
-    tmpStruct.averageSpeed = QString::number(qint64((info.downloadPercent / 100 * tmpStruct.totalSize.toDouble()//当前完成大小
-                                                    - tmpStruct.readySize.toDouble()//上次完成大小
-                                                    ) / UPDATE_XML_INTERVAL));
-    tmpStruct.readySize = QString::number(qint64(info.downloadPercent / 100 * tmpStruct.totalSize.toLongLong()));
-
-    qDebug()<<"****************************  readySize :"<<tmpStruct.readySize<<" *****************************";
-
-    tmpOpera.writeDownloadingConfigFile(tmpStruct);
 }
 

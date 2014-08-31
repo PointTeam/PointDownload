@@ -27,7 +27,7 @@ XwareWebController::XwareWebController(QObject *parent) :
     webview = new MyWebView();
     isLogined = false;
     loginCtrlTimer = new QTimer();
-    loginTimeCount = 0;
+    loginTimeCount = 1;
     isHasAutoLoginTask = false;
 
     // set default url
@@ -48,16 +48,15 @@ XwareWebController::XwareWebController(QObject *parent) :
 
 void XwareWebController::startLoginCtrlTimer()
 {
-    if(loginTimeCount > LOGIN_MAX_TRY)
+    if(loginTimeCount == LOGIN_MAX_TRY)
     {
-        loginTimeCount = 0;
+        loginTimeCount = 1;
         loginCtrlTimer->stop();
 
         // emit this to javascript
         emit sLoginResult(x_LoginTimeOut);
 
-        if(XWARE_CONSTANTS_STRUCT.DEBUG)
-            qDebug()<<"xware login time out !!";
+         qDebug()<<"[xware fail] login time out ";
     }
 
     ++loginTimeCount;
@@ -93,6 +92,7 @@ QString XwareWebController::setElemValueById(QString id, QString value)
 
 void XwareWebController::login(QString userName, QString pwd)
 {
+    qDebug()<<"[xware info] login ...";
     this->userName = userName;
     this->userPwd = pwd;
 //    startLoginCtrlTimer();
@@ -111,6 +111,9 @@ QString XwareWebController::currentPageURL()
 
 void XwareWebController::reloadWebView()
 {
+    // need to clear window object before this action
+    /*   ...  */
+
     this->webview->reload();
 }
 
@@ -129,7 +132,7 @@ void XwareWebController::loadingFinished()
         isHasAutoLoginTask = false;
         emit sLoginResult(x_LoginSuccess);
 
-        qDebug()<<"[info] finish login !";
+        qDebug()<<"[xware info] finish login !";
     }
     else if(currentPageURL() == LOGIN_URL)
     {
@@ -138,7 +141,7 @@ void XwareWebController::loadingFinished()
             emit sLoginResult(x_Logout);  // logout xware
             isLogined = false;
 
-            qDebug()<<"[info] logout ";
+            qDebug()<<"[xware info] logout ";
         }
 
         // 仅在程序刚启动并且有自动登录记录时调用

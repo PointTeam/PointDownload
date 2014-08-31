@@ -110,7 +110,7 @@ bool XwareController::startETM()
     }
 
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<<"fail to start ETM successfully!!";
+        qDebug()<<"fail to start ETM!!";
     return false;
 }
 
@@ -306,7 +306,7 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         QString jsonCode = getCodeFromJson(); // peer id
         if(jsonCode == "")
         {
-            qDebug()<<"[error]empty, get code from json unsuccessfully , return";
+            qDebug()<<"[xware fail] empty, fail to get code from json , return";
             return;
         }
         bindCodeToXware(jsonCode);

@@ -87,7 +87,7 @@ SOURCES += main.cpp \
     Download/XwareTask/xwarewebcontroller.cpp \
     Download/XwareTask/mynetworkaccessmanager.cpp \
     Download/XwareTask/mywebview.cpp \
-    Download/XwareTask/xwaretaskentity.cpp
+    Download/XwareTask/xwaretaskentity.cpp \
     Controler/dldataconverter.cpp
 
 # Installation path
@@ -131,7 +131,7 @@ HEADERS += \
     Download/XwareTask/xwarewebcontroller.h \
     Download/XwareTask/mynetworkaccessmanager.h \
     Download/XwareTask/mywebview.h \
-    Download/XwareTask/xwaretaskentity.h
+    Download/XwareTask/xwaretaskentity.h \
     Controler/dldataconverter.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 

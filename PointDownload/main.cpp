@@ -35,7 +35,7 @@
 #include "Controler/topcontrl.h"
 
 #include "Controler/monitorClipBoard.h"
-#include "Controler/downloaddatasender.h"
+#include "Controler/dldataconverter.h"
 #include "qtsinglecoreapplication.h"
 
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 
     //这样能保证系统托盘类的初始化在qml初始化之前完成，避免造 成gtk的一些错误
     TopContrl::getInstance()->initTrayIcon();
-    DownloadDataSender::getInstance();
+    DLDataConverter::getInstance();
     PEventFilter::getInstance();
     MonitorClipBoard::getInstance();
     DropzoneSettingControler::getInstance();

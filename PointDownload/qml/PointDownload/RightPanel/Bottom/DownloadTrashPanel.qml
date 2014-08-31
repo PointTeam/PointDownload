@@ -22,7 +22,7 @@
 import QtQuick 2.0
 import "TrashHandler.js" as TrashScript
 import "Item"
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 
 Rectangle {
     id: trashPanel
@@ -30,11 +30,11 @@ Rectangle {
 
     //连接单例的信号
     Connections {
-        target: DownloadDataSender
+        target: DLDataConverter
         //当c++中的DownloadingDataSender类触发以下信号时，更改相应属性
-        onFileInfoChange: {
-            if (DownloadDataSender.downloadType === "dl_trash")
-                TrashScript.addNewItem(DownloadDataSender.fileInfo)
+        onSFileInfoChange: {
+            if (dlType === "dl_trash")
+                TrashScript.addNewItem(fileInfo)
         }
     }
 

@@ -67,7 +67,6 @@ SOURCES += main.cpp \
     Controler/urlserver.cpp \
     SysData/getspeed.cpp \
     SysData/dataflow.cpp \
-    Controler/downloaddatasender.cpp \
     Download/unifiedinterface.cpp \
     Download/Aria2Task/a2ia2task.cpp \
     Download/PointTask/HttpTask/httpthread.cpp \
@@ -89,6 +88,7 @@ SOURCES += main.cpp \
     Download/XwareTask/mynetworkaccessmanager.cpp \
     Download/XwareTask/mywebview.cpp \
     Download/XwareTask/xwaretaskentity.cpp
+    Controler/dldataconverter.cpp
 
 # Installation path
 # target.path =
@@ -108,7 +108,6 @@ HEADERS += \
     Controler/urlserver.h \
     SysData/getspeed.h \
     SysData/dataflow.h \
-    Controler/downloaddatasender.h \
     Download/unifiedinterface.h \
     Download/DataType.h \
     Download/Aria2Task/a2ia2task.h \
@@ -133,6 +132,7 @@ HEADERS += \
     Download/XwareTask/mynetworkaccessmanager.h \
     Download/XwareTask/mywebview.h \
     Download/XwareTask/xwaretaskentity.h
+    Controler/dldataconverter.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS = PointDownload_zh_CN.ts

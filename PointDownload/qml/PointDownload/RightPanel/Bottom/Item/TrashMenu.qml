@@ -27,7 +27,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
@@ -62,7 +62,7 @@ Rectangle {
             {
                 //在新增下载项时再做处理qml显示界面
                 //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_trash","download_redownload",downloadURL)
+                DLDataConverter.controlItem("dl_trash","download_redownload",downloadURL)
             }
         }
     }
@@ -86,7 +86,7 @@ Rectangle {
             {
                 //处理qml显示界面
                 downloadTrashPage.moveItem(downloadURL)
-                DownloadDataSender.controlItem("dl_trash","download_delete",downloadURL)
+                DLDataConverter.controlItem("dl_trash","download_delete",downloadURL)
             }
         }
     }

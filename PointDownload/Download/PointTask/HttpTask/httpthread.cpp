@@ -40,11 +40,9 @@ void HttpThread::run()
 {
     if (getStartByte() >= getEndByte())
     {
-        emit finish();
+        emit finish(206);
         return;
     }
-
-    initDownloadFile();
 
     manager = new QNetworkAccessManager;
     request = new QNetworkRequest( getURL() );
@@ -56,12 +54,15 @@ void HttpThread::run()
     request->setRawHeader("Connection", "keep-alive");
 
     reply = manager->get( *request );
+    if( ! reply )
+    {
+        return;
+    }
 
     connect(manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerFnish(QNetworkReply*)));
-    if( ! reply )
-        return;
-
     connect( reply, SIGNAL( readyRead() ), this, SLOT( writeToFile() ) );
+
+    initDownloadFile();
 
     this->exec();
 }
@@ -95,7 +96,6 @@ void HttpThread::writeToFile()
 void HttpThread::managerFnish(QNetworkReply *tmpReply)
 {
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-//    qDebug() << "statucode:"<<statusCode;
     if(statusCode == 302)
     {
         QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
@@ -109,7 +109,6 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
     {
         emit threadsIslimited();
     }
-//    emit statusCodeChanged( statusCode );
 
     if (tmpReply->size() > 0)
     {
@@ -124,14 +123,12 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
     }
 
     downloadFile.close();
-    emit finish(  );
+    emit finish( statusCode );
 }
 
 void HttpThread::stopDownload()
 {
     downloadFile.close();
-//    reply->deleteLater();
-//    manager->deleteLater();
     this->quit();
 }
 

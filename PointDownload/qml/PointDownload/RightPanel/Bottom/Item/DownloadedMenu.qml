@@ -28,7 +28,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
@@ -62,7 +62,7 @@ Rectangle {
             onClicked:
             {
                 //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_downloaded","download_redownload",downloadURL)
+                DLDataConverter.controlItem("dl_downloaded","download_redownload",downloadURL)
             }
         }
     }
@@ -82,7 +82,7 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DownloadDataSender.controlItem("dl_downloaded","download_openFolder",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloaded","download_openFolder",downloadURL)
         }
     }
     MenuButton {
@@ -104,7 +104,7 @@ Rectangle {
             onDoubleClicked:
             {
                 //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_downloaded","download_trash",downloadURL)
+                DLDataConverter.controlItem("dl_downloaded","download_trash",downloadURL)
                 //处理qml显示界面
                 downloadTrashPage.addItem(downloadedPage.getFileInfo(downloadURL))
                 downloadedPage.moveItem(downloadURL)
@@ -129,7 +129,7 @@ Rectangle {
             }
             onDoubleClicked:
             {
-                DownloadDataSender.controlItem("dl_downloaded","download_delete",downloadURL)
+                DLDataConverter.controlItem("dl_downloaded","download_delete",downloadURL)
                 //处理qml显示界面
                 downloadedPage.moveItem(downloadURL)
             }

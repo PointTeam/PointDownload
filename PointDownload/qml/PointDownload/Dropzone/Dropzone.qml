@@ -88,11 +88,10 @@ Window {
     }
 
 
-    Image{
-        id:mainImg
+    Item{
+        id:mainViewItem
         width: parent.width
         height: parent.height
-        source: "qrc:/images/dropzone/tback"
 
 
         OuterMainCircle{
@@ -128,7 +127,7 @@ Window {
 
         MouseArea{
             id:mArea
-            anchors {verticalCenter: mainImg.verticalCenter; horizontalCenter: mainImg.horizontalCenter}
+            anchors {verticalCenter: mainViewItem.verticalCenter; horizontalCenter: mainViewItem.horizontalCenter}
             width: parent.width / 3
             height: parent.height / 3
             hoverEnabled: true
@@ -173,13 +172,13 @@ Window {
 
     //阴影必须在所有组件之后才会在最底层
     DropShadow {
-        anchors.fill: mainImg
+        anchors.fill: mainViewItem
         horizontalOffset: 3
         verticalOffset: 3
         radius: 2.0
         samples: 16
         fast: false
         color: "#1d2833"
-        source: mainImg
+        source: mainViewItem
     }
 }

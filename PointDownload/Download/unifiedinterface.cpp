@@ -26,7 +26,6 @@ UnifiedInterface::UnifiedInterface(QObject *parent) :
 {
     QTimer::singleShot(500, this, SLOT(initDownloadList()));
     QTimer::singleShot(501, this, SLOT(initDownloadingStart()));
-    QTimer::singleShot(501, this, SLOT(initTimer()));
 }
 
 UnifiedInterface * UnifiedInterface::unifiedInterface = NULL;
@@ -74,6 +73,40 @@ void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
     }
 
     refreshDownloadingItem();
+}
+
+void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
+{
+    //向已下载xml记录文件插入新项
+    DownloadXMLHandler tmpOpera;
+
+    SDownloading ingStruct = tmpOpera.getDownloadingNode(dlURL);
+    SDownloaded edStruct;
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    edStruct.completeDate = current_date_time.toString( "yyyy:MM:dd:hh:mm" );
+    edStruct.dlToolsType = ingStruct.dlToolsType;
+    edStruct.exist = "true";
+    edStruct.iconPath = ingStruct.iconPath;
+    edStruct.name = ingStruct.name;
+    edStruct.savePath = ingStruct.savePath;
+    edStruct.Size = ingStruct.totalSize;
+    edStruct.URL = ingStruct.URL;
+
+    if (edStruct.name != "")
+        tmpOpera.insertDownloadedNode(edStruct);
+
+    //删除正在下载的项
+    tmpOpera.removeDownloadingFileNode(dlURL);
+
+    downloadingListMap.remove(dlURL);
+    //取出一个合适的项进行下载
+    startReady();
+
+    refreshDownloadingItem();
+
+    //统计流量
+    QString day = current_date_time.toString("dddd");
+    DataFlow::addData(day,edStruct.Size);
 }
 
 void UnifiedInterface::changeMaxJobCount(int newCount)
@@ -529,16 +562,11 @@ void UnifiedInterface::deleteDownloading(QString URL)
 
 void UnifiedInterface::offlineDownloadDownloading(QString URL)
 {
-
-    qDebug()<<"-------------------- UnifiedInterface::offlineDownloadDownloading -----------------------";
-
     XwareTask::getInstance()->entryOfflineChannel(URL);
 }
 
 void UnifiedInterface::hightSpeedChannelDownloading(QString URL)
 {
-    qDebug()<<"-------------------- UnifiedInterface::hightSpeedChannelDownloading -----------------------";
-
     XwareTask::getInstance()->entryHighSpeedChannel(URL);
 }
 
@@ -658,7 +686,6 @@ void UnifiedInterface::initDownloadList()
     initDownloadedList();
     initdownloadingList();
     initTrashList();
-    initConnection();
 }
 
 void UnifiedInterface::initDownloadedList()
@@ -742,16 +769,6 @@ void UnifiedInterface::initTrashList()
     }
 }
 
-void UnifiedInterface::initTimer()
-{
-    speedSumTimer = new QTimer();
-    connect(speedSumTimer, SIGNAL(timeout()), this, SLOT(getSpeedSum()));
-    speedSumTimer->start(SUM_INTERVAL);
-
-    pingTimer = new QTimer();
-    connect(pingTimer, SIGNAL(timeout()), this, SLOT(pingOutSide()));
-}
-
 void UnifiedInterface::initDownloadingStart()
 {
     SettingXMLHandler tmpHandler;
@@ -780,106 +797,6 @@ void UnifiedInterface::initDownloadingStart()
     }
 
     refreshDownloadingItem();
-}
-
-
-bool UnifiedInterface::pingNetWork()
-{
-    QProcess pingProc;
-    pingProc.start("ping www.baidu.com\n");
-    while ( pingProc.waitForFinished( 300 ) )
-        break;
-
-    QString result = QString( pingProc.readAll() );
-    pingProc.close();
-
-    if ( result == "" )
-        return false;
-    else
-        return true;
-}
-
-void UnifiedInterface::suspendWhenOffLine()
-{
-    qDebug() << "suspendWhenOffLine==============================";
-    QList<QString> urlList = downloadingListMap.keys();
-
-    DownloadXMLHandler tmpOpera;
-    for (int i = 0; i < urlList.count(); i ++)
-    {
-        if (tmpOpera.getDownloadingNode(urlList.at(i)).state == "dlstate_downloading")
-        {
-            suspendList.append(urlList.at(i));
-            suspendDownloading(urlList.at(i));
-        }
-    }
-}
-
-void UnifiedInterface::resumeWhenOnLine()
-{
-    for (int i = 0; i < suspendList.count(); i ++)
-    {
-        resumeDownloading(suspendList.at(i));
-    }
-
-    suspendList.clear();
-}
-
-void UnifiedInterface::pingOutSide()
-{
-    if (pingNetWork())
-    {
-        //ping通则恢复下载
-        resumeWhenOnLine();
-        speedSumTimer->start(SUM_INTERVAL);
-        pingTimer->stop();
-    }
-}
-
-void UnifiedInterface::getSpeedSum()
-{
-    if (downloadingListMap.count() <= 0)
-        return;
-
-    int speedSum = 0;
-
-    DownloadXMLHandler tmpopera;
-    QList<QString> urlList = downloadingListMap.keys();
-    for (int i = 0; i < downloadingListMap.count(); i ++)
-    {
-        speedSum += tmpopera.getDownloadingNode(urlList.at(i)).averageSpeed.toInt();
-    }
-
-    if (speedSum == 0)//断网状态
-    {
-        pingTimer->start(PING_INTERVAL);
-        speedSumTimer->stop();
-        suspendWhenOffLine();
-    }
-}
-
-void UnifiedInterface::initConnection()
-{
-    connect(YouGetTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(YouGetTask::getInstance(), SIGNAL(sYouGetError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(YouGetTask::getInstance(), SIGNAL(sFinishYouGetDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
-
-    connect(PointTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(PointTask::getInstance(), SIGNAL(sPointError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(PointTask::getInstance(), SIGNAL(sFinishPointDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
-
-    connect(XwareTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
-            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(XwareTask::getInstance(), SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
-            this, SLOT(downloadGetError(QString,QString,DownloadToolsType)));
-    connect(XwareTask::getInstance(), SIGNAL(sFinishXwareDownload(QString)),
-            this, SLOT(downloadFinish(QString)));
 }
 
 void UnifiedInterface::deleteFileFromDisk(QString path, QString fileName)

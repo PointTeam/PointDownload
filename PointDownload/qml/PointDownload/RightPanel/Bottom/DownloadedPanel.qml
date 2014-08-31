@@ -20,7 +20,7 @@
  ***********************************************************************/
 
 import QtQuick 2.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 import "DownloadedHandler.js" as DownloadedScript
 import "Item"
 
@@ -31,11 +31,11 @@ Rectangle {
 
     //连接单例的信号
     Connections {
-        target: DownloadDataSender
-        //当c++中的DownloadDataSender类触发以下信号时，更改相应属性
-        onFileInfoChange: {
-            if (DownloadDataSender.downloadType === "dl_downloaded")
-                DownloadedScript.addNewItem(DownloadDataSender.fileInfo)
+        target: DLDataConverter
+        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
+        onSFileInfoChange: {
+            if (dlType === "dl_downloaded")
+                DownloadedScript.addNewItem(fileInfo)
         }
     }
 

@@ -28,7 +28,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
@@ -49,7 +49,7 @@ Rectangle {
     MenuButton {
         id: menuSuspend
         height: parent.height - 10
-        iconPath: downloadState === "Downloading"? "qrc:/images/right/suspend" :
+        iconPath: downloadState === "dlstate_downloading"? "qrc:/images/right/suspend" :
                                                               "qrc:/images/right/resume";
         anchors {left: parent.left;leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
@@ -67,12 +67,12 @@ Rectangle {
                 if (parent.iconPath === "qrc:/images/right/suspend")
                 {
                     parent.iconPath = "qrc:/images/right/resume"
-                    DownloadDataSender.controlItem("dl_downloading","download_suspend",downloadURL)
+                    DLDataConverter.controlItem("dl_downloading","download_suspend",downloadURL)
                 }
                 else
                 {
                     parent.iconPath = "qrc:/images/right/suspend"
-                    DownloadDataSender.controlItem("dl_downloading","download_resume",downloadURL)
+                    DLDataConverter.controlItem("dl_downloading","download_resume",downloadURL)
                 }
             }
         }
@@ -96,7 +96,7 @@ Rectangle {
             }
             onClicked: {
                 downloadingPage.moveItemToTop(downloadURL);// 在优先下载时，应该把优先项移动到最前面
-                DownloadDataSender.controlItem("dl_downloading","download_priority",downloadURL)
+                DLDataConverter.controlItem("dl_downloading","download_priority",downloadURL)
                 sortTimer.start();
             }
         }
@@ -117,7 +117,7 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DownloadDataSender.controlItem("dl_downloading","download_openFolder",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloading","download_openFolder",downloadURL)
         }
     }
     MenuButton {
@@ -142,7 +142,7 @@ Rectangle {
                 downloadTrashPage.addItem(downloadingPage.getFileInfo(downloadURL))
                 downloadingPage.moveItem(downloadURL)
                 //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_downloading","download_trash",downloadURL)
+                DLDataConverter.controlItem("dl_downloading","download_trash",downloadURL)
             }
         }
     }
@@ -167,7 +167,7 @@ Rectangle {
                 //处理qml显示界面
                 downloadingPage.moveItem(downloadURL)
                 //调用C++类做文件处理
-                DownloadDataSender.controlItem("dl_downloading","download_delete",downloadURL)
+                DLDataConverter.controlItem("dl_downloading","download_delete",downloadURL)
             }
         }
     }
@@ -189,7 +189,7 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DownloadDataSender.controlItem("dl_downloading","download_offlineDownload",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloading","download_offlineDownload",downloadURL)
         }
     }
     Text{
@@ -219,7 +219,7 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DownloadDataSender.controlItem("dl_downloading","download_hightSpeedChannel",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloading","download_hightSpeedChannel",downloadURL)
         }
     }
     Text{

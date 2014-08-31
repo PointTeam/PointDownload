@@ -46,24 +46,25 @@ public:
     void startDownload();
     void stopDownload();
 
-    QFile downloadFile;//下载文件的管理对象，会分发到各个子线程中
 signals:
     void sRealTimeData(DownloadingItemInfo info);
     void sHttpError(QString URL,QString err, DownloadToolsType toolType);
     void sDownloadFinish(QString);
 
 public slots:
-    void slotSendDataToUI();//由定时器触发，定时将信息发送至界面
-    void slotUpdataXMLFile();//由定时器触发，定时更新xml文件
-
     void slotProgressChange(qint64 doneSize);//与所有子线程相连，获取下载进度
-    void slotThreadFinish();//与所有子线程相连，每个子线程完成后均触发此槽进行统计
+    void slotThreadFinish(int statusCode);//与所有子线程相连，每个子线程完成后均触发此槽进行统计
 
-    void slotGetNewRedirectURL(QUrl URL);//url重定向之后再下载
-    void slotThreadsIsLimited();//某些服务器会限制连接数导致不能下载完全，此时使用一个线程下载
+    void slotGetNewRedirectURL(QUrl URL);   //url重定向之后再下载
+    void slotThreadsIsLimited();            //某些服务器会限制连接数导致不能下载完全，此时使用一个线程下载
+
+private slots:
+    void slotSendDataToUI();    //由定时器触发，定时将信息发送至界面
+    void slotUpdataXMLFile();   //由定时器触发，定时更新xml文件
+    void slotRetryDownload();   //线程不正常退出，重试下载
+
 private:
     void touchDownloadFile();
-//    void initDownloadFile();
     void initUpdateTimer();
     void initData();
     void changeStateToDownloading(QString URL);
@@ -88,6 +89,8 @@ private:
 
     QTimer * updateXMLTimer;//定时更新xml文件的计时器
     QTimer * updateDataTimer;//定时更新向界面传送信息的计时器
+
+    const int RETRY_DOWNLOAD_INTERVAL = 5000;
 };
 
 #endif // HTTPTHREADMANAGER_H

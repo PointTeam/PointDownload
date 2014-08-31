@@ -28,7 +28,7 @@ Others:
 History:
 *********************************************************************/
 import QtQuick 2.0
-import Singleton.DownloadDataSender 1.0
+import Singleton.DLDataConverter 1.0
 
 FocusScope {
     property string defaultText : "Download URL";
@@ -77,7 +77,7 @@ FocusScope {
             //Key_Enter通常位于小键盘上
             if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
             {
-                DownloadDataSender.controlItem("dl_search","download_redownloed",textInput.text)
+                DLDataConverter.controlItem("dl_search","download_redownloed",textInput.text)
                 textInput.text = ""
             }
         }

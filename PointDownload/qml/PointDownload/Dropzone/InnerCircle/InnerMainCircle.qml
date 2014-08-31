@@ -23,8 +23,9 @@ import QtQuick 2.0
 import Singleton.PEventFilter 1.0
 import Singleton.DropzoneSettingControler 1.0
 
-Image{
-    id:innerImg
+Item{
+    id:innerViewItem
+//    source: "qrc:/images/dropzone/tback"
 
     property string percentageColor: "#ffffff"    //使用率的颜色
     property real startAngle: Math.PI / 2
@@ -43,7 +44,6 @@ Image{
 
     x:winx
     y:winy
-    source: "qrc:/images/dropzone/tback"
 
     Connections{
         target: DropzoneSettingControler
@@ -77,7 +77,7 @@ Image{
             if (stateIndex >= states.length)
                 stateIndex = 0
 
-            innerImg.state = states[stateIndex].name
+            innerViewItem.state = states[stateIndex].name
             stateIndex ++
         }
     }

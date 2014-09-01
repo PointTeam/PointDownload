@@ -27,6 +27,7 @@
 #include "XwareDataType.h"
 #include "xwarepopulateobject.h"
 #include "XMLHandler/downloadxmlhandler.h"
+#include "xwaretask.h"
 
 class XwareTaskEntity : public QObject
 {

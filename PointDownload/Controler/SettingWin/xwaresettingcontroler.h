@@ -2,6 +2,7 @@
 #define XWARESETTINGCONTROLER_H
 
 #include <QObject>
+#include <QQmlEngine>
 #include "XMLHandler/settingxmlhandler.h"
 #include "Download/XwareTask/xwarecontroller.h"
 
@@ -14,7 +15,7 @@ class XwareSettingControler : public QObject
     Q_PROPERTY(QString userName READ getUserName WRITE setUserName NOTIFY sUserNameChange)
     Q_PROPERTY(QString userPasswd READ getUserPasswd WRITE setUserPasswd NOTIFY sUserPasswdChange)
 public:
-    explicit XwareSettingControler(QObject *parent = 0);
+    static XwareSettingControler * getInstance();
 
     Q_INVOKABLE void enableXware();
     Q_INVOKABLE void disableXware();
@@ -55,9 +56,13 @@ private slots:
     void loginResultHandle(XwareLoginResultType rs);
 
 private:
+    explicit XwareSettingControler(QObject *parent = 0);
+
     void initData();
 
 private:
+    static XwareSettingControler * xwareSettingControler;
+
     bool xwareEnable;
     bool isSignIn;
     bool automaticLogin;
@@ -65,5 +70,15 @@ private:
     QString userPasswd;
 
 };
+
+
+//将单例对象注册到qml中使用的回调函数
+static QObject * xSCObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return XwareSettingControler::getInstance();
+}
 
 #endif // XWARESETTINGCONTROLER_H

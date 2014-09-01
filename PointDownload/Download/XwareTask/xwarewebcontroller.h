@@ -54,7 +54,7 @@ public:
     void logout();
     QString currentPageURL();
     void reloadWebView();
-
+    QWebView *getWebView();
     void tryAutomaticLogin(QString userName, QString pwd);
 
 signals:

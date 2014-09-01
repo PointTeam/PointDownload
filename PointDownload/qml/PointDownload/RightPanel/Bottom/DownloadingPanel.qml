@@ -67,11 +67,7 @@ Rectangle {
             DownloadingScript.updatePercentage(dlURL, progress)
         }
         onSControlFeedback: {
-//            if (DownloadDataSender.downloadType === "dl_downloading")
-//            {
-//                if (DownloadDataSender.contrlResultType === "download_priority")
-//                    sortTimer.start();
-//            }
+
         }
     }
 

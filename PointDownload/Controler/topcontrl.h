@@ -66,6 +66,7 @@ signals:
     void signalShowMainWindow();
     void signalHideMainWindow();
     void signalShowAboutPoint();
+    void signalAllDestroy();
 
 public slots:
     Q_INVOKABLE void showMainWindow();

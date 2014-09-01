@@ -74,13 +74,13 @@ public:
 
     bool writeDownloadingConfigFile(SDownloading downloading);    //修改正在下载项的配置文件
 
-    void insertDownloadedNode(SDownloaded tmpStruct);               //插入一个已完成下载项到下载完成配置文件中
-    void insertDownloadingNode(SDownloading tmpStruct);             //插入一个正在下载项到正在下载配置文件中
-    void insertDownloadTrash(SDownloadTrash tmpStruct);             //插入一个被删除的项到已删除配置文件中
+    bool insertDownloadedNode(SDownloaded tmpStruct);               //插入一个已完成下载项到下载完成配置文件中
+    bool insertDownloadingNode(SDownloading tmpStruct);             //插入一个正在下载项到正在下载配置文件中
+    bool insertDownloadTrash(SDownloadTrash tmpStruct);             //插入一个被删除的项到已删除配置文件中
 
-    void removeDownloadingFileNode(QString URL);                //移除下载链接为URL的正在下载项
-    void removeDownloadedFileNode(QString URL);                 //移除下载链接为URL的已下载项
-    void removeDownloadTrashFileNode(QString URL);              //移除下载链接为URL的回首站项
+    bool removeDownloadingFileNode(QString URL);                //移除下载链接为URL的正在下载项
+    bool removeDownloadedFileNode(QString URL);                 //移除下载链接为URL的已下载项
+    bool removeDownloadTrashFileNode(QString URL);              //移除下载链接为URL的回首站项
 
     bool urlExit(QString url, QString type);                    //type can be string "ing" or "ed"
 
@@ -97,12 +97,12 @@ signals:
 public slots:
 
 private:
-    void touchAll();                                    //从调用下面的探测函年数，被构造函数调用
-    void touchConfigDir();                          //探测配置文件夹是否存在，不存在则创建
+    void touchAll();                         //从调用下面的探测函年数，被构造函数调用
+    void touchConfigDir();                   //探测配置文件夹是否存在，不存在则创建
     void touchDownloadDir();
     void touchDownloadedConfigFile();        //探测已下载列表文件是否存在，不存在则创建
-    void touchDownloadingConfigFile();        //探测正在下载列表文件是否存在，不存在则创建
-    void touchDownloadTrashConfigFile();    //探测垃圾箱文件是否存在，不存在则创建
+    void touchDownloadingConfigFile();       //探测正在下载列表文件是否存在，不存在则创建
+    void touchDownloadTrashConfigFile();     //探测垃圾箱文件是否存在，不存在则创建
 
     QDomDocument getDocument(QString path);
     QDomNode getMatchFileNode(QDomDocument &domDoc, QString URL);   //将对应URL的节点取出，以便进行删除操作

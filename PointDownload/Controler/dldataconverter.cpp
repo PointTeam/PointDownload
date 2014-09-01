@@ -115,17 +115,17 @@ void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
         break;
     }
 
-    if((infoList.thunderHightSpeed != "")
-            && (infoList.thunderHightSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
+    if(infoList.thunderHightSpeed == XwarePopulateObject::getInstance()->getDefaultTaskPara())
     {
-        emit sThunderHightSpeedChange(tmpURL, infoList.thunderHightSpeed);
+        infoList.thunderHightSpeed = "";
     }
+    emit sThunderHightSpeedChange(tmpURL, infoList.thunderHightSpeed);
 
-    if((infoList.thunderOfflineSpeed != "")
-            && (infoList.thunderOfflineSpeed != XwarePopulateObject::getInstance()->getDefaultTaskPara()))
+    if(infoList.thunderOfflineSpeed == XwarePopulateObject::getInstance()->getDefaultTaskPara())
     {
-        emit sThunderOfflineSpeedChange(tmpURL, infoList.thunderOfflineSpeed);
+        infoList.thunderOfflineSpeed = "";
     }
+    emit sThunderOfflineSpeedChange(tmpURL, infoList.thunderOfflineSpeed);
 }
 
 void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType otype, QString URL, bool result)

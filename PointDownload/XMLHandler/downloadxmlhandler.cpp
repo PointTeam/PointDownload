@@ -55,7 +55,7 @@ bool DownloadXMLHandler::writeDownloadingConfigFile(SDownloading downloading)
     return true;
 }
 
-void DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
+bool DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadedFile(DOWNLOADEDFILE_PATH);
@@ -63,10 +63,10 @@ void DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
     {
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadedFile))
-            return;
+            return false;
     }
     else
-        return;
+        return false;
 
     downloadedFile.close();
 
@@ -86,15 +86,17 @@ void DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
 
     //写xml文件
     if (!downloadedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
+        return false;
     QTextStream textStream(&downloadedFile);
 
     domDocument.save(textStream,4);
 
     downloadedFile.close();
+
+    return true;
 }
 
-void DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
+bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
@@ -103,11 +105,11 @@ void DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadingFile))
         {
-             return;
+             return false;
         }
     }
     else
-        return;
+        return false;
 
     downloadingFile.close();
 
@@ -136,15 +138,17 @@ void DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
 
     //写xml文件
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
+        return false;
     QTextStream textStream(&downloadingFile);
 
     domDocument.save(textStream,4);
 
     downloadingFile.close();
+
+    return true;
 }
 
-void DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
+bool DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadTrashFile(DOWNLOADTRASHFILE_PATH);
@@ -152,10 +156,10 @@ void DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
     {
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadTrashFile))
-            return;
+            return false;
     }
     else
-        return;
+        return false;
 
     downloadTrashFile.close();
 
@@ -172,15 +176,17 @@ void DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
 
     //写xml文件
     if (!downloadTrashFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
+        return false;
     QTextStream textStream(&downloadTrashFile);
 
     domDocument.save(textStream,4);
 
     downloadTrashFile.close();
+
+    return true;
 }
 
-void DownloadXMLHandler::removeDownloadedFileNode(QString URL)
+bool DownloadXMLHandler::removeDownloadedFileNode(QString URL)
 {
     QDomDocument domDocument;
     QFile downloadedFile(DOWNLOADEDFILE_PATH);
@@ -188,10 +194,10 @@ void DownloadXMLHandler::removeDownloadedFileNode(QString URL)
     {
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadedFile))
-            return;
+            return false;
     }
     else
-        return;
+        return false;
 
     downloadedFile.close();
 
@@ -199,17 +205,18 @@ void DownloadXMLHandler::removeDownloadedFileNode(QString URL)
 
     //写xml文件
     if (!downloadedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
+        return false;
     QTextStream textStream(&downloadedFile);
     domDocument.save(textStream,4);
     downloadedFile.close();
 
+    return true;
 }
 
-void DownloadXMLHandler::removeDownloadingFileNode(QString URL)
+bool DownloadXMLHandler::removeDownloadingFileNode(QString URL)
 {
     if (!urlExit(URL,"ing"))
-        return;
+        return false;
 
     QDomDocument domDocument;
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
@@ -219,13 +226,13 @@ void DownloadXMLHandler::removeDownloadingFileNode(QString URL)
         if (!domDocument.setContent(&downloadingFile))
         {
             qDebug() << "remove: setContent err";
-            return;
+            return false;
         }
     }
     else
     {
         qDebug() << "remove: open file err";
-        return;
+        return false;
     }
 
     downloadingFile.close();
@@ -236,14 +243,16 @@ void DownloadXMLHandler::removeDownloadingFileNode(QString URL)
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         qDebug() << "remove: open file err";
-        return;
+        return false;
     }
     QTextStream textStream(&downloadingFile);
     domDocument.save(textStream,4);
     downloadingFile.close();
+
+    return true;
 }
 
-void DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
+bool DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
 {
     QDomDocument domDocument;
     QFile downloadTrashFile(DOWNLOADTRASHFILE_PATH);
@@ -251,22 +260,22 @@ void DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
     {
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadTrashFile))
-            return;
+            return false;
     }
     else
-        return;
+        return false;
 
     downloadTrashFile.close();
-    qDebug() << "remove trash item";
-
     domDocument.documentElement().removeChild(getMatchFileNode(domDocument,URL));
 
     //写xml文件
     if (!downloadTrashFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
+        return false;
     QTextStream textStream(&downloadTrashFile);
     domDocument.save(textStream,4);
     downloadTrashFile.close();
+
+    return true;
 }
 
 bool DownloadXMLHandler::urlExit(QString URL, QString type)

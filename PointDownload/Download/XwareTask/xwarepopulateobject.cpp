@@ -86,7 +86,7 @@ void XwarePopulateObject::setAllBindedPeerIds(QString ids)
     {
         // debug
         qDebug()<<"ids is empty, return ~~~";
-        return;
+        // return;
     }
     else
     {
@@ -111,7 +111,7 @@ void XwarePopulateObject::login(QString userName, QString pwd)
         qDebug()<<"======== XwarePopulateObject::login ===========";
 
     // emit this to javascript
-    emit sLogin(userName, pwd);
+    emit sJSLogin(userName, pwd);
 }
 
 void XwarePopulateObject::logout()
@@ -120,7 +120,7 @@ void XwarePopulateObject::logout()
         qDebug()<<"======== XwarePopulateObject::logout ===========";
     
     // emit this to javascript
-    emit sLogout();
+    emit sJSLogout();
 }
 
 void XwarePopulateObject::getAllBindedPeerIds()

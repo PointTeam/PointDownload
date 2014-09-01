@@ -52,8 +52,8 @@ struct XwareTaskInfo
     QString remainTime;
     XwareTaskState state;
     QString url; // url
-    QString offlineChnlSpeed;
     QString highChnlSpeed;
+    QString offlineChnlSpeed;
 //    QString uploadSpeed;
 };
 

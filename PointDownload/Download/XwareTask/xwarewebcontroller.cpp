@@ -57,6 +57,7 @@ void XwareWebController::startLoginCtrlTimer()
         emit sLoginResult(x_LoginTimeOut);
 
          qDebug()<<"[xware fail] login time out ";
+         return;
     }
 
     ++loginTimeCount;
@@ -93,9 +94,10 @@ QString XwareWebController::setElemValueById(QString id, QString value)
 void XwareWebController::login(QString userName, QString pwd)
 {
     qDebug()<<"[xware info] login ...";
+
     this->userName = userName;
     this->userPwd = pwd;
-//    startLoginCtrlTimer();
+    startLoginCtrlTimer();
     loginCtrlTimer->start(LOGIN_DEFAULT_INTERVAL);
 }
 
@@ -117,6 +119,11 @@ void XwareWebController::reloadWebView()
     this->webview->reload();
 }
 
+QWebView * XwareWebController::getWebView()
+{
+    return this->webview;
+}
+
 void XwareWebController::tryAutomaticLogin(QString userName, QString pwd)
 {
     this->userName = userName;
@@ -134,7 +141,7 @@ void XwareWebController::loadingFinished()
 
         qDebug()<<"[xware info] finish login !";
     }
-    else if(currentPageURL() == LOGIN_URL)
+    else if(currentPageURL().contains(LOGIN_URL))
     {
         if(isLogined)
         {
@@ -149,6 +156,8 @@ void XwareWebController::loadingFinished()
         {
             this->login(userName, userPwd);
         }
+
+        qDebug()<<"[xware info] login page ready ! ";
     }
 }
 
@@ -192,19 +201,14 @@ void XwareWebController::webUrlChanged(QUrl url)
    if(XWARE_CONSTANTS_STRUCT.DEBUG)
        qDebug()<<"URL changed ==>" << url.toString() ;
 
-   if(url.toString() == LOGIN_URL)
-   {
-       qDebug()<<"[xware info] login page ready ! ";
-   }
-
    if(url.toString() == MAIN_URL_3)
    {
        loginTimeCount = 0;
        loginCtrlTimer->stop();
-       qDebug()<<"[xware info] login success, initialise ...";
+       qDebug()<<"[xware info] login success, initialise binding ...";
    }
 
-    if(url.toString() != MAIN_URL_3 &&  currentPageURL() != LOGIN_URL)
+    if(url.toString() != MAIN_URL_3 &&  !url.toString().contains(LOGIN_URL))
     {
             webview->triggerPageAction(QWebPage::Stop);
             webview->page()->mainFrame()->load(QUrl(MAIN_URL_3));

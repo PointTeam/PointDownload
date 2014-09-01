@@ -226,6 +226,8 @@ void TopContrl::checkUpdate()
 void TopContrl::completelyExit()
 {
     //做相应的数据保存处理后再退出
+    emit signalAllDestroy();
+
     qApp->quit();
 }
 

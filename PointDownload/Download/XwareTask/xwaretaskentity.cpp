@@ -73,7 +73,7 @@ void XwareTaskEntity::feedbackDownloadList(QString tasksInfo)
    if(tasksInfo.trimmed().length() == 0)
     {
         // debug
-        //qDebug()<<"it dose not contain any  downloading task information!!";
+//        qDebug()<<"it dose not contain any  downloading task information!!";
         return;
     }
 
@@ -109,7 +109,7 @@ void XwareTaskEntity::feedbackDownloadList(QString tasksInfo)
     taskInfoMapLocker->unlock();
 
      // debug
-    //debugMap(taskInfoMap);
+//    debugMap(taskInfoMap);
 }
 
 void XwareTaskEntity::insertTask(QStringList taskInfoStr)

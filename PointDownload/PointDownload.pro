@@ -88,7 +88,8 @@ SOURCES += main.cpp \
     Download/XwareTask/mynetworkaccessmanager.cpp \
     Download/XwareTask/mywebview.cpp \
     Download/XwareTask/xwaretaskentity.cpp \
-    Controler/dldataconverter.cpp
+    Controler/dldataconverter.cpp \
+    Download/XwareTask/webctrlviewtest.cpp
 
 # Installation path
 # target.path =
@@ -132,7 +133,8 @@ HEADERS += \
     Download/XwareTask/mynetworkaccessmanager.h \
     Download/XwareTask/mywebview.h \
     Download/XwareTask/xwaretaskentity.h \
-    Controler/dldataconverter.h
+    Controler/dldataconverter.h \
+    Download/XwareTask/webctrlviewtest.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS = PointDownload_zh_CN.ts

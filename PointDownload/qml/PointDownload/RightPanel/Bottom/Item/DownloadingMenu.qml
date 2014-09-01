@@ -45,6 +45,20 @@ Rectangle {
     radius: 4
     opacity: 0.8
     color: "#ffffff"
+    //连接单例的信号
+    Connections {
+        target: DLDataConverter
+        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
+        onSDLStateChange: {
+            if (dlURL == downloadURL)
+            {
+                if (dlState == "dlstate_downloading")
+                    menuSuspend.iconPath = "qrc:/images/right/suspend"
+                else if (dlState == "dlstate_suspend")
+                    menuSuspend.iconPath = "qrc:/images/right/resume"
+            }
+        }
+    }
 
     MenuButton {
         id: menuSuspend
@@ -174,7 +188,7 @@ Rectangle {
 
     MenuButton{
         id:menuOfflineDownload
-        visible: downloadingItem.dlToolsType == "Xware"?true:false
+        visible: (downloadingItem.dlToolsType == "Xware" || downloadingItem.dlToolsType == "xware")?true:false
         height: parent.height - 10
         iconPath: "qrc:/images/right/offlinedownload"
         anchors {right:offlineDownloadText.left; rightMargin: 6; verticalCenter: parent.verticalCenter}
@@ -194,7 +208,7 @@ Rectangle {
     }
     Text{
         id:offlineDownloadText
-        text: offlineSpeed
+        text:offlineSpeed
         visible: parent.height == 0?false:true
         font.pixelSize: 11
         color: "#48484b"
@@ -204,7 +218,7 @@ Rectangle {
 
     MenuButton{
         id:menuHightSpeed
-        visible: downloadingItem.dlToolsType == "Xware"?true:false
+        visible: (downloadingItem.dlToolsType == "Xware" || downloadingItem.dlToolsType == "xware")?true:false
         height: parent.height - 10
         iconPath: "qrc:/images/right/hightspeed"
         anchors {right: hightSpeedText.left;rightMargin: 6; verticalCenter: parent.verticalCenter}

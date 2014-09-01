@@ -182,6 +182,9 @@ function pointRefashDloadListTimer()
     }
     );
 
+
+//    Point.justForJSTest("... pointRefashDloadListTimer start ...");
+
     Point.feedbackDownloadList(allTaskInfo);
 }
 

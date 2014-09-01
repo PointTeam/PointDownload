@@ -37,6 +37,8 @@
 #include "Controler/monitorClipBoard.h"
 #include "Controler/dldataconverter.h"
 #include "qtsinglecoreapplication.h"
+#include "Download/XwareTask/XwareConstants.h"
+#include "Download/XwareTask/webctrlviewtest.h"
 
 
 int main(int argc, char *argv[])
@@ -59,21 +61,25 @@ int main(int argc, char *argv[])
     MonitorClipBoard::getInstance();
     DropzoneSettingControler::getInstance();
     MiddleSender::getInstance();
+    XwareTaskEntity::getInstance();
+    XwareTask::getInstance();
     //如果符合条件，则自动登陆xware
-    XwareSettingControler * xCtrl = new XwareSettingControler;
-    xCtrl->tryAutomaticLogin();
-    delete xCtrl;
-    xCtrl = NULL;
+    XwareSettingControler::getInstance()->tryAutomaticLogin();
 
     //注册的参数格式：import settingControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
-    qmlRegisterType<XwareSettingControler>("xwareSettingControler", 1, 0, "XwareSettingControler");
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 
    //添加全局事件过滤
    app.installEventFilter(PEventFilter::getInstance());
+
+   // Xware Test View
+   if(XWARE_CONSTANTS_STRUCT.DEBUG_2)
+   {
+       WebCtrlViewTest::getInstance()->show();
+   }
 
     return app.exec();
 }

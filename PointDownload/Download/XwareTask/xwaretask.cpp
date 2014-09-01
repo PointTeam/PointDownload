@@ -116,6 +116,9 @@ void XwareTask::entryHighSpeedChannel(QString URL)
 
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)
 {
+
+//    qDebug()<<"xxxxxxxxxxx feedback xxxxxxxxxxxxxxxx";
+
     emit sRealTimeData(info);
 }
 

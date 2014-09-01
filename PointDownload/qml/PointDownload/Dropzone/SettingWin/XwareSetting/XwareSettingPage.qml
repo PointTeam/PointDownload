@@ -1,11 +1,12 @@
 import QtQuick 2.0
-import xwareSettingControler 1.0
+import Singleton.XwareSettingControler 1.0
 
 Rectangle{
     id:xwareSettingPage
 
-    XwareSettingControler{
-        id:xwareCotrl
+    Connections{
+        target: XwareSettingControler
+
         onSIsSignInChange: {
             if (isSignIn)
             {
@@ -26,7 +27,7 @@ Rectangle{
 
     signal xwareEnableChange(bool changeFlag)
 
-    property bool xwareEnable: xwareCotrl.xwareEnable
+    property bool xwareEnable: XwareSettingControler.xwareEnable
 
     Image{
         id:backImg
@@ -37,7 +38,7 @@ Rectangle{
 
         LoginPage{
             id:loginPage
-            visible: xwareCotrl.isSignIn?false:true
+            visible: XwareSettingControler.isSignIn?false:true
             width: parent.width * 4 / 5
             height:  parent.height * 2 /  5
             anchors {top: parent.top; topMargin: 10; horizontalCenter: parent.horizontalCenter}
@@ -45,7 +46,7 @@ Rectangle{
 
         LogoutPage{
             id:logoutPage
-            visible: xwareCotrl.isSignIn?true:false
+            visible: XwareSettingControler.isSignIn?true:false
             width: parent.width * 4 / 5
             height:  parent.height * 2 /  5
             anchors {top: parent.top; topMargin: 5; horizontalCenter: parent.horizontalCenter}
@@ -53,7 +54,7 @@ Rectangle{
 
         Image{
             id:remeberInfoCheckImg
-            source: xwareCotrl.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
+            source: XwareSettingControler.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
             width: 10
             height: parent.height / 18
             anchors {left: loginPage.left; top: loginPage.bottom; topMargin: 20}
@@ -64,12 +65,12 @@ Rectangle{
                     if (remeberInfoCheckImg.source == "qrc:/images/navigation/Breduncheck")
                     {
                         remeberInfoCheckImg.source = "qrc:/images/navigation/Brednone"
-                        xwareCotrl.automaticLogin = false
+                        XwareSettingControler.automaticLogin = false
                     }
                     else
                     {
                         remeberInfoCheckImg.source = "qrc:/images/navigation/Breduncheck"
-                        xwareCotrl.automaticLogin = true
+                        XwareSettingControler.automaticLogin = true
                     }
                 }
             }
@@ -114,7 +115,7 @@ Rectangle{
             Text{
                 id:logText
                 color: "#ffffff"
-                text:xwareCotrl.isSignIn?qsTr("Sign out") : qsTr("Sign in")
+                text:XwareSettingControler.isSignIn?qsTr("Sign out") : qsTr("Sign in")
                 visible: parent.height == 0?false:true
                 width: parent.width / 2
                 height: parent.height
@@ -126,13 +127,13 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (xwareCotrl.isSignIn)
-                        xwareCotrl.signOutXware()
+                    if (XwareSettingControler.isSignIn)
+                        XwareSettingControler.signOutXware()
                     else
                     {
-                        xwareCotrl.userName = loginPage.getUsername();
-                        xwareCotrl.userPasswd = loginPage.getPassword();
-                        xwareCotrl.signInXware(loginPage.getUsername(),loginPage.getPassword())
+                        XwareSettingControler.userName = loginPage.getUsername();
+                        XwareSettingControler.userPasswd = loginPage.getPassword();
+                        XwareSettingControler.signInXware(loginPage.getUsername(),loginPage.getPassword())
                     }
                 }
             }
@@ -141,26 +142,26 @@ Rectangle{
 
     function enableXware()
     {
-        xwareCotrl.enableXware()
+        XwareSettingControler.enableXware()
     }
 
     function disableXware()
     {
-        xwareCotrl.disableXware()
+        XwareSettingControler.disableXware()
     }
 
     function isXwareEnable()
     {
-        return xwareCotrl.xwareEnable
+        return XwareSettingControler.xwareEnable
     }
 
     function getDefaultUserName()
     {
-        return xwareCotrl.userName
+        return XwareSettingControler.userName
     }
 
     function getDefaultUserPasswd()
     {
-        return xwareCotrl.userPasswd
+        return XwareSettingControler.userPasswd
     }
 }

@@ -1,11 +1,24 @@
 #include "xwaresettingcontroler.h"
+#include <QtQml>
 
 XwareSettingControler::XwareSettingControler(QObject *parent) :
     QObject(parent)
 {
+    //import时使用Singleton.XwareSettingControler
+    qmlRegisterSingletonType<XwareSettingControler>("Singleton.XwareSettingControler"
+                                                    , 1, 0, "XwareSettingControler", xSCObj);
+
     connect(XwareController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
             this, SLOT(loginResultHandle(XwareLoginResultType)));
     initData();
+}
+
+XwareSettingControler * XwareSettingControler::xwareSettingControler = NULL;
+XwareSettingControler * XwareSettingControler::getInstance()
+{
+    if (xwareSettingControler == NULL)
+        xwareSettingControler = new XwareSettingControler();
+    return xwareSettingControler;
 }
 
 void XwareSettingControler::enableXware()
@@ -22,8 +35,6 @@ void XwareSettingControler::disableXware()
 
 void XwareSettingControler::signInXware(QString username, QString passwd)
 {
-
-
     XwareController::getInstance()->login(username, passwd);
 }
 

@@ -288,6 +288,9 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
     }
 
 
+    qDebug()<<"xware add new download";
+
+
     //启动下载
     XwareTask::getInstance()->addNewDownload(info);
 }
@@ -739,7 +742,7 @@ void UnifiedInterface::initdownloadingList()
             dlToolsType = aria2;
 
         // added by choldrim , not sure
-        else if (ingList.at(i).dlToolsType == "Xware")
+        else if (ingList.at(i).dlToolsType == "xware")
             dlToolsType = Xware;
 
         else

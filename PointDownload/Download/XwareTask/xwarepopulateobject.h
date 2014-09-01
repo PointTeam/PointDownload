@@ -32,6 +32,7 @@
 #include "XwareDataType.h"
 #include "xwarewebcontroller.h"
 #include "Download/DataType.h"
+#include "xwaretaskentity.h"
 
 class XwarePopulateObject : public QObject
 {
@@ -51,26 +52,23 @@ public:
     void entryOfflineChannel(QString tid);
     void entryHighSpeedChannel(QString tid);
 
-//    QString getTaskIdByUrl(QString url_);  // get task id through download URL , -1 will be returned when not find
-
     void urlParse(QString url);
     void btParse(QString btFilePath);
-
-//    XwareTaskInfo getTaskInfoStructById(QString tid);
 
     QString getDefaultTaskPara();
     QString getSpliterBtwData();
     QString getSpliterEnd();
+
 signals:
-    void sLogin(QString, QString);
-    void sLogout();
     void sReturnAllBindedPeerIds(QStringList);
-//    void sRealTimeDataChanged(DownloadingItemInfo);
-    void sFeedbackURLParse(QString);
-    void sFinishDownload(QString);  // QString URL
+    void sFeedbackURLParse(QString);  // QString: all URL parse result, include fileName and fileSize
+    void sFinishDownload(QString);  // QString: URL
     void sFeedbackDownloadList(QString);
 
     // ============================>  emit to javascript <================================= //
+    void sJSLogin(QString, QString);
+    void sJSLogout();
+
     // get all binded machine code(peer id)
     void sJSGetAllBindedPeerIds();
 
@@ -79,7 +77,6 @@ signals:
 
     // add new task
     void sJSAddNewDownloadTask(QString, QString, QStringList);  // param: url, storage, fileList
-//    void sAddNewBTDownloadTask(QString, QString, QStringList);  // param: btFilePath, storage, fileList
 
     // task controller
     void sJSSuspendDownloadingTask(QString);  // param: task id
@@ -108,21 +105,14 @@ public slots:
     // ================================================================================== //
 
 private slots:
-//    void emitReturnAllBindedPeerIdsSignal();
 
 private:
     explicit XwarePopulateObject(QObject *parent = 0);
     static XwarePopulateObject *xwarePopulateObject;
 
-//    void insertTask(QStringList taskInfoStr);
-//    void clearTaskMap(QMap<QString, XwareTaskInfo*> * taskInfoMap); // free all items of task map to prevent memory leaks
-//    void constructAndEmitRealTimeData(XwareTaskInfo *taskInfo);
-
     QString spliterBtwData;
     QString spliterEnd;
     QString defaultPara;
-//    QMap<QString, XwareTaskInfo*> * taskInfoMap;
-//    QMutex * taskInfoMapLocker;
 };
 
 #endif // XWAREPOPULATEOBJECT_H

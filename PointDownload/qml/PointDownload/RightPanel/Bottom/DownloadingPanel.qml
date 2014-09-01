@@ -115,6 +115,7 @@ Rectangle {
         model: ingItemModel
         spacing: 4
         delegate: listDelegate
+        clip: true
     }
 
     //启动排序的计时器

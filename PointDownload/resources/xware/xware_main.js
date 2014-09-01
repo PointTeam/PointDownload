@@ -120,7 +120,9 @@ function pointRemoveDownloadingTask(tid)
     // debugger
     Point.justForJSTest("----------------- remove -----------------------" + tid);
 
+    App.set("dialogs.removeTasks.checked", 1);
     App.set("task.remove", tid);
+    App.set("dialogs.removeTasks.confirmEVT", 1);
 }
 
 function pointEntryOfflineChannel(tid)

@@ -65,9 +65,6 @@ void URLServer::socketReadyReadHandler()
 
         QString urlInfo = stream.readAll();
 
-        // debug
-//        qDebug()<<"read msg from popup window: "<<urlInfo;
-
         // parse URL and BT file
         if(urlInfo.startsWith(XwareParseURLHander))
         {
@@ -78,6 +75,8 @@ void URLServer::socketReadyReadHandler()
 
         //取出数据，调用统一接口启动下载
         QStringList infoList = urlInfo.split("?:?");
+
+//        qDebug() << "infoList" << infoList;
 
         //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
         if (infoList.count() == 8)
@@ -93,6 +92,8 @@ void URLServer::socketReadyReadHandler()
                 dlInfo.toolType = aria2;
 
             dlInfo.fileName = infoList.at(1).split("?:?").at(0).split("@").at(2);
+            if (dlInfo.fileName.contains("#:#"))
+                dlInfo.fileName = dlInfo.fileName.left(dlInfo.fileName.length() - 3);
             dlInfo.downloadURL = infoList.at(2);
             dlInfo.redirectURl = infoList.at(3);
             dlInfo.iconPath = infoList.at(4);

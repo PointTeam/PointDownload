@@ -40,7 +40,6 @@ YouGetTask * YouGetTask::getInstance()
 
 void YouGetTask::startDownload(PrepareDownloadInfo info)
 {
-    qDebug() << "555555555555555555555555555YouGetTask::startDownload";
     YouGetProcess * yougetProcess = new YouGetProcess(info);
     connect(yougetProcess, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
     connect(yougetProcess, SIGNAL(yougetError(QString,QString,DownloadToolsType))

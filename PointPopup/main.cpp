@@ -84,17 +84,17 @@ int main(int argc, char *argv[])
 //    QString fileURL = "http://www.tudou.com/programs/view/QIIUsuQxT0M/";
     QString fileURL = "";
 
-//    QStringList urlList = QString(argv[argc - 1]).split("#..#");
+    QStringList urlList = QString(argv[argc - 1]).split("#..#");
 
 
-//    if (urlList.at(0) == QString("FIREFOX"))//firefox
-//    {
-//        fileURL = QString(urlList.at(1));
-//    }
-//    else//chrome
-//    {
-//        fileURL = getChromeURL();
-//    }
+    if (urlList.at(0) == QString("FIREFOX"))//firefox
+    {
+        fileURL = QString(urlList.at(1));
+    }
+    else//chrome
+    {
+        fileURL = getChromeURL();
+    }
 
     DataControler::getInstance()->getURLFromBrowser(fileURL);
 

@@ -29,7 +29,7 @@
 static struct XwareConstants
 {
     // is output the debug info
-    const bool DEBUG = true;
+    const bool DEBUG = false;
     const bool DEBUG_2 = false;
 
     int  ETM_PORT;  // default port

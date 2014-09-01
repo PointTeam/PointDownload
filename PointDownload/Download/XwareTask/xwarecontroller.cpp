@@ -158,7 +158,7 @@ QString XwareController::getCodeFromJson()
 
     // 读到的信息
     QString jsonStr = reply->readAll();
-    QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toLatin1());
+    QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
     QJsonArray jary = jsd.array();
 
     delete reply;

@@ -179,7 +179,20 @@ void XwareTaskEntity::constructAndEmitRealTimeData(XwareTaskInfo * taskInfo)
     itemInfo.uploadSpeed = "0 KB";
     itemInfo.thunderOfflineSpeed = taskInfo->offlineChnlSpeed;
     itemInfo.thunderHightSpeed = taskInfo->highChnlSpeed;
-    itemInfo.downloadState = taskInfo->state == x_dload?dlstate_downloading:dlstate_suspend;
+
+    if(taskInfo->state == x_dload)
+    {
+        itemInfo.downloadState = dlstate_downloading;
+    }
+    else if(taskInfo->state == x_pause)
+    {
+        itemInfo.downloadState = dlstate_suspend;
+    }
+    else
+    {
+        itemInfo.downloadState = dlstate_ready;
+    }
+
     itemInfo.downloadPercent = taskInfo->progress.split("%").at(0).toDouble();
 
     if(isUpdateXML)

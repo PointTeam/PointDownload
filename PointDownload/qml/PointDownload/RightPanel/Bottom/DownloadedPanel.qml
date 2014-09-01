@@ -84,6 +84,7 @@ Rectangle {
         model: edItemModel
         spacing: 4
         delegate: listDelegate
+        clip: true
     }
 
     function moveItem(url)

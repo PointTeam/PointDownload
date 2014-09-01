@@ -377,7 +377,7 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
     QProcess *myProcess = new QProcess(parent);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
 
-    myProcess->write(URL.toLatin1().data());
+    myProcess->write(URL.toUtf8().data());
     myProcess->closeWriteChannel();
 }
 
@@ -544,6 +544,10 @@ void UnifiedInterface::trashDownloading(QString URL)
     deleteFileFromDisk(tmpOpera.getDownloadingNode(URL).savePath,tmpOpera.getDownloadingNode(URL).name);
     tmpOpera.removeDownloadingFileNode(URL);// 从XML文件中移除
 
+
+    if (tmpTrashStruct.dlToolsType == "xware" || tmpTrashStruct.dlToolsType == "Xware")
+        XwareTask::getInstance()->removeDownloading(URL);
+
     emit sReturnControlResult(dl_downloading,download_trash,URL,true);
 
     startReady();
@@ -556,6 +560,9 @@ void UnifiedInterface::deleteDownloading(QString URL)
     stopDownloading(URL);
     deleteFileFromDisk(tmpOpera.getDownloadingNode(URL).savePath,tmpOpera.getDownloadingNode(URL).name);
     tmpOpera.removeDownloadingFileNode(URL);
+
+
+    XwareTask::getInstance()->removeDownloading(URL);
 
     emit sReturnControlResult(dl_downloading,download_delete,URL,true);
 
@@ -617,7 +624,7 @@ void UnifiedInterface::redownloadDownloaded(QString URL)
     QProcess *  myProcess = new QProcess(parent);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
 
-    myProcess->write(URL.toLatin1().data());
+    myProcess->write(URL.toUtf8().data());
     myProcess->closeWriteChannel();
 
     //当用户确定要下载后，由界面调用相关函数删除文件
@@ -670,7 +677,7 @@ void UnifiedInterface::redownloadTrash(QString URL)
     QProcess *  myProcess = new QProcess(parent);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
 
-    myProcess->write(URL.toLatin1().data());
+    myProcess->write(URL.toUtf8().data());
     myProcess->closeWriteChannel();
 
     //当用户确定要下载后，由界面调用相关函数删除文件

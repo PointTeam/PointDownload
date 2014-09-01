@@ -49,7 +49,7 @@ ListView {
     VisualItemModel
     {
         id: itemModel
-        SettingMainPanel {id: settingPanel; height: rightListViewPanel.height; width: rightListViewPanel.width;}
+//        SettingMainPanel {id: settingPanel; height: rightListViewPanel.height; width: rightListViewPanel.width;}
         BottomMainPanel {id: downloadListPanel;width: rightListViewPanel.width;height: rightListViewPanel.height;}
     }
 

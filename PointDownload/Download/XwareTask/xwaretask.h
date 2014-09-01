@@ -43,6 +43,7 @@ public:
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
+    void removeDownloading(QString URL);
 
     void entryOfflineChannel(QString URL);
     void entryHighSpeedChannel(QString URL);

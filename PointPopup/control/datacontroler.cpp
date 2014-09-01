@@ -444,7 +444,7 @@ void DataControler::readMsgFromMainProgram()
         QStringList fileInfoList = file.split(xwareSpliterBtwData);
 
         // get mine type by name
-        QString fileType = getFileTypeByName(fileInfoList.at(0));
+        fileType = getFileTypeByName(fileInfoList.at(0));
 
         QString fileSize = convertToByteUnit(fileInfoList.at(1));
 
@@ -452,8 +452,6 @@ void DataControler::readMsgFromMainProgram()
         QString singleFileInfo = fileType + "@" + fileSize + "@" + fileInfoList.at(0) + "#:#";
         allFileInfo += singleFileInfo;
     }
-
-    qDebug()<<"all file info:" << allFileInfo;
 
     setFileNameList(allFileInfo);
     emit sFnishGetAllInfo();
@@ -687,12 +685,12 @@ QString DataControler::getFileTypeByName(QString fileName)
     QRegExp rex(vidioRexStr);
     if(rex.exactMatch(fileName))
     {
-        QString suffix = fileName.section("\.", -1);
-        return "video/"+suffix;
+//        QString suffix = fileName.section("\.", -1);
+        return "video/mp4";
     }
 
     // tmp
-    return "Unknow";
+    return "application/octet-stream";
 }
 
 QString DataControler::convertToByteUnit(QString size)

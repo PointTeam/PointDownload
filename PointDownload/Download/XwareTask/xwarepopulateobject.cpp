@@ -65,6 +65,11 @@ void XwarePopulateObject::resumeDownloadingTask(QString tid)
     emit sJSResumeDownloadingTask(tid);
 }
 
+void XwarePopulateObject::removeDownloadingTask(QString tid)
+{
+    emit sJSRemoveDownloadingTask(tid);
+}
+
 void XwarePopulateObject::entryOfflineChannel(QString tid)
 {
     emit sJSEntryOfflineChannel(tid);

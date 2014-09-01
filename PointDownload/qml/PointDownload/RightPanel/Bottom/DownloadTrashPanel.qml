@@ -77,6 +77,7 @@ Rectangle {
         model: trashItemModel
         spacing: 4
         delegate: listDelegate
+        clip: true
     }
 
     function moveItem(url)

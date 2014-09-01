@@ -88,6 +88,19 @@ void XwareTask::resumeDownloading(QString URL)
     XwarePopulateObject::getInstance()->resumeDownloadingTask(tid);
 }
 
+void XwareTask::removeDownloading(QString URL)
+{
+    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
+    if(tid == "-1")
+    {
+        // error
+        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        return;
+    }
+
+    XwarePopulateObject::getInstance()->removeDownloadingTask(tid);
+}
+
 void XwareTask::entryOfflineChannel(QString URL)
 {
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);

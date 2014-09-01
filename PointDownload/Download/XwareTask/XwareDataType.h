@@ -28,7 +28,7 @@ enum XwareTaskState
 {
     x_dload,
     x_pause,
-    x_wait,
+    x_wait,  // 等待就绪
     x_other
 };
 

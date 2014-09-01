@@ -39,6 +39,7 @@
 #include "XwareDataType.h"
 #include "XwareConstants.h"
 #include "Controler/SettingWin/xwaresettingcontroler.h"
+#include "Controler/topcontrl.h"
 
 class XwareController : public QObject
 {
@@ -57,11 +58,12 @@ public:
 
 signals:
     void sLoginResult(XwareLoginResultType);
-//    void sRealTimeDataChanged(DownloadingItemInfo);
     void sAddXwareSupportResult(int);     // add xware support result (to the setting dialog)
     void sFinishDownload(QString);
 
 private slots:
+    void allDestroyHandle();
+
     void loginResult(XwareLoginResultType rs);
     void tryToStartAndBindXware(QStringList allPeerList);
     void getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus);   // finish downloading xware firmware
@@ -76,7 +78,6 @@ private:
     QString getCodeFromJson();          // get local peer id(machine code) from json , from "http://127.0.0.1:9000/getsysinfo"
     void bindCodeToXware(QString code);
     bool tryToMakeDir(QString dirPath);
-//    void parseTask(QString taskInfo);   //
 
 private:
     static XwareController * xwareController;

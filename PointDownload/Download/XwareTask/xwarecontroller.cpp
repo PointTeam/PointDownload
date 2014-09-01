@@ -33,9 +33,8 @@ XwareController::XwareController(QObject *parent) :
     connect(XwarePopulateObject::getInstance(), SIGNAL(sReturnAllBindedPeerIds(QStringList)),
             this, SLOT(tryToStartAndBindXware(QStringList)));
 
-    // real data time
-//    connect(XwarePopulateObject::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
-//            this, SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)));
+    // destroy
+    connect(TopContrl::getInstance(), SIGNAL(signalAllDestroy()), this, SLOT(allDestroyHandle()));
 
     // finish a downloading task
     connect(XwarePopulateObject::getInstance(), SIGNAL(sFinishDownload(QString)),
@@ -54,6 +53,11 @@ XwareController * XwareController::getInstance()
     if (xwareController == NULL)
         xwareController = new XwareController();
     return xwareController;
+}
+
+void XwareController::allDestroyHandle()
+{
+    system("pkill Embed");
 }
 
 QString XwareController::getValueFromEtmcfg(QString key)

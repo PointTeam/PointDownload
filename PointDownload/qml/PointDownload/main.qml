@@ -31,7 +31,9 @@ History:
 import QtQuick 2.0
 import QtQuick.Window 2.1
 import Singleton.PEventFilter 1.0
+import Singleton.NormalNotice 1.0
 
+import "Message/NormalNoticePage.js" as NormalNoticePage
 //import "AboutPoint/AboutPoint.js" as AboutPage
 
 import "AboutPoint"
@@ -44,8 +46,6 @@ Window {
     visible: true
     color: "#00ffffff"
     title: qsTr(" ")
-//    width: Screen.width / 2                                                   //2014.5.18 edit
-//    height: Screen.height * 3 / 5                                             //2014.5.18 edit
     width: Screen.width < 1641?820:Screen.width / 2
     height: Screen.height < 800? Screen.height * 4 / 5 : Screen.height * 3 / 5
 
@@ -61,6 +61,13 @@ Window {
     x: winx
     y: winy
 
+    Connections{
+        target: NormalNotice
+
+        onSignalShowMessage:{
+            NormalNoticePage.showNormalNoticePage(mainUI,title,noticeTitleColor,message)
+        }
+    }
 
     Rectangle {
         id:mainUI

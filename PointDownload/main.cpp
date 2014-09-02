@@ -34,9 +34,10 @@
 #include "Controler/SettingWin/xwaresettingcontroler.h"
 #include "Controler/topcontrl.h"
 
+#include "qtsinglecoreapplication.h"
 #include "Controler/monitorClipBoard.h"
 #include "Controler/dldataconverter.h"
-#include "qtsinglecoreapplication.h"
+#include "Controler/Message/normalnotice.h"
 #include "Download/XwareTask/XwareConstants.h"
 #include "Download/XwareTask/webctrlviewtest.h"
 
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
     app.installTranslator(&translator);
 
     //这样能保证系统托盘类的初始化在qml初始化之前完成，避免造 成gtk的一些错误
+    NormalNotice::getInstance();
     TopContrl::getInstance()->initTrayIcon();
     DLDataConverter::getInstance();
     PEventFilter::getInstance();

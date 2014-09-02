@@ -141,6 +141,8 @@
         <file>qml/PointDownload/Dropzone/SettingWin/XwareSetting/ValueInputBox.qml</file>
         <file>qml/PointDownload/ToolTip/MenuToolTip.qml</file>
         <file>qml/PointDownload/ToolTip/MenuTooltipCreator.js</file>
+        <file>qml/PointDownload/Message/NormalNoticePage.js</file>
+        <file>qml/PointDownload/Message/NormalNoticePage.qml</file>
     </qresource>
     <qresource prefix="/images/setting">
         <file alias="MDSpeed">resources/images/setting/MDSpeed.png</file>
@@ -190,6 +192,7 @@
         <file alias="login-back">resources/images/dropzone/login-back.png</file>
         <file alias="user&amp;passwd">resources/images/dropzone/user&amp;passwd.png</file>
         <file alias="thunder64">resources/images/dropzone/thunder64.png</file>
+        <file alias="closebutton">resources/images/dropzone/cloosebutton.png</file>
     </qresource>
     <qresource prefix="/xware">
         <file>resources/xware/xware_login.js</file>

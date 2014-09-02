@@ -695,31 +695,25 @@ QString DataControler::getFileTypeByName(QString fileName)
 
 QString DataControler::convertToByteUnit(QString size)
 {
-    if(size.contains("T"))
-    {
-        double num = size.split("G").at(0).toDouble();
-        return QString::number((long long)num * 1024 * 1024 * 1024 * 1024);
-    }
-
     if(size.contains("G"))
     {
         double num = size.split("G").at(0).toDouble();
-        return QString::number((long long)num * 1024 * 1024 * 1024);
+        return QString::number((long long)(num * 1024 * 1024 * 1024));
     }
 
     if(size.contains("M"))
     {
         double num = size.split("M").at(0).toDouble();
-        return QString::number((long long)num * 1024 * 1024);
+        return QString::number((long long)(num * 1024 * 1024));
     }
 
     if(size.contains("K"))
     {
         double num = size.split("K").at(0).toDouble();
-        return QString::number((long long)num * 1024);
+        return QString::number((long long)(num * 1024));
     }
 
-    return QString::number(size.split("B").at(0).toLongLong());
+    return size.split("B").at(0);
 }
 
 bool DataControler::isXwareParseType(QString task)

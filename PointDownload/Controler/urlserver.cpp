@@ -137,7 +137,7 @@ void URLServer::taskParseHandle(QString taskInfo)
     {
         QString msgType("XwareMsgType");
         QString msgConten("XwareNotStart");
-        taskParseFeedback(msgType + XWARE_CONSTANTS_STRUCT.spliterBtwData + msgConten);
+        taskParseFeedback(msgType + XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA + msgConten);
         return;
     }
 

@@ -96,6 +96,14 @@ void TopContrl::updateShowState(bool isShow)
     isMainWindowShowed = isShow;
 }
 
+void TopContrl::destroyAll()
+{
+    //做相应的数据保存处理后再退出
+    emit signalAllDestroy();
+
+    qApp->quit();
+}
+
 void TopContrl::initTrayIcon()
 {
     if (QSystemTrayIcon::isSystemTrayAvailable())

@@ -29,22 +29,22 @@ PointTeam@qq.com</translation>
 <context>
     <name>DownloadedMenu</name>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="66"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="55"/>
         <source>Redownload</source>
         <translation>重新下载</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="92"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="78"/>
         <source>Open Storage Folder</source>
         <translation>打开存放目录</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="114"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="97"/>
         <source>Double Click Will Move To Trash</source>
         <translation>双击移动到回收站</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="143"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml" line="123"/>
         <source>Double Click Will Delete,Including File</source>
         <translation>双击删除，包括文件</translation>
     </message>
@@ -52,17 +52,17 @@ PointTeam@qq.com</translation>
 <context>
     <name>DownloadingMenu</name>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="67"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="73"/>
         <source>Pause</source>
         <translation>暂停</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="67"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="73"/>
         <source>Resume</source>
         <translation>恢复</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="101"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="104"/>
         <source>Priority</source>
         <translation>优先下载</translation>
     </message>
@@ -72,14 +72,24 @@ PointTeam@qq.com</translation>
         <translation>打开存放目录</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="149"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="146"/>
         <source>Double Click Will Move To Trash</source>
         <translation>双击移动到回收站</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="178"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="172"/>
         <source>Double Click Will Delete,Including File</source>
         <translation>双击删除，包括文件</translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="199"/>
+        <source>Thunder Offline Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="229"/>
+        <source>Thunder High-speed Channel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -101,7 +111,8 @@ PointTeam@qq.com</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml" line="62"/>
-        <source>Show CPU Usage</source>
+        <source>Show Storage Usage</source>
+        <oldsource>Show CPU Usage</oldsource>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -136,17 +147,17 @@ PointTeam@qq.com</translation>
 <context>
     <name>HelpPage</name>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="12"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="10"/>
         <source>About</source>
         <translation type="unfinished">关于</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="29"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="27"/>
         <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="46"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="44"/>
         <source>Skills</source>
         <translation type="unfinished"></translation>
     </message>
@@ -214,6 +225,19 @@ Also, if you can provide more help, please contact us. </source>
     </message>
 </context>
 <context>
+    <name>InnerMainCircle</name>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/InnerCircle/InnerMainCircle.qml" line="122"/>
+        <source>Disk: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/InnerCircle/InnerMainCircle.qml" line="135"/>
+        <source>Task: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InputItem</name>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/InputItem.qml" line="58"/>
@@ -260,6 +284,19 @@ Also, if you can provide more help, please contact us. </source>
         <location filename="qml/PointDownload/AboutPoint/LeftSlider.qml" line="98"/>
         <source>Help Us</source>
         <translation>帮助我们</translation>
+    </message>
+</context>
+<context>
+    <name>LoginPage</name>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/LoginPage.qml" line="16"/>
+        <source>Thunder User Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/LoginPage.qml" line="27"/>
+        <source>Password</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -367,22 +404,22 @@ Also, if you can provide more help, please contact us. </source>
 <context>
     <name>SettingBody</name>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="53"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="89"/>
         <source>Error! Please Retry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="138"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="236"/>
         <source>Dropzone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="185"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="35"/>
         <source>Generic settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="230"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="286"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -481,22 +518,22 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
 <context>
     <name>TopContrl</name>
     <message>
-        <location filename="Controler/topcontrl.cpp" line="126"/>
+        <location filename="Controler/topcontrl.cpp" line="122"/>
         <source>Open Main Windown</source>
         <translation>显示主窗口</translation>
     </message>
     <message>
-        <location filename="Controler/topcontrl.cpp" line="130"/>
+        <location filename="Controler/topcontrl.cpp" line="126"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="Controler/topcontrl.cpp" line="134"/>
+        <location filename="Controler/topcontrl.cpp" line="130"/>
         <source>Check Update</source>
         <translation>检查更新</translation>
     </message>
     <message>
-        <location filename="Controler/topcontrl.cpp" line="138"/>
+        <location filename="Controler/topcontrl.cpp" line="134"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
@@ -504,14 +541,39 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
 <context>
     <name>TrashMenu</name>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/TrashMenu.qml" line="56"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/TrashMenu.qml" line="54"/>
         <source>Redownload</source>
         <translation>重新下载</translation>
     </message>
     <message>
-        <location filename="qml/PointDownload/RightPanel/Bottom/Item/TrashMenu.qml" line="83"/>
+        <location filename="qml/PointDownload/RightPanel/Bottom/Item/TrashMenu.qml" line="78"/>
         <source>Double Click Will Delete</source>
         <translation>双击删除</translation>
+    </message>
+</context>
+<context>
+    <name>XwareSettingPage</name>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="15"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="118"/>
+        <source>Sign out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="21"/>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="118"/>
+        <source>Sign in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="79"/>
+        <source>Automatic Login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="88"/>
+        <source>Thunder License?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

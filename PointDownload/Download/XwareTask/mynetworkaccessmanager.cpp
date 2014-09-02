@@ -47,7 +47,8 @@ QNetworkReply *MyNetworkAccessManager::createRequest(QNetworkAccessManager::Oper
 
              // chang
              req_.setUrl(url);
-             qDebug()<<"redefined url ==>"<<url;
+             if(XWARE_CONSTANTS_STRUCT.DEBUG)
+                qDebug()<<"redefined url ==>"<<url;
          }
      }
 

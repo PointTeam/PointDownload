@@ -26,10 +26,11 @@
 #include <QString>
 #include <QStandardPaths>
 
+
 static struct XwareConstants
 {
     // is output the debug info
-    const bool DEBUG = false;
+    const bool DEBUG = true;
     const bool DEBUG_2 = false;
 
     int  ETM_PORT;  // default port
@@ -52,9 +53,9 @@ static struct XwareConstants
     QString URLSTR;
 
     // msg spliter
-    const QString spliterBtwData = "#..#";
-    const QString spliterEnd = "#.^_^.#";
-    const QString defaultPara = "--";
+    const QString SPLITER_BTWN_DATA = "#..#";
+    const QString SPLITER_END = "#.^_^.#";
+    const QString SPLITER_DEFAULT_PARAM = "--";
 
     XwareConstants()
     {

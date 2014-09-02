@@ -24,9 +24,9 @@
 XwarePopulateObject::XwarePopulateObject(QObject *parent) :
     QObject(parent)
 {
-    spliterBtwData = XWARE_CONSTANTS_STRUCT.spliterBtwData;
-    spliterEnd =  XWARE_CONSTANTS_STRUCT.spliterEnd;
-    defaultPara = XWARE_CONSTANTS_STRUCT.defaultPara;
+    spliterBtwData = XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA;
+    spliterEnd =  XWARE_CONSTANTS_STRUCT.SPLITER_END;
+    defaultPara = XWARE_CONSTANTS_STRUCT.SPLITER_DEFAULT_PARAM;
 //    taskInfoMap = new QMap<QString, XwareTaskInfo*>;
 //    taskInfoMapLocker = new QMutex;
 }
@@ -84,14 +84,13 @@ void XwarePopulateObject::entryHighSpeedChannel(QString tid)
 void XwarePopulateObject::setAllBindedPeerIds(QString ids)
 {
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<<"recv sReturnAllBindedPeerIds !!" << ids;
+        qDebug()<<"recv sReturnAllBindedPeerIds => " << ids;
 
     QStringList list;
     if(! ids.contains(spliterBtwData))
     {
         // debug
-        qDebug()<<"ids is empty, return ~~~";
-        // return;
+        qDebug()<<"AllBindedPeerIds is empty ~~~";
     }
     else
     {

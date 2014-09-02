@@ -25,7 +25,7 @@
 #define MAIN_URL_3 "http://yuancheng.xunlei.com/3/"
 #define LOGIN_URL  "http://yuancheng.xunlei.com/login.html"
 #define LOGIN_MAX_TRY 5
-#define LOGIN_DEFAULT_INTERVAL 1500
+#define LOGIN_DEFAULT_INTERVAL 2000
 
 #include <QObject>
 #include <QtWebKitWidgets/QWebView>

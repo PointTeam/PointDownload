@@ -57,6 +57,7 @@ XwareController * XwareController::getInstance()
 
 void XwareController::allDestroyHandle()
 {
+    qDebug()<<"[xware info] xware exit and stop ETM";
     system("pkill Embed");
 }
 
@@ -66,7 +67,7 @@ QString XwareController::getValueFromEtmcfg(QString key)
     QFile file(XWARE_CONSTANTS_STRUCT.XWARE_ETM_CFG);
     if(!file.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"[error]open xware etm.cfg file error !!";
+        qDebug()<<"[xware error]open xware etm.cfg file error or it doesn't exist !!";
         return value;
     }
     QTextStream ts(&file);
@@ -273,7 +274,7 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
     if(isMatch)
     {
         // set this machine to default download machine
-        XwareWebController::getInstance()->executeJS("pointSetDefaultMachine("+ id +");");
+        XwareWebController::getInstance()->executeJS("pointSetDefaultMachine("+ id +");");  // tmp
 
         // (5) start ETM
         if(!startETM())
@@ -317,8 +318,8 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
     }
 
 //    XwareWebController::getInstance()->reloadWebView();
-    QTimer::singleShot(2000, XwarePopulateObject::getInstance(),
-                       SLOT(startFeedbackDloadList()));
+//    QTimer::singleShot(2000, XwarePopulateObject::getInstance(),
+//                       SLOT(startFeedbackDloadList()));
 }
 
 void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus)

@@ -224,7 +224,8 @@ Item{
     //用于延时
     function destroyAll()
     {
-        Qt.quit()
+//        Qt.quit()
+        TopContrl.destroyAll()
     }
 }
 

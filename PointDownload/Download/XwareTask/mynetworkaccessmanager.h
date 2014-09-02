@@ -28,6 +28,8 @@
 #include <QDebug>
 #include <QHostInfo>
 
+#include "XwareConstants.h"
+
 // this class use for filtering the request
 class MyNetworkAccessManager : public QNetworkAccessManager
 {

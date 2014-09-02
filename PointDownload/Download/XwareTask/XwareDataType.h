@@ -24,6 +24,37 @@
 
 #include <QString>
 
+/*
+taskStateClass: {
+    0: "dload",
+    8: "wait",
+    9: "pause",
+    10: "pause",
+    11: "finish",
+    12: "delete",
+    13: "finish",
+    14: "wait",
+    15: "delete",
+    16: "delete",
+    37: "wait",
+    38: "delete"
+},
+taskStateText: {
+    0: "下载中",
+    8: "等待中",
+    9: "已停止",
+    10: "已暂停",
+    11: "已完成",
+    12: "下载失败",
+    13: "上传中",
+    14: "提交中",
+    15: "已删除",
+    16: "已移至回收站",
+    37: "已挂起",
+    38: "发生错误"
+}
+*/
+
 enum XwareTaskState
 {
     x_dload,
@@ -46,10 +77,10 @@ struct XwareTaskInfo
 {
     QString tid; // task ID
     QString name; // name
-    QString size;  // size :  xxGB/MB/KB
+    QString size;  // size :  B (without unit)
     QString progress; // progress %
     QString speed; // speed
-    QString remainTime;
+    QString remainTime;  // seconds
     XwareTaskState state;
     QString url; // url
     QString highChnlSpeed;

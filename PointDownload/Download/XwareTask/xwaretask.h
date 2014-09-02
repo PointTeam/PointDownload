@@ -48,7 +48,6 @@ public:
     void entryOfflineChannel(QString URL);
     void entryHighSpeedChannel(QString URL);
 
-
 signals:
     void sRealTimeData(DownloadingItemInfo);
     void sXwareError(QString, QString, DownloadToolsType);
@@ -61,9 +60,9 @@ private slots:
 
 private:
     explicit XwareTask(QObject *parent = 0);
-
     void updateXMLFile(DownloadingItemInfo info);
     void initConnection();
+
 private:
     static XwareTask *xwareTask;
 

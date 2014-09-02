@@ -41,13 +41,23 @@ signals:
     void sRealTimeDataChanged(DownloadingItemInfo);
 
 public slots:
+    void startFeedbackTaskInfo();
+    void stopFeedbackTaskInfo();
 
 private slots:
-    void feedbackDownloadList(QString tasksInfo);
+    void updateTaskMap();
+    void taskCompletedMonitor();
+    void loginResultHandle(XwareLoginResultType result);
 
 private:
     explicit XwareTaskEntity(QObject *parent = 0);
-    void insertTask(QStringList taskInfoStr);
+
+     // param =>toBigUnit: (1)true: B -> KB/MB/GB,input size shuld be without unit. (2)false: KB/MB/GB -> B(without unit)
+    QString convertFileSize(QString size, bool toBigUnit);
+
+    // convert the xware state to local state
+    XwareTaskState convertXwareState(QString stateText);
+
     void clearTaskMap(QMap<QString, XwareTaskInfo*> * taskInfoMap); // free all items of task map to prevent memory leaks
     void constructAndEmitRealTimeData(XwareTaskInfo *taskInfo);
     void updateXMLFile(DownloadingItemInfo info);
@@ -59,8 +69,12 @@ private:
     QString defaultPara;
     QMap<QString, XwareTaskInfo*> * taskInfoMap;
     QMutex * taskInfoMapLocker;
-    bool isUpdateXML;
-    short updateXMLCounter;
+    bool isUpdateXML;   // it is time for update xml
+    short updateXMLCounter;   // used to compare with UPDATE_XML_INTERVAL
+    QTimer* updateTaskTimer;
+    int completedNum = 0;
+    QList<QVariant> completedTaskList;
+    QTimer* taskCompleteMonitorTimer;
 };
 
 #endif // XWARETASKENTITY_H

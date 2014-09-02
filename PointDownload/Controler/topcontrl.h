@@ -61,6 +61,7 @@ public:
     Q_INVOKABLE void showSaveFolder();
     Q_INVOKABLE void showTrayIcon();
     Q_INVOKABLE void updateShowState(bool isShow);
+    Q_INVOKABLE void destroyAll();
 
 signals:
     void signalShowMainWindow();

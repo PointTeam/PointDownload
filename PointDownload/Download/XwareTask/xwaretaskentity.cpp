@@ -22,22 +22,105 @@
 
 #include "xwaretaskentity.h"
 
-#define UPDATE_XML_INTERVAL 4
+#define UPDATE_TASK_INTERVAL 1000   // msecond
+#define MONITOR_COMPLETED_INTERVAL 1000   // msecond
+#define UPDATE_XML_INTERVAL 4   // times
+
+// tmp , just for debug
+void debugMap(QMap<QString, XwareTaskInfo *> *taskInfoMap);
 
 XwareTaskEntity * XwareTaskEntity::xwareTaskEntityInstance = NULL;
 XwareTaskEntity::XwareTaskEntity(QObject *parent) :
     QObject(parent)
 {
-    spliterBtwData = XWARE_CONSTANTS_STRUCT.spliterBtwData;
-    spliterEnd =  XWARE_CONSTANTS_STRUCT.spliterEnd;
-    defaultPara = XWARE_CONSTANTS_STRUCT.defaultPara;
+    spliterBtwData = XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA;
+    spliterEnd =  XWARE_CONSTANTS_STRUCT.SPLITER_END;
+    defaultPara = XWARE_CONSTANTS_STRUCT.SPLITER_DEFAULT_PARAM;
+    
     taskInfoMap = new QMap<QString, XwareTaskInfo*>();
     taskInfoMapLocker = new QMutex();
     isUpdateXML = false;
     updateXMLCounter = 1;
 
-    connect(XwarePopulateObject::getInstance(), SIGNAL(sFeedbackDownloadList(QString)),
-            this, SLOT(feedbackDownloadList(QString)));
+    // monitor the completed task
+    taskCompleteMonitorTimer = new QTimer();
+    taskCompleteMonitorTimer->setInterval(MONITOR_COMPLETED_INTERVAL);
+    connect(taskCompleteMonitorTimer, SIGNAL(timeout()), this, SLOT(taskCompletedMonitor()));
+
+    // update task info
+    updateTaskTimer = new QTimer();
+    updateTaskTimer->setInterval(UPDATE_TASK_INTERVAL);
+    connect(updateTaskTimer, SIGNAL(timeout()), this, SLOT(updateTaskMap()));
+    
+    connect(XwareWebController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
+            this, SLOT(loginResultHandle(XwareLoginResultType)));
+}
+
+QString XwareTaskEntity::convertFileSize(QString size, bool toBigUnit)
+{
+    if(toBigUnit)
+    {
+        bool ok;
+        qint64 value = size.toLongLong(&ok);
+        if(ok)
+        {
+            if (value > 1024 * 1024 * 1024)  //GB
+                return QString::number(((double)value) / 1024 / 1024 / 1024,'f',1) + "GB";
+            else if (value > 1024 * 1024)  //MB
+                return QString::number(((double)value) / 1024 / 1024,'f',1) + "MB";
+            else if (value > 1024)  //KB
+                return QString::number(((double)value)/ 1024,'f',1) + "KB";
+            else
+                return QString::number(value,'f',1) + "B";
+        }
+    }
+    else
+    {
+        if(size.contains("G"))
+        {
+            double num = size.split("G").at(0).toDouble();
+            return QString::number((long long)num * 1024 * 1024 * 1024);
+        }
+
+        if(size.contains("M"))
+        {
+            double num = size.split("M").at(0).toDouble();
+            return QString::number((long long)num * 1024 * 1024);
+        }
+
+        if(size.contains("K"))
+        {
+            double num = size.split("K").at(0).toDouble();
+            return QString::number((long long)num * 1024);
+        }
+
+        return QString::number(size.split("B").at(0).toLongLong());
+    }
+
+    return "0";
+}
+
+XwareTaskState XwareTaskEntity::convertXwareState(QString stateText)
+{
+    if(stateText == "0")
+    {
+        return x_dload;
+    }
+
+    else if(stateText == "8")
+    {
+        return x_wait;
+    }
+
+    else if(stateText == "10" || stateText == "9")
+    {
+        return x_pause;
+    }
+
+    else
+    {
+        return x_other;
+    }
 }
 
 XwareTaskEntity *XwareTaskEntity::getInstance()
@@ -66,28 +149,59 @@ QString XwareTaskEntity::getTaskIdByUrl(QString url)
     return tid;
 }
 
-
-void debugMap(QMap<QString, XwareTaskInfo *> *taskInfoMap);  // temp
-void XwareTaskEntity::feedbackDownloadList(QString tasksInfo)
+void XwareTaskEntity::startFeedbackTaskInfo()
 {
-   if(tasksInfo.trimmed().length() == 0)
-    {
-        // debug
-//        qDebug()<<"it dose not contain any  downloading task information!!";
-        return;
-    }
+    updateTaskTimer->start();
+    taskCompleteMonitorTimer->start();
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"start to feedback task info and added a monitor to completed task !";
+}
 
-   //update xml file
-   if (updateXMLCounter == UPDATE_XML_INTERVAL)
-   {
-       isUpdateXML = true;
-       updateXMLCounter = 1;
-   }
-   else
-   {
-       isUpdateXML = false;
-       ++updateXMLCounter;
-   }
+void XwareTaskEntity::stopFeedbackTaskInfo()
+{
+    updateTaskTimer->stop();
+    taskCompleteMonitorTimer->start();
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"stop to feedback task info and remove the monitor to completed task !";
+}
+
+void XwareTaskEntity::updateTaskMap()
+{
+    QUrl url(XWARE_CONSTANTS_STRUCT.URLSTR + "list?v=2&type=0&pos=0&number=99999&needUrl=1");
+
+    QEventLoop loop;
+    QNetworkAccessManager manager;
+
+    // request
+    QNetworkReply *reply = manager.get(QNetworkRequest(url));
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    // wait for message
+    loop.exec();
+    reply->disconnect();
+
+    // 读到的信息
+    QString jsonStr = QUrl::fromPercentEncoding(reply->readAll());
+    QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
+    QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
+
+    delete reply;
+    reply = NULL;
+    
+    
+    QList<QVariant> completedTaskList = jsonMap.value("tasks").toList();
+    if(completedTaskList.length() == 0)return;
+
+    //update xml file
+    if (updateXMLCounter == UPDATE_XML_INTERVAL)
+    {
+        isUpdateXML = true;
+        updateXMLCounter = 1;
+    }
+    else
+    {
+        isUpdateXML = false;
+        ++updateXMLCounter;
+    }
 
     // lock and prevent the task map from being read.
     taskInfoMapLocker->lock();
@@ -95,62 +209,33 @@ void XwareTaskEntity::feedbackDownloadList(QString tasksInfo)
     // clear the task map
     clearTaskMap(taskInfoMap);
 
-    QStringList taskList = tasksInfo.split(spliterEnd);
-
-    foreach (QString task, taskList)
+    for(int i = 0; i < completedTaskList.length(); ++i)
     {
-        QStringList taskInfo = task.split(spliterBtwData);
+        QString tid = completedTaskList.at(i).toMap().value("id").toString();
+        QString name = completedTaskList.at(i).toMap().value("name").toString();
+        QString size = completedTaskList.at(i).toMap().value("size").toString();
+        QString progress = completedTaskList.at(i).toMap().value("progress").toString();
+        progress = QString::number(progress.toDouble() / 100) + "%";
+        QString speed = convertFileSize(completedTaskList.at(i).toMap().value("speed").toString(), 1) + "/s";
+        QString remainTime = completedTaskList.at(i).toMap().value("remainTime").toString();
+        XwareTaskState state = convertXwareState(completedTaskList.at(i).toMap().value("state").toString());
+        QString url = completedTaskList.at(i).toMap().value("url").toString();
+        QString highChnlSpeed = completedTaskList.at(i).toMap().value("vipChannel").toMap().value("speed").toString();
+        QString offlineChnlSpeed = completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("speed").toString();
 
-        if(taskInfo.length() <= 1){continue;}
-        insertTask(taskInfo);
+        XwareTaskInfo* taskInfoStruct = new XwareTaskInfo{tid, name, size, progress, speed, remainTime,
+                state, url, highChnlSpeed, offlineChnlSpeed};
+
+        // insert task map
+        taskInfoMap->insert(tid, taskInfoStruct);
+
+        constructAndEmitRealTimeData(taskInfoStruct);
     }
 
     // free the map lock
     taskInfoMapLocker->unlock();
 
-     // debug
 //    debugMap(taskInfoMap);
-}
-
-void XwareTaskEntity::insertTask(QStringList taskInfoStr)
-{
-    // the format of "taskInfoStr": tid  taskName  size progress speed  remain  state highChannelSpeed offlineChannelSpeed;
-
-    // check Parameters
-    for(int i = 0; i < taskInfoStr.length(); ++i)
-    {
-        if(taskInfoStr.at(i).trimmed().length() == 0)
-        {
-            taskInfoStr.replace(i, defaultPara);
-        }
-    }
-
-    XwareTaskState taskState;
-    if(taskInfoStr.at(6).endsWith("dload"))
-    {
-        taskState = x_dload;
-    }
-    else if(taskInfoStr.at(6).endsWith("pause"))
-    {
-        taskState = x_pause;
-    }
-    else if(taskInfoStr.at(6).endsWith("wait"))
-    {
-        taskState = x_wait;
-    }
-    else
-    {
-        taskState = x_other;
-    }
-
-    // the format of "taskInfoStr": tid + taskName + size + progress + speed + remain + state + highChannelSpeed + offlineChannelSpeed;
-    XwareTaskInfo* taskInfoStruct = new XwareTaskInfo{taskInfoStr.at(0), taskInfoStr.at(1), taskInfoStr.at(2),
-            taskInfoStr.at(3), taskInfoStr.at(4), taskInfoStr.at(5), taskState, taskInfoStr.at(7), taskInfoStr.at(8), taskInfoStr.at(9)};
-
-    // insert task map
-    taskInfoMap->insert(taskInfoStr.at(0), taskInfoStruct);
-
-    constructAndEmitRealTimeData(taskInfoStruct);
 }
 
 
@@ -176,7 +261,7 @@ void XwareTaskEntity::constructAndEmitRealTimeData(XwareTaskInfo * taskInfo)
     DownloadingItemInfo itemInfo;
     itemInfo.downloadURL = taskInfo->url;
     itemInfo.downloadSpeed = taskInfo->speed;
-    itemInfo.uploadSpeed = "0 KB";
+    itemInfo.uploadSpeed = "0 B/s";
     itemInfo.thunderOfflineSpeed = taskInfo->offlineChnlSpeed;
     itemInfo.thunderHightSpeed = taskInfo->highChnlSpeed;
 
@@ -204,6 +289,81 @@ void XwareTaskEntity::constructAndEmitRealTimeData(XwareTaskInfo * taskInfo)
     emit sRealTimeDataChanged(itemInfo);
 }
 
+void XwareTaskEntity::taskCompletedMonitor()
+{
+    QUrl url(XWARE_CONSTANTS_STRUCT.URLSTR + "list?v=2&type=1&pos=0&number=99999&needUrl=1");
+
+    QEventLoop loop;
+    QNetworkAccessManager manager;
+
+    // request
+    QNetworkReply *reply = manager.get(QNetworkRequest(url));
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();// wait for message
+    reply->disconnect();
+
+    // 读到的信息
+    QString jsonStr = QUrl::fromPercentEncoding(reply->readAll());
+    QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
+    QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
+
+    delete reply;
+    reply = NULL;
+
+//    int completedNum = jsonMap.value("completeNum").toString().toInt();
+    QList<QVariant> completedTaskListTmp = jsonMap.value("tasks").toList();
+    if(completedTaskListTmp.length() == 0)
+    {
+        return;
+    }
+
+    // first time
+    if(completedTaskList.length() == 0)
+    {
+        completedTaskList = completedTaskListTmp;
+        return;
+    }
+
+    for(int i = 0; i < completedTaskListTmp.length(); ++i )
+    {
+        bool match = false;
+        QString url = completedTaskListTmp.at(i).toMap().value("url").toString();
+        for(int j = 0; j < completedTaskList.length(); ++j )
+        {
+            if(url == completedTaskList.at(j).toMap().value("url"))
+            {
+                match = true;
+            }
+        }
+
+        if(!match)
+        {
+            // MatchFinish
+            // **  ** //
+
+            // tmp
+            qDebug()<<"[xware info] finished dloading: ==> "<<url;
+        }
+
+    }
+
+    completedTaskList = completedTaskListTmp;
+
+//    qDebug()<<"completedNum : "<<completedNum;
+}
+
+void XwareTaskEntity::loginResultHandle(XwareLoginResultType result)
+{
+    if(result == x_LoginSuccess)
+    {
+        startFeedbackTaskInfo();
+    }
+    else if(result == x_Logout)
+    {
+        stopFeedbackTaskInfo();
+    }
+}
+
 void XwareTaskEntity::updateXMLFile(DownloadingItemInfo info)
 {
     DownloadXMLHandler tmpOpera;
@@ -216,6 +376,8 @@ void XwareTaskEntity::updateXMLFile(DownloadingItemInfo info)
 
     tmpOpera.writeDownloadingConfigFile(tmpStruct);
 }
+
+
 
 
 // debug , check the task information through Qt console

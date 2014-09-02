@@ -123,7 +123,8 @@ Rectangle {
                 settingCtrl.initData()
                 if (settingCtrl.exitOnClose)
                 {
-                    Qt.quit()
+//                    Qt.quit()
+                    TopContrl.destroyAll()
                 }
                 else
                 {

@@ -119,8 +119,6 @@ void URLServer::socketReadyReadHandler()
 
 void URLServer::taskParseFeedback(QString taskInfo)
 {
-    // debug
-//    qDebug()<<"write to popup window : "<<taskInfo;
     tmp_socket->write(taskInfo.toStdString().c_str());
     tmp_socket->flush();
 }

@@ -54,6 +54,7 @@ signals:
     void sFinishXwareDownload(QString);
 
 public slots:
+    void slotFinishDownload(QString URL);//match add 2014.9.3
 
 private slots:
     void updateRealTimeData(DownloadingItemInfo info);

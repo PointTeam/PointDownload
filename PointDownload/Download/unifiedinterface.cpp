@@ -40,6 +40,7 @@ UnifiedInterface * UnifiedInterface::getInstance()
 
 void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
 {
+    NormalNotice::getInstance()->showMessage(tr("New Task"), info.fileName);
     //确保将要下载的文件不会重复
     deleteFileFromDisk(info.storageDir, info.fileName);
 
@@ -107,6 +108,9 @@ void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
     //统计流量
     QString day = current_date_time.toString("dddd");
     DataFlow::addData(day,edStruct.Size);
+
+
+    NormalNotice::getInstance()->showMessage(tr("Finish Download"), Notice_Color_Success, edStruct.name);
 }
 
 void UnifiedInterface::changeMaxJobCount(int newCount)
@@ -173,12 +177,11 @@ void UnifiedInterface::controlDownload(DownloadType dtype, OperationType otype, 
 
 void UnifiedInterface::downloadFinish(QString URL)
 {
-//    qDebug() << "finish:"<<URL;
 }
 
 void UnifiedInterface::downloadGetError(QString URL,QString err, DownloadToolsType toolType)
 {
-
+    NormalNotice::getInstance()->showMessage(tr("Download Error"), Notice_Color_Error, QString(URL + ":\n" + err));
 }
 
 void UnifiedInterface::startPointDownload(PrepareDownloadInfo info)

@@ -50,6 +50,7 @@ History:
 #include "XMLHandler/downloadxmlhandler.h"
 #include "XMLHandler/settingxmlhandler.h"
 #include "Download/XwareTask/xwaretask.h"
+#include "Controler/Message/normalnotice.h"
 
 const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
 

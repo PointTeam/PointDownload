@@ -217,7 +217,9 @@ void HttpThreadManager::touchDownloadFile()
         file->close();
     }
     else
+    {
         qDebug() << "open file err"<<file->errorString();
+    }
 
     delete file;
 }

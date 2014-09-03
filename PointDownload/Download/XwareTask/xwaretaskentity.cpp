@@ -340,6 +340,18 @@ void XwareTaskEntity::taskCompletedMonitor()
         {
             // MatchFinish
             // **  ** //
+            DownloadingItemInfo tmpInfo;
+            tmpInfo.downloadURL = url;
+            tmpInfo.downloadPercent = 100;
+            tmpInfo.downloadSpeed = "0 KB/S";
+            tmpInfo.downloadState = dlstate_downloading;
+            tmpInfo.thunderHightSpeed = "-";
+            tmpInfo.thunderOfflineSpeed = "-";
+            tmpInfo.uploadSpeed = "0";
+
+            emit sRealTimeDataChanged(tmpInfo);
+
+            emit sFinishDownload(url);
 
             // tmp
             qDebug()<<"[xware info] finished dloading: ==> "<<url;

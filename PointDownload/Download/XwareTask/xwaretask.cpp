@@ -28,6 +28,8 @@ XwareTask::XwareTask(QObject *parent) :
 {
     connect(XwareTaskEntity::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
             this, SLOT(updateRealTimeData(DownloadingItemInfo)));
+    connect(XwareTaskEntity::getInstance(), SIGNAL(sFinishDownload(QString)),
+            this, SLOT(slotFinishDownload(QString)));
 
     connect(XwareController::getInstance(), SIGNAL(sFinishDownload(QString)),
             this, SIGNAL(sFinishXwareDownload(QString)));
@@ -125,6 +127,12 @@ void XwareTask::entryHighSpeedChannel(QString URL)
     }
 
     XwarePopulateObject::getInstance()->entryHighSpeedChannel(tid);
+}
+
+void XwareTask::slotFinishDownload(QString URL)
+{
+    qDebug() << "slotFinishDownload xware..........";
+    UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 }
 
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)

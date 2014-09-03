@@ -10,7 +10,7 @@ Window {
 
     color: "#00000000"
     width: 280
-    height: 100
+    height: 80
     opacity: 1
 
     property string messageTitle: ""
@@ -44,7 +44,7 @@ Window {
         id:noticeTitleText
         text:messageTitle
         color: titleColor
-        font.pixelSize: 16
+        font.pixelSize: 15
         font.bold: true
         anchors {top: mainRec.top; topMargin: 10; horizontalCenter: mainRec.horizontalCenter}
     }

@@ -39,6 +39,7 @@ public:
 
 signals:
     void sRealTimeDataChanged(DownloadingItemInfo);
+    void sFinishDownload(QString URL);
 
 public slots:
     void startFeedbackTaskInfo();

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://pointdownload/skin/menu.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://pointdownload/locale/main.dtd" >
+<overlay id="Point-saveas" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script type="application/javascript" src="chrome://pointdownload/content/Point.js" />
+    <script type="application/javascript" src="chrome://pointdownload/content/pref.js" />
+    <script type="application/javascript" src="chrome://pointdownload/content/saveas.js"/>
+
+    <radiogroup id="mode">
+        <stringbundleset id="stringbundleset">
+            <stringbundle id="PointAgentStrings" src="chrome://pointdownload/locale/agent.properties"/>
+        </stringbundleset>
+        <hbox id="PointDown" insertbefore="save" >
+            <radio id="PointRadio" label="Point"/>
+            <menulist id="PointAgentList" flex="1">
+                <menupopup id="PointAgentPopup" />
+            </menulist>
+        </hbox>
+    </radiogroup>
+</overlay>

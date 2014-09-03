@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+  <!--扩展的ID，之前的版本都是guid，现在流行方式是个email地址，要确保这个ID在你的电脑上唯一-->
+    <em:id>PointTeam@qq.com</em:id>
+   	<!--FF扩展的名字-->
+    <em:name>PointDownload</em:name>
+    <!--FF扩展的版本号-->
+    <em:version>1.2.1</em:version>
+    <!--2表示是ff扩展，这个数字不要变-->
+    <em:type>2</em:type>
+    <em:unpack>true</em:unpack>
+    <em:optionsURL>chrome://piont/content/options.xul</em:optionsURL>
+	<!-- Front End Metadata -->
+    <!--FF扩展的描述-->
+    <em:description>需要下载时右键下载按钮，从菜单中选择点载</em:description>
+    <!--FF扩展的创建者和贡献者-->
+    <em:creator>bonseyuan,kumahime</em:creator>
+    <em:homepageURL>http://www.linuxdeepin.com/forum/23/21124</em:homepageURL>
+    
+    <em:localized>
+      <Description>
+        <em:locale>zh-CN</em:locale>
+        <em:name>PointDownload</em:name>
+        <em:description>获取文件下载链接地址并传递给Point</em:description>
+        <em:creator>bonseyuan,kumahime</em:creator>
+        <em:homepageURL>http://www.linuxdeepin.com/forum/23/21124</em:homepageURL>
+      </Description>
+    </em:localized>
+    
+    <em:localized>
+      <Description>
+        <em:locale>zh-TW</em:locale>
+        <em:name>PointDownload</em:name>
+        <em:description>獲取文件下載鏈接地址並傳遞給Poin</em:description>
+        <em:creator>bonseyuan,kumahime</em:creator>
+        <em:homepageURL>http://www.linuxdeepin.com/forum/23/21124</em:homepageURL>
+        <em:translator>ZH-TW</em:translator>
+      </Description>
+    </em:localized>
+
+	    <em:localized>
+      <Description>
+        <em:locale>zh-en</em:locale>
+        <em:name>PointDownload</em:name>
+        <em:description>Get file download link for Point</em:description>
+        <em:creator>bonseyuan,kumahime</em:creator>
+        <em:homepageURL>http://www.linuxdeepin.com/forum/23/21124</em:homepageURL>
+        <em:translator>ZH-EN</em:translator>
+      </Description>
+    </em:localized>
+        
+    <!-- Describe the Firefox versions we support -->
+    <em:targetApplication>
+      <Description>
+       <!--Firefox，这个guid不能变，表示的是FF-->
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <!--最低的支持版本-->
+        <em:minVersion>1.5</em:minVersion>
+        <!--最高的支持版本-->
+        <em:maxVersion>31.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>
+
+
+
+

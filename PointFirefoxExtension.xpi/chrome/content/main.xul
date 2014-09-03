@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://pointdownload/skin/menu.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://pointdownload/locale/main.dtd" >
+<overlay id="pointdownload-overlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+    <script type="application/javascript" src="chrome://pointdownload/content/Point.js" />
+    <script type="application/javascript" src="chrome://pointdownload/content/pref.js" />
+    <script type="application/javascript" src="chrome://pointdownload/content/decode.js"/>
+    <script type="application/javascript" src="chrome://pointdownload/content/main.js"/>
+    
+    <popup id="contentAreaContextMenu"><!-- 添加右键菜单 -->
+        <menuseparator id="PointDownloadUp"/>
+        <menuitem id="PointDownload" label="使用Point下载" onclick="PointMain.OnPointDownload(event, 0);"/>
+    </popup> 
+
+    <popupset>
+        <menupopup id="clipmenu">
+        <menuitem label="关于我们" oncommand="PointMain.ondo(event);"/>
+	<menuitem label="下载视频" oncommand="PointMain.OnPointDownload(event, 1);"/>
+        </menupopup>
+    </popupset>
+
+    <toolbarpalette id="BrowserToolbarPalette">
+        <toolbarbutton id="pointdownloadToolbarBtn" label="point" class="toolbarbutton-1" context="clipmenu">
+        </toolbarbutton>
+    </toolbarpalette>
+
+</overlay>

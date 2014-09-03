@@ -1,0 +1,12 @@
+content pointdownload chrome/content/
+skin    pointdownload classic/1.0 chrome/skin/
+
+# Gecko 2 JavaScript component registration
+#component {77683972-8cb9-4f92-a962-aea5b6f1e2a1} components/PointService.js
+#contract @pointdownload.com/component;1 {77683972-8cb9-4f92-a962-aea5b6f1e2a1}
+
+## overlay ##
+overlay chrome://browser/content/browser.xul chrome://pointdownload/content/main.xul
+overlay chrome://mozapps/content/downloads/unknownContentType.xul chrome://pointdownload/content/saveas.xul
+
+style   chrome://global/content/customizeToolbar.xul chrome://point/skin/menu.css

@@ -1,0 +1,9 @@
+#pointdownloadToolbarBtn  {
+ list-style-image: url("point-19.png");
+}
+#pointdownloadBtn  {
+ list-style-image: url("point-16.png");
+}
+.agentNonsup {
+    color: red;
+}

@@ -38,28 +38,28 @@ Rectangle {
 
     Image {
         id: iconImg
-        source: "qrc:/images/main/point-96-w"
-        width: parent.width * 4 / 8
-        height: parent.width * 4 / 8
-        anchors {horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 10}
+        source: "qrc:/images/main/point-32-b"
+        width: parent.width * 1 / 6
+        height: parent.width * 1 / 6
+        anchors {left:parent.left; leftMargin: 20; top: parent.top; topMargin: 15}
     }
 
     Text {
         id: iconText
         text: qsTr("POINT")
         font.family: "URW Bookman L"
-        anchors {horizontalCenter: parent.horizontalCenter; top: iconImg.bottom}
+        anchors {left:iconImg.right; leftMargin: 10; verticalCenter: iconImg.verticalCenter}
         font.bold: true
         font.pixelSize: 12
-        color: "#ffffff"
+        color: "#d7d1d1"
     }
 
-    Rectangle {
+    Image {
         id: splitLine1
         width: parent.width
-        height: 3
-        color: "#0a2a4b"
-        anchors {top: iconText.bottom; topMargin: 12}
+        height: 2
+        source: "qrc:/images/navigation/left-split"
+        anchors {top: iconText.bottom; topMargin: 10}
     }
 
     Text {
@@ -78,11 +78,11 @@ Rectangle {
         anchors {top: navigationBarText.bottom; left: parent.left}
     }
 
-    Rectangle {
+    Image {
         id: splitLine2
         width: parent.width
-        height: 3
-        color: "#0a2a4b"
+        height: 2
+        source: "qrc:/images/navigation/left-split"
         anchors {top: mainMenu.bottom;}
     }
 

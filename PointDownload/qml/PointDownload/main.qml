@@ -47,7 +47,7 @@ Window {
     color: "#00ffffff"
     title: qsTr(" ")
     width: Screen.width < 1641?820:Screen.width / 2
-    height: Screen.height < 800? Screen.height * 4 / 5 : Screen.height * 3 / 5
+    height: Screen.height < 800? Screen.height * 4 / 5 : Screen.height * 3 / 5 - 30
 
     property int prex;
     property int nextx;
@@ -115,7 +115,7 @@ Window {
             id:mArea
             anchors {top:parent.top; left: parent.left}
             width: leftPanel.width
-            height: leftPanel.width
+            height: leftPanel.width / 3
             hoverEnabled: true
 
             onPressed:  {
@@ -143,12 +143,12 @@ Window {
             id:mArea2
             anchors {bottom: parent.bottom; left: parent.left}
             width: leftPanel.width
-            height: leftPanel.height - leftPanel.width - 260//2014.5.18 add
+            height: leftPanel.height - leftPanel.width / 3 - 280//2014.5.18 add
             hoverEnabled: true
 
             onPressed:  {
                 oldX = mouseX;
-                oldY = mouseY + leftPanel.width + 260;
+                oldY = mouseY + leftPanel.width / 3 + 280;
                 dragIng = "true"
                 mArea2.cursorShape=Qt.DragMoveCursor
             }

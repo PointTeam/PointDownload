@@ -25,11 +25,14 @@
         <file alias="search">resources/images/navigation/search.png</file>
         <file alias="quit">resources/images/navigation/quit.png</file>
         <file alias="downarrow">resources/images/navigation/downarrow.png</file>
+        <file alias="right-split">resources/images/navigation/right-split.png</file>
+        <file alias="left-split">resources/images/navigation/left-split.png</file>
     </qresource>
     <qresource prefix="/images/main">
         <file alias="triangle">resources/images/main/triangle.png</file>
         <file alias="point-24-b">resources/images/main/point-24.png</file>
         <file alias="point-96-w">resources/images/main/point-96-w.png</file>
+        <file alias="point-32-b">resources/images/main/point-32.png</file>
     </qresource>
     <qresource prefix="/images/right">
         <file alias="uncheck">resources/images/right/uncheck.png</file>

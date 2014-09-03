@@ -33,6 +33,8 @@ import QtQuick.Window 2.0
 import settingControler 1.0
 import Singleton.TopContrl 1.0
 import Singleton.PEventFilter 1.0
+import Singleton.DLDataConverter 1.0
+import Singleton.MonitorClipBoard 1.0
 //import "../../ToolTip/CloseTipCreator.js" as CloseTip
 import "../../AboutPoint/AboutPoint.js" as AboutPage
 import "../../Dropzone/Dropzone.js" as DropzonePage
@@ -72,36 +74,37 @@ Rectangle {
         color: "#eeeff3"
     }
 
-    FButton {
+
+    BlueButton {
         id: smallerButton
         imagePath: "qrc:/images/navigation/smaller"
-        anchors {left: parent.left; leftMargin: 10; verticalCenter: parent.verticalCenter}
+        anchors {left: parent.left; leftMargin: 5; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
-            onClicked: mainWindow.hide()
+            onClicked: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
         }
     }
 
     Rectangle {
         id: splitLine1
-        width: 1.5
+        width: 2
         height: parent.height
-        anchors {left: smallerButton.right; leftMargin: 10;}
+        anchors {left: smallerButton.right; leftMargin: 5;}
         color: "#eeeff3"
     }
 
-    Image {
-        id: searchImg
-        source: "qrc:/images/navigation/search"
-        anchors {left: splitLine1.right; leftMargin: 4; verticalCenter: parent.verticalCenter}
-    }
+//    Image {
+//        id: searchImg
+//        source: "qrc:/images/navigation/search"
+//        anchors {left: splitLine1.right; leftMargin: 4; verticalCenter: parent.verticalCenter}
+//    }
 
-    InputBox {
-        id: searchBox
-        boxWidth: 200
-        boxHeigth: parent.height
-        anchors {left: searchImg.right; leftMargin: 5; verticalCenter: parent.verticalCenter; right: splitLine4.left}
-    }
+//    InputBox {
+//        id: searchBox
+//        boxWidth: 200
+//        boxHeigth: parent.height
+//        anchors {left: searchImg.right; leftMargin: 5; verticalCenter: parent.verticalCenter; right: splitLine4.left}
+//    }
 
 
     BlueButton {
@@ -123,12 +126,10 @@ Rectangle {
                 settingCtrl.initData()
                 if (settingCtrl.exitOnClose)
                 {
-//                    Qt.quit()
                     TopContrl.destroyAll()
                 }
                 else
                 {
-//                    mainWindow.hide()
                     TopContrl.hideMainWindow()
                 }
             }
@@ -191,10 +192,10 @@ Rectangle {
         color: "#eeeff3"
     }
 
-    Rectangle {
-        height: 1.5
+    Image {
         width: parent.width
+        height: 2
+        source: "qrc:/images/navigation/right-split"
         anchors.bottom: parent.bottom
-        color: "#eeeff3"
     }
 }

@@ -84,12 +84,12 @@ PointTeam@qq.com</translation>
     <message>
         <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="199"/>
         <source>Thunder Offline Download</source>
-        <translation type="unfinished"></translation>
+        <translation>迅雷离线下载</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/RightPanel/Bottom/Item/DownloadingMenu.qml" line="229"/>
         <source>Thunder High-speed Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>迅雷高速下载</translation>
     </message>
 </context>
 <context>
@@ -97,23 +97,23 @@ PointTeam@qq.com</translation>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml" line="20"/>
         <source>Opacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>透明度:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml" line="35"/>
         <source>Infomation Interval(MS):</source>
-        <translation type="unfinished"></translation>
+        <translation>信息间隔(MS)</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml" line="50"/>
         <source>Show Job Count</source>
-        <translation type="unfinished"></translation>
+        <translation>显示任务数</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/DropzoneSetting/DropzoneSettingPage.qml" line="62"/>
         <source>Show Storage Usage</source>
         <oldsource>Show CPU Usage</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>显示磁盘使用率</translation>
     </message>
 </context>
 <context>
@@ -121,27 +121,27 @@ PointTeam@qq.com</translation>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml" line="18"/>
         <source>Max Job Count:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大任务数:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml" line="33"/>
         <source>Thread Count:</source>
-        <translation type="unfinished"></translation>
+        <translation>默认线程数:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml" line="48"/>
         <source>MaxDL Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大下载速度:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml" line="63"/>
         <source>MaxUL Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大上传速度:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/GenericSettingPage.qml" line="78"/>
         <source>Enable Upload</source>
-        <translation type="unfinished"></translation>
+        <translation>启用上传</translation>
     </message>
 </context>
 <context>
@@ -149,17 +149,17 @@ PointTeam@qq.com</translation>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="10"/>
         <source>About</source>
-        <translation type="unfinished">关于</translation>
+        <translation>关于</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="27"/>
         <source>Update</source>
-        <translation type="unfinished"></translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/Help/HelpPage.qml" line="44"/>
         <source>Skills</source>
-        <translation type="unfinished"></translation>
+        <translation>技巧</translation>
     </message>
 </context>
 <context>
@@ -229,12 +229,12 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/InnerCircle/InnerMainCircle.qml" line="122"/>
         <source>Disk: </source>
-        <translation type="unfinished"></translation>
+        <translation>磁盘:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/InnerCircle/InnerMainCircle.qml" line="135"/>
         <source>Task: </source>
-        <translation type="unfinished"></translation>
+        <translation>任务:</translation>
     </message>
 </context>
 <context>
@@ -242,12 +242,12 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/InputItem.qml" line="58"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>更改</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/InputItem.qml" line="76"/>
         <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>应用</translation>
     </message>
 </context>
 <context>
@@ -291,12 +291,12 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/LoginPage.qml" line="16"/>
         <source>Thunder User Name</source>
-        <translation type="unfinished"></translation>
+        <translation>迅雷用户名</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/LoginPage.qml" line="27"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>密码</translation>
     </message>
 </context>
 <context>
@@ -318,41 +318,49 @@ Also, if you can provide more help, please contact us. </source>
     </message>
 </context>
 <context>
+    <name>NormalNotice</name>
+    <message>
+        <location filename="Controler/Message/normalnotice.cpp" line="23"/>
+        <source>Notice</source>
+        <translation>提示</translation>
+    </message>
+</context>
+<context>
     <name>OuterMainCircle</name>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="40"/>
         <source>Main</source>
-        <translation type="unfinished"></translation>
+        <translation>主窗口</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="70"/>
         <source>Resume All</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复所有</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="72"/>
         <source>SuspendAll</source>
-        <translation type="unfinished"></translation>
+        <translation>暂停所有</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="92"/>
         <source>NewTask</source>
-        <translation type="unfinished"></translation>
+        <translation>新建任务</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="111"/>
         <source>Quit</source>
-        <translation type="unfinished">退出</translation>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="131"/>
         <source>Storage</source>
-        <translation type="unfinished"></translation>
+        <translation>存储路径</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/OuterCircle/OuterMainCircle.qml" line="153"/>
         <source>Setting</source>
-        <translation type="unfinished"></translation>
+        <translation>设置</translation>
     </message>
 </context>
 <context>
@@ -360,22 +368,22 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/PriorityToolItem.qml" line="40"/>
         <source>Priority Components :</source>
-        <translation type="unfinished"></translation>
+        <translation>优先使用组件:</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/PriorityToolItem.qml" line="90"/>
         <source>Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Point</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/PriorityToolItem.qml" line="122"/>
         <source>Aria2</source>
-        <translation type="unfinished"></translation>
+        <translation>Aria2</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/PriorityToolItem.qml" line="155"/>
         <source>Xware</source>
-        <translation type="unfinished"></translation>
+        <translation>Xware</translation>
     </message>
 </context>
 <context>
@@ -383,22 +391,22 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/SavePathItem.qml" line="40"/>
         <source>SavePath:</source>
-        <translation type="unfinished"></translation>
+        <translation>存储路径</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/SavePathItem.qml" line="91"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>默认</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/SavePathItem.qml" line="123"/>
         <source>Desktop</source>
-        <translation type="unfinished"></translation>
+        <translation>桌面</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/GenericSetting/SavePathItem.qml" line="156"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
@@ -406,22 +414,22 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="89"/>
         <source>Error! Please Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>错误！请重试</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="236"/>
         <source>Dropzone</source>
-        <translation type="unfinished"></translation>
+        <translation>悬浮窗</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="35"/>
         <source>Generic settings</source>
-        <translation type="unfinished"></translation>
+        <translation>通用设置</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/SettingBody.qml" line="286"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助</translation>
     </message>
 </context>
 <context>
@@ -461,7 +469,7 @@ Also, if you can provide more help, please contact us. </source>
         <location filename="qml/PointDownload/LeftPanel/ShortcutBar.qml" line="34"/>
         <source>AlertTone</source>
         <oldsource>Tone</oldsource>
-        <translation type="unfinished">完成提示音</translation>
+        <translation>完成提示音</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/LeftPanel/ShortcutBar.qml" line="59"/>
@@ -471,7 +479,7 @@ Also, if you can provide more help, please contact us. </source>
     <message>
         <location filename="qml/PointDownload/LeftPanel/ShortcutBar.qml" line="84"/>
         <source>Dropzone</source>
-        <translation type="unfinished"></translation>
+        <translation>悬浮窗</translation>
     </message>
     <message>
         <source>Clipboard</source>
@@ -552,28 +560,46 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
     </message>
 </context>
 <context>
+    <name>UnifiedInterface</name>
+    <message>
+        <location filename="Download/unifiedinterface.cpp" line="43"/>
+        <source>New Task</source>
+        <translation>新建任务</translation>
+    </message>
+    <message>
+        <location filename="Download/unifiedinterface.cpp" line="113"/>
+        <source>Finish Download</source>
+        <translation>下载完成</translation>
+    </message>
+    <message>
+        <location filename="Download/unifiedinterface.cpp" line="184"/>
+        <source>Download Error</source>
+        <translation>下载出错</translation>
+    </message>
+</context>
+<context>
     <name>XwareSettingPage</name>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="15"/>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="118"/>
         <source>Sign out</source>
-        <translation type="unfinished"></translation>
+        <translation>登出</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="21"/>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="118"/>
         <source>Sign in</source>
-        <translation type="unfinished"></translation>
+        <translation>登陆</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="79"/>
         <source>Automatic Login</source>
-        <translation type="unfinished"></translation>
+        <translation>自动登陆</translation>
     </message>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="88"/>
         <source>Thunder License?</source>
-        <translation type="unfinished"></translation>
+        <translation>迅雷协议?</translation>
     </message>
 </context>
 <context>
@@ -581,13 +607,13 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/YouGetSettingPage.qml" line="70"/>
         <source>LICENSE</source>
-        <translation type="unfinished"></translation>
+        <translation>LICENSE</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <location filename="qml/PointDownload/main.qml" line="46"/>
+        <location filename="qml/PointDownload/main.qml" line="48"/>
         <source> </source>
         <translation></translation>
     </message>

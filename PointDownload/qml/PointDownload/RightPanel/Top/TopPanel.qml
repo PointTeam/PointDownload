@@ -74,45 +74,42 @@ Rectangle {
         color: "#eeeff3"
     }
 
+    Rectangle {
+        id: splitLine0
+        width:1.5
+        height: parent.height
+        anchors {left: parent.left; }
+        color: "#eeeff3"
+    }
 
     BlueButton {
-        id: smallerButton
-        imagePath: "qrc:/images/navigation/smaller"
-        anchors {left: parent.left; leftMargin: 5; verticalCenter: parent.verticalCenter}
+        id: settingButton
+        imagePath: "qrc:/images/navigation/style"
+        imageWidth: 19
+        imageHeigth: 19
+        anchors {left: splitLine0.right;verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
-            onClicked: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
+            onClicked: {
+                SettingScript.showSettingWin(topPanel,PEventFilter.globalX,PEventFilter.globalY)
+            }
         }
     }
 
     Rectangle {
         id: splitLine1
-        width: 2
+        width: 1.5
         height: parent.height
-        anchors {left: smallerButton.right; leftMargin: 5;}
+        anchors {left: settingButton.right; }
         color: "#eeeff3"
     }
-
-//    Image {
-//        id: searchImg
-//        source: "qrc:/images/navigation/search"
-//        anchors {left: splitLine1.right; leftMargin: 4; verticalCenter: parent.verticalCenter}
-//    }
-
-//    InputBox {
-//        id: searchBox
-//        boxWidth: 200
-//        boxHeigth: parent.height
-//        anchors {left: searchImg.right; leftMargin: 5; verticalCenter: parent.verticalCenter; right: splitLine4.left}
-//    }
-
 
     BlueButton {
         id: quitButton
         imagePath: "qrc:/images/navigation/quit"
         imageWidth: 19
         imageHeigth: 19
-        anchors {right: parent.right;/* rightMargin: 13;*/ verticalCenter: parent.verticalCenter}
+        anchors {right: parent.right; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
 //            onClicked: {
@@ -140,21 +137,19 @@ Rectangle {
         id: splitLine2
         width: 1.5
         height: parent.height
-        anchors {right: quitButton.left; /*rightMargin: 10;*/}
+        anchors {right: quitButton.left;}
         color: "#eeeff3"
     }
 
     BlueButton {
-        id: settingButton
-        imagePath: "qrc:/images/navigation/style"
+        id: newTaskButton
+        imagePath: "qrc:/images/navigation/plus"
         imageWidth: 19
         imageHeigth: 19
         anchors {right: splitLine2.right; rightMargin: 3; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
-            onClicked: {
-                SettingScript.showSettingWin(topPanel,PEventFilter.globalX,PEventFilter.globalY)
-            }
+            onClicked: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
         }
     }
 
@@ -162,7 +157,7 @@ Rectangle {
         id: splitLine3
         width: 1.5
         height: parent.height
-        anchors {right: settingButton.left;/* rightMargin: 10;*/}
+        anchors {right: newTaskButton.left;}
         color: "#eeeff3"
     }
 
@@ -181,14 +176,15 @@ Rectangle {
         id: splitLine4
         width: 1.5
         height: parent.height
-        anchors {right: folderButton.left;/* rightMargin: 10;*/}
+        anchors {right: folderButton.left;}
         color: "#eeeff3"
     }
+
     Rectangle {
         id: splitLine5
         width: 1.5
         height: parent.height
-        anchors {right: parent.right;/* rightMargin: 10;*/}
+        anchors {right: parent.right;}
         color: "#eeeff3"
     }
 

@@ -27,7 +27,7 @@ MonitorClipBoard::MonitorClipBoard()
     //import时使用Singleton.MonitorClipBoard
     qmlRegisterSingletonType<MonitorClipBoard>("Singleton.MonitorClipBoard", 1, 0, "MonitorClipBoard", clipboardObj);
 
-    setTmpURL("");
+    setTmpURL(tr("Download URL"));
     clipBoard = QApplication::clipboard();
     connect( clipBoard, SIGNAL( dataChanged() ), this, SLOT( slot_clipDataChange() ) );
 }

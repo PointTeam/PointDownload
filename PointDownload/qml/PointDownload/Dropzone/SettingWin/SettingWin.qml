@@ -76,7 +76,7 @@ Window {
 
                 MouseArea{
                     anchors.fill: parent
-                    onClicked: settingWin.destroy()
+                    onClicked: settingWin.close()
                 }
             }
 

@@ -287,6 +287,14 @@ Also, if you can provide more help, please contact us. </source>
     </message>
 </context>
 <context>
+    <name>MonitorClipBoard</name>
+    <message>
+        <location filename="Controler/monitorClipBoard.cpp" line="30"/>
+        <source>Download URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NavigationBar</name>
     <message>
         <location filename="qml/PointDownload/LeftPanel/NavigationBar.qml" line="73"/>
@@ -540,12 +548,12 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="113"/>
+        <location filename="Download/unifiedinterface.cpp" line="114"/>
         <source>Finish Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="184"/>
+        <location filename="Download/unifiedinterface.cpp" line="190"/>
         <source>Download Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -572,6 +580,11 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
     <message>
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="88"/>
         <source>Thunder License?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="137"/>
+        <source>Signing...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

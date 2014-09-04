@@ -7,8 +7,8 @@ Rectangle{
     Connections{
         target: XwareSettingControler
 
-        onSIsSignInChange: {
-            if (isSignIn)
+        onSSignInFlagChange:{
+            if (flag)
             {
                 loginPage.visible = false
                 logoutPage.visible = true
@@ -134,6 +134,7 @@ Rectangle{
                         XwareSettingControler.userName = loginPage.getUsername();
                         XwareSettingControler.userPasswd = loginPage.getPassword();
                         XwareSettingControler.signInXware(loginPage.getUsername(),loginPage.getPassword())
+                        logText.text = qsTr("Signing...")
                     }
                 }
             }

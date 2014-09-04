@@ -110,7 +110,13 @@ void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
     DataFlow::addData(day,edStruct.Size);
 
 
+    //完成提示消息
     NormalNotice::getInstance()->showMessage(tr("Finish Download"), Notice_Color_Success, edStruct.name);
+
+    //完成提示音
+    SettingXMLHandler tmpHandler;
+    if(tmpHandler.getChildElement(GeneralSettings,"AlertTone") == "Enable")
+        QSound::play(":/tone/resources/Tone/complete.wav");
 }
 
 void UnifiedInterface::changeMaxJobCount(int newCount)

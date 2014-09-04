@@ -106,6 +106,7 @@ void XwareSettingControler::setIsSignIn(bool flag)
         tmpHandler.setChildElement(XwareSetting,"Logged","False");
 
     emit sIsSignInChange();
+    emit sSignInFlagChange(flag);
     emit sSignInFinish();
 }
 

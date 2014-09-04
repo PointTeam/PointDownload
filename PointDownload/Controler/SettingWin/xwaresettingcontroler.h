@@ -44,6 +44,7 @@ signals:
     void sUserNameChange();
     void sUserPasswdChange();
     void sAutomaticLoginChange();
+    void sSignInFlagChange(bool flag);
 
     void sInstallFinish();
     void sInstallError();

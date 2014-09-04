@@ -42,6 +42,8 @@ History:
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSound>
+#include <QSoundEffect>
 #include <QDebug>
 #include "DataType.h"
 #include "YouGetTask/yougettask.h"

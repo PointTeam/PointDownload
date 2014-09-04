@@ -300,6 +300,14 @@ Also, if you can provide more help, please contact us. </source>
     </message>
 </context>
 <context>
+    <name>MonitorClipBoard</name>
+    <message>
+        <location filename="Controler/monitorClipBoard.cpp" line="30"/>
+        <source>Download URL</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>NavigationBar</name>
     <message>
         <location filename="qml/PointDownload/LeftPanel/NavigationBar.qml" line="73"/>
@@ -580,12 +588,12 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
         <translation>新建任务</translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="113"/>
+        <location filename="Download/unifiedinterface.cpp" line="114"/>
         <source>Finish Download</source>
         <translation>下载完成</translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="184"/>
+        <location filename="Download/unifiedinterface.cpp" line="190"/>
         <source>Download Error</source>
         <translation>下载出错</translation>
     </message>
@@ -613,6 +621,11 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
         <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="88"/>
         <source>Thunder License?</source>
         <translation>迅雷协议?</translation>
+    </message>
+    <message>
+        <location filename="qml/PointDownload/Dropzone/SettingWin/XwareSetting/XwareSettingPage.qml" line="137"/>
+        <source>Signing...</source>
+        <translation>正在登陆...</translation>
     </message>
 </context>
 <context>

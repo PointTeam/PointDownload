@@ -36,17 +36,15 @@ contains(DISTRIBUTION_NAME,debian){DEFINES+=LINUX_LIKE_DEBIAN}
  exists(/etc/redhat-release ) {DEFINES+=LINUX_LIKE_REDHAT}
  exists(/etc/gentoo-release ) {DEFINES+=LINUX_LIKE_GENTOO}
 
+
 #Get Desktop Environment
 DESKTOP_ENVIRONMENT = $$system(echo $DESKTOP_SESSION)
-contains(DESKTOP_ENVIRONMENT,[Uu]buntu)
-{
-#Add support for unity menu------------------------------------------------------------------------------------------------------
-CONFIG += link_pkgconfig
-PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1
-#Add support for unity menu done--------------------------------------------------------------------------------------------------------
+contains(DESKTOP_ENVIRONMENT,[Uu]buntu){DEFINES+=DESKTOP_ENV_UBUNTU}
 
-DEFINES+=DESKTOP_ENV_UBUNTU
-}
+#Add support for unity menu------------------------------------------------------------------------------------------
+contains(DESKTOP_ENVIRONMENT,[Uu]buntu){CONFIG += link_pkgconfig}
+contains(DESKTOP_ENVIRONMENT,[Uu]buntu){PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1}
+#Add support for unity menu done---------------------------------------------------------------------------------------
 
 #is gksudo or kdesu  exist
 GKSUDO_EXIST = $$system(command -v gksudo)

@@ -163,8 +163,7 @@
         <file alias=":/languages/resources/LANG/PointDownload_ja_JP">resources/LANG/PointDownload_ja_JP.qm</file>
     </qresource>
     <qresource prefix="/tone">
-        <file>resources/Tone/complete.ogg</file>
-        <file>resources/Tone/001.ogg</file>
+        <file>resources/Tone/complete.wav</file>
     </qresource>
     <qresource prefix="/images/aboutpoint">
         <file alias="arrow-lightblue">resources/images/aboutpoint/arrow-lightblue.png</file>

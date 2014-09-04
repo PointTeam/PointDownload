@@ -51,7 +51,7 @@ Rectangle {
         anchors {left:iconImg.right; leftMargin: 10; verticalCenter: iconImg.verticalCenter}
         font.bold: true
         font.pixelSize: 12
-        color: "#d7d1d1"
+        color: "#e2d9d9"
     }
 
     Image {

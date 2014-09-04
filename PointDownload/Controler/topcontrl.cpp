@@ -201,7 +201,7 @@ void TopContrl::showQtTrayIcon()
 
     sysTrayIcon = new QSystemTrayIcon(0);
     sysTrayIcon->setContextMenu(trayMenu);
-    sysTrayIcon->setIcon(QIcon(":/images/main/point-24-b"));
+    sysTrayIcon->setIcon(QIcon(":/images/main/point-32-b"));
     sysTrayIcon->setVisible(true);
     sysTrayIcon->show();
 

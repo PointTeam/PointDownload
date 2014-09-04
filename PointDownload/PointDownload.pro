@@ -27,10 +27,6 @@ QT += multimedia
 QT += webkitwidgets
 #CONFIG += static
 
-#Add support for unity menu------------------------------------------------------------------------------------------------------
-CONFIG += link_pkgconfig
-PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1
-#Add support for unity menu done--------------------------------------------------------------------------------------------------------
 
 #Get distributions type
 DISTRIBUTION_NAME = $$system(cat /etc/os-release)
@@ -42,7 +38,15 @@ contains(DISTRIBUTION_NAME,debian){DEFINES+=LINUX_LIKE_DEBIAN}
 
 #Get Desktop Environment
 DESKTOP_ENVIRONMENT = $$system(echo $DESKTOP_SESSION)
-contains(DESKTOP_ENVIRONMENT,[Uu]buntu){DEFINES+=DESKTOP_ENV_UBUNTU}
+contains(DESKTOP_ENVIRONMENT,[Uu]buntu)
+{
+#Add support for unity menu------------------------------------------------------------------------------------------------------
+CONFIG += link_pkgconfig
+PKGCONFIG += gtk+-2.0 glib-2.0 appindicator-0.1
+#Add support for unity menu done--------------------------------------------------------------------------------------------------------
+
+DEFINES+=DESKTOP_ENV_UBUNTU
+}
 
 #is gksudo or kdesu  exist
 GKSUDO_EXIST = $$system(command -v gksudo)
@@ -139,4 +143,5 @@ HEADERS += \
     Controler/Message/normalnotice.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
-TRANSLATIONS = PointDownload_zh_CN.ts
+TRANSLATIONS += PointDownload_zh_CN.ts
+TRANSLATIONS += PointDownload_ja_JP.ts

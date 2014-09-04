@@ -27,6 +27,7 @@
         <file alias="downarrow">resources/images/navigation/downarrow.png</file>
         <file alias="right-split">resources/images/navigation/right-split.png</file>
         <file alias="left-split">resources/images/navigation/left-split.png</file>
+        <file alias="plus">resources/images/navigation/plus.png</file>
     </qresource>
     <qresource prefix="/images/main">
         <file alias="triangle">resources/images/main/triangle.png</file>
@@ -159,6 +160,7 @@
     </qresource>
     <qresource prefix="/languages">
         <file alias=":/languages/resources/LANG/PointDownload_zh_CN">resources/LANG/PointDownload_zh_CN.qm</file>
+        <file alias=":/languages/resources/LANG/PointDownload_ja_JP">resources/LANG/PointDownload_ja_JP.qm</file>
     </qresource>
     <qresource prefix="/tone">
         <file>resources/Tone/complete.ogg</file>
@@ -176,7 +178,6 @@
         <file alias="newjob">resources/images/dropzone/newjob.png</file>
         <file alias="tback">resources/images/dropzone/tback.png</file>
         <file alias="maxsize">resources/images/dropzone/maxsize.png</file>
-        <file alias="quit">resources/images/dropzone/quit.png</file>
         <file alias="setting">resources/images/dropzone/setting.png</file>
         <file alias="startall">resources/images/dropzone/startall.png</file>
         <file alias="stopall">resources/images/dropzone/stopall.png</file>
@@ -196,6 +197,7 @@
         <file alias="user&amp;passwd">resources/images/dropzone/user&amp;passwd.png</file>
         <file alias="thunder64">resources/images/dropzone/thunder64.png</file>
         <file alias="closebutton">resources/images/dropzone/cloosebutton.png</file>
+        <file alias="quit">resources/images/dropzone/quit.png</file>
     </qresource>
     <qresource prefix="/xware">
         <file>resources/xware/xware_login.js</file>

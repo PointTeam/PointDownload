@@ -65,8 +65,7 @@ Rectangle {
 
 PointDownload is a software that can help you download
 various kinds of documents efficiently.
-The current version supports HTTP, besides,
-the future one will support ED2K, BT and FTP,etc.
+The current version supports HTTP, ED2K, BT and FTP,etc.
 The operating systems,LinuxDeepin2014, Ubuntu14.04,
 UbuntuKy14.04,are supported by the current version.")
             anchors {horizontalCenter: parent.horizontalCenter;top: parent.top; topMargin: 20}
@@ -77,6 +76,7 @@ UbuntuKy14.04,are supported by the current version.")
             color: "#9b9fb1"
             font.bold: true
             text:qsTr("<PointDownload>
+Version:1.2.0
 Copyright © <2014> <PointTeam>
 This program comes with ABSOLUTELY NO WARRANTY
 For more details:<http://www.gnu.org/licenses/gpl-3.0.html>")

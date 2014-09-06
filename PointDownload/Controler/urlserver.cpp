@@ -131,7 +131,7 @@ void URLServer::taskParseHandle(QString taskInfo)
     }
 
     // xware not start or not login
-    if(XwareWebController::getInstance()->currentPageURL() != MAIN_URL_3)
+    if(!XwareWebController::getInstance()->getLoginState())
     {
         QString msgType("XwareMsgType");
         QString msgConten("XwareNotStart");

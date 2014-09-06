@@ -23,6 +23,7 @@
 #define XWAREWEBCONTROLLER_H
 
 #define MAIN_URL_3 "http://yuancheng.xunlei.com/3/"
+#define MAIN_URL_OLD "http://yuancheng.xunlei.com/"
 #define LOGIN_URL  "http://yuancheng.xunlei.com/login.html"
 #define LOGIN_MAX_TRY 5
 #define LOGIN_DEFAULT_INTERVAL 2000
@@ -39,6 +40,7 @@
 #include "xwarepopulateobject.h"
 #include "mywebview.h"
 #include "XwareConstants.h"
+#include "completedlistwebview.h"
 
 class XwareWebController : public QObject
 {
@@ -56,6 +58,7 @@ public:
     void reloadWebView();
     QWebView *getWebView();
     void tryAutomaticLogin(QString userName, QString pwd);
+    bool getLoginState();
 
 signals:
     void sLoginResult(XwareLoginResultType);
@@ -70,6 +73,7 @@ private slots:
 
 private:
     explicit XwareWebController(QObject *parent = 0);
+    void initDefaultSetting();
     
 private:
     static XwareWebController * xwareWebController;

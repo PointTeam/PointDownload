@@ -24,7 +24,7 @@
 XwareWebController::XwareWebController(QObject *parent) :
     QObject(parent)
 {
-    webview = new MyWebView();
+    webview = new MainWebView();
     isLogined = false;
     loginCtrlTimer = new QTimer();
     loginTimeCount = 1;
@@ -44,6 +44,17 @@ XwareWebController::XwareWebController(QObject *parent) :
 
     // login control timer
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
+}
+
+void XwareWebController::initDefaultSetting()
+{
+    // max task
+
+
+    // speed limits
+
+
+    //
 }
 
 void XwareWebController::startLoginCtrlTimer()
@@ -131,6 +142,18 @@ void XwareWebController::tryAutomaticLogin(QString userName, QString pwd)
     isHasAutoLoginTask = true;
 }
 
+bool XwareWebController::getLoginState()
+{
+    if(currentPageURL() == MAIN_URL_3 || currentPageURL() == MAIN_URL_OLD)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void XwareWebController::loadingFinished()
 {
     if(currentPageURL() == MAIN_URL_3 && !isLogined)
@@ -140,6 +163,10 @@ void XwareWebController::loadingFinished()
         emit sLoginResult(x_LoginSuccess);
 
         qDebug()<<"[xware info] finish login !";
+
+        qDebug()<<" init competed webview !";
+        CompletedListWebView::getInstance()->init();
+
     }
     else if(currentPageURL().contains(LOGIN_URL))
     {

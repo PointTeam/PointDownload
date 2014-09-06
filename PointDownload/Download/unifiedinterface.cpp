@@ -415,9 +415,9 @@ void UnifiedInterface::stopDownloading(QString URL)
 void UnifiedInterface::suspendDownloading(QString URL)
 {
     DownloadXMLHandler tmpOpera;
-    //如果已经处于暂停状态则不作处理
-    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_suspend")
-        return;
+//    //如果已经处于暂停状态则不作处理
+//    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_suspend")
+//        return;
 
     //在xml文件中将该项标注为暂停
     SDownloading tmpStruct;
@@ -435,7 +435,7 @@ void UnifiedInterface::suspendDownloading(QString URL)
         break;
     case Xware:
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
-            qDebug()<<"xxxxxxx UnifiedInterface  suspend  xxxxxxx";
+            qDebug()<<" xxxxxxx UnifiedInterface  suspend  xxxxxxx";
         XwareTask::getInstance()->suspendDownloading(URL);
         break;
     default:
@@ -447,12 +447,11 @@ void UnifiedInterface::suspendDownloading(QString URL)
 
 void UnifiedInterface::resumeDownloading(QString URL)
 {
-    qDebug() << "resumeDownloading...............................................";
     SettingXMLHandler tmpHandler;
     DownloadXMLHandler downloadHandler;
     //如果已经处于下载状态则不作处理
-    if (downloadHandler.getDownloadingNode(URL).state == "dlstate_downloading")
-        return;
+//    if (downloadHandler.getDownloadingNode(URL).state == "dlstate_downloading")
+//        return;
 
     //如果数量超出了最大限制,则把正在下载的最慢的项停下
     if (tmpHandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() <= downloadingListMap.count())
@@ -465,6 +464,16 @@ void UnifiedInterface::resumeDownloading(QString URL)
     tmpStruct.URL = URL;
     tmpStruct.state = "dlstate_downloading";
     downloadHandler.writeDownloadingConfigFile(tmpStruct);
+
+    QString tmpToolType = downloadHandler.getDownloadingNode(URL).dlToolsType;
+    if (tmpToolType == "xware")
+        downloadingListMap.insert(URL, Xware);
+    else if (tmpToolType == "aria2")
+        downloadingListMap.insert(URL, aria2);
+    else if (tmpToolType == "youget")
+        downloadingListMap.insert(URL, youget);
+    else
+        downloadingListMap.insert(URL, Point);
 
     switch(downloadingListMap.value(URL))
     {

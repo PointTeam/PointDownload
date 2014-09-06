@@ -3,14 +3,19 @@
 
 WebCtrlViewTest::WebCtrlViewTest()
 {
-    this->webview = XwareWebController::getInstance()->getWebView();
+    tabWG = new QTabWidget();
+    tabWG->addTab(XwareWebController::getInstance()->getWebView(), QString("downloading"));
+    tabWG->addTab(CompletedListWebView::getInstance(), QString("completed"));
+    this->webview = CompletedListWebView::getInstance();
+    connect(tabWG, SIGNAL(currentChanged(int)), this, SLOT(tabChangedHandle(int)));
+
     execJSLE = new QLineEdit();
     execJSLE->show();
     connect(execJSLE, SIGNAL(returnPressed()), this, SLOT(lineEditReturnHandle()));
 
     mainLayout = new QGridLayout();
 
-    mainLayout->addWidget(this->webview);
+    mainLayout->addWidget(this->tabWG);
 
     this->setLayout(mainLayout);
 }
@@ -33,6 +38,11 @@ void WebCtrlViewTest::lineEditReturnHandle()
 
 void WebCtrlViewTest::execJS(QString js)
 {
-    XwareWebController::getInstance()->executeJS(js);
+    this->webview->page()->mainFrame()->evaluateJavaScript(js);
+}
+
+void WebCtrlViewTest::tabChangedHandle(int index)
+{
+    this->webview = qobject_cast<QWebView*>(tabWG->currentWidget());
 }
 

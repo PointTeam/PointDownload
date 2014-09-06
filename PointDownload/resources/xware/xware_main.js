@@ -89,9 +89,16 @@ function pointAddNewDownloadTask(url, storage, fileList)
     }, 1500
     );
 
-
     Point.justForJSTest("----------------- end -----------------------");
 
+}
+
+function pointLogout()
+{
+    // debugger
+    Point.justForJSTest("----------------- logOut -----------------------");
+
+    App.set("exit", true);
 }
 
 function pointAddNewBTDownloadTask(btFilePath, storage, fileList)
@@ -124,6 +131,44 @@ function pointRemoveDownloadingTask(tid)
     App.set("task.remove", tid);
     App.set("dialogs.removeTasks.confirmEVT", 1);
 }
+
+/*
+function pointClearAllHistoryTask()
+{
+    var counts = App.get("task.counts");
+    for(var i = 0; i < counts.length; ++i)
+    {
+        if(counts[i] <= 0)continue;
+        switch (i)
+        {
+        case 1:
+            pointClearFinishedTask();
+            break;
+        case 2:
+            pointClearGarbageTask();
+            break;
+        case 3:
+            pointClearSubmitFailTask();
+            break;
+        }
+    }
+}
+
+function pointClearFinishedTask()
+{
+
+}
+
+function pointClearGarbageTask()
+{
+
+}
+
+function pointClearSubmitFailTask()
+{
+
+}
+*/
 
 function pointEntryOfflineChannel(tid)
 {
@@ -227,13 +272,6 @@ function pointBindNewMachine(code)
     $pop_sjbox_div.find("a.btn_inp").click();
 }
 
-function pointLogout()
-{
-    // debugger
-    Point.justForJSTest("----------------- logOut -----------------------");
-
-    App.set("exit", true);
-}
 
 function pointUnbindMachine(code)
 {

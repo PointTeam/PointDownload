@@ -25,11 +25,11 @@
 #include <QWebView>
 #include "mynetworkaccessmanager.h"
 
-class MyWebView : public QWebView
+class MainWebView : public QWebView
 {
     Q_OBJECT
 public:
-    explicit MyWebView();
+    explicit MainWebView();
 
 signals:
 

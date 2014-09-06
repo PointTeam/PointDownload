@@ -53,6 +53,9 @@ XwareTask * XwareTask::getInstance()
 
 void XwareTask::addNewDownload(PrepareDownloadInfo info)
 {
+    // clear the completed task
+    CompletedListWebView::getInstance()->clearAllCompletedTask(false);
+
     QString mappingDir = "";
     // mappingDir = XwareDloadFolderController::getInstance()->getMappingFolder(info.storageDir);
 
@@ -66,6 +69,7 @@ void XwareTask::stopDownload(QString URL)
 
 void XwareTask::suspendDownloading(QString URL)
 {
+    if(!XwareWebController::getInstance()->getLoginState())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
@@ -79,6 +83,7 @@ void XwareTask::suspendDownloading(QString URL)
 
 void XwareTask::resumeDownloading(QString URL)
 {
+    if(!XwareWebController::getInstance()->getLoginState())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
@@ -92,6 +97,7 @@ void XwareTask::resumeDownloading(QString URL)
 
 void XwareTask::removeDownloading(QString URL)
 {
+    if(!XwareWebController::getInstance()->getLoginState())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
@@ -105,6 +111,7 @@ void XwareTask::removeDownloading(QString URL)
 
 void XwareTask::entryOfflineChannel(QString URL)
 {
+    if(!XwareWebController::getInstance()->getLoginState())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
@@ -118,11 +125,12 @@ void XwareTask::entryOfflineChannel(QString URL)
 
 void XwareTask::entryHighSpeedChannel(QString URL)
 {
+    if(!XwareWebController::getInstance()->getLoginState())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
         return;
     }
 
@@ -131,15 +139,14 @@ void XwareTask::entryHighSpeedChannel(QString URL)
 
 void XwareTask::slotFinishDownload(QString URL)
 {
-    qDebug() << "slotFinishDownload xware..........";
     UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
+
+    // clear the finished file
+    CompletedListWebView::getInstance()->clearAllCompletedTask(false);
 }
 
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)
 {
-
-//    qDebug()<<"xxxxxxxxxxx feedback xxxxxxxxxxxxxxxx";
-
     emit sRealTimeData(info);
 }
 

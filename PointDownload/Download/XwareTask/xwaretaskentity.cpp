@@ -184,10 +184,9 @@ void XwareTaskEntity::updateTaskMap()
     QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
     QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
 
-    delete reply;
-    reply = NULL;
-    
-    
+//    delete reply;
+//    reply = NULL;
+
     QList<QVariant> completedTaskList = jsonMap.value("tasks").toList();
     if(completedTaskList.length() == 0)return;
 
@@ -220,8 +219,19 @@ void XwareTaskEntity::updateTaskMap()
         QString remainTime = completedTaskList.at(i).toMap().value("remainTime").toString();
         XwareTaskState state = convertXwareState(completedTaskList.at(i).toMap().value("state").toString());
         QString url = completedTaskList.at(i).toMap().value("url").toString();
-        QString highChnlSpeed = completedTaskList.at(i).toMap().value("vipChannel").toMap().value("speed").toString();
-        QString offlineChnlSpeed = completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("speed").toString();
+
+        bool isEnableHighSpeedChannel = completedTaskList.at(i).toMap().value("vipChannel").toMap().value("type").toString() == "0"?false:true;
+        bool isEnableOfflineChannel = completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("state").toString() == "0"?false:true;
+        QString highChnlSpeed = "";
+        QString offlineChnlSpeed = "";
+        if(isEnableHighSpeedChannel && state == x_dload)
+        {
+            highChnlSpeed = convertFileSize(completedTaskList.at(i).toMap().value("vipChannel").toMap().value("speed").toString(), 1) + "/s";
+        }
+        if(isEnableOfflineChannel && state == x_dload)
+        {
+            offlineChnlSpeed = convertFileSize(completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("speed").toString(), 1) + "/s";
+        }
 
         XwareTaskInfo* taskInfoStruct = new XwareTaskInfo{tid, name, size, progress, speed, remainTime,
                 state, url, highChnlSpeed, offlineChnlSpeed};
@@ -307,17 +317,19 @@ void XwareTaskEntity::taskCompletedMonitor()
     QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
     QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
 
-    delete reply;
-    reply = NULL;
+//    delete reply;
+//    reply = NULL;
 
-//    int completedNum = jsonMap.value("completeNum").toString().toInt();
     QList<QVariant> completedTaskListTmp = jsonMap.value("tasks").toList();
     if(completedTaskListTmp.length() == 0)
     {
         return;
     }
 
-    // first time
+//    qDebug()<<"completedTaskList :"<<completedTaskList.length();
+//    qDebug()<<"completedTaskListTmp :"<<completedTaskListTmp.length();
+
+    // first
     if(completedTaskList.length() == 0)
     {
         completedTaskList = completedTaskListTmp;
@@ -328,8 +340,14 @@ void XwareTaskEntity::taskCompletedMonitor()
     {
         bool match = false;
         QString url = completedTaskListTmp.at(i).toMap().value("url").toString();
+
+//        qDebug()<<"completedTaskListTmp url "<<url;
+
         for(int j = 0; j < completedTaskList.length(); ++j )
         {
+
+//            qDebug()<<"completedTaskList url "<<completedTaskList.at(j).toMap().value("url");
+
             if(url == completedTaskList.at(j).toMap().value("url"))
             {
                 match = true;
@@ -343,11 +361,11 @@ void XwareTaskEntity::taskCompletedMonitor()
             DownloadingItemInfo tmpInfo;
             tmpInfo.downloadURL = url;
             tmpInfo.downloadPercent = 100;
-            tmpInfo.downloadSpeed = "0 KB/S";
+            tmpInfo.downloadSpeed = "0 KB/s";
             tmpInfo.downloadState = dlstate_downloading;
-            tmpInfo.thunderHightSpeed = "-";
-            tmpInfo.thunderOfflineSpeed = "-";
-            tmpInfo.uploadSpeed = "0";
+            tmpInfo.thunderHightSpeed = "";
+            tmpInfo.thunderOfflineSpeed = "";
+            tmpInfo.uploadSpeed = "";
 
             emit sRealTimeDataChanged(tmpInfo);
 
@@ -356,12 +374,9 @@ void XwareTaskEntity::taskCompletedMonitor()
             // tmp
             qDebug()<<"[xware info] finished dloading: ==> "<<url;
         }
-
     }
 
     completedTaskList = completedTaskListTmp;
-
-//    qDebug()<<"completedNum : "<<completedNum;
 }
 
 void XwareTaskEntity::loginResultHandle(XwareLoginResultType result)
@@ -378,6 +393,7 @@ void XwareTaskEntity::loginResultHandle(XwareLoginResultType result)
 
 void XwareTaskEntity::updateXMLFile(DownloadingItemInfo info)
 {
+
     DownloadXMLHandler tmpOpera;
     SDownloading tmpStruct = tmpOpera.getDownloadingNode(info.downloadURL);
     //计算平均速度，用作优先下载的判断条件
@@ -386,10 +402,22 @@ void XwareTaskEntity::updateXMLFile(DownloadingItemInfo info)
                                                     ) / UPDATE_XML_INTERVAL));
     tmpStruct.readySize = QString::number(qint64(info.downloadPercent / 100 * tmpStruct.totalSize.toLongLong()));
 
+    // state
+    if(info.downloadState == dlstate_downloading)
+    {
+        tmpStruct.state = "dlstate_downloading";
+    }
+    else if(info.downloadState == dlstate_suspend)
+    {
+        tmpStruct.state = "dlstate_suspend";
+    }
+    else if(info.downloadState == dlstate_ready)
+    {
+        tmpStruct.state = "dlstate_ready";
+    }
+
     tmpOpera.writeDownloadingConfigFile(tmpStruct);
 }
-
-
 
 
 // debug , check the task information through Qt console

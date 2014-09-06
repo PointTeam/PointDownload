@@ -29,6 +29,7 @@
 #include "xwarewebcontroller.h"
 #include "XMLHandler/settingxmlhandler.h"
 #include "xwaretaskentity.h"
+#include "completedlistwebview.h"
 
 class XwareTask : public QObject
 {

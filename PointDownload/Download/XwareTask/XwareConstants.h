@@ -30,13 +30,13 @@
 static struct XwareConstants
 {
     // is output the debug info
-    const bool DEBUG = true;
-    const bool DEBUG_2 = false;
+    static const bool DEBUG = true;
+    static const bool DEBUG_2 = false;
 
     int  ETM_PORT;  // default port
 
     // cfg
-    QString HOME_PATH ;
+    QString HOME_PATH;
     QString POINT_CFG_DIR ;
     QString XWARE_CFG_DIR ;
     QString XWARE_ETM_CFG;

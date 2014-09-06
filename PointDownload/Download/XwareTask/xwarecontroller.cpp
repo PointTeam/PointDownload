@@ -166,8 +166,8 @@ QString XwareController::getCodeFromJson()
     QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
     QJsonArray jary = jsd.array();
 
-    delete reply;
-    reply = NULL;
+//    delete reply;
+//    reply = NULL;
     return jary.at(4).toString();
 }
 

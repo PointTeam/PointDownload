@@ -48,7 +48,7 @@ struct SDownloading
     QString totalSize;                              //总大小，Byte
     QString readySize;                              //已完成的大小，Byte
     QString autoOpenFolder;                     //完成后是否自动打开文件夹
-    QString state;                              //Suspend,Downloading,Ready,2014.4.7add
+    QString state;                              //dlstate_suspend,dlstate_downloading,dlstate_ready,2014.9.3 modify
     QString averageSpeed;
     QString lastModifyTime;
     QString iconPath;

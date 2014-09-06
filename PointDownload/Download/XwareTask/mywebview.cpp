@@ -21,7 +21,7 @@
 
 #include "mywebview.h"
 
-MyWebView::MyWebView()
+MainWebView::MainWebView()
 {
     this->page()->setNetworkAccessManager(new MyNetworkAccessManager());
 }

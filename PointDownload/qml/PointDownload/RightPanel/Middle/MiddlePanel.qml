@@ -29,6 +29,7 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
+import settingControler 1.0
 import Singleton.MiddleSender 1.0
 
 Rectangle {
@@ -36,7 +37,7 @@ Rectangle {
     width: parent.width
     height: 190
     color: "#ecf2f6"
-    state: "middleShow"
+    state: settingCtrl.getShowSysDataFlag()?"middleShow":"middleHide"
 
     property real testHeight: 0
 
@@ -54,6 +55,10 @@ Rectangle {
             netCircle.percentage = 100 * MiddleSender.downSpeed / (MiddleSender.downSpeed + MiddleSender.upSpeed);
             netCircle.updatePercentage();
         }
+    }
+
+    SettingControler{
+        id:settingCtrl
     }
 
     //cpu使用率圈
@@ -182,9 +187,15 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     if (middlePanel.state == "middleHide")
+                    {
                         middlePanel.state = "middleShow";
+                        settingCtrl.setShowSysDataFlag(true)
+                    }
                     else
+                    {
                         middlePanel.state = "middleHide"
+                        settingCtrl.setShowSysDataFlag(false)
+                    }
                 }
             }
         }

@@ -56,7 +56,8 @@ Rectangle {
 
         onSignalHideMainWindow:{
             mainWindow.hide()
-            DropzonePage.showDropzone(topPanel)
+            if (settingCtrl.enableDropzone)
+                DropzonePage.showDropzone(topPanel)
         }
 
         onSignalShowAboutPoint:AboutPage.showAbout(topPanel)
@@ -91,7 +92,17 @@ Rectangle {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                SettingScript.showSettingWin(topPanel,PEventFilter.globalX,PEventFilter.globalY)
+                if (settingCtrl.getSettingWinShowed())
+                {
+                    SettingScript.destroySettingWin()
+                    settingCtrl.setSettingWinShowed(false)
+                }
+
+                else
+                {
+                    SettingScript.showSettingWin(topPanel,PEventFilter.globalX + 30,PEventFilter.globalY)
+                    settingCtrl.setSettingWinShowed(true)
+                }
             }
         }
     }
@@ -112,13 +123,6 @@ Rectangle {
         anchors {right: parent.right; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
-//            onClicked: {
-//                CloseTip.fadeInDelay = 200;
-//                CloseTip.fadeOutDelay = 200;
-////                CloseTip.tip = "";
-//                CloseTip.showTipe(infoMenu);
-//            }
-
             onClicked: {
                 settingCtrl.initData()
                 if (settingCtrl.exitOnClose)

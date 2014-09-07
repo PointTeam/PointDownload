@@ -25,6 +25,7 @@ SettingControler::SettingControler(QObject *parent) :
     QObject(parent)
 {
     initData();
+    setSettingWinShowed(false); //保证不正常重启也能正确标志
 }
 
 QString SettingControler::getOperatingSystem()
@@ -259,6 +260,31 @@ void SettingControler::selectPriorityTool(QString tool)
 }
 
 
+bool SettingControler::getShowSysDataFlag()
+{
+    return sHandler.getChildElement(GeneralSettings, "ShowSysData") == "True" ? true : false;
+}
+
+void SettingControler::setShowSysDataFlag(bool flag)
+{
+    if (flag)
+        sHandler.setChildElement(GeneralSettings, "ShowSysData", "True");
+    else
+        sHandler.setChildElement(GeneralSettings, "ShowSysData", "False");
+}
+
+bool SettingControler::getSettingWinShowed()
+{
+    return sHandler.getChildElement(GeneralSettings, "SettingWinShowed") == "True" ? true : false;
+}
+
+void SettingControler::setSettingWinShowed(bool flag)
+{
+    if (flag)
+        sHandler.setChildElement(GeneralSettings, "SettingWinShowed", "True");
+    else
+        sHandler.setChildElement(GeneralSettings, "SettingWinShowed", "False");
+}
 
 
 

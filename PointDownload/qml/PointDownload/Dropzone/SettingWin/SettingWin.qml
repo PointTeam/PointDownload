@@ -22,6 +22,7 @@
 import QtQuick 2.1
 import QtQuick.Window 2.1
 import QtGraphicalEffects 1.0
+import settingControler 1.0
 import Singleton.PEventFilter 1.0
 
 
@@ -42,6 +43,10 @@ Window {
 
     x:winx
     y:winy
+
+    SettingControler {
+        id:settingCtrl
+    }
 
     Image{
         id:mainImg
@@ -76,7 +81,10 @@ Window {
 
                 MouseArea{
                     anchors.fill: parent
-                    onClicked: settingWin.close()
+                    onClicked: {
+                        settingWin.close()
+                        settingCtrl.setSettingWinShowed(false)
+                    }
                 }
             }
 

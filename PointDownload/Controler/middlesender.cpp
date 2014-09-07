@@ -46,6 +46,7 @@ MiddleSender * MiddleSender::getInstance()
     return middleSender;
 }
 
+
 double MiddleSender::getCpuUsage()
 {
     return cpuUsage;

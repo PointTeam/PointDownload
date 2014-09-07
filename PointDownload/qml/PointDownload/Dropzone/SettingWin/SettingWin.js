@@ -60,5 +60,5 @@ function showSettingWin(obj,x,y)
 
 function destroySettingWin()
 {
-    settingPage.destroy()
+    settingPage.close()
 }

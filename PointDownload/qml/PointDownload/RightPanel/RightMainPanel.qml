@@ -62,6 +62,7 @@ Rectangle {
 
         MouseArea{
             id:middleMouse
+            enabled: parent.height <= 5?false:true
             anchors.fill: parent
             anchors.bottomMargin: 20
             onPressed:  {

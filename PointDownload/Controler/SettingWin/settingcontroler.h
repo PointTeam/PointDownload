@@ -53,6 +53,12 @@ public:
     Q_INVOKABLE void selectSavePath(QString pathType);//Default,Desktop,Other
     Q_INVOKABLE void selectPriorityTool(QString tool);//Point,Aria2,Xware
 
+    Q_INVOKABLE bool getShowSysDataFlag();              //记录中部信息面板是否显示
+    Q_INVOKABLE void setShowSysDataFlag(bool flag);
+    Q_INVOKABLE bool getSettingWinShowed();
+    Q_INVOKABLE void setSettingWinShowed(bool flag);
+
+
     QString getOperatingSystem();
     QString getVersion();
     QString getSavePath();

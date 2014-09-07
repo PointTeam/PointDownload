@@ -55,5 +55,6 @@ function showDropzone(obj)
 
 function destroyDropzone()
 {
-    dropzonePage.close()
+    if (!dropzonePage === undefined)
+        dropzonePage.close()
 }

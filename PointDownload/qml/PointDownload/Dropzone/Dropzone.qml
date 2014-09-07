@@ -163,8 +163,9 @@ Window {
 
 //            onDoubleClicked: {
 //                TopContrl.showMainWindow()
+//                TopContrl.updateShowState(true)
 //                outerCircle.updateMenuState()
-//                dropzonePage.destroy()
+//                dropzonePage.close()
 //            }
         }
 

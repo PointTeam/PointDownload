@@ -46,16 +46,20 @@ XwareWebController::XwareWebController(QObject *parent) :
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
 }
 
-void XwareWebController::initDefaultSetting()
+XwareWebController * XwareWebController::xwareWebController = NULL;
+XwareWebController::~XwareWebController()
 {
-    // max task
-
-
-    // speed limits
-
-
-    //
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"~XwareWebController()  was be called !!";
 }
+
+XwareWebController * XwareWebController::getInstance()
+{
+    if (xwareWebController == NULL)
+        xwareWebController = new XwareWebController();
+    return xwareWebController;
+}
+
 
 void XwareWebController::startLoginCtrlTimer()
 {
@@ -73,20 +77,6 @@ void XwareWebController::startLoginCtrlTimer()
 
     ++loginTimeCount;
     XwarePopulateObject::getInstance()->login(userName, userPwd);
-}
-
-XwareWebController * XwareWebController::xwareWebController = NULL;
-XwareWebController::~XwareWebController()
-{
-    if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<<"~XwareWebController()  was be called !!";
-}
-
-XwareWebController * XwareWebController::getInstance()
-{
-    if (xwareWebController == NULL)
-        xwareWebController = new XwareWebController();
-    return xwareWebController;
 }
 
 void XwareWebController::executeJS(QString js)
@@ -124,7 +114,7 @@ QString XwareWebController::currentPageURL()
 
 void XwareWebController::reloadWebView()
 {
-    // need to clear window object before this action
+    // need to clear window object from webview before this action
     /*   ...  */
 
     this->webview->reload();
@@ -164,7 +154,7 @@ void XwareWebController::loadingFinished()
 
         qDebug()<<"[xware info] finish login !";
 
-        qDebug()<<" init competed webview !";
+        qDebug()<<"[xware info] init competed webview !";
         CompletedListWebView::getInstance()->init();
 
     }

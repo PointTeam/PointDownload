@@ -41,6 +41,7 @@
 #include "mywebview.h"
 #include "XwareConstants.h"
 #include "completedlistwebview.h"
+#include "xwaresetting.h"
 
 class XwareWebController : public QObject
 {
@@ -73,7 +74,6 @@ private slots:
 
 private:
     explicit XwareWebController(QObject *parent = 0);
-    void initDefaultSetting();
     
 private:
     static XwareWebController * xwareWebController;

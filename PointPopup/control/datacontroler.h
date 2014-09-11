@@ -35,6 +35,7 @@
 #include <QTextStream>
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
+#include "BtAndMagnetInfo/metainfo.h"
 
 const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
 
@@ -58,6 +59,7 @@ public:
 
     //qml中能直接调用此方法,将数据发送到服务端
     Q_INVOKABLE void selectSavePath(QString buttonName);
+    Q_INVOKABLE void selectBTFile();
     Q_INVOKABLE void sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType);
 
     //从浏览器（谷歌、火狐），或者从主程序取得下载URL和下载类型的值

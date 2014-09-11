@@ -84,6 +84,22 @@ void DataControler::selectSavePath(QString buttonName)
     }
 }
 
+void DataControler::selectBTFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),
+                                                    gSettingHandler.getChildElement(GeneralSettings,"SavePath"),
+                                                    tr("BitTorrent (*.torrent)"));
+    if (fileName == NULL)
+        return;
+
+    MetaInfo metaInfo;
+    QFile torrent(fileName);
+    if (!torrent.open(QFile::ReadOnly) || !metaInfo.parse(torrent.readAll()))
+        return;
+    else
+        getURLFromBrowser(metaInfo.toMagnetLink());
+}
+
 void DataControler::sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType)
 {
     if (checkIsInDownloading(fileURL))

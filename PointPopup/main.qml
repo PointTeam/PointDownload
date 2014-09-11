@@ -72,7 +72,6 @@ Window {
                                                settingSpinBox.getSpeed(),
                                                savePanel.getSavePath(),
                                                newToolType)
-
                 Qt.quit()
             }
         }
@@ -141,6 +140,7 @@ Window {
                     anchors.fill: parent
                     onClicked: {
                             //点击之后调用分析bt的方法并返回数据到弹出窗
+                        DataControler.selectBTFile()
                     }
                 }
             }

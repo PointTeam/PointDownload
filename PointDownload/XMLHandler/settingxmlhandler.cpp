@@ -135,7 +135,7 @@ void SettingXMLHandler::touchPointSettingFile()
         generalSettingsNode.appendChild(createChildElement("DefaultThreadCount","5"));
         generalSettingsNode.appendChild(createChildElement("MaxJobCount","10"));
         generalSettingsNode.appendChild(createChildElement("AlertTone","True"));
-        generalSettingsNode.appendChild(createChildElement("ShowSysData","True"));
+        generalSettingsNode.appendChild(createChildElement("ShowSysData","False"));
         generalSettingsNode.appendChild(createChildElement("SettingWinShowed","False"));
         generalSettingsNode.appendChild(createChildElement("ExitOnClose","False"));
         generalSettingsNode.appendChild(createChildElement("PriorityTool","Point"));

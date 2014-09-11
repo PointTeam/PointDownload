@@ -27,7 +27,11 @@ SOURCES += main.cpp \
     control/peventfilter.cpp \
     control/datacontroler.cpp \
     control/settingxmlhandler.cpp \
-    control/downloadxmlhandler.cpp
+    control/downloadxmlhandler.cpp \
+    BtAndMagnetInfo/bencodeparser.cpp \
+    BtAndMagnetInfo/CyoDecode.cpp \
+    BtAndMagnetInfo/CyoEncode.cpp \
+    BtAndMagnetInfo/metainfo.cpp
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -45,7 +49,11 @@ HEADERS += \
     control/peventfilter.h \
     control/datacontroler.h \
     control/settingxmlhandler.h \
-    control/downloadxmlhandler.h
+    control/downloadxmlhandler.h \
+    BtAndMagnetInfo/bencodeparser.h \
+    BtAndMagnetInfo/CyoDecode.h \
+    BtAndMagnetInfo/CyoEncode.h \
+    BtAndMagnetInfo/metainfo.h
 
 lupdate_only{
 SOURCES = main.qml \

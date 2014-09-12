@@ -93,7 +93,8 @@ SOURCES += main.cpp \
     Controler/dldataconverter.cpp \
     Download/XwareTask/webctrlviewtest.cpp \
     Controler/Message/normalnotice.cpp \
-    Download/XwareTask/completedlistwebview.cpp
+    Download/XwareTask/completedlistwebview.cpp \
+    Download/XwareTask/xwaresetting.cpp
 
 # Installation path
 # target.path =
@@ -140,7 +141,8 @@ HEADERS += \
     Controler/dldataconverter.h \
     Download/XwareTask/webctrlviewtest.h \
     Controler/Message/normalnotice.h \
-    Download/XwareTask/completedlistwebview.h
+    Download/XwareTask/completedlistwebview.h \
+    Download/XwareTask/xwaresetting.h
 include(./QtSingleApplication/qtsinglecoreapplication.pri)
 
 TRANSLATIONS += PointDownload_zh_CN.ts

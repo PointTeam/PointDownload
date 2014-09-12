@@ -44,6 +44,9 @@ static struct XwareConstants
     // work dir
     QString XWARE_HOME;
     QString XWARE_WORK_DIR;
+    QString XWARE_MOUNTS_DIR;
+    QString XWARE_TMP_DIR;
+    QString XWARE_START_UP_PATH;
     QString XWARE_ETM_PATH;
 
     // xware firmware location
@@ -69,8 +72,11 @@ static struct XwareConstants
 
         // work dir
         XWARE_HOME = POINT_CFG_DIR + "XwarePlugin/";
+        XWARE_MOUNTS_DIR = XWARE_HOME + "mounts/";
+        XWARE_TMP_DIR = XWARE_HOME + "tmp/";
         XWARE_WORK_DIR = XWARE_HOME + "Xware/";
         XWARE_ETM_PATH = XWARE_WORK_DIR + "EmbedThunderManager";
+        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
 
         // xware firmware location
         XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip";

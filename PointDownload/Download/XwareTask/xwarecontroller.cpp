@@ -92,6 +92,29 @@ bool XwareController::startETM()
     // kill all ETM process
     system("pkill Embed");
 
+
+    SettingXMLHandler xmlHandle;
+    QString defaultDloadPath = xmlHandle.getChildElement(GeneralSettings, "SavePath");
+//    int rs = setenv("POINT-DLOAD-PATH", defaultDloadPath.toLatin1().data(), 1);
+//    if (rs < 0)
+//    {
+//        perror("setenv error(POINT-DLOAD-PATH): ");
+//        exit(EXIT_FAILURE);
+//    }
+
+    ETMProcess = new QProcess();
+    QStringList args;
+    args<<defaultDloadPath;
+    args<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
+    args<<"--verbose";
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<< "start XwareStartUp to start ETM ==>"<<XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH;
+    ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH);
+    ETMProcess->setArguments(args);
+    ETMProcess->start();
+
+
+    /*
     ETMProcess = new QProcess();
     QStringList args;
     args<<"--verbose";
@@ -101,6 +124,7 @@ bool XwareController::startETM()
     ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH);
     ETMProcess->setArguments(args);
     ETMProcess->start();
+    */
 
     QEventLoop loop;
     QTimer::singleShot(3000, &loop, SLOT(quit()));
@@ -202,6 +226,15 @@ void XwareController::addXwareFirmware()
 {
     tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
 
+    // ------------------- temp ----------------------------- //
+
+    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_MOUNTS_DIR + "PointXDownloads");
+    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR);
+
+
+    // ----------------------------------------------------- //
+
+
     // changed work dir
     QDir::setCurrent(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
 
@@ -221,6 +254,9 @@ void XwareController::addXwareFirmware()
 
 void XwareController::removeXwareFirmware()
 {
+    // stop etm
+    system("pkill Embed");
+
     // remove xware firmware
     QDir xwareCfgDir(XWARE_CONSTANTS_STRUCT.XWARE_HOME);
     bool tag = true;
@@ -317,9 +353,21 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         bindCodeToXware(jsonCode);
     }
 
+    QTimer::singleShot(200, this, SLOT(initDefaultSetting()));
+
 //    XwareWebController::getInstance()->reloadWebView();
 //    QTimer::singleShot(2000, XwarePopulateObject::getInstance(),
 //                       SLOT(startFeedbackDloadList()));
+}
+
+void XwareController::initDefaultSetting()
+{
+    // max task
+    XwareSetting::setMaxRunTaskNumber(-1);
+
+    // speed limits
+    XwareSetting::setUploadSpeedLimit(-1);  // tmp speed, not limit
+    XwareSetting::setDownloadSpeedLimit(-1); // tmp speed, not limit
 }
 
 void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus)

@@ -40,6 +40,7 @@
 #include "XwareConstants.h"
 #include "Controler/SettingWin/xwaresettingcontroler.h"
 #include "Controler/topcontrl.h"
+#include "XMLHandler/downloadxmlhandler.h"
 
 class XwareController : public QObject
 {
@@ -68,6 +69,7 @@ private slots:
     void tryToStartAndBindXware(QStringList allPeerList);
     void getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus);   // finish downloading xware firmware
     void finishDownloadHandle(QString URL);
+    void initDefaultSetting();  // init default setting, like max running job and download & upload speed limit
 
 private:
     explicit XwareController(QObject *parent = 0);

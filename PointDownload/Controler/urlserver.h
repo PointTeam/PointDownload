@@ -53,6 +53,7 @@ private:
     QLocalSocket * tmp_socket;
     QString XwareParseURLHander;
 
+    const QString ITEM_INFO_SPLIT_CHAR = "@:@";
 };
 
 #endif // URLSERVER_H

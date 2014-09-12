@@ -60,6 +60,21 @@ Window {
             okRec.enabled = false
             loadingImg.visible = false
         }
+        onSGettingInfo:
+        {
+            if (flag)
+            {
+                loadingImg.visible = true
+                okRec.color = "#c6c4c4"
+                okRec.enabled = false
+            }
+            else
+            {
+                loadingImg.visible = false
+                okRec.color = "#e2567d"
+                okRec.enabled = true
+            }
+        }
     }
 
     //连接单例的信号

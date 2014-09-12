@@ -46,9 +46,7 @@ DataControler::DataControler(QObject *parent) :
 
     yougetProcess = NULL;
 
-    xwareSpliterBtwData = "#..#";
-    xwareSpliterEnd = "#.^_^.#";
-    xwareParseURLHander = "XwareParseURLOrBT:";
+    urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
 }
 
 //保证单例对象先于qml组件之前构建
@@ -121,7 +119,7 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
 
     //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
     QString info = newToolType + "?:?"
-            + fileNameList + "?:?"
+            + mergeFileNameList(fileNameList) + "?:?"
             + fileURL + "?:?"
             + redirectURL + "?:?"
             + "qrc:/images/right/filetype/" +getIconName() + "?:?"
@@ -137,6 +135,7 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
 
 void DataControler::getURLFromBrowser(QString URL)
 {
+
     setFileURL(URL);
     redirectURL = fileURL;
     setToolsType(getDLToolsTypeFromURL(URL));
@@ -162,6 +161,8 @@ void DataControler::getURLFromBrowser(QString URL)
     {
         QTimer::singleShot(100,this,SLOT(getXwareURLOrBtInfo()));
     }
+
+    emit sGettingInfo(true);
 }
 
 QString DataControler::getFileURL()
@@ -221,6 +222,8 @@ QString DataControler::getMaxThread()
 
 void DataControler::setFileURL(QString URL)
 {
+    if (fileURL == URL)
+        return;
     fileURL = URL;
     emit sFileURLChange();
 }
@@ -229,6 +232,7 @@ void DataControler::setFileNameList(QString nameList)
 {
     fileNameList = nameList;
     emit sFileNameListChange();
+    emit sGettingInfo(false);
 }
 
 void DataControler::setFileSavePath(QString path)
@@ -331,7 +335,7 @@ void DataControler::getURLInfo()
     if (fileURL.contains("http://") || fileURL.contains("https"))
     {
         //必须要执行getHttpFileTypeSize函数，保证如果有重定向可以根据重定向后再去取名字
-        QString tmpNameList = getHttpFileTypeSize(fileURL) + QString("@");
+        QString tmpNameList = getHttpFileTypeSize(fileURL) + QString(ITEM_INFO_SPLIT_CHAR);
         QString tmpName =  getHttpFtpFileName(redirectURL);
         tmpNameList += tmpName;
 
@@ -362,7 +366,7 @@ void DataControler::getYougetFeedBack()
     if (tmpList.count() != 3)
         return;
 
-     setFileNameList(tmpList.at(0) + "@" + tmpList.at(1) + "@" + tmpList.at(2));
+     setFileNameList(tmpList.at(0) + ITEM_INFO_SPLIT_CHAR + tmpList.at(1) + ITEM_INFO_SPLIT_CHAR + tmpList.at(2));
      emit sFnishGetAllInfo();
 }
 
@@ -424,55 +428,9 @@ void DataControler::mainProgramStarted()
         localSocket = new QLocalSocket();
         connectToMainProgram();
         isConnected = true;
-
-        //============ choldrim add =====================//
-        connect(localSocket, SIGNAL(readyRead()), this, SLOT(readMsgFromMainProgram()));
-        //=============================================//
     }
 }
 
-
-void DataControler::readMsgFromMainProgram()
-{
-    QTextStream stream(localSocket);
-    QString msg = stream.readAll();
-    msg = msg.trimmed();
-
-    // debug
-//    qDebug()<<"recieve parse url or bt file result : "<<msg;
-
-    if(msg.startsWith("XwareMsgType"))
-    {
-        if(msg.split(xwareSpliterBtwData).at(1) == "XwareNotStart")
-        {
-            qDebug()<<"[info]xware doesn't start now, you need to login thunder and try again later";
-            return;
-        }
-    }
-
-    QStringList files = msg.split(xwareSpliterEnd);
-    QString allFileInfo = "";
-    foreach (QString file, files)
-    {
-        if(file.length() == 0)continue;
-
-        // format: fileName #..# fileSize
-        QStringList fileInfoList = file.split(xwareSpliterBtwData);
-
-        // get mine type by name
-        fileType = getFileTypeByName(fileInfoList.at(0));
-
-        QString fileSize = convertToByteUnit(fileInfoList.at(1));
-
-        // changed to type@size@name#:#
-        QString singleFileInfo = fileType + "@" + fileSize + "@" + fileInfoList.at(0) + "#:#";
-        allFileInfo += singleFileInfo;
-    }
-
-    setFileNameList(allFileInfo);
-    emit sFnishGetAllInfo();
-
-}
 
 QString DataControler::getHttpFileTypeSize(QString URL)
 {
@@ -529,7 +487,7 @@ QString DataControler::getHttpFileTypeSize(QString URL)
     headReply->deleteLater();
     delete tmpManager;
 
-    return fileType + "@" + QString::number(totalSize);
+    return fileType + ITEM_INFO_SPLIT_CHAR + QString::number(totalSize);
 
 }
 
@@ -690,48 +648,6 @@ bool DataControler::checkIsInDownloadTrash(QString URL)
     return false;//at the end got nothing will return false
 }
 
-QString DataControler::getFileTypeByName(QString fileName)
-{
-    QString vidioRexStr = QString(".*\.(asf|avi|wm|wmp|wmv|ram|rm|rmvb|rp|rt|")
-            + QString("smil|scm|dat|m1v|m2v|m2p|m2ts|mp2v|mpe|mpeg|")
-            + QString("mpeg1|mpeg2|mpg|mpv2|pss|pva|tp|tpr|ts|m4b|")
-            + QString("m4p|m4v|mp4|mpeg4|3g2|3gp|3gp2|3gpp|mov|qt|")
-            + QString("flv|f4v|hlv|ifo|vob|amv|csf|divx|evo|mkv|mod|")
-            + QString("pmp|vp6|vik|mts|xvx|xv|xlmv|ogm|ogv|ogx|dvd)$");
-    QRegExp rex(vidioRexStr);
-    if(rex.exactMatch(fileName))
-    {
-//        QString suffix = fileName.section("\.", -1);
-        return "video/mp4";
-    }
-
-    // tmp
-    return "application/octet-stream";
-}
-
-QString DataControler::convertToByteUnit(QString size)
-{
-    if(size.contains("G"))
-    {
-        double num = size.split("G").at(0).toDouble();
-        return QString::number((long long)(num * 1024 * 1024 * 1024));
-    }
-
-    if(size.contains("M"))
-    {
-        double num = size.split("M").at(0).toDouble();
-        return QString::number((long long)(num * 1024 * 1024));
-    }
-
-    if(size.contains("K"))
-    {
-        double num = size.split("K").at(0).toDouble();
-        return QString::number((long long)(num * 1024));
-    }
-
-    return size.split("B").at(0);
-}
-
 bool DataControler::isXwareParseType(QString task)
 {
     QString str = QString("^(ftp|magnet|ed2k|thunder|mms|rtsp)?:.*");
@@ -741,17 +657,22 @@ bool DataControler::isXwareParseType(QString task)
 
 void DataControler::getXwareURLOrBtInfo()
 {
-    fileURL = xwareParseURLHander + fileURL;
+    if (urlInfoGeter->isRunning())
+        return;
+    else
+    {
+        delete urlInfoGeter ;
+        urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+        connect(urlInfoGeter, SIGNAL(sGetAllFileInfo(QString)),
+                this ,SLOT(receiveXwareNameInfo(QString)),Qt::UniqueConnection);
+        urlInfoGeter->start();
+    }
+}
 
-    // send this url or bt file to main window, and let it is parsed by xware
-    localSocket->write(fileURL.toStdString().c_str());
-    localSocket->flush();
-
-    // restore URL
-    fileURL = fileURL.split(xwareParseURLHander).at(1);
-    localSocket->waitForReadyRead();
-
-    setToolsType(toolsType);
+void DataControler::receiveXwareNameInfo(QString nameList)
+{
+    fileType = "application/x-gzip";
+    setFileNameList(nameList);
 }
 
 
@@ -801,8 +722,32 @@ QString DataControler::getDLToolsTypeFromURL(QString URL)
         return "";                  //排除两种可能性外,就是不合法的链接
 }
 
+QString DataControler::mergeFileNameList(QString nameList)
+{
+    if (!nameList.contains(NAME_LIST_SPLIT_CHAR))
+        return nameList;
 
+    qint64 totalSize = 0;
+    qint64 maxSize = 0;
+    QString maxName = "";
+    QStringList itemList = nameList.split(NAME_LIST_SPLIT_CHAR);
+    for (int i = 0; i < itemList.size(); i++)
+    {
+        QStringList infoList = itemList.at(i).split(ITEM_INFO_SPLIT_CHAR);
+        if (infoList.size() != 3)
+            continue;
+        else
+        {
+            qint64 tmpSize = infoList.at(1).toLongLong();
+            totalSize += tmpSize;
+            maxSize = maxSize > tmpSize?maxSize:tmpSize;
+            maxName = maxSize > tmpSize?maxName:infoList.at(2);
+        }
+    }
 
+    return "application/x-gzip" + ITEM_INFO_SPLIT_CHAR + QString::number(totalSize) +
+            ITEM_INFO_SPLIT_CHAR + maxName;
+}
 
 
 

@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     BtAndMagnetInfo/bencodeparser.cpp \
     BtAndMagnetInfo/CyoDecode.cpp \
     BtAndMagnetInfo/CyoEncode.cpp \
-    BtAndMagnetInfo/metainfo.cpp
+    BtAndMagnetInfo/metainfo.cpp \
+    control/urlinfogeter.cpp
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -53,7 +54,8 @@ HEADERS += \
     BtAndMagnetInfo/bencodeparser.h \
     BtAndMagnetInfo/CyoDecode.h \
     BtAndMagnetInfo/CyoEncode.h \
-    BtAndMagnetInfo/metainfo.h
+    BtAndMagnetInfo/metainfo.h \
+    control/urlinfogeter.h
 
 lupdate_only{
 SOURCES = main.qml \

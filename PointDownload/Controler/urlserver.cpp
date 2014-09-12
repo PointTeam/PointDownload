@@ -76,8 +76,6 @@ void URLServer::socketReadyReadHandler()
         //取出数据，调用统一接口启动下载
         QStringList infoList = urlInfo.split("?:?");
 
-//        qDebug() << "infoList" << infoList;
-
         //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
         if (infoList.count() == 8)
         {
@@ -91,13 +89,11 @@ void URLServer::socketReadyReadHandler()
             else
                 dlInfo.toolType = aria2;
 
-            dlInfo.fileName = infoList.at(1).split("?:?").at(0).split("@").at(2);
-            if (dlInfo.fileName.contains("#:#"))
-                dlInfo.fileName = dlInfo.fileName.left(dlInfo.fileName.length() - 3);
+            dlInfo.fileName = infoList.at(1).split(ITEM_INFO_SPLIT_CHAR).at(2);
             dlInfo.downloadURL = infoList.at(2);
             dlInfo.redirectURl = infoList.at(3);
             dlInfo.iconPath = infoList.at(4);
-            dlInfo.fileSize = infoList.at(1).split("?:?").at(0).split("@").at(1);
+            dlInfo.fileSize = infoList.at(1).split(ITEM_INFO_SPLIT_CHAR).at(1);
             dlInfo.storageDir = infoList.at(5);
             dlInfo.threadCount = infoList.at(6);
             dlInfo.maxSpeed = infoList.at(7).toDouble();

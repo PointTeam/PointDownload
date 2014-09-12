@@ -165,7 +165,7 @@ Rectangle {
         var infoArry = nameList.split("#:#");
         for (var i = 0; i < infoArry.length; i++)
         {
-            var nameArry = infoArry[i].split("@");
+            var nameArry = infoArry[i].split("@:@");
             if (nameArry.length === 3)
             {
                 var sizeByte=0;

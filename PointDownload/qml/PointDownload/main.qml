@@ -47,7 +47,7 @@ Window {
     color: "#00ffffff"
     title: qsTr(" ")
     width: Screen.width < 1641?820:Screen.width / 2
-    height: Screen.height < 800? Screen.height * 4 / 5 : Screen.height * 3 / 5 - 30
+    height: Screen.height < 800? Screen.height * 4 / 5 - 50: Screen.height * 3 / 5 - 30
 
     property int prex;
     property int nextx;

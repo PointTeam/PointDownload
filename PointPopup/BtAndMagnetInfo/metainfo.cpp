@@ -229,13 +229,13 @@ QString MetaInfo::toMagnetLink()
     cyoBase32Encode(result,inputChar,hash1Arry.size());
 
     QString b32hash1 = QString(result);
-    QString fileName = "";
-    if (metaInfoFileForm  == SingleFileForm)
-        fileName = metaInfoSingleFile.name;
-    else
-        fileName = metaInfoName;
-    if (fileName == "")
+//    QString fileName = "";
+//    if (metaInfoFileForm  == SingleFileForm)
+//        fileName = metaInfoSingleFile.name;
+//    else
+//        fileName = metaInfoName;
+//    if (fileName == "")
         return "magnet:?xt=urn:btih:" + b32hash1;
-    else
-        return "magnet:?xt=urn:btih:" + b32hash1 + "&dn=" + fileName;
+//    else
+//        return "magnet:?xt=urn:btih:" + b32hash1 + "&dn=" + fileName;
 }

@@ -36,6 +36,7 @@
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 #include "BtAndMagnetInfo/metainfo.h"
+#include "urlinfogeter.h"
 
 const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
 
@@ -104,6 +105,8 @@ signals:
 
     void sFnishGetAllInfo();
     void sIsWrongURL();
+
+    void sGettingInfo(bool flag);               //标志正在加载图标的显示和隐藏
 public slots:
 
 private slots:
@@ -117,8 +120,8 @@ private slots:
 
     void mainProgramStarted();                  //主程序启动后，连接主程序
 
-    void readMsgFromMainProgram();       // ( added by choldrim )
     void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
+    void receiveXwareNameInfo(QString nameList);
 
 private:
     explicit DataControler(QObject *parent = 0);
@@ -139,21 +142,23 @@ private:
     bool checkIsInDownloaded(QString URL);      //查看URL是否已经在已完成下载列表
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
-    QString getFileTypeByName(QString fileName);   // get file mine type by file name
-    QString convertToByteUnit(QString size);  //  将大单位（如：GB）转换成小单元B，返回值是不带单位的纯数字字符串, eg: 2KB ==> 2048
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
 
     //url查询处理
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
+
+    QString mergeFileNameList(QString nameList);
 private:
     static DataControler * dataControler;
 
     SettingXMLHandler gSettingHandler;
     DownloadXMLHandler gDownloadHandler;
 
+    URLInfoGeter * urlInfoGeter;
+
     //将要发送到qml界面上的数据
     QString fileURL;
-    QString fileNameList;   //BT文件中可能包含多个文件,split by "#:#" type@size@name#:#type@size...
+    QString fileNameList;   //BT文件中可能包含多个文件,split by "#:#" type@:@size@name#:#type@:@size...
     QString fileSavePath;   //默认从系统文件读取，但是也可以从文件选择框选择
     QString maxThread;
     QString maxSpeed;
@@ -172,9 +177,8 @@ private:
 
     QLocalSocket * localSocket;
 
-    QString xwareSpliterBtwData;
-    QString xwareSpliterEnd;
-    QString xwareParseURLHander;    // this hander is added to the URL that need be parsed by xware
+    const QString NAME_LIST_SPLIT_CHAR = "#:#";
+    const QString ITEM_INFO_SPLIT_CHAR = "@:@";
 };
 
 //将单例对象注册到qml中使用的回调函数

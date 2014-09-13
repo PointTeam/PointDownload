@@ -45,10 +45,13 @@ Item{
     x:winx
     y:winy
 
+    signal sNewJobCountChange(int count)
+
     Connections{
         target: DropzoneSettingControler
         onSNewJobCount:{
             jobCount = newCount
+            innerViewItem.sNewJobCountChange(jobCount)
         }
         onSNewStorageUsage:{
             storageUsage = newUsage

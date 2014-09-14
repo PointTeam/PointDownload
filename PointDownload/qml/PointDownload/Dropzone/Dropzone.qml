@@ -235,12 +235,12 @@ Window {
                 }
             }
 
-//            onDoubleClicked: {
-//                TopContrl.showMainWindow()
-//                TopContrl.updateShowState(true)
-//                outerCircle.updateMenuState()
-//                dropzonePage.close()
-//            }
+            onDoubleClicked: {
+                TopContrl.showMainWindow()
+                TopContrl.updateShowState(true)
+                outerCircle.updateMenuState()
+                dropzonePage.close()
+            }
         }
     }
 

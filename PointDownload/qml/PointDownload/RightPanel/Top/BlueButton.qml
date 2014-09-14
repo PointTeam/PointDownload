@@ -41,6 +41,8 @@ Rectangle {
     width: 40
     height: 40
 
+    signal sBlueButtonClick();
+
     Image {
         id: iconImg
         source: imagePath
@@ -59,5 +61,6 @@ Rectangle {
         anchors.fill:parent
         onEntered: color = "#15a4fa"
         onExited: color = "#ffffff"
+        onClicked: blueButton.sBlueButtonClick()
     }
 }

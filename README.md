@@ -8,8 +8,6 @@
 ##程序截图
 ![DownloadingPage](https://github.com/PointTeam/PointDownload/blob/gh-pages/images/PointDownloadScreenshot/PointDownloadMainUI/downloading.png  "DownloadingPage")
 
-![DownloadTrashPage](https://github.com/PointTeam/PointDownload/blob/gh-pages/images/PointDownloadScreenshot/PointDownloadMainUI/trash.png  "DownloadTrashPage")
-
 ##开发指南
 
 ###开发环境：>=Qt5.2.1

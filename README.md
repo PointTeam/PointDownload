@@ -5,6 +5,10 @@
 安装包在[LinuxDeepin论坛页面](http://www.linuxdeepin.com/forum/23/21124) 发布，提供下载
 其他Linux发行版本的安装包暂时没有提供，因为开发和维护人员有限，如果您能帮助我们打包和维护其他Linux发行版本的安装包，请与我们联系！**
 
+##程序截图
+![DownloadingPage](https://github.com/PointTeam/PointDownload/blob/gh-pages/images/PointDownloadScreenshot/PointDownloadMainUI/downloading.png  "DownloadingPage")
+
+![DownloadTrashPage](https://github.com/PointTeam/PointDownload/blob/gh-pages/images/PointDownloadScreenshot/PointDownloadMainUI/trash.png  "DownloadTrashPage")
 
 ##开发指南
 

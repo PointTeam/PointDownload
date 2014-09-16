@@ -1,5 +1,4 @@
 Point.sJSLogin.connect(pointSlotLogin);
-
 function pointSlotLogin(userName, pwd)
 {
     $("#login-input-username").click();

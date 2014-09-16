@@ -22,9 +22,10 @@
 
 #include "xwaretaskentity.h"
 
-#define UPDATE_TASK_INTERVAL 1000   // msecond
-#define MONITOR_COMPLETED_INTERVAL 1000   // msecond
+#define UPDATE_TASK_INTERVAL 1000   // m_second
+#define MONITOR_COMPLETED_INTERVAL 1000   // m_second
 #define UPDATE_XML_INTERVAL 4   // times
+#define UPDATE_MAGNET_INTERVAL 2000  // m_second
 
 // tmp , just for debug
 void debugMap(QMap<QString, XwareTaskInfo *> *taskInfoMap);
@@ -52,8 +53,17 @@ XwareTaskEntity::XwareTaskEntity(QObject *parent) :
     updateTaskTimer->setInterval(UPDATE_TASK_INTERVAL);
     connect(updateTaskTimer, SIGNAL(timeout()), this, SLOT(updateTaskMap()));
     
+    // login result
     connect(XwareWebController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
             this, SLOT(loginResultHandle(XwareLoginResultType)));
+
+    // magnet
+    magnetMap = new QMap<QString, QString>();
+    updateMagnetMapTimer = new QTimer();
+    updateMagnetMapTimer->setInterval(UPDATE_MAGNET_INTERVAL);
+    connect(updateMagnetMapTimer, SIGNAL(timeout()), this, SLOT(updateMagnetMap()));
+
+    magnetMapLocker = new QMutex();
 }
 
 QString XwareTaskEntity::convertFileSize(QString size, bool toBigUnit)
@@ -153,6 +163,7 @@ void XwareTaskEntity::startFeedbackTaskInfo()
 {
     updateTaskTimer->start();
     taskCompleteMonitorTimer->start();
+    updateMagnetMapTimer->start();
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"start to feedback task info and added a monitor to completed task !";
 }
@@ -160,7 +171,8 @@ void XwareTaskEntity::startFeedbackTaskInfo()
 void XwareTaskEntity::stopFeedbackTaskInfo()
 {
     updateTaskTimer->stop();
-    taskCompleteMonitorTimer->start();
+    taskCompleteMonitorTimer->stop();
+    updateMagnetMapTimer->stop();
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"stop to feedback task info and remove the monitor to completed task !";
 }
@@ -187,8 +199,8 @@ void XwareTaskEntity::updateTaskMap()
 //    delete reply;
 //    reply = NULL;
 
-    QList<QVariant> completedTaskList = jsonMap.value("tasks").toList();
-    if(completedTaskList.length() == 0)return;
+    QList<QVariant> downloadingTaskList = jsonMap.value("tasks").toList();
+    if(downloadingTaskList.length() == 0)return;
 
     //update xml file
     if (updateXMLCounter == UPDATE_XML_INTERVAL)
@@ -208,29 +220,36 @@ void XwareTaskEntity::updateTaskMap()
     // clear the task map
     clearTaskMap(taskInfoMap);
 
-    for(int i = 0; i < completedTaskList.length(); ++i)
+    for(int i = 0; i < downloadingTaskList.length(); ++i)
     {
-        QString tid = completedTaskList.at(i).toMap().value("id").toString();
-        QString name = completedTaskList.at(i).toMap().value("name").toString();
-        QString size = completedTaskList.at(i).toMap().value("size").toString();
-        QString progress = completedTaskList.at(i).toMap().value("progress").toString();
+        QString tid = downloadingTaskList.at(i).toMap().value("id").toString();
+        QString name = downloadingTaskList.at(i).toMap().value("name").toString();
+        QString size = downloadingTaskList.at(i).toMap().value("size").toString();
+        QString progress = downloadingTaskList.at(i).toMap().value("progress").toString();
         progress = QString::number(progress.toDouble() / 100) + "%";
-        QString speed = convertFileSize(completedTaskList.at(i).toMap().value("speed").toString(), 1) + "/s";
-        QString remainTime = completedTaskList.at(i).toMap().value("remainTime").toString();
-        XwareTaskState state = convertXwareState(completedTaskList.at(i).toMap().value("state").toString());
-        QString url = completedTaskList.at(i).toMap().value("url").toString();
+        QString speed = convertFileSize(downloadingTaskList.at(i).toMap().value("speed").toString(), 1) + "/s";
+        QString remainTime = downloadingTaskList.at(i).toMap().value("remainTime").toString();
+        XwareTaskState state = convertXwareState(downloadingTaskList.at(i).toMap().value("state").toString());
+        QString url = downloadingTaskList.at(i).toMap().value("url").toString();
+        // magnet
+        if(url.length() == 0)
+        {
+            magnetMapLocker->lock();
+            url = magnetMap->value(name);
+            magnetMapLocker->unlock();
+        }
 
-        bool isEnableHighSpeedChannel = completedTaskList.at(i).toMap().value("vipChannel").toMap().value("type").toString() == "0"?false:true;
-        bool isEnableOfflineChannel = completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("state").toString() == "0"?false:true;
+        bool isEnableHighSpeedChannel = downloadingTaskList.at(i).toMap().value("vipChannel").toMap().value("type").toString() == "0"?false:true;
+        bool isEnableOfflineChannel = downloadingTaskList.at(i).toMap().value("lixianChannel").toMap().value("state").toString() == "0"?false:true;
         QString highChnlSpeed = "";
         QString offlineChnlSpeed = "";
         if(isEnableHighSpeedChannel && state == x_dload)
         {
-            highChnlSpeed = convertFileSize(completedTaskList.at(i).toMap().value("vipChannel").toMap().value("speed").toString(), 1) + "/s";
+            highChnlSpeed = convertFileSize(downloadingTaskList.at(i).toMap().value("vipChannel").toMap().value("speed").toString(), 1) + "/s";
         }
         if(isEnableOfflineChannel && state == x_dload)
         {
-            offlineChnlSpeed = convertFileSize(completedTaskList.at(i).toMap().value("lixianChannel").toMap().value("speed").toString(), 1) + "/s";
+            offlineChnlSpeed = convertFileSize(downloadingTaskList.at(i).toMap().value("lixianChannel").toMap().value("speed").toString(), 1) + "/s";
         }
 
         XwareTaskInfo* taskInfoStruct = new XwareTaskInfo{tid, name, size, progress, speed, remainTime,
@@ -417,6 +436,25 @@ void XwareTaskEntity::updateXMLFile(DownloadingItemInfo info)
     }
 
     tmpOpera.writeDownloadingConfigFile(tmpStruct);
+}
+
+void XwareTaskEntity::updateMagnetMap()
+{
+    magnetMapLocker->lock();
+
+    DownloadXMLHandler xml;
+    QList<SDownloading> dloadingList = xml.getDownloadingNodes();
+
+    magnetMap->clear();
+    foreach(SDownloading item, dloadingList)
+    {
+        if(item.URL.startsWith("magnet"))
+        {
+            magnetMap->insert(item.name, item.URL);
+        }
+    }
+
+    magnetMapLocker->unlock();
 }
 
 

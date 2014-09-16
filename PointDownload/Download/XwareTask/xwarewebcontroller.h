@@ -69,6 +69,7 @@ public slots:
 private slots:
     void loadingFinished();
     void populateQtObject();
+    void populateJavascript();  // populate default javascript to webview
     void webUrlChanged(QUrl url);
     void startLoginCtrlTimer();  // try to login, a slot of login-timer
 

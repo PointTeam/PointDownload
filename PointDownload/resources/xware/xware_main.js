@@ -25,47 +25,80 @@ Point.sJSUrlParse.connect(pointUrlParse);
 Point.sJSLogout.connect(pointLogout);
 // ======================================================== //
 
-// parse url like magent, ftp ...
+
+// ========================== init ============================ //
+var addNewDownloadTask = false;
+
+
+App.bind("si.urlInfo",
+    function(e)
+    {
+        Point.justForJSTest("-------------- si.urlInfo ---------------");
+        Point.justForJSTest(e.name);
+
+        // add new download task
+        if(addNewDownloadTask)
+        {
+            // handle  storage    fileList
+
+            addNewDownloadTask = false;
+            App.set("dialogs.createTask.confirmEVT", true);
+            App.set("dialogs.createTask.show", false);
+            Point.justForJSTest("--------------- confirmEVT (add new download) --------------------");
+        }
+
+        // parse url
+        else
+        {
+            var taskFileList = "";
+            var fileName = "";
+            var fileSize = "";
+
+            // add bt name
+            if(App.get("si.urlInfoHash"))
+            {
+                fileName = e.name;
+                fileSize = "-1";
+                taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
+            }
+
+            $("#d-create-task-file-list > li").each
+            (
+                function ()
+                {
+                    // bt or magnet
+                    if(App.get("si.urlInfoHash"))
+                    {
+                        fileName = $(this).find(".pop_al_02").html();
+                    }
+                    // common url
+                    else
+                    {
+                        fileName = $(this).find("p > input").attr("value");
+                    }
+
+                    fileSize = $(this).find(".pop_al_03").html();
+                    taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
+                }
+            );
+            Point.feedbackURLParse(taskFileList);
+            App.set("dialogs.createTask.show", false);
+        }
+    }
+);
+
+// ======================================================== //
+
+
+
+// parse url like magnet, ftp ...
 function pointUrlParse(url)
 {
-    var taskFileList = "";
-    var fileName = "";
-    var fileSize = "";
-    var isMagnet = false;
-
-    if(url.indexOf("magnet") >= 0)
-    {
-        isMagnet = true;
-    }
+    App.set("dialogs.createTask.show", false);
 
     App.set("dialogs.createTask.show", true);  // this can be removed
     $("#d-create-task-url").val(url).keyup().get(0).focus();
     App.set("dialogs.createTask.confirmEVT", true);
-
-    setTimeout(
-    function()
-    {
-        $("#d-create-task-file-list > li").each
-        (
-            function ()
-            {
-                if(isMagnet)
-                {
-                    fileName = $(this).find(".pop_al_02").html();
-                }
-                else
-                {
-                    fileName = $(this).find("p > input").attr("value");
-                }
-
-                fileSize = $(this).find(".pop_al_03").html();
-                taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
-            }
-        );
-        Point.feedbackURLParse(taskFileList);
-        App.set("dialogs.createTask.show", false);
-    }, 1500
-    );
 }
 
 function pointAddNewDownloadTask(url, storage, fileList)
@@ -73,24 +106,16 @@ function pointAddNewDownloadTask(url, storage, fileList)
     Point.justForJSTest("----------------- pointAddNewDownloadTask -----------------------");
     Point.justForJSTest(url);
 
-    isAddNewDownloadTask = true;
+    addNewDownloadTask = true;
+    App.set("dialogs.createTask.show", false);
     App.set("dialogs.createTask.show", true);  // this can be removed
     $("#d-create-task-url").val(url).keyup().get(0).focus();
     App.set("dialogs.createTask.confirmEVT", true);
 
-    // storage    fileList
-    setTimeout(
-    function()
-    {
-        App.set("dialogs.createTask.confirmEVT", true);
+    // globleStorage = storage;
+    // globleFileList = fileList;
 
-        Point.justForJSTest("----------------- download -----------------------");
-
-    }, 1500
-    );
-
-    Point.justForJSTest("----------------- end -----------------------");
-
+    addNewDownloadTask = true;
 }
 
 function pointLogout()
@@ -99,11 +124,6 @@ function pointLogout()
     Point.justForJSTest("----------------- logOut -----------------------");
 
     App.set("exit", true);
-}
-
-function pointAddNewBTDownloadTask(btFilePath, storage, fileList)
-{
-
 }
 
 // ================================== task controller ==================================== //
@@ -132,43 +152,6 @@ function pointRemoveDownloadingTask(tid)
     App.set("dialogs.removeTasks.confirmEVT", 1);
 }
 
-/*
-function pointClearAllHistoryTask()
-{
-    var counts = App.get("task.counts");
-    for(var i = 0; i < counts.length; ++i)
-    {
-        if(counts[i] <= 0)continue;
-        switch (i)
-        {
-        case 1:
-            pointClearFinishedTask();
-            break;
-        case 2:
-            pointClearGarbageTask();
-            break;
-        case 3:
-            pointClearSubmitFailTask();
-            break;
-        }
-    }
-}
-
-function pointClearFinishedTask()
-{
-
-}
-
-function pointClearGarbageTask()
-{
-
-}
-
-function pointClearSubmitFailTask()
-{
-
-}
-*/
 
 function pointEntryOfflineChannel(tid)
 {
@@ -278,3 +261,5 @@ function pointUnbindMachine(code)
 
 }
 
+
+//App.bind("si.urlInfo",function(e){Point.justForJSTest(e.name);});

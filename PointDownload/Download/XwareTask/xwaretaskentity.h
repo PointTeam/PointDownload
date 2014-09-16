@@ -49,6 +49,7 @@ private slots:
     void updateTaskMap();
     void taskCompletedMonitor();
     void loginResultHandle(XwareLoginResultType result);
+    void updateMagnetMap();  // update globle magnet map
 
 private:
     explicit XwareTaskEntity(QObject *parent = 0);
@@ -63,19 +64,28 @@ private:
     void constructAndEmitRealTimeData(XwareTaskInfo *taskInfo);
     void updateXMLFile(DownloadingItemInfo info);
 
+
 private:
     static XwareTaskEntity * xwareTaskEntityInstance;
     QString spliterBtwData;
     QString spliterEnd;
     QString defaultPara;
-    QMap<QString, XwareTaskInfo*> * taskInfoMap;
+
+    // task Info Map
     QMutex * taskInfoMapLocker;
+    QMap<QString, XwareTaskInfo*> * taskInfoMap;
+
     bool isUpdateXML;   // it is time for update xml
     short updateXMLCounter;   // used to compare with UPDATE_XML_INTERVAL
     QTimer* updateTaskTimer;
     int completedNum = 0;
     QList<QVariant> completedTaskList;
     QTimer* taskCompleteMonitorTimer;
+
+    // magnet task map
+    QMap<QString, QString> * magnetMap;   // <QString, QString>: <magnetName, url>
+    QTimer* updateMagnetMapTimer;
+    QMutex * magnetMapLocker;
 };
 
 #endif // XWARETASKENTITY_H

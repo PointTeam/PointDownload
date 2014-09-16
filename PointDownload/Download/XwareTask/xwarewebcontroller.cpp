@@ -148,18 +148,23 @@ void XwareWebController::loadingFinished()
 {
     if(currentPageURL() == MAIN_URL_3 && !isLogined)
     {
+        // populate javascript to webview
+        populateJavascript();
+
         isLogined = true;
         isHasAutoLoginTask = false;
-        emit sLoginResult(x_LoginSuccess);
 
         qDebug()<<"[xware info] finish login !";
-
         qDebug()<<"[xware info] init competed webview !";
         CompletedListWebView::getInstance()->init();
 
+        emit sLoginResult(x_LoginSuccess);
     }
     else if(currentPageURL().contains(LOGIN_URL))
     {
+        // populate javascript to webview
+        populateJavascript();
+
         if(isLogined)
         {
             emit sLoginResult(x_Logout);  // logout xware
@@ -168,49 +173,56 @@ void XwareWebController::loadingFinished()
             qDebug()<<"[xware info] logout ";
         }
 
+        qDebug()<<"[xware info] login page ready ! ";
+
         // 仅在程序刚启动并且有自动登录记录时调用
         if(isHasAutoLoginTask)
         {
             this->login(userName, userPwd);
         }
-
-        qDebug()<<"[xware info] login page ready ! ";
     }
 }
 
 void XwareWebController::populateQtObject()
 {
     if ((currentPageURL() == MAIN_URL_3) || (currentPageURL() == LOGIN_URL))
+    {        
+        // populate QT object into javascript
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"populate qt object to ==>" << currentPageURL();
+
+        XwarePopulateObject::getInstance()->disconnect(SIGNAL(XwarePopulateObject::getInstance()->sJSLogin();));
+        webview->page()->mainFrame()->addToJavaScriptWindowObject("Point", XwarePopulateObject::getInstance());
+    }
+}
+
+void XwareWebController::populateJavascript()
+{
+    // populate javascript file to javascript
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"populate javascript to ==>" << currentPageURL();
+
+    QString filePath = "";
+    if(currentPageURL().contains(LOGIN_URL))
+    {
+        filePath = ":/xware/resources/xware/xware_login.js";
+    }
+    else if(currentPageURL() == MAIN_URL_3)
+    {
+        filePath = ":/xware/resources/xware/xware_main.js";
+    }
+
+    QFile file(filePath);
+    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
-            qDebug()<<"populate object to ==>" << currentPageURL();
-
-        // (1) populate QT object into javascript
-        webview->page()->mainFrame()->addToJavaScriptWindowObject("Point", XwarePopulateObject::getInstance());
-
-        // (2) populate javascript file to javascript
-        QString filePath = "";
-        if(currentPageURL() == LOGIN_URL)
-        {
-            filePath = ":/xware/resources/xware/xware_login.js";
-        }
-        else if(currentPageURL() == MAIN_URL_3)
-        {
-            filePath = ":/xware/resources/xware/xware_main.js";
-        }
-
-        QFile file(filePath);
-        if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            if(XWARE_CONSTANTS_STRUCT.DEBUG)
-                qDebug()<<"open error";
-            return;
-        }
-        QTextStream textInput(&file);
-        QString jsStr = textInput.readAll();
-        webview->page()->mainFrame()->evaluateJavaScript(jsStr);
-        file.close();
+            qDebug()<<"open error";
+        return;
     }
+    QTextStream textInput(&file);
+    QString jsStr = textInput.readAll();
+    webview->page()->mainFrame()->evaluateJavaScript(jsStr);
+    file.close();
 }
 
 void XwareWebController::webUrlChanged(QUrl url)

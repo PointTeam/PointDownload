@@ -64,7 +64,7 @@ void URLInfoGeter::slotGetInfoFromServer()
 
         QString fileSize = convertToByteUnit(fileInfoList.at(1));
 
-        // changed to type@size@name#:#
+        // changed to type@:@size@:@name#:#
         QString singleFileInfo = fileType + ITEM_INFO_SPLIT_CHAR
                 + fileSize + ITEM_INFO_SPLIT_CHAR
                 + fileInfoList.at(0) + "#:#";

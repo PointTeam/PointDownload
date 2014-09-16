@@ -730,6 +730,7 @@ QString DataControler::mergeFileNameList(QString nameList)
     qint64 totalSize = 0;
     qint64 maxSize = 0;
     QString maxName = "";
+    bool getDirName = false;
     QStringList itemList = nameList.split(NAME_LIST_SPLIT_CHAR);
     for (int i = 0; i < itemList.size(); i++)
     {
@@ -740,8 +741,17 @@ QString DataControler::mergeFileNameList(QString nameList)
         {
             qint64 tmpSize = infoList.at(1).toLongLong();
             totalSize += tmpSize;
-            maxSize = maxSize > tmpSize?maxSize:tmpSize;
-            maxName = maxSize > tmpSize?maxName:infoList.at(2);
+            if (tmpSize == -1)
+            {
+                getDirName = true;
+                maxName = infoList.at(2);
+                totalSize += 1;
+            }
+            if (!getDirName)
+            {
+                maxName = maxSize > tmpSize?maxName:infoList.at(2);
+                maxSize = maxSize > tmpSize?maxSize:tmpSize;
+            }
         }
     }
 

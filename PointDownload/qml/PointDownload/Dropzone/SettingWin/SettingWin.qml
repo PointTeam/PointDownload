@@ -135,7 +135,7 @@ Window {
         radius: 2.0
         samples: 16
         fast: false
-        color: "#1d2833"
+        color: "#aa000000"
         source: mainImg
     }
 }

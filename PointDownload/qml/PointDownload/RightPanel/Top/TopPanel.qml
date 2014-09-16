@@ -89,20 +89,17 @@ Rectangle {
         imageWidth: 19
         imageHeigth: 19
         anchors {left: splitLine0.right;verticalCenter: parent.verticalCenter}
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                if (settingCtrl.getSettingWinShowed())
-                {
-                    SettingScript.destroySettingWin()
-                    settingCtrl.setSettingWinShowed(false)
-                }
+        onSBlueButtonClick: {
+            if (settingCtrl.getSettingWinShowed())
+            {
+                SettingScript.destroySettingWin()
+                settingCtrl.setSettingWinShowed(false)
+            }
 
-                else
-                {
-                    SettingScript.showSettingWin(topPanel,PEventFilter.globalX + 30,PEventFilter.globalY)
-                    settingCtrl.setSettingWinShowed(true)
-                }
+            else
+            {
+                SettingScript.showSettingWin(topPanel,PEventFilter.globalX + 30,PEventFilter.globalY)
+                settingCtrl.setSettingWinShowed(true)
             }
         }
     }
@@ -121,18 +118,15 @@ Rectangle {
         imageWidth: 19
         imageHeigth: 19
         anchors {right: parent.right; verticalCenter: parent.verticalCenter}
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                settingCtrl.initData()
-                if (settingCtrl.exitOnClose)
-                {
-                    TopContrl.destroyAll()
-                }
-                else
-                {
-                    TopContrl.hideMainWindow()
-                }
+        onSBlueButtonClick: {
+            settingCtrl.initData()
+            if (settingCtrl.exitOnClose)
+            {
+                TopContrl.destroyAll()
+            }
+            else
+            {
+                TopContrl.hideMainWindow()
             }
         }
     }
@@ -151,10 +145,7 @@ Rectangle {
         imageWidth: 19
         imageHeigth: 19
         anchors {right: splitLine2.right; rightMargin: 3; verticalCenter: parent.verticalCenter}
-        MouseArea {
-            anchors.fill: parent
-            onClicked: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
-        }
+        onSBlueButtonClick: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
     }
 
     Rectangle {
@@ -171,10 +162,7 @@ Rectangle {
         imageWidth: 20
         imageHeigth: 20
         anchors {right: splitLine3.right; rightMargin: 3; verticalCenter: parent.verticalCenter}
-        MouseArea {
-            anchors.fill: parent
-            onClicked: TopContrl.showSaveFolder()
-        }
+        onSBlueButtonClick: TopContrl.showSaveFolder()
     }
     Rectangle {
         id: splitLine4

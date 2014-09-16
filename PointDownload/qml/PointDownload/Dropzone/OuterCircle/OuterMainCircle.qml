@@ -15,6 +15,7 @@ Item{
     state: "hideAllMenu"
 
     signal menuButtonHover(string buttonTips)
+    signal completeHideMenu(bool completed);
 
     Timer{
         id:destroyTimer
@@ -192,6 +193,7 @@ Item{
         Transition {
             from: "showAllMenu"
             to: "hideAllMenu"
+            onRunningChanged: outerViewItem.completeHideMenu(!running)
             PropertyAnimation { target: showMainSector; property: "opacity";from:1; to: 0.8; duration: animationDuration;}
             PropertyAnimation { target: showMainSector; property: "rotation"; duration: animationDuration;easing.type: Easing.InOutBack}
             PropertyAnimation { target: jobControlSector; property: "opacity";from:1; to: 0.8; duration: animationDuration;}

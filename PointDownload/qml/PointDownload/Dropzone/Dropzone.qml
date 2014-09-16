@@ -35,8 +35,8 @@ Window {
     flags:Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
 
     color: "#00000000"
-    width: 170
-    height: 170
+    width: 80
+    height: 80
     opacity: DropzoneSettingControler.opacity/10
 
     property string dragIng: "false"
@@ -49,6 +49,8 @@ Window {
 
     x:winx
     y:winy
+
+
 
     Timer{
         id:updateTimer
@@ -71,7 +73,7 @@ Window {
     Connections {
         target: MiddleSender
         onSendTotalProgressChange: {
-            if (MiddleSender.totalProgress == 1)
+            if (MiddleSender.totalProgress === 1)
             {
                 innerMainCircle.percentageColor = "#1b9ad6"
                 innerMainCircle.updatePercentage()
@@ -105,23 +107,82 @@ Window {
                 else
                     innerMainCircle.showButtonTips(buttonTips)
             }
+            onCompleteHideMenu: {
+                if (completed)
+                {
+                    //保证过渡顺畅
+                    do
+                    {
+                        dropzonePage.height -= 2
+                        dropzonePage.width -= 2
+                        winx += 1
+                        winy += 1
+                    }while(dropzonePage.width > 80)
+                }
+            }
+        }
 
+        InnerMainCircle{
+            id:innerMainCircle
+            width: 70
+            height: 70
+            anchors {verticalCenter: parent.verticalCenter; horizontalCenter: parent.horizontalCenter}
+            onSNewJobCountChange:{
+                if (count > 0)
+                {
+                    normalInfo.angle = 0;
+                    innerMainCircle.visible = true
+                    iconRota.angle = 180;
+                    iconShadowItem.visible = false
+                }
+                else
+                {
+                    normalInfo.angle = 180
+                    innerMainCircle.visible = false
+                    iconRota.angle = 0;
+                    iconShadowItem.visible = true
+                }
+            }
 
-            InnerMainCircle{
-                id:innerMainCircle
-                width: parent.width - 80
-                height: parent.height - 80
-                anchors {verticalCenter: parent.verticalCenter; horizontalCenter: parent.horizontalCenter}
+            transform: Rotation {
+                id:normalInfo
+                origin.x: innerMainCircle.width / 2;
+                origin.y: innerMainCircle.width / 2;
+                axis { x: 0; y: 1; z: 0 }
+                Behavior on angle {  // for animation
+                    NumberAnimation { duration: 700;easing.type : Easing.InOutBack }
+                }
+            }
+        }
 
-//                transform: Rotation {
-//                    origin.x: innerMainCircle.width / 2;
-//                    origin.y: innerMainCircle.width / 2;
-//                    axis { x: 0; y: 1; z: 0 }
-//                    angle: outerCircle.state == "showAllMenu" ? 180 : 0
-//                    Behavior on angle {  // for animation
-//                        NumberAnimation { duration: 700;easing.type : Easing.InOutBack }
-//                    }
-//                }
+        Rectangle{
+            id:iconShadowItem
+            width: 70
+            height: 70
+            radius: 70
+            color:"#1b9ad6"
+            anchors {verticalCenter: parent.verticalCenter; horizontalCenter: parent.horizontalCenter}
+
+            Text{
+                text: qsTr("Point")
+                width: parent.width
+                height: parent.height
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                color: "#ffffff"
+                font.pixelSize: 15
+                font.bold: true
+                anchors.centerIn: parent
+            }
+
+            transform: Rotation {
+                id:iconRota
+                origin.x: innerMainCircle.width / 2;
+                origin.y: innerMainCircle.width / 2;
+                axis { x: 0; y: 1; z: 0 }
+                Behavior on angle {  // for animation
+                    NumberAnimation { duration: 700;easing.type : Easing.InOutBack }
+                }
             }
         }
 
@@ -158,17 +219,29 @@ Window {
 
             onClicked: {
                 if (oldWinx == winx && oldWiny == winy)
+                {
+                    if (dropzonePage.width < 170)
+                    {
+                        //保证过渡顺畅
+                        do
+                        {
+                            dropzonePage.height += 2
+                            dropzonePage.width += 2
+                            winx -= 1
+                            winy -= 1
+                        }while(dropzonePage.width < 170)
+                    }
                     outerCircle.updateMenuState()
+                }
             }
 
-//            onDoubleClicked: {
-//                TopContrl.showMainWindow()
-//                TopContrl.updateShowState(true)
-//                outerCircle.updateMenuState()
-//                dropzonePage.close()
-//            }
+            onDoubleClicked: {
+                TopContrl.showMainWindow()
+                TopContrl.updateShowState(true)
+                outerCircle.updateMenuState()
+                dropzonePage.close()
+            }
         }
-
     }
 
     //阴影必须在所有组件之后才会在最底层

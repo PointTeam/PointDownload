@@ -80,12 +80,10 @@ int main(int argc, char *argv[])
     translator.load(QString(":/LANG/PointPopup_") + local);
     app.installTranslator(&translator);
 
-//    QString fileURL = "http://v.qq.com/cover/i/iflxiuw0hk8ubfx/l0014bxbwo2.html";
-//    QString fileURL = "http://www.tudou.com/programs/view/QIIUsuQxT0M/";
+//    QString fileURL = QString(argv[argc - 1]);
     QString fileURL = "";
 
     QStringList urlList = QString(argv[argc - 1]).split("#..#");
-
 
     if (urlList.at(0) == QString("FIREFOX"))//firefox
     {

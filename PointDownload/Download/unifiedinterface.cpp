@@ -381,13 +381,13 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
 {
     QObject *parent;
     QStringList arguments;
-    arguments << "-c";
+    arguments << QString("FIREFOX#..#" + URL);//仿照firefox格式发送数据
 
     QProcess *myProcess = new QProcess(parent);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
 
-    myProcess->write(URL.toUtf8().data());
-    myProcess->closeWriteChannel();
+//    myProcess->write(URL.toUtf8().data());
+//    myProcess->closeWriteChannel();
 }
 
 

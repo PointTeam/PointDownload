@@ -135,7 +135,6 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
 
 void DataControler::getURLFromBrowser(QString URL)
 {
-
     setFileURL(URL);
     redirectURL = fileURL;
     setToolsType(getDLToolsTypeFromURL(URL));

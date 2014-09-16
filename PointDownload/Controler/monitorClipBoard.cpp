@@ -53,6 +53,62 @@ QString MonitorClipBoard::getTmpURL()
 
 void MonitorClipBoard::setTmpURL(QString URL)
 {
-    tmpURL = URL;
+    if (!isLegalURL(URL))
+        return;
+
+    tmpURL = QString(URL.toUtf8());
     emit tmpURLChange();
+}
+
+bool MonitorClipBoard::isLegalURL(QString URL)
+{
+    QRegExp rx;
+    rx.setPatternSyntax(QRegExp::RegExp);
+
+    QString normalURLRegex = QString("^((https|http|chrome)?://)")
+            + QString(".*\.(exe|asf|avi|exe|iso|mp3|mpeg|mpg|mpga|ra|rar|rm|rmvb|tar|wma|wmp|wmv|mov|zip|3gp|")
+            + QString("chm|mdf|torrent|jar|msi|arj|bin|dll|psd|hqx|sit|lzh|gz|tgz|xlsx|xls|doc|docx|ppt|pptx|flv|swf|mkv|")
+            + QString("tp|ts|flac|ape|wav|aac|txt|dat|7z|ttf|bat|xv|xvx|pdf|mp4|apk|ipa|epub|mobi|deb|sisx|cab|pxl|run|rpm|deb|dmg)")
+            + QString("($|[?]{1}.*$)");
+
+    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
+            QString("http://v.yinyuetai.com/|") +
+            QString("http://v.youku.com/| ")+
+            QString(" http://v.ku6.com/|")+
+            QString("http://v.163.com/|") +
+            QString("http://v.qq.com/|") +
+            QString("http://www.acfun.com/v/|")+
+            QString("http://bilibili.kankanews.com/video/av|")+
+            QString("http://www.jpopsuki.tv/video/|")+
+            QString("http://video.sina.com.cn/|")+
+            QString("http://tv.sohu.com/|")+
+            QString("http://www.56.com/w|")+
+            QString("http://www.56.com/u|")+
+            QString("http://www.songtaste.com/song/).+");
+
+    rx.setPattern(normalURLRegex);
+    int normalPos = URL.indexOf(rx);
+
+    if (normalPos >= 0)
+        return true;
+
+    rx.setPattern(videoURLRegex);
+    int videoPos = URL.indexOf(rx);
+
+    if (videoPos >= 0)
+        return true;
+
+    if(isXwareParseType(URL))
+    {
+        return true;
+    }
+
+        return false;                  //排除两种可能性外,就是不合法的链接
+}
+
+bool MonitorClipBoard::isXwareParseType(QString URL)
+{
+    QString str = QString("^(ftp|magnet|ed2k|thunder|mms|rtsp)?:.*");
+    QRegExp rex(str);
+    return rex.exactMatch(URL);
 }

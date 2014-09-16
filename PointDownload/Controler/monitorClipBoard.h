@@ -53,6 +53,9 @@ signals:
 private:
     explicit MonitorClipBoard();
 
+    bool isLegalURL(QString URL);
+    bool isXwareParseType(QString URL);
+
 private:
     QClipboard * clipBoard;                                        //粘贴板
     static MonitorClipBoard * monitorClipBord;

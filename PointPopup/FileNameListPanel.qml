@@ -168,6 +168,9 @@ Rectangle {
             var nameArry = infoArry[i].split("@:@");
             if (nameArry.length === 3)
             {
+                if (nameArry[1] == -1)
+                    continue
+
                 var sizeByte=0;
 
                 if (nameArry[1] > 1024 * 1024 * 1024)//GB

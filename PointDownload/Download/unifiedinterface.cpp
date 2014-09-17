@@ -381,13 +381,10 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
 {
     QObject *parent;
     QStringList arguments;
-    arguments << QString("FIREFOX#..#" + URL);//仿照firefox格式发送数据
+    arguments << QString(URL + "#..#FIREFOX");//仿照firefox格式发送数据
 
     QProcess *myProcess = new QProcess(parent);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
-
-//    myProcess->write(URL.toUtf8().data());
-//    myProcess->closeWriteChannel();
 }
 
 
@@ -635,16 +632,7 @@ void UnifiedInterface::finishDownloading(QString URL)
 
 void UnifiedInterface::redownloadDownloaded(QString URL)
 {
-    QObject *parent;
-    QStringList arguments;
-    arguments << "-c";
-
-    QProcess *  myProcess = new QProcess(parent);
-    myProcess->start(POPUP_PROGRAM_PATH,arguments);
-
-    myProcess->write(URL.toUtf8().data());
-    myProcess->closeWriteChannel();
-
+    handleDownloadSearchControl(URL);
     //当用户确定要下载后，由界面调用相关函数删除文件
 }
 
@@ -688,16 +676,7 @@ void UnifiedInterface::deleteDownloaded(QString URL)
 
 void UnifiedInterface::redownloadTrash(QString URL)
 {
-    QObject *parent;
-    QStringList arguments;
-    arguments << "-c";
-
-    QProcess *  myProcess = new QProcess(parent);
-    myProcess->start(POPUP_PROGRAM_PATH,arguments);
-
-    myProcess->write(URL.toUtf8().data());
-    myProcess->closeWriteChannel();
-
+    handleDownloadSearchControl(URL);
     //当用户确定要下载后，由界面调用相关函数删除文件
 }
 

@@ -80,18 +80,29 @@ int main(int argc, char *argv[])
     translator.load(QString(":/LANG/PointPopup_") + local);
     app.installTranslator(&translator);
 
-//    QString fileURL = QString(argv[argc - 1]);
     QString fileURL = "";
 
-    QStringList urlList = QString(argv[argc - 1]).split("#..#");
+    QString tmpURL = QString(argv[argc - 1]);
+    QStringList urlList = tmpURL.split("#..#");
 
-    if (urlList.at(0) == QString("FIREFOX"))//firefox
+    if (urlList.size() == 2 && tmpURL.contains("#..#FIREFOX"))//firefox
     {
-        fileURL = QString(urlList.at(1));
+        fileURL = QString(urlList.at(0));
     }
-    else//chrome
+    else if (tmpURL.contains("chrome-extension://"))//chrome
     {
         fileURL = getChromeURL();
+    }
+    else
+    {
+        if(tmpURL.contains(".torrent"))//BT or other file
+        {
+            fileURL = DataControler::getInstance()->getMagnetFromBT(tmpURL);
+        }
+        else//magnet/ed2k...
+        {
+            fileURL = tmpURL;
+        }
     }
 
     DataControler::getInstance()->getURLFromBrowser(fileURL);

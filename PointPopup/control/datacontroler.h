@@ -66,6 +66,8 @@ public:
     //从浏览器（谷歌、火狐），或者从主程序取得下载URL和下载类型的值
     Q_INVOKABLE void getURLFromBrowser(QString URL);
 
+    QString getMagnetFromBT(QString fileName);
+
     QString getFileURL();
     QString getFileNameList();
     QString getFileSavePath();

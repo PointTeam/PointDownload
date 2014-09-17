@@ -236,10 +236,10 @@ var PointMain = {
 		      alert("m( _ _ )m 非常抱们，我们没有获取到视频链接！\n");
 		      return;
 		  }
-		  var args = ["FIREFOX#..#" + url];
+		  var args = [url + "#..#FIREFOX"];
 	    }else{
 			  
-	          var args = ["FIREFOX#..#" + url];
+	          var args = [url + "#..#FIREFOX"];
 	     }
 
 	    process.init(file);

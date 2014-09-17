@@ -98,6 +98,7 @@ void DataControler::selectBTFile()
         getURLFromBrowser(metaInfo.toMagnetLink());
 }
 
+
 void DataControler::sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType)
 {
     if (checkIsInDownloading(fileURL))
@@ -162,6 +163,20 @@ void DataControler::getURLFromBrowser(QString URL)
     }
 
     emit sGettingInfo(true);
+}
+
+
+QString DataControler::getMagnetFromBT(QString fileName)
+{
+    if (fileName == NULL)
+        return "";
+
+    MetaInfo metaInfo;
+    QFile torrent(fileName);
+    if (!torrent.open(QFile::ReadOnly) || !metaInfo.parse(torrent.readAll()))
+        return "";
+    else
+        return metaInfo.toMagnetLink();
 }
 
 QString DataControler::getFileURL()

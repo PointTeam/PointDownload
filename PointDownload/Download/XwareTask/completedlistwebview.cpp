@@ -1,6 +1,7 @@
 #include "completedlistwebview.h"
 
-#define AUTO_CLEAR_INTERVAL 2000
+#define CHECK_COMPLETED_TASK_INTERVAL 2000
+#define AUTO_CLEAR_INTERVAL 5 // clear time = CHECK_COMPLETED_TASK_INTERVAL * AUTO_CLEAR_INTERVAL
 
 
 CompletedListWebView::CompletedListWebView(QObject *parent)
@@ -17,19 +18,20 @@ void CompletedListWebView::initConnection()
 
 void CompletedListWebView::init()
 {
-    this->page()->setNetworkAccessManager(XwareWebController::getInstance()->
-                                          getWebView()->page()->networkAccessManager());
+    this->page()->setNetworkAccessManager(
+                XwareWebController::getInstance()->getWebView()->page()->networkAccessManager());
 
     // direct to the downloading URL
     this->setUrl(XwareWebController::getInstance()->getWebView()->url());
 
     autoClearTimer = new QTimer();
-    autoClearTimer->setInterval(AUTO_CLEAR_INTERVAL);
+    autoClearTimer->setInterval(CHECK_COMPLETED_TASK_INTERVAL);
     autoClearTimer->start();
 
     initConnection();
 
     firstCheckNewCompletedTask = true;
+    checkCompletedTaskIntervalCounter = 1;
 }
 
 void CompletedListWebView::evaluateDefaultJS()
@@ -39,7 +41,8 @@ void CompletedListWebView::evaluateDefaultJS()
 
 void CompletedListWebView::evaluateJS(QString js)
 {
-    qDebug()<<"completed webview js : "<<js;
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"completed webview js : => "<<js;
     this->page()->mainFrame()->evaluateJavaScript(js);
 }
 
@@ -57,15 +60,19 @@ void CompletedListWebView::clearAllCompletedTask(bool deleteFile)
 {
     QMap<QString, QString> map = getAllCompletedTaskFromJson();
 
-
     // check whether there is new completed tasks
     checkNewCompletedTask(map);
 
     QStringList list = map.keys();
 
-//    qDebug()<<"+++++++++++++++++++++"<<list;
-
     if(list.length() == 0)return;
+
+    if(checkCompletedTaskIntervalCounter < AUTO_CLEAR_INTERVAL)
+    {
+        ++checkCompletedTaskIntervalCounter;
+        return;
+    }
+    checkCompletedTaskIntervalCounter = 1;
 
     if(deleteFile)
     {
@@ -110,11 +117,11 @@ void CompletedListWebView::removeComletedTask(QString taskId, bool deleteFile)
 {
     if(deleteFile)
     {
-//        evaluateJS("pointRmAddDelItem("+ taskId +")");
+
     }
     else
     {
-//        evaluateJS("pointRmItem("+ taskId +")");
+
     }
 }
 
@@ -180,6 +187,9 @@ void CompletedListWebView::checkNewCompletedTask(QMap<QString, QString> map)
         if(!isMatch)
         {
             emit sNewCompletedTask(map.value(id));
+
+            // 如果有新任务则重置计数器
+            checkCompletedTaskIntervalCounter = 1;
         }
     }
 

@@ -88,6 +88,8 @@ private:
     QTimer * loginCtrlTimer;
     int loginTimeCount;
     bool isHasAutoLoginTask;   // 仅在程序刚启动并且有自动登录记录时置true
+
+    bool isInitedJSConnection;
 };
 
 #endif // XWAREWEBCONTROLLER_H

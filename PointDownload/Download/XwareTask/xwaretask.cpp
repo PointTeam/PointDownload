@@ -142,7 +142,7 @@ void XwareTask::slotFinishDownload(QString URL)
     UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 
     // clear the finished file
-    CompletedListWebView::getInstance()->clearAllCompletedTask(false);
+//    CompletedListWebView::getInstance()->clearAllCompletedTask(false);
 }
 
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)

@@ -14,6 +14,7 @@ public:
     void init();
 
 signals:
+    void sNewCompletedTask(QString url);
 
 public slots:
     void loadFinishHandle();
@@ -28,13 +29,20 @@ private:
     void initConnection();
     void evaluateDefaultJS();
     void evaluateJS(QString js);
-    QStringList getAllCompletedTaskFromJson();
+    QMap<QString, QString> getAllCompletedTaskFromJson();
+
+    // check whether there is new completed tasks, if there is, emit sNewCompletedTask signal
+    void checkNewCompletedTask(QMap<QString, QString> map);
 
 private:
     static CompletedListWebView * completedListWebView;
     QNetworkAccessManager manager;
     QNetworkReply * reply;
     QTimer * autoClearTimer;
+    QMap<QString, QString> completedTaskMap; // <QString, QString> : <tid, url>
+
+//    QStringList completedTasksIdList;
+    bool firstCheckNewCompletedTask;
 };
 
 #endif // COMPLETEDLISTWEBVIEW_H

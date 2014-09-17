@@ -1,10 +1,11 @@
 #include "completedlistwebview.h"
 
-#define AUTO_CLEAR_INTERVAL 5000
+#define AUTO_CLEAR_INTERVAL 2000
 
 
 CompletedListWebView::CompletedListWebView(QObject *parent)
 {
+
 }
 
 void CompletedListWebView::initConnection()
@@ -27,11 +28,13 @@ void CompletedListWebView::init()
     autoClearTimer->start();
 
     initConnection();
+
+    firstCheckNewCompletedTask = true;
 }
 
 void CompletedListWebView::evaluateDefaultJS()
 {
-
+    // default js
 }
 
 void CompletedListWebView::evaluateJS(QString js)
@@ -52,7 +55,16 @@ CompletedListWebView * CompletedListWebView::getInstance()
 
 void CompletedListWebView::clearAllCompletedTask(bool deleteFile)
 {
-    QStringList list = getAllCompletedTaskFromJson();
+    QMap<QString, QString> map = getAllCompletedTaskFromJson();
+
+
+    // check whether there is new completed tasks
+    checkNewCompletedTask(map);
+
+    QStringList list = map.keys();
+
+//    qDebug()<<"+++++++++++++++++++++"<<list;
+
     if(list.length() == 0)return;
 
     if(deleteFile)
@@ -98,16 +110,16 @@ void CompletedListWebView::removeComletedTask(QString taskId, bool deleteFile)
 {
     if(deleteFile)
     {
-        evaluateJS("pointRmAddDelItem("+ taskId +")");
+//        evaluateJS("pointRmAddDelItem("+ taskId +")");
     }
     else
     {
-        evaluateJS("pointRmItem("+ taskId +")");
+//        evaluateJS("pointRmItem("+ taskId +")");
     }
 }
 
 
-QStringList CompletedListWebView::getAllCompletedTaskFromJson()
+QMap<QString, QString> CompletedListWebView::getAllCompletedTaskFromJson()
 {
     QUrl url(XWARE_CONSTANTS_STRUCT.URLSTR + "list?v=2&type=1&pos=0&number=99999&needUrl=1");
 
@@ -126,12 +138,51 @@ QStringList CompletedListWebView::getAllCompletedTaskFromJson()
 
     QList<QVariant> completedTaskList = jsonMap.value("tasks").toList();
 
-    QStringList list;
+    QMap<QString, QString> map;
     for(int i = 0; i < completedTaskList.length(); ++i )
     {
         QString id = completedTaskList.at(i).toMap().value("id").toString();
-        list<<id;
+        QString url = completedTaskList.at(i).toMap().value("url").toString();
+        map.insert(id, url);
     }
 
-    return list;
+    return map;
 }
+
+void CompletedListWebView::checkNewCompletedTask(QMap<QString, QString> map)
+{
+    if(firstCheckNewCompletedTask)
+    {
+        firstCheckNewCompletedTask = false;
+        completedTaskMap = map;
+        return;
+    }
+
+    QStringList completedTasksIdList = map.keys();
+    QStringList completedTasksIdList_old = completedTaskMap.keys();
+
+    QString id;
+    QString id_old;
+    bool isMatch;
+    foreach(id, completedTasksIdList)
+    {
+        isMatch = false;
+
+        foreach(id_old, completedTasksIdList_old)
+        {
+            if(id == id_old)
+            {
+                isMatch = true;
+                break;
+            }
+        }
+
+        if(!isMatch)
+        {
+            emit sNewCompletedTask(map.value(id));
+        }
+    }
+
+    completedTaskMap = map;
+}
+

@@ -27,6 +27,7 @@ Point.sJSLogout.connect(pointLogout);
 
 
 // ========================== init ============================ //
+var feedbackTaskInfoInterval = 1000;
 var addNewDownloadTask = false;
 
 
@@ -226,7 +227,7 @@ function pointSlotReflashDownloadList()
     if(!pointIsReflashDownloadListTimerStarted)
     {
         // setInterval
-        pointReflashDownloadListIntervalId = setInterval("pointRefashDloadListTimer()", 1000);
+        pointReflashDownloadListIntervalId = setInterval("pointRefashDloadListTimer()", feedbackTaskInfoInterval);
         pointIsReflashDownloadListTimerStarted = true;
     }
 }

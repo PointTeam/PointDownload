@@ -19,7 +19,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***********************************************************************/
 
-
 #include "xwaretaskentity.h"
 
 #define UPDATE_TASK_INTERVAL 1000   // m_second
@@ -34,6 +33,7 @@ XwareTaskEntity * XwareTaskEntity::xwareTaskEntityInstance = NULL;
 XwareTaskEntity::XwareTaskEntity(QObject *parent) :
     QObject(parent)
 {
+    // init spliter
     spliterBtwData = XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA;
     spliterEnd =  XWARE_CONSTANTS_STRUCT.SPLITER_END;
     defaultPara = XWARE_CONSTANTS_STRUCT.SPLITER_DEFAULT_PARAM;
@@ -43,10 +43,8 @@ XwareTaskEntity::XwareTaskEntity(QObject *parent) :
     isUpdateXML = false;
     updateXMLCounter = 1;
 
-    // monitor the completed task
-    taskCompleteMonitorTimer = new QTimer();
-    taskCompleteMonitorTimer->setInterval(MONITOR_COMPLETED_INTERVAL);
-    connect(taskCompleteMonitorTimer, SIGNAL(timeout()), this, SLOT(taskCompletedMonitor()));
+    connect(CompletedListWebView::getInstance(), SIGNAL(sNewCompletedTask(QString)),
+            this, SLOT(hasNewCompletedTaskHandle(QString)));
 
     // update task info
     updateTaskTimer = new QTimer();
@@ -159,10 +157,30 @@ QString XwareTaskEntity::getTaskIdByUrl(QString url)
     return tid;
 }
 
+void XwareTaskEntity::hasNewCompletedTaskHandle(QString url)
+{
+    // construct a finish task struct
+    DownloadingItemInfo tmpInfo;
+    tmpInfo.downloadURL = url;
+    tmpInfo.downloadPercent = 100;
+    tmpInfo.downloadSpeed = "0 KB/s";
+    tmpInfo.downloadState = dlstate_downloading;
+    tmpInfo.thunderHightSpeed = "";
+    tmpInfo.thunderOfflineSpeed = "";
+    tmpInfo.uploadSpeed = "";
+
+    emit sRealTimeDataChanged(tmpInfo);
+
+    emit sFinishDownload(url);
+
+    // tmp
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<"[xware info] finished dloading: ==> "<<url;
+}
+
 void XwareTaskEntity::startFeedbackTaskInfo()
 {
     updateTaskTimer->start();
-    taskCompleteMonitorTimer->start();
     updateMagnetMapTimer->start();
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"start to feedback task info and added a monitor to completed task !";
@@ -171,7 +189,6 @@ void XwareTaskEntity::startFeedbackTaskInfo()
 void XwareTaskEntity::stopFeedbackTaskInfo()
 {
     updateTaskTimer->stop();
-    taskCompleteMonitorTimer->stop();
     updateMagnetMapTimer->stop();
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"stop to feedback task info and remove the monitor to completed task !";
@@ -195,9 +212,6 @@ void XwareTaskEntity::updateTaskMap()
     QString jsonStr = QUrl::fromPercentEncoding(reply->readAll());
     QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
     QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
-
-//    delete reply;
-//    reply = NULL;
 
     QList<QVariant> downloadingTaskList = jsonMap.value("tasks").toList();
     if(downloadingTaskList.length() == 0)return;
@@ -231,6 +245,7 @@ void XwareTaskEntity::updateTaskMap()
         QString remainTime = downloadingTaskList.at(i).toMap().value("remainTime").toString();
         XwareTaskState state = convertXwareState(downloadingTaskList.at(i).toMap().value("state").toString());
         QString url = downloadingTaskList.at(i).toMap().value("url").toString();
+
         // magnet
         if(url.length() == 0)
         {
@@ -316,86 +331,6 @@ void XwareTaskEntity::constructAndEmitRealTimeData(XwareTaskInfo * taskInfo)
 
     // emit signal to xware task
     emit sRealTimeDataChanged(itemInfo);
-}
-
-void XwareTaskEntity::taskCompletedMonitor()
-{
-    QUrl url(XWARE_CONSTANTS_STRUCT.URLSTR + "list?v=2&type=1&pos=0&number=99999&needUrl=1");
-
-    QEventLoop loop;
-    QNetworkAccessManager manager;
-
-    // request
-    QNetworkReply *reply = manager.get(QNetworkRequest(url));
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();// wait for message
-    reply->disconnect();
-
-    // 读到的信息
-    QString jsonStr = QUrl::fromPercentEncoding(reply->readAll());
-    QJsonDocument jsd = QJsonDocument::fromJson(jsonStr.toUtf8());
-    QMap<QString, QVariant> jsonMap = jsd.toVariant().toMap();
-
-//    delete reply;
-//    reply = NULL;
-
-    QList<QVariant> completedTaskListTmp = jsonMap.value("tasks").toList();
-    if(completedTaskListTmp.length() == 0)
-    {
-        return;
-    }
-
-//    qDebug()<<"completedTaskList :"<<completedTaskList.length();
-//    qDebug()<<"completedTaskListTmp :"<<completedTaskListTmp.length();
-
-    // first
-    if(completedTaskList.length() == 0)
-    {
-        completedTaskList = completedTaskListTmp;
-        return;
-    }
-
-    for(int i = 0; i < completedTaskListTmp.length(); ++i )
-    {
-        bool match = false;
-        QString url = completedTaskListTmp.at(i).toMap().value("url").toString();
-
-//        qDebug()<<"completedTaskListTmp url "<<url;
-
-        for(int j = 0; j < completedTaskList.length(); ++j )
-        {
-
-//            qDebug()<<"completedTaskList url "<<completedTaskList.at(j).toMap().value("url");
-
-            if(url == completedTaskList.at(j).toMap().value("url"))
-            {
-                match = true;
-            }
-        }
-
-        if(!match)
-        {
-            // MatchFinish
-            // **  ** //
-            DownloadingItemInfo tmpInfo;
-            tmpInfo.downloadURL = url;
-            tmpInfo.downloadPercent = 100;
-            tmpInfo.downloadSpeed = "0 KB/s";
-            tmpInfo.downloadState = dlstate_downloading;
-            tmpInfo.thunderHightSpeed = "";
-            tmpInfo.thunderOfflineSpeed = "";
-            tmpInfo.uploadSpeed = "";
-
-            emit sRealTimeDataChanged(tmpInfo);
-
-            emit sFinishDownload(url);
-
-            // tmp
-            qDebug()<<"[xware info] finished dloading: ==> "<<url;
-        }
-    }
-
-    completedTaskList = completedTaskListTmp;
 }
 
 void XwareTaskEntity::loginResultHandle(XwareLoginResultType result)

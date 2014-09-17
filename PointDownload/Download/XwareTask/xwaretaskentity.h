@@ -29,6 +29,7 @@
 #include "XMLHandler/downloadxmlhandler.h"
 #include "xwaretask.h"
 
+// 此类主要负责反馈和保存下载中任务的信息
 class XwareTaskEntity : public QObject
 {
     Q_OBJECT
@@ -36,6 +37,7 @@ public:
     static XwareTaskEntity *getInstance();
 
     QString getTaskIdByUrl(QString url);
+
 
 signals:
     void sRealTimeDataChanged(DownloadingItemInfo);
@@ -46,10 +48,17 @@ public slots:
     void stopFeedbackTaskInfo();
 
 private slots:
-    void updateTaskMap();
-    void taskCompletedMonitor();
+    // handle login result
     void loginResultHandle(XwareLoginResultType result);
-    void updateMagnetMap();  // update globle magnet map
+
+    // get task info from local json, and populate the XwareTaskInfo struct into the global taskInfoMap
+    void updateTaskMap();
+
+    // update globle magnet map
+    void updateMagnetMap();
+
+    // finish downloading task
+    void hasNewCompletedTaskHandle(QString url);
 
 private:
     explicit XwareTaskEntity(QObject *parent = 0);
@@ -60,27 +69,35 @@ private:
     // convert the xware state to local state
     XwareTaskState convertXwareState(QString stateText);
 
-    void clearTaskMap(QMap<QString, XwareTaskInfo*> * taskInfoMap); // free all items of task map to prevent memory leaks
-    void constructAndEmitRealTimeData(XwareTaskInfo *taskInfo);
-    void updateXMLFile(DownloadingItemInfo info);
+    // free all items of task map to prevent memory leaks
+    void clearTaskMap(QMap<QString, XwareTaskInfo*> * taskInfoMap);
 
+    // change the XwareTaskInfo struct to DownloadingItemInfo struct, and emit the task data
+    void constructAndEmitRealTimeData(XwareTaskInfo *taskInfo);
+
+    // update xml info
+    void updateXMLFile(DownloadingItemInfo info);
 
 private:
     static XwareTaskEntity * xwareTaskEntityInstance;
+
+    // message spliter
     QString spliterBtwData;
     QString spliterEnd;
     QString defaultPara;
 
-    // task Info Map
+    // taskInfoMap sync locker
     QMutex * taskInfoMapLocker;
+
+      // <QString, XwareTaskInfo*> : <task id, task struct>
     QMap<QString, XwareTaskInfo*> * taskInfoMap;
 
-    bool isUpdateXML;   // it is time for update xml
-    short updateXMLCounter;   // used to compare with UPDATE_XML_INTERVAL
+    // is it time for update xml
+    bool isUpdateXML;
+
+    // used to compare with UPDATE_XML_INTERVAL
+    short updateXMLCounter;
     QTimer* updateTaskTimer;
-    int completedNum = 0;
-    QList<QVariant> completedTaskList;
-    QTimer* taskCompleteMonitorTimer;
 
     // magnet task map
     QMap<QString, QString> * magnetMap;   // <QString, QString>: <magnetName, url>

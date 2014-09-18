@@ -114,6 +114,9 @@ void XwarePopulateObject::login(QString userName, QString pwd)
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"======== XwarePopulateObject::login ===========";
 
+    qDebug()<<"user name:"<<userName;
+    qDebug()<<"pwd:"<<pwd;
+
     // emit this to javascript
     emit sJSLogin(userName, pwd);
 }
@@ -136,7 +139,7 @@ void XwarePopulateObject::getAllBindedPeerIds()
 void XwarePopulateObject::justForJSTest(QString testStr)
 {
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<<" ************* javascript test !!  ==>" << testStr;
+        qDebug()<<" ************* javascript feedback test !!  ==>" << testStr;
 }
 
 void XwarePopulateObject::urlParse(QString url)

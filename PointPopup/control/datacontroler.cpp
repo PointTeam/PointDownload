@@ -159,6 +159,18 @@ void DataControler::getURLFromBrowser(QString URL)
     }
     else if(toolsType == "Xware")
     {
+        //qDebug()<<"before unity parse: => "<<URL;
+
+        // 对带有%转译符的URL进行统一转码处理
+        if(URL.contains("%"))
+        {
+            URL = QUrl::fromPercentEncoding(URL.toLatin1());
+            setFileURL(URL);
+            redirectURL = fileURL;
+        }
+
+        //qDebug()<<"after unity parse: => "<<URL;
+
         QTimer::singleShot(100,this,SLOT(getXwareURLOrBtInfo()));
     }
 

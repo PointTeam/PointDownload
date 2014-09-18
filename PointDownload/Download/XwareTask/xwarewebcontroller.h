@@ -67,7 +67,7 @@ signals:
 public slots:
 
 private slots:
-    void loadingFinished();
+    void loadingFinished(bool noError);
     void populateQtObject();
     void populateJavascript();  // populate default javascript to webview
     void webUrlChanged(QUrl url);

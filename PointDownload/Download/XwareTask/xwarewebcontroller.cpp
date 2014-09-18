@@ -34,7 +34,7 @@ XwareWebController::XwareWebController(QObject *parent) :
     webview->setUrl(QUrl(LOGIN_URL));
 
     // loading finish
-    connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(loadingFinished()));
+    connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(loadingFinished(bool)));
 
     // populate Qt object to javascript
     connect(webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(populateQtObject()));
@@ -146,8 +146,16 @@ bool XwareWebController::getLoginState()
     }
 }
 
-void XwareWebController::loadingFinished()
+void XwareWebController::loadingFinished(bool noError)
 {
+    if(!noError)
+    {
+        qDebug()<<"an error is eccured when loading page:"<<currentPageURL();
+        return;
+    }
+
+//    qDebug()<<"login"
+
     if(currentPageURL() == MAIN_URL_3 && !isLogined)
     {
         // populate javascript to webview
@@ -201,11 +209,11 @@ void XwareWebController::populateQtObject()
 void XwareWebController::populateJavascript()
 {
     QString filePath = "";
-    if(currentPageURL().contains(LOGIN_URL) && !isInitedJSConnection)
+    if(currentPageURL().contains(LOGIN_URL))
     {
         filePath = ":/xware/resources/xware/xware_login.js";
 
-
+//        isInitedJSConnection = true;
 
         // temp
 //        if(!isInitedJSConnection)
@@ -256,26 +264,26 @@ void XwareWebController::populateJavascript()
     file.close();
 
 
-//    if(currentPageURL().contains(LOGIN_URL))
-//    {
-//        // temp
-//        if(!isInitedJSConnection)
-//        {
-//            QFile file(":/xware/resources/xware/xware_connection.js");
-//            qDebug()<<"              populate xware_connection js              ";
-//            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-//            {
-//                if(XWARE_CONSTANTS_STRUCT.DEBUG)
-//                    qDebug()<<"open error";
-//                return;
-//            }
-//            QTextStream textInput(&file);
-//            QString jsStr = textInput.readAll();
-//            webview->page()->mainFrame()->evaluateJavaScript(jsStr);
-//            file.close();
-//            isInitedJSConnection = true;
-//        }
-//    }
+    if(currentPageURL().contains(LOGIN_URL))
+    {
+        // temp
+        if(!isInitedJSConnection)
+        {
+            QFile file(":/xware/resources/xware/xware_connection.js");
+            qDebug()<<"              populate xware_connection js              ";
+            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                if(XWARE_CONSTANTS_STRUCT.DEBUG)
+                    qDebug()<<"open error";
+                return;
+            }
+            QTextStream textInput(&file);
+            QString jsStr = textInput.readAll();
+            webview->page()->mainFrame()->evaluateJavaScript(jsStr);
+            file.close();
+            isInitedJSConnection = true;
+        }
+    }
 
 }
 

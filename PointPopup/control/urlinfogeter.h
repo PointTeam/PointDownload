@@ -21,7 +21,9 @@ public slots:
     void slotGetInfoFromServer();
 private:
     QString getFileTypeByName(QString fileName);   // get file mine type by file name
-    QString convertToByteUnit(QString size);  //  将大单位（如：GB）转换成小单元B，返回值是不带单位的纯数字字符串, eg: 2KB ==> 2048
+
+    //  将大单位（如：GB）转换成小单元B，返回值是不带单位的纯数字字符串, eg: 2KB ==> 2048
+    QString convertToByteUnit(QString size);
 
 private:
     QLocalSocket * mLocalSocket;

@@ -159,6 +159,7 @@ void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
     else if(rs == x_LoginTimeOut)
     {
         // time out
+        setIsSignIn(false);
     }
 }
 

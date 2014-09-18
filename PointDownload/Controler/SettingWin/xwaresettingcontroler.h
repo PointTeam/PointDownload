@@ -45,6 +45,7 @@ signals:
     void sUserPasswdChange();
     void sAutomaticLoginChange();
     void sSignInFlagChange(bool flag);
+    void sVertifyCodeLinkChange(QString codeLink);
 
     void sInstallFinish();
     void sInstallError();

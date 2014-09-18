@@ -4,6 +4,9 @@ import Singleton.XwareSettingControler 1.0
 Rectangle{
     id:xwareSettingPage
 
+    property bool xwareEnable: XwareSettingControler.xwareEnable
+    property string vertifyCodeLink: ""
+
     Connections{
         target: XwareSettingControler
 
@@ -23,11 +26,14 @@ Rectangle{
         }
 
         onSXwareEnableChange: xwareSettingPage.xwareEnableChange(xwareEnable)
+
+        onSVertifyCodeLinkChange:{
+            vertifyCodeLink = codeLink
+        }
     }
 
     signal xwareEnableChange(bool changeFlag)
 
-    property bool xwareEnable: XwareSettingControler.xwareEnable
 
     Image{
         id:backImg
@@ -52,12 +58,51 @@ Rectangle{
             anchors {top: parent.top; topMargin: 5; horizontalCenter: parent.horizontalCenter}
         }
 
+        Rectangle {
+            id:verifyCodeRec
+            width: loginPage.width
+            height: vertifyCodeLink == ""?0:20
+            color: "#141414"
+            radius: 4
+            clip: true
+            anchors {left: loginPage.left; top: loginPage.bottom}
+            TextInput{
+                id:vertifyCodeBox
+                width: parent.width * 1/ 2
+                height: parent.height
+                font.pixelSize: 14
+                selectByMouse: true
+                color: "#ffffff"
+                selectionColor: "#488bc5"
+                verticalAlignment: TextInput.AlignVCenter
+                horizontalAlignment: TextInput.AlignHCenter
+                anchors {left: parent.left;}
+
+            }
+            AnimatedImage {
+                id: loadingImg
+                source: vertifyCodeLink
+                playing: true
+                opacity: 1
+                width: parent.width / 3
+                height: parent.height - 4
+                anchors {right: parent.right;rightMargin: 2; verticalCenter: parent.verticalCenter}
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        loadingImg.source = ""
+                        loadingImg.source = vertifyCodeLink
+                    }
+                }
+            }
+        }
+
         Image{
             id:remeberInfoCheckImg
             source: XwareSettingControler.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
             width: 10
             height: parent.height / 18
-            anchors {left: loginPage.left; top: loginPage.bottom; topMargin: 20}
+            anchors {left: verifyCodeRec.left; top: verifyCodeRec.bottom; topMargin: 10}
 
             MouseArea{
                 anchors.fill: parent

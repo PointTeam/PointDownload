@@ -114,8 +114,8 @@ void XwarePopulateObject::login(QString userName, QString pwd)
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"======== XwarePopulateObject::login ===========";
 
-    qDebug()<<"user name:"<<userName;
-    qDebug()<<"pwd:"<<pwd;
+//    qDebug()<<"user name:"<<userName;
+//    qDebug()<<"pwd:"<<pwd;
 
     // emit this to javascript
     emit sJSLogin(userName, pwd);

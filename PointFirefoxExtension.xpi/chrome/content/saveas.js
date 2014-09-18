@@ -50,7 +50,7 @@ window.addEventListener("load", function() {
         	// create an nsIProcess
         	var process = Components.classes["@mozilla.org/process/util;1"].createInstance(Components.interfaces.nsIProcess);
         	try {
-		var url = "FIREFOX#..#" + dialog.mLauncher.source.spec;
+		var url = dialog.mLauncher.source.spec + "#..#FIREFOX";
             	var args = [url];
 
             	process.init(file);

@@ -233,12 +233,11 @@ var PointMain = {
 	try {
 	    if (type == 1){
 		  if (!PointMain.isVideoURL(url)){
-		      alert("m( _ _ )m 非常抱们，我们没有获取到视频链接！\n");
-		      return;
+			alert("m( _ _ )m非常抱歉，我们没有在此页找到视频链接");
+			return;
 		  }
 		  var args = [url + "#..#FIREFOX"];
 	    }else{
-			  
 	          var args = [url + "#..#FIREFOX"];
 	     }
 

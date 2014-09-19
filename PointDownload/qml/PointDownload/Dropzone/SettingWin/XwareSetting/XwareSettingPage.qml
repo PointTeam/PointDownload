@@ -102,7 +102,7 @@ Rectangle{
             source: XwareSettingControler.automaticLogin?"qrc:/images/navigation/Breduncheck":"qrc:/images/navigation/Brednone"
             width: 10
             height: parent.height / 18
-            anchors {left: verifyCodeRec.left; top: verifyCodeRec.bottom; topMargin: 10}
+            anchors {left: verifyCodeRec.left; top: verifyCodeRec.bottom; topMargin: 18}
 
             MouseArea{
                 anchors.fill: parent
@@ -155,7 +155,7 @@ Rectangle{
             radius: height / 5
             width: parent.width * 4 / 5
             height: parent.height / 5
-            anchors {top: remeberInfoCheckImg.bottom; topMargin: 20; horizontalCenter: parent.horizontalCenter}
+            anchors {top: remeberInfoCheckImg.bottom; topMargin: 10; horizontalCenter: parent.horizontalCenter}
 
             Text{
                 id:logText

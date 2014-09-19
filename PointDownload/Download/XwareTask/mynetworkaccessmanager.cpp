@@ -21,9 +21,19 @@
 
 #include "mynetworkaccessmanager.h"
 
+MyNetworkAccessManager * MyNetworkAccessManager::networkAccessManager = NULL;
 MyNetworkAccessManager::MyNetworkAccessManager(QObject *parent) :
     QNetworkAccessManager(parent)
 {
+}
+
+MyNetworkAccessManager *MyNetworkAccessManager::getInstance()
+{
+    if(networkAccessManager == NULL)
+    {
+        networkAccessManager = new MyNetworkAccessManager();
+    }
+    return networkAccessManager;
 }
 
 QNetworkReply *MyNetworkAccessManager::createRequest(QNetworkAccessManager::Operation op, const QNetworkRequest &req, QIODevice *outgoingData)

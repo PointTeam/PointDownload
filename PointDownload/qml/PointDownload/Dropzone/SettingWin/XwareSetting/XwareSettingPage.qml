@@ -178,7 +178,7 @@ Rectangle{
                     {
                         XwareSettingControler.userName = loginPage.getUsername();
                         XwareSettingControler.userPasswd = loginPage.getPassword();
-                        XwareSettingControler.signInXware(loginPage.getUsername(),loginPage.getPassword())
+                        XwareSettingControler.signInXware(loginPage.getUsername(),loginPage.getPassword(), vertifyCodeBox.text)
                         logText.text = qsTr("Signing...")
                     }
                 }

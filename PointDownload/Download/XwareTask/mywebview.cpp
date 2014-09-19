@@ -23,5 +23,5 @@
 
 MainWebView::MainWebView()
 {
-    this->page()->setNetworkAccessManager(new MyNetworkAccessManager());
+    this->page()->setNetworkAccessManager(MyNetworkAccessManager::getInstance());
 }

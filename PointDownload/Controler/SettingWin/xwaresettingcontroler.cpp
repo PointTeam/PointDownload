@@ -8,8 +8,14 @@ XwareSettingControler::XwareSettingControler(QObject *parent) :
     qmlRegisterSingletonType<XwareSettingControler>("Singleton.XwareSettingControler"
                                                     , 1, 0, "XwareSettingControler", xSCObj);
 
+    // login result
     connect(XwareController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
             this, SLOT(loginResultHandle(XwareLoginResultType)));
+
+    // vertify code link update
+    connect(XwarePopulateObject::getInstance(), SIGNAL(sVertifyCodeLink(QString)),
+            this, SIGNAL(sVertifyCodeLinkChange(QString)));
+
     initData();
 }
 
@@ -33,9 +39,9 @@ void XwareSettingControler::disableXware()
     setXwareEnable(false);
 }
 
-void XwareSettingControler::signInXware(QString username, QString passwd)
+void XwareSettingControler::signInXware(QString username, QString passwd, QString vertifyCode)
 {
-    XwareController::getInstance()->login(username, passwd);
+    XwareController::getInstance()->login(username, passwd, vertifyCode);
 }
 
 void XwareSettingControler::signOutXware()

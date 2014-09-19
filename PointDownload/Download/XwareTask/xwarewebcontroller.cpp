@@ -24,23 +24,13 @@
 XwareWebController::XwareWebController(QObject *parent) :
     QObject(parent)
 {
-    webview = new MainWebView();
+    // init the web view
+    initWebView();
+
     isLogined = false;
     loginCtrlTimer = new QTimer();
     loginTimeCount = 1;
     isHasAutoLoginTask = false;
-
-    // set default url
-    webview->setUrl(QUrl(LOGIN_URL));
-
-    // loading finish
-    connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(loadingFinished(bool)));
-
-    // populate Qt object to javascript
-    connect(webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(populateQtObject()));
-
-    // url change
-    connect(webview, SIGNAL(urlChanged(QUrl)), this, SLOT(webUrlChanged(QUrl)), Qt::QueuedConnection);
 
     // login control timer
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
@@ -73,12 +63,13 @@ void XwareWebController::startLoginCtrlTimer()
         // emit this to javascript
         emit sLoginResult(x_LoginTimeOut);
 
-         qDebug()<<"[xware fail] login time out ";
+//        NormalNotice::showMessage(tr("Login Timeout"));
+
          return;
     }
 
     ++loginTimeCount;
-    XwarePopulateObject::getInstance()->login(userName, userPwd);
+    XwarePopulateObject::getInstance()->login(userName, userPwd, vertifyCode);
 }
 
 void XwareWebController::executeJS(QString js)
@@ -94,12 +85,13 @@ QString XwareWebController::setElemValueById(QString id, QString value)
     return QString("$(\"#"+ id + "\").val(\"" + value + "\");");
 }
 
-void XwareWebController::login(QString userName, QString pwd)
+void XwareWebController::login(QString userName, QString pwd, QString vertifyCode)
 {
     qDebug()<<"[xware info] login ...";
 
     this->userName = userName;
     this->userPwd = pwd;
+    this->vertifyCode = vertifyCode;
     startLoginCtrlTimer();
     loginCtrlTimer->start(LOGIN_DEFAULT_INTERVAL);
 }
@@ -107,6 +99,36 @@ void XwareWebController::login(QString userName, QString pwd)
 void XwareWebController::logout()
 {
     XwarePopulateObject::getInstance()->logout();
+}
+
+void XwareWebController::initWebView()
+{
+    webview = new MainWebView();
+
+    // set default url
+    webview->setUrl(QUrl(LOGIN_URL));
+
+    // loading finish
+    connect(webview, SIGNAL(loadFinished(bool)), this, SLOT(loadingFinished(bool)));
+
+    // populate Qt object to javascript
+    connect(webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(populateQtObject()));
+
+    // url change
+    connect(webview, SIGNAL(urlChanged(QUrl)), this, SLOT(webUrlChanged(QUrl)), Qt::QueuedConnection);
+}
+
+QWebView *XwareWebController::reInitWebView()
+{
+    if(webview != NULL)
+    {
+        delete webview;
+        webview = NULL;
+    }
+
+    initWebView();
+
+    return webview;
 }
 
 QString XwareWebController::currentPageURL()
@@ -134,31 +156,33 @@ void XwareWebController::tryAutomaticLogin(QString userName, QString pwd)
     isHasAutoLoginTask = true;
 }
 
-bool XwareWebController::getLoginState()
+bool XwareWebController::getIsLogin()
 {
     if(currentPageURL() == MAIN_URL_3 || currentPageURL() == MAIN_URL_OLD)
     {
-        return true;
+        isLogined = true;
     }
     else
     {
-        return false;
+        isLogined = false;
     }
+
+    return isLogined;
 }
 
 void XwareWebController::loadingFinished(bool noError)
 {
+    // on error
     if(!noError)
     {
         qDebug()<<"an error is eccured when loading page:"<<currentPageURL();
-        return;
+        // return;
     }
 
-//    qDebug()<<"login"
-
+    // http://yuancheng.xunlei.com/3/
     if(currentPageURL() == MAIN_URL_3 && !isLogined)
     {
-        // populate javascript to webview
+        // populate javascript to MAIN_URL_3
         populateJavascript();
 
         isLogined = true;
@@ -166,21 +190,27 @@ void XwareWebController::loadingFinished(bool noError)
 
         qDebug()<<"[xware info] finish login !";
         qDebug()<<"[xware info] init competed webview !";
+
         CompletedListWebView::getInstance()->init();
 
         emit sLoginResult(x_LoginSuccess);
     }
+
+    // http://yuancheng.xunlei.com/login.html
     else if(currentPageURL().contains(LOGIN_URL))
     {
-        // populate javascript to webview
+        // populate javascript to LOGIN_URL
         populateJavascript();
 
         if(isLogined)
         {
-            emit sLoginResult(x_Logout);  // logout xware
+            emit sLoginResult(x_Logout);
             isLogined = false;
 
             qDebug()<<"[xware info] logout ";
+
+            // re init the webview
+            reInitWebView();
         }
 
         qDebug()<<"[xware info] login page ready ! ";
@@ -197,11 +227,10 @@ void XwareWebController::populateQtObject()
 {
     if ((currentPageURL() == MAIN_URL_3) || (currentPageURL() == LOGIN_URL))
     {        
-        // populate QT object into javascript
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
             qDebug()<<"populate qt object to ==>" << currentPageURL();
 
-//        XwarePopulateObject::getInstance()->disconnect(SIGNAL(XwarePopulateObject::getInstance()->sJSLogin()));
+        // populate QT object into javascript
         webview->page()->mainFrame()->addToJavaScriptWindowObject("Point", XwarePopulateObject::getInstance());
     }
 }

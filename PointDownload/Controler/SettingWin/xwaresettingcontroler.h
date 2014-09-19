@@ -19,7 +19,7 @@ public:
 
     Q_INVOKABLE void enableXware();
     Q_INVOKABLE void disableXware();
-    Q_INVOKABLE void signInXware(QString username, QString passwd);
+    Q_INVOKABLE void signInXware(QString username, QString passwd, QString vertifyCode);
     Q_INVOKABLE void signOutXware();
 
     //在main函数调用

@@ -27,8 +27,9 @@ XwarePopulateObject::XwarePopulateObject(QObject *parent) :
     spliterBtwData = XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA;
     spliterEnd =  XWARE_CONSTANTS_STRUCT.SPLITER_END;
     defaultPara = XWARE_CONSTANTS_STRUCT.SPLITER_DEFAULT_PARAM;
-//    taskInfoMap = new QMap<QString, XwareTaskInfo*>;
-//    taskInfoMapLocker = new QMutex;
+
+    connect(this, SIGNAL(sHint(QString,QString)), this, SLOT(handleHintEmit(QString,QString)));
+    connect(this, SIGNAL(sError(QString,QString)), this, SLOT(handleErrorEmit(QString,QString)));
 }
 
 XwarePopulateObject * XwarePopulateObject::xwarePopulateObject = NULL;
@@ -109,16 +110,13 @@ void XwarePopulateObject::startFeedbackDloadList()
     emit sJSReflashDownloadList();
 }
 
-void XwarePopulateObject::login(QString userName, QString pwd)
+void XwarePopulateObject::login(QString userName, QString pwd, QString vertifyCode)
 {
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<<"======== XwarePopulateObject::login ===========";
 
-//    qDebug()<<"user name:"<<userName;
-//    qDebug()<<"pwd:"<<pwd;
-
     // emit this to javascript
-    emit sJSLogin(userName, pwd);
+    emit sJSLogin(userName, pwd, vertifyCode);
 }
 
 void XwarePopulateObject::logout()
@@ -162,9 +160,55 @@ void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
     emit sFeedbackURLParse(taskInfoList);
 }
 
-void XwarePopulateObject::finishDownload(QString tid)
+void XwarePopulateObject::loginError(short type, QString errorMsg)
 {
-    emit sFinishDownload(tid);
+    switch (type)
+    {
+    // username
+    case 1:
+        emit sError(tr("Login Error"), errorMsg);
+        qDebug()<<" login username error =>"<<errorMsg;
+        break;
+
+    // password
+    case 2:
+        emit sError(tr("Login Error"), errorMsg);
+        qDebug()<<" login password error =>"<<errorMsg;
+        break;
+
+    // vertify code
+    case 3:
+        // emit vertify code link
+        QString vertifyCodeUrl = errorMsg.split(this->spliterBtwData).at(1);
+        emit sVertifyCodeLink(vertifyCodeUrl);
+
+        errorMsg = errorMsg.split(this->spliterBtwData).at(0);
+
+        // emit hint
+        if(errorMsg.startsWith("请"))
+        {
+            emit sHint(tr("Login Hint"), errorMsg);
+            qDebug()<<" login vertify code hint =>"<<errorMsg;
+        }
+
+        // emit error
+        else
+        {
+            emit sError(tr("Login Error"), errorMsg);
+            qDebug()<<" login vertify code error =>"<<errorMsg;
+        }
+        break;
+    }
+}
+
+void XwarePopulateObject::handleErrorEmit(QString title, QString msg)
+{
+    NormalNotice::getInstance()->showMessage(title, Notice_Color_Error, msg);
+}
+
+void XwarePopulateObject::handleHintEmit(QString title, QString msg)
+{
+    NormalNotice::getInstance()->showMessage(title, Notice_Color_Warning, msg);
 }
 
 QString XwarePopulateObject::getDefaultTaskPara()

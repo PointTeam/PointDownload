@@ -206,9 +206,9 @@ bool XwareController::tryToMakeDir(QString dirPath)
     return dir.mkpath(dirPath);
 }
 
-void XwareController::login(QString userName, QString pwd)
+void XwareController::login(QString userName, QString pwd, QString vertifyCode)
 {
-    XwareWebController::getInstance()->login(userName, pwd);
+    XwareWebController::getInstance()->login(userName, pwd, vertifyCode);
 }
 
 void XwareController::logout()

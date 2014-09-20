@@ -25,8 +25,8 @@
 #define MAIN_URL_3 "http://yuancheng.xunlei.com/3/"
 #define MAIN_URL_OLD "http://yuancheng.xunlei.com/"
 #define LOGIN_URL  "http://yuancheng.xunlei.com/login.html"
-#define LOGIN_MAX_TRY 5
-#define LOGIN_DEFAULT_INTERVAL 2000
+#define LOGIN_MAX_TRY 2
+#define LOGIN_DEFAULT_INTERVAL 3000
 
 #include <QObject>
 #include <QtWebKitWidgets/QWebView>
@@ -50,16 +50,27 @@ public:
     ~XwareWebController();
     static XwareWebController *getInstance();
 
+    // javascript
     void executeJS(QString js); // execute javascript
-    QString setElemValueById(QString id, QString value); //
+    QString setElemValueById(QString id, QString value);
 
-    void login(QString userName, QString pwd);
+    // login and logout
+    void login(QString userName, QString pwd, QString vertifyCode = QString(""));
     void logout();
+
+    // webview
+    void initWebView();
+    QWebView * reInitWebView();
     QString currentPageURL();
-    void reloadWebView();
     QWebView *getWebView();
+
+    // reload/reflash
+    void reloadWebView();
+
     void tryAutomaticLogin(QString userName, QString pwd);
-    bool getLoginState();
+
+    // return whether the login state is login
+    bool getIsLogin();
 
 signals:
     void sLoginResult(XwareLoginResultType);
@@ -83,8 +94,12 @@ private:
 
     QString URL3;
     bool isLogined;
+
+    // login param
     QString userName;
     QString userPwd;
+    QString vertifyCode;
+
     QTimer * loginCtrlTimer;
     int loginTimeCount;
     bool isHasAutoLoginTask;   // 仅在程序刚启动并且有自动登录记录时置true

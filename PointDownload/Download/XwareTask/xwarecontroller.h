@@ -51,7 +51,7 @@ public:
     void startFeedbackDloadList();
 
     // called by setting dialog
-    void login(QString userName, QString pwd);
+    void login(QString userName, QString pwd, QString vertifyCode = QString(""));
     void logout();
     void addXwareFirmware();   // add the xware firmware
     void removeXwareFirmware();

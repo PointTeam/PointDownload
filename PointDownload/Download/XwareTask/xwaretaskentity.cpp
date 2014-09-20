@@ -206,7 +206,7 @@ void XwareTaskEntity::updateTaskMap()
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     // wait for message
     loop.exec();
-    reply->disconnect();
+    //reply->disconnect();
 
     // 读到的信息
     QString jsonStr = QUrl::fromPercentEncoding(reply->readAll());

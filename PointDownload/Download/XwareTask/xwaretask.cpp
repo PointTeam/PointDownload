@@ -26,14 +26,6 @@
 XwareTask::XwareTask(QObject *parent) :
     QObject(parent)
 {
-    connect(XwareTaskEntity::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
-            this, SLOT(updateRealTimeData(DownloadingItemInfo)));
-    connect(XwareTaskEntity::getInstance(), SIGNAL(sFinishDownload(QString)),
-            this, SLOT(slotFinishDownload(QString)));
-
-    connect(XwareController::getInstance(), SIGNAL(sFinishDownload(QString)),
-            this, SIGNAL(sFinishXwareDownload(QString)));
-
     //match add,2014.8.30
     initConnection();
 }
@@ -69,12 +61,12 @@ void XwareTask::stopDownload(QString URL)
 
 void XwareTask::suspendDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getLoginState())return;
+    if(!XwareWebController::getInstance()->getIsLogin())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
         return;
     }
 
@@ -83,12 +75,12 @@ void XwareTask::suspendDownloading(QString URL)
 
 void XwareTask::resumeDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getLoginState())return;
+    if(!XwareWebController::getInstance()->getIsLogin())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
         return;
     }
 
@@ -97,12 +89,12 @@ void XwareTask::resumeDownloading(QString URL)
 
 void XwareTask::removeDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getLoginState())return;
+    if(!XwareWebController::getInstance()->getIsLogin())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
         return;
     }
 
@@ -111,12 +103,12 @@ void XwareTask::removeDownloading(QString URL)
 
 void XwareTask::entryOfflineChannel(QString URL)
 {
-    if(!XwareWebController::getInstance()->getLoginState())return;
+    if(!XwareWebController::getInstance()->getIsLogin())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString("no task can not be found by URL:" + URL), Xware);
+        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
         return;
     }
 
@@ -125,7 +117,7 @@ void XwareTask::entryOfflineChannel(QString URL)
 
 void XwareTask::entryHighSpeedChannel(QString URL)
 {
-    if(!XwareWebController::getInstance()->getLoginState())return;
+    if(!XwareWebController::getInstance()->getIsLogin())return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
@@ -140,9 +132,6 @@ void XwareTask::entryHighSpeedChannel(QString URL)
 void XwareTask::slotFinishDownload(QString URL)
 {
     UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
-
-    // clear the finished file
-//    CompletedListWebView::getInstance()->clearAllCompletedTask(false);
 }
 
 void XwareTask::updateRealTimeData(DownloadingItemInfo info)
@@ -152,10 +141,19 @@ void XwareTask::updateRealTimeData(DownloadingItemInfo info)
 
 void XwareTask::initConnection()
 {
+    // UnifiedInterface
     connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
     connect(this, SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
             UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
     connect(this, SIGNAL(sFinishXwareDownload(QString)),
             UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
+
+    // Real Time Data update
+    connect(XwareTaskEntity::getInstance(), SIGNAL(sRealTimeDataChanged(DownloadingItemInfo)),
+            this, SLOT(updateRealTimeData(DownloadingItemInfo)));
+
+    // finish download
+    connect(XwareTaskEntity::getInstance(), SIGNAL(sFinishDownload(QString)),
+            this, SLOT(slotFinishDownload(QString)));
 }

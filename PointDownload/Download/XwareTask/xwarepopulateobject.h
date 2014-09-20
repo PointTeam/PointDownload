@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QMutex>
+#include <QImage>
 
 #include "XwareDataType.h"
 #include "xwarewebcontroller.h"
@@ -59,14 +60,23 @@ public:
     QString getSpliterBtwData();
     QString getSpliterEnd();
 
+
+
 signals:
     void sReturnAllBindedPeerIds(QStringList);
     void sFeedbackURLParse(QString);  // QString: all URL parse result, include fileName and fileSize
     void sFinishDownload(QString);  // QString: URL
     void sFeedbackDownloadList(QString);
 
+    // login hints or errors
+    void sHint(QString, QString);
+    void sError(QString, QString);
+
+    // emit to the login pannel for updating the vertify code
+    void sVertifyCodeLink(QString);
+
     // ============================>  emit to javascript <================================= //
-    void sJSLogin(QString, QString);
+    void sJSLogin(QString, QString, QString);
     void sJSLogout();
 
     // get all binded machine code(peer id)
@@ -88,28 +98,41 @@ signals:
     // parse url , and then js will feedback the url parsed info
     void sJSUrlParse(QString);
     void sJSBTParse(QString);
+
+    // login vertify code
+    void sJSUpdateVertifyCode();
     // ================================================================================== //
 
 public slots:
-    void login(QString userName, QString pwd);  // called by web controller
+    void login(QString userName, QString pwd, QString vertifyCode = QString(""));  // called by web controller
     void logout();
     void getAllBindedPeerIds();  // called by controller
     void startFeedbackDloadList();  // called by controller
 
     // =============================>  called by javascript <================================== //
-    void justForJSTest(QString testStr);      // tmp js debugger //
+    // debugger
+    void justForJSTest(QString testStr);
     void setAllBindedPeerIds(QString ids);  //  return all bind peer ids
     void feedbackDownloadList(QString tasksInfo);
     void feedbackURLParse(QString taskInfoList);
-    void finishDownload(QString tid);
+    //void finishDownload(QString tid);
+
+    // login error
+    void loginError(short type, QString errorMsg);  // type: 1 => userName, 2 => passwd, 3 => vertify code
+
     // ================================================================================== //
 
 private slots:
+    // show the error or hint
+    void handleErrorEmit(QString title, QString msg);
+    void handleHintEmit(QString title, QString msg);
 
 private:
     explicit XwarePopulateObject(QObject *parent = 0);
-    static XwarePopulateObject *xwarePopulateObject;
+    QString saveVertifyImg(QString link);
 
+private:
+    static XwarePopulateObject *xwarePopulateObject;
     QString spliterBtwData;
     QString spliterEnd;
     QString defaultPara;

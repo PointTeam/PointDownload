@@ -35,13 +35,19 @@ class MyNetworkAccessManager : public QNetworkAccessManager
 {
     Q_OBJECT
 public:
-    explicit MyNetworkAccessManager(QObject *parent = 0);
+    static MyNetworkAccessManager * getInstance();
 
     QNetworkReply *createRequest(Operation op, const QNetworkRequest & req, QIODevice * outgoingData = 0);
 
 signals:
 
 public slots:
+
+private:
+    explicit MyNetworkAccessManager(QObject *parent = 0);
+
+private:
+    static MyNetworkAccessManager * networkAccessManager;
 
 };
 

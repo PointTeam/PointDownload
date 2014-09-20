@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QMutex>
+#include <QImage>
 
 #include "XwareDataType.h"
 #include "xwarewebcontroller.h"
@@ -58,6 +59,8 @@ public:
     QString getDefaultTaskPara();
     QString getSpliterBtwData();
     QString getSpliterEnd();
+
+
 
 signals:
     void sReturnAllBindedPeerIds(QStringList);
@@ -95,6 +98,9 @@ signals:
     // parse url , and then js will feedback the url parsed info
     void sJSUrlParse(QString);
     void sJSBTParse(QString);
+
+    // login vertify code
+    void sJSUpdateVertifyCode();
     // ================================================================================== //
 
 public slots:
@@ -113,6 +119,7 @@ public slots:
 
     // login error
     void loginError(short type, QString errorMsg);  // type: 1 => userName, 2 => passwd, 3 => vertify code
+
     // ================================================================================== //
 
 private slots:
@@ -122,6 +129,7 @@ private slots:
 
 private:
     explicit XwarePopulateObject(QObject *parent = 0);
+    QString saveVertifyImg(QString link);
 
 private:
     static XwarePopulateObject *xwarePopulateObject;

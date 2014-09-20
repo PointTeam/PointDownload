@@ -6,6 +6,8 @@ var spliterEnd = "#.^_^.#";
 var pointLoginCheckInterval;
 var pointLoginCheckHandle;
 
+var pointVertifyChangeIntervalId;
+
 function pointSlotLogin(userName, pwd, vertifyCode)
 {
     $("#login-input-username").click();
@@ -17,12 +19,7 @@ function pointSlotLogin(userName, pwd, vertifyCode)
 
     pointLoginCheckHandle = false;
     pointLoginCheckInterval = setInterval("pointLoginCheckSlot()", 500);
-
-
-    // 用于绕过验证
-//    Login.login.verifyCode = 1;
-//    $("#login-input-verify-code").val(1);
-//    Login.hasVerifyCode = true;
+    pointVertifyChangeIntervalId = setInterval("pointVertifyCodeCheckSlot()", 500);
 
     setTimeout(
     function()
@@ -64,6 +61,23 @@ function pointLoginCheckSlot()
             window.clearInterval(pointLoginCheckInterval);
         }
     }
+}
+
+var vertifyCodeLink = "/img/wh.png";
+function pointVertifyCodeCheckSlot()
+{
+    if(vertifyCodeLink !== $("#verify-code-image").attr("src") && $("#verify-code-image").attr("src") != "/img/wh.png")
+    {
+        vertifyCodeLink = $("#verify-code-image").attr("src");
+        Point.loginError(3, $("#login-verify-code-error-msg").html() + spliterBtwData
+                         + $("#verify-code-image").attr("src"));
+    }
+}
+
+function pointUpdateVertifyCode()
+{
+    $("#login-account-password-error-msg").click();
+    pointSlotLogin($("#login-input-username").val(), $("#login-input-password").val())
 }
 
 

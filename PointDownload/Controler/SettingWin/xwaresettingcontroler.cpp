@@ -49,6 +49,12 @@ void XwareSettingControler::signOutXware()
     XwareController::getInstance()->logout();
 }
 
+void XwareSettingControler::refreshVertifyCode()
+{
+    qDebug() << "refresh";
+    emit XwarePopulateObject::getInstance()->sJSUpdateVertifyCode();
+}
+
 void XwareSettingControler::tryAutomaticLogin()
 {
 //    qDebug()<<isSignIn<<userName<<userPasswd<<automaticLogin;

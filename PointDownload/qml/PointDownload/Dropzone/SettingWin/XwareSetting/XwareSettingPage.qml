@@ -15,6 +15,7 @@ Rectangle{
             {
                 loginPage.visible = false
                 logoutPage.visible = true
+                verifyCodeRec.height = 0
                 logText.text = qsTr("Sign out")
             }
             else
@@ -28,7 +29,7 @@ Rectangle{
         onSXwareEnableChange: xwareSettingPage.xwareEnableChange(xwareEnable)
 
         onSVertifyCodeLinkChange:{
-            vertifyCodeLink = codeLink
+            loadingImg.source ="file:/" + codeLink
         }
     }
 
@@ -61,7 +62,7 @@ Rectangle{
         Rectangle {
             id:verifyCodeRec
             width: loginPage.width
-            height: vertifyCodeLink == ""?0:20
+            height: loadingImg.source == ""?0:20
             color: "#141414"
             radius: 4
             clip: true
@@ -79,10 +80,8 @@ Rectangle{
                 anchors {left: parent.left;}
 
             }
-            AnimatedImage {
+            Image {
                 id: loadingImg
-                source: vertifyCodeLink
-                playing: true
                 opacity: 1
                 width: parent.width / 3
                 height: parent.height - 4
@@ -90,8 +89,7 @@ Rectangle{
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        loadingImg.source = ""
-                        loadingImg.source = vertifyCodeLink
+                        XwareSettingControler.refreshVertifyCode()
                     }
                 }
             }

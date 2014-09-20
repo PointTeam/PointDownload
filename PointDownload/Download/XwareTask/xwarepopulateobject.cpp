@@ -32,6 +32,32 @@ XwarePopulateObject::XwarePopulateObject(QObject *parent) :
     connect(this, SIGNAL(sError(QString,QString)), this, SLOT(handleErrorEmit(QString,QString)));
 }
 
+QString XwarePopulateObject::saveVertifyImg(QString link)
+{
+    QUrl url(link);
+
+    QEventLoop loop;
+//    QNetworkAccessManager manager;
+    QNetworkReply *reply = MyNetworkAccessManager::getInstance()->get(QNetworkRequest(url));
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    \
+    QImage img;
+    img = img.fromData(reply->readAll());
+    QString cmd = QString("rm ") + XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode*");
+    system(cmd.toLatin1().data());
+    QString savePath = XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode")
+            + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) +QString(".jpg");
+    if(!img.save(savePath))
+    {
+        qDebug()<<"[xware error] eccur an error when save vertify code !";
+    }
+
+    qDebug()<<"save vertify code success !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111";
+
+    return savePath;
+}
+
 XwarePopulateObject * XwarePopulateObject::xwarePopulateObject = NULL;
 XwarePopulateObject * XwarePopulateObject::getInstance()
 {
@@ -180,15 +206,15 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
     case 3:
         // emit vertify code link
         QString vertifyCodeUrl = errorMsg.split(this->spliterBtwData).at(1);
-        emit sVertifyCodeLink(vertifyCodeUrl);
+        emit sVertifyCodeLink(saveVertifyImg(vertifyCodeUrl));
 
         errorMsg = errorMsg.split(this->spliterBtwData).at(0);
 
         // emit hint
         if(errorMsg.startsWith("请"))
         {
-            emit sHint(tr("Login Hint"), errorMsg);
-            qDebug()<<" login vertify code hint =>"<<errorMsg;
+//            emit sHint(tr("Login Hint"), errorMsg);
+//            qDebug()<<" login vertify code hint =>"<<errorMsg;
         }
 
         // emit error

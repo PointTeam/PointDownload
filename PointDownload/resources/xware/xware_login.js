@@ -69,8 +69,13 @@ function pointVertifyCodeCheckSlot()
     if(vertifyCodeLink !== $("#verify-code-image").attr("src") && $("#verify-code-image").attr("src") != "/img/wh.png")
     {
         vertifyCodeLink = $("#verify-code-image").attr("src");
-        Point.loginError(3, $("#login-verify-code-error-msg").html() + spliterBtwData
-                         + $("#verify-code-image").attr("src"));
+
+        if($("#login-verify-code-error-box").css("display") === "block")
+        {
+            Point.loginError(3, $("#login-verify-code-error-msg").html() + spliterBtwData
+                             + $("#verify-code-image").attr("src"));
+            pointLoginCheckHandle = true;
+        }
     }
 }
 

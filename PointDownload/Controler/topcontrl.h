@@ -74,6 +74,7 @@ public slots:
     Q_INVOKABLE void hideMainWindow();
     Q_INVOKABLE void showAboutWindow();
     Q_INVOKABLE void checkUpdate();
+    Q_INVOKABLE void checkSkills();
     void completelyExit();
 
 private slots:

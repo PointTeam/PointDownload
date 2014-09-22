@@ -51,7 +51,7 @@ Rectangle {
             onEntered: skillsItem.color = "#dd5c07"
             onExited: skillsItem.color = "#464852"
             onClicked: {
-
+                TopContrl.checkSkills()
             }
         }
     }

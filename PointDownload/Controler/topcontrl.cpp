@@ -231,6 +231,11 @@ void TopContrl::checkUpdate()
     QDesktopServices::openUrl(QUrl("http://www.linuxdeepin.com/forum/23/21124"));
 }
 
+void TopContrl::checkSkills()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/PointTeam/PointDownload/wiki"));
+}
+
 void TopContrl::completelyExit()
 {
     //做相应的数据保存处理后再退出

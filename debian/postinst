@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+if [ "$1" = "configure" ]; then
+    echo "欢迎使用 PointDownload"
+    sudo setcap CAP_SYS_ADMIN=+ep /opt/Point/PointDownload/XwareStartUp
+    echo "正在配置Chrome浏览器扩展..."
+    mkdir -p /etc/opt/chrome/native-messaging-hosts
+    mkdir -p /opt/google/chrome/extensions
+    mv /opt/Point/Extensions/pointdownload.json /etc/opt/chrome/native-messaging-hosts/
+    mv /opt/Point/Extensions/nkbchchceepbameamioagcjlhnghdoff.json /opt/google/chrome/extensions/
+    echo "Chrome浏览器扩展配置完成！"
+    echo "正在配置Firefox浏览器扩展..."
+    mkdir -p /usr/lib/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}
+    cp /opt/Point/Extensions/PointFirefoxExtension.xpi /usr/lib/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/PointTeam@qq.com.xpi
+    echo "配置Firefox浏览器扩展完成！"
+    echo "正在更新默认程序类型..."
+    xdg-mime default pointpopup.desktop application/x-bittorrent
+    xdg-mime default pointpopup.desktop x-scheme-handler/ed2k
+    xdg-mime default pointpopup.desktop x-scheme-handler/thunder
+    xdg-mime default pointpopup.desktop x-scheme-handler/magnet
+    echo "更多使用技巧，请访问：https://github.com/PointTeam/PointDownload/wiki"
+fi
+
+#DEBHELPER#
+exit 0

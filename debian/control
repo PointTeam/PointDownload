@@ -1,0 +1,22 @@
+Source: pointdownload
+Section: net
+Priority: optional
+Maintainer: PointTeam <PointTeam@qq.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: https://github.com/PointTeam/PointDownload/wiki
+#Vcs-Git: git://gibhub.com/PointTeam/PointDownload.git
+#Vcs-Browser: https://github.com/PointTeam/PointDownload
+
+Package: pointdownload
+Version: 1.2.0
+Section: net
+Priority: optional
+Maintainer: PointTeam <PointTeam@qq.com>
+Architecture: any
+Installed-Size: 2048
+Depends: libqt5quick5 (>= 5.2.1),libqt5multimedia5,libqt5qml5(>= 5.2.1),libqt5webkit5,libqt5widgets5,libqt5network5,libqt5xml5,libqt5gui5,libqt5core5a(>= 5.2.1)
+Replaces: pointdownload
+Provides: pointdownload
+Description: Efficient download tool
+ Efficient and easy to use to download for Http,Https,Ftp, P2P(BT、magnet、ed2k、thunder etc.) download

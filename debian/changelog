@@ -1,0 +1,8 @@
+pointdownload (1.2.0) unstable; urgency=low
+
+  * Initial Release.
+  * This version has a lot of great change
+  * Make UI more easier to use
+  * Add Xware(Thunder) support 
+
+ -- PointTeam <PointTeam@qq.com>  Sun, 21 Sep 2014 20:19:23 +0800

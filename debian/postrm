@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ "$1" = "remove" ]; then
+    return 0
+fi
+
+if [ "$1" = "purge" ]; then
+    echo "正在删除Chrome扩展配置文件..."
+    rm /etc/opt/chrome/native-messaging-hosts/pointdownload.json
+    rm /opt/google/chrome/extensions/nkbchchceepbameamioagcjlhnghdoff.json
+    echo "正在删除Firefox配置文件..."
+    rm /usr/lib/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}/PointTeam@qq.com.xpi
+    echo "PointDownload卸载完成。"
+    echo "用户配置文件、下载列表文件以及下载组件执行文件位于~/.PointConfig，请手动删除。"
+fi
+
+#DEBHELPER#
+exit 0

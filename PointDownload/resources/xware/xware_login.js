@@ -85,7 +85,6 @@ function pointVertifyCodeCheckSlot()
 function pointUpdateVertifyCode()
 {
     $("#verify-code-image").click();
-//    pointSlotLogin($("#login-input-username").val(), $("#login-input-password").val())
 }
 
 

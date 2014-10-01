@@ -125,8 +125,6 @@ void XwarePopulateObject::setAllBindedPeerIds(QString ids)
         list.removeLast(); // remove the last empty element
     }
 
-    if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<< list << " .....";
     emit sReturnAllBindedPeerIds(list);
 }
 
@@ -229,6 +227,22 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
     }
 }
 
+void XwarePopulateObject::feedbackMsgboxMessage(QString msg)
+{
+    // just handle one msg now
+    if(msg.startsWith("您所选择的下载器没有连接到网络"))
+    {
+        NormalNotice::getInstance()->showMessage(tr("Xware: wait a moment"), Notice_Color_Notice,
+                  tr("Please wait a moment for Thunder to connect to your computer"));
+
+    }
+    else
+    {
+        NormalNotice::getInstance()->showMessage(tr("Xware message"), Notice_Color_Notice, msg);
+    }
+
+}
+
 void XwarePopulateObject::handleErrorEmit(QString title, QString msg)
 {
     NormalNotice::getInstance()->showMessage(title, Notice_Color_Error, msg);
@@ -247,6 +261,11 @@ QString XwarePopulateObject::getDefaultTaskPara()
 QString XwarePopulateObject::getSpliterEnd()
 {
     return this->spliterEnd;
+}
+
+void XwarePopulateObject::setDefaultDownloader(QString pid)
+{
+    emit sSetDefaultDownloader(pid);
 }
 
 QString XwarePopulateObject::getSpliterBtwData()

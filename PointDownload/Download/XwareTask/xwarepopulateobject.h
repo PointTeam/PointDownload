@@ -60,6 +60,8 @@ public:
     QString getSpliterBtwData();
     QString getSpliterEnd();
 
+    void setDefaultDownloader(QString pid);
+
 
 
 signals:
@@ -101,6 +103,8 @@ signals:
 
     // login vertify code
     void sJSUpdateVertifyCode();
+
+    void sSetDefaultDownloader(QString);
     // ================================================================================== //
 
 public slots:
@@ -115,11 +119,12 @@ public slots:
     void setAllBindedPeerIds(QString ids);  //  return all bind peer ids
     void feedbackDownloadList(QString tasksInfo);
     void feedbackURLParse(QString taskInfoList);
-    //void finishDownload(QString tid);
 
     // login error
     void loginError(short type, QString errorMsg);  // type: 1 => userName, 2 => passwd, 3 => vertify code
 
+    // feedback the msg from xware
+    void feedbackMsgboxMessage(QString msg);
     // ================================================================================== //
 
 private slots:

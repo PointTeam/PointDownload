@@ -326,8 +326,8 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
     // (4.1) matched the peerid in the web peer list
     if(isMatch)
     {
-        // set this machine to default download machine
-        XwareWebController::getInstance()->executeJS("pointSetDefaultMachine("+ id +");");  // tmp
+        // set this machine as default downloader
+        XwarePopulateObject::getInstance()->setDefaultDownloader(id);
 
         // (5) start ETM
         if(!startETM())
@@ -380,6 +380,10 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         }
 
         bindCodeToXware(jsonCode);
+
+        // this can help js function pointSetDefaultDownloader()
+        QString id_tmp = getLocalPeerId();
+        XwarePopulateObject::getInstance()->setDefaultDownloader(id_tmp);
     }
 
     QTimer::singleShot(200, this, SLOT(initDefaultSetting()));

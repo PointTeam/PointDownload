@@ -21,6 +21,9 @@ Point.sJSEntryOfflineChannel.connect(pointEntryOfflineChannel);
 Point.sJSEntryHighSpeedChannel.connect(pointEntryHighSpeedChannel);
 Point.sJSUrlParse.connect(pointUrlParse);
 
+// set default downloader
+Point.sSetDefaultDownloader.connect(pointSetDefaultDownloader);
+
 // logout
 Point.sJSLogout.connect(pointLogout);
 // ======================================================== //
@@ -29,8 +32,40 @@ Point.sJSLogout.connect(pointLogout);
 // ========================== init ============================ //
 var feedbackTaskInfoInterval = 1000;
 var addNewDownloadTask = false;
+var pointLocalDownloaderPid = "";
 
+// feedback the message to point
+App.bind("functions.msgbox.show",
+            function(e) {
+                Point.feedbackMsgboxMessage(App.select("#d-msgbox-message").html());
+            });
 
+// if have not clicked the downloader then it become online, the controlling of task will not work
+var pointReloadDownloaderInterval = setInterval(
+function()
+{
+    if(pointLocalDownloaderPid !== "")
+    {
+        $("#downloader-list>li").each(
+            function()
+            {
+                if($(this).attr("data-pid") === pointLocalDownloaderPid)
+                {
+                    // if the downloader ture out online status
+                    if($(this).find(".ico_online").length > 0)
+                    {
+                        $(this).click();
+                        window.clearInterval(pointReloadDownloaderInterval);
+
+                        // hide the msgbox if exits
+                        App.set("functions.msgbox.show", 0);
+                    }
+                }
+            });
+    }
+}, 1000);
+
+// for add new task and parse url
 App.bind("si.urlInfo",
     function(e)
     {
@@ -213,9 +248,6 @@ function pointRefashDloadListTimer()
     }
     );
 
-
-//    Point.justForJSTest("... pointRefashDloadListTimer start ...");
-
     Point.feedbackDownloadList(allTaskInfo);
 }
 
@@ -238,8 +270,9 @@ function pointStopPointInterval()
     window.clearInterval(pointReflashDownloadListIntervalId);
 }
 
-function pointSetDefaultMachine(peerId)
+function pointSetDefaultDownloader(peerId)
 {
+    pointLocalDownloaderPid = peerId;
     $("#manage-list > li[data-pid="+peerId+"]").click();
 }
 
@@ -247,17 +280,23 @@ function pointBindNewMachine(code)
 {
     if(code === "")
     {
-        Point.justForJSTest("  machine code is empty, return  ");
+        Point.justForJSTest("  router code is empty, return  ");
         return;
     }
 
     $pop_sjbox_div = $("#d-add-downloader-panels > div.pop_addd_unit > div.pop_de_inp > div.pop_sjbox");
     $pop_sjbox_div.find(".sel_txt > input.sel_inptxt").val(code).blur().trigger('input');
     $pop_sjbox_div.find("a.btn_inp").click();
+
+    // hide the msgbox if exits
+    App.set("functions.msgbox.show", 0);
 }
 
 
-function pointUnbindMachine(code)
+function pointUnbindMachine(pid)
 {
+    $("#downloader-list>li[data-pid="+pid+"]>div").find("a[title='解除绑定']").click();
+
+    // click confirm
 
 }

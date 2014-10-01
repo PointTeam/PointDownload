@@ -16,6 +16,9 @@ XwareSettingControler::XwareSettingControler(QObject *parent) :
     connect(XwarePopulateObject::getInstance(), SIGNAL(sVertifyCodeLink(QString)),
             this, SIGNAL(sVertifyCodeLinkChange(QString)));
 
+    connect(XwareController::getInstance(), SIGNAL(sBindRouterCodeResult(int)),
+            this, SLOT(bindRouterCodeResultHandle(int)));
+
     initData();
 }
 
@@ -46,7 +49,10 @@ void XwareSettingControler::signInXware(QString username, QString passwd, QStrin
 
 void XwareSettingControler::signOutXware()
 {
-    XwareController::getInstance()->logout();
+    // don't nothing temporiry
+    NormalNotice::getInstance()->showMessage(tr("Logout Disable"), Notice_Color_Notice,
+                                             tr("Sorry, logout dose not enable for now, you can restart point to logout"));
+    //XwareController::getInstance()->logout();
 }
 
 void XwareSettingControler::refreshVertifyCode()
@@ -57,8 +63,6 @@ void XwareSettingControler::refreshVertifyCode()
 
 void XwareSettingControler::tryAutomaticLogin()
 {
-//    qDebug()<<isSignIn<<userName<<userPasswd<<automaticLogin;
-
     setIsSignIn(false);   // added by Choldrim
 
     if (!isSignIn && userName != "" & userPasswd != "" & automaticLogin)
@@ -158,12 +162,12 @@ void XwareSettingControler::setUserPasswd(QString tmpPasswd)
 
 void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
 {
-    if(rs == x_LoginSuccess)
-    {
-        // save state
-        setIsSignIn(true);
-    }
-    else if(rs == x_Logout)
+//    if(rs == x_LoginSuccess)
+//    {
+//        // save state
+//        setIsSignIn(true);
+//    }
+    if(rs == x_Logout)
     {
         // save state
         setIsSignIn(false);
@@ -172,6 +176,18 @@ void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
     {
         // time out
         setIsSignIn(false);
+    }
+}
+
+void XwareSettingControler::bindRouterCodeResultHandle(int rs)
+{
+    if(rs == 0)
+    {
+        setIsSignIn(false);
+    }
+    if(rs == 1)
+    {
+        setIsSignIn(true);
     }
 }
 

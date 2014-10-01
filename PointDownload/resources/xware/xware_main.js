@@ -261,6 +261,3 @@ function pointUnbindMachine(code)
 {
 
 }
-
-
-//App.bind("si.urlInfo",function(e){Point.justForJSTest(e.name);});

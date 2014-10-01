@@ -61,12 +61,12 @@ void XwareTask::stopDownload(QString URL)
 
 void XwareTask::suspendDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getIsLogin())return;
+    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
+        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
         return;
     }
 
@@ -75,12 +75,12 @@ void XwareTask::suspendDownloading(QString URL)
 
 void XwareTask::resumeDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getIsLogin())return;
+    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
+        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
         return;
     }
 
@@ -89,12 +89,12 @@ void XwareTask::resumeDownloading(QString URL)
 
 void XwareTask::removeDownloading(QString URL)
 {
-    if(!XwareWebController::getInstance()->getIsLogin())return;
+    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
+        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
         return;
     }
 
@@ -103,12 +103,12 @@ void XwareTask::removeDownloading(QString URL)
 
 void XwareTask::entryOfflineChannel(QString URL)
 {
-    if(!XwareWebController::getInstance()->getIsLogin())return;
+    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
+        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
         return;
     }
 
@@ -117,12 +117,12 @@ void XwareTask::entryOfflineChannel(QString URL)
 
 void XwareTask::entryHighSpeedChannel(QString URL)
 {
-    if(!XwareWebController::getInstance()->getIsLogin())return;
+    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
     QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
     if(tid == "-1")
     {
         // error
-        emit sXwareError(URL, QString(tr("no task can not be found by URL:") + URL), Xware);
+        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
         return;
     }
 

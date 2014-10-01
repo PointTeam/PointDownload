@@ -379,11 +379,10 @@ void UnifiedInterface::handleDownloadTrashControl(OperationType otype, QString U
 
 void UnifiedInterface::handleDownloadSearchControl(QString URL)
 {
-    QObject *parent;
     QStringList arguments;
     arguments << QString(URL + "#..#FIREFOX");//仿照firefox格式发送数据
 
-    QProcess *myProcess = new QProcess(parent);
+    QProcess *myProcess = new QProcess(0);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
 }
 

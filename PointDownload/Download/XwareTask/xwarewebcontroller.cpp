@@ -27,9 +27,11 @@ XwareWebController::XwareWebController(QObject *parent) :
     // init the web view
     initWebView();
 
-    isLogined = false;
+    // init login state
+    loginState = LoginNotReady;
+
     loginCtrlTimer = new QTimer();
-    loginTimeCount = 1;
+    loginTimeCount = 0;
     isHasAutoLoginTask = false;
 
     // login control timer
@@ -55,21 +57,25 @@ XwareWebController * XwareWebController::getInstance()
 
 void XwareWebController::startLoginCtrlTimer()
 {
-    if(loginTimeCount == LOGIN_MAX_TRY)
+    if(loginTimeCount < LOGIN_MAX_TRY)
     {
-        loginTimeCount = 1;
+        ++loginTimeCount;
+        XwarePopulateObject::getInstance()->login(userName, userPwd, vertifyCode);
+    }
+
+    else
+    {
+        loginTimeCount = 0;
         loginCtrlTimer->stop();
 
         // emit this to javascript
         emit sLoginResult(x_LoginTimeOut);
+        loginState = LoginReady;
 
-//        NormalNotice::showMessage(tr("Login Timeout"));
-
-         return;
+        NormalNotice::getInstance()->showMessage(tr("Xware: Login Timeout"), Notice_Color_Error,
+                  tr("Sorry for this, Please check the network or restart Point and try again later"));
     }
 
-    ++loginTimeCount;
-    XwarePopulateObject::getInstance()->login(userName, userPwd, vertifyCode);
 }
 
 void XwareWebController::executeJS(QString js)
@@ -87,11 +93,25 @@ QString XwareWebController::setElemValueById(QString id, QString value)
 
 void XwareWebController::login(QString userName, QString pwd, QString vertifyCode)
 {
-    qDebug()<<"[xware info] login ...";
+    if(loginState == LoginNotReady)
+    {
+        NormalNotice::getInstance()->showMessage(tr("Xware: Login Service is not Ready"), Notice_Color_Notice,
+                                                 tr("Please check the network"));
+        return;
+    }
+
+
+    // show hints
+    NormalNotice::getInstance()->showMessage(tr("Xware: Try to Login ..."), Notice_Color_Notice,
+                                             tr(""));
+
+    // changed login state
+    loginState = Logining;
 
     this->userName = userName;
     this->userPwd = pwd;
     this->vertifyCode = vertifyCode;
+
     startLoginCtrlTimer();
     loginCtrlTimer->start(LOGIN_DEFAULT_INTERVAL);
 }
@@ -156,42 +176,34 @@ void XwareWebController::tryAutomaticLogin(QString userName, QString pwd)
     isHasAutoLoginTask = true;
 }
 
-bool XwareWebController::getIsLogin()
+XwareWebController::LoginState XwareWebController::getLoginState()
 {
-    if(currentPageURL() == MAIN_URL_3 || currentPageURL() == MAIN_URL_OLD)
-    {
-        isLogined = true;
-    }
-    else
-    {
-        isLogined = false;
-    }
-
-    return isLogined;
+    return loginState;
 }
 
 void XwareWebController::loadingFinished(bool noError)
 {
-    // on error
+    if(XWARE_CONSTANTS_STRUCT.DEBUG)
+        qDebug()<<" loading Finished:"<<currentPageURL();
+
+    // catch error
     if(!noError)
     {
-        qDebug()<<"an error is eccured when loading page:"<<currentPageURL();
-        // return;
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<" catch an error when loading page:"<<currentPageURL();
     }
 
     // http://yuancheng.xunlei.com/3/
-    if(currentPageURL() == MAIN_URL_3 && !isLogined)
+    if(currentPageURL() == MAIN_URL_3 && loginState != Logined)
     {
         // populate javascript to MAIN_URL_3
         populateJavascript();
 
-        isLogined = true;
-        isHasAutoLoginTask = false;
-
-        qDebug()<<"[xware info] finish login !";
-        qDebug()<<"[xware info] init competed webview !";
-
+        // init completed task webview
         CompletedListWebView::getInstance()->init();
+
+        loginState = Logined;
+        isHasAutoLoginTask = false;
 
         emit sLoginResult(x_LoginSuccess);
     }
@@ -202,23 +214,33 @@ void XwareWebController::loadingFinished(bool noError)
         // populate javascript to LOGIN_URL
         populateJavascript();
 
-        if(isLogined)
+        if(loginState == Logined)
         {
-            emit sLoginResult(x_Logout);
-            isLogined = false;
 
-            qDebug()<<"[xware info] logout ";
+            //  show the hints
+            NormalNotice::getInstance()->showMessage(tr("Xware: Logout"), Notice_Color_Success, tr(""));
 
             // re init the webview
             reInitWebView();
+
+            emit sLoginResult(x_Logout);
         }
 
-        qDebug()<<"[xware info] login page ready ! ";
-
-        // 仅在程序刚启动并且有自动登录记录时调用
-        if(isHasAutoLoginTask)
+        if(loginState != Logining)
         {
-            this->login(userName, userPwd);
+            // changed login state
+            loginState = LoginReady;
+
+            // 仅在程序刚启动并且有自动登录记录时调用
+            if(isHasAutoLoginTask)
+            {
+                this->login(userName, userPwd);
+            }
+            else
+            {
+                NormalNotice::getInstance()->showMessage(tr("Xware: Login Service is Ready"), Notice_Color_Success,
+                                                         tr("You can login to Xware now"));
+            }
         }
     }
 }
@@ -226,7 +248,7 @@ void XwareWebController::loadingFinished(bool noError)
 void XwareWebController::populateQtObject()
 {
     if ((currentPageURL() == MAIN_URL_3) || (currentPageURL() == LOGIN_URL))
-    {        
+    {
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
             qDebug()<<"populate qt object to ==>" << currentPageURL();
 
@@ -241,30 +263,6 @@ void XwareWebController::populateJavascript()
     if(currentPageURL().contains(LOGIN_URL))
     {
         filePath = ":/xware/resources/xware/xware_login.js";
-
-//        isInitedJSConnection = true;
-
-        // temp
-//        if(!isInitedJSConnection)
-//        {
-//            QFile file(":/xware/resources/xware/xware_connection.js");
-//            qDebug()<<"              populate xware_connection js              ";
-//            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-//            {
-//                if(XWARE_CONSTANTS_STRUCT.DEBUG)
-//                    qDebug()<<"open error";
-//                return;
-//            }
-//            QTextStream textInput(&file);
-//            QString jsStr = textInput.readAll();
-//            webview->page()->mainFrame()->evaluateJavaScript(jsStr);
-//            file.close();
-//            isInitedJSConnection = true;
-//        }
-
-
-
-
     }
     else if(currentPageURL() == MAIN_URL_3)
     {
@@ -292,14 +290,14 @@ void XwareWebController::populateJavascript()
     webview->page()->mainFrame()->evaluateJavaScript(jsStr);
     file.close();
 
-
     if(currentPageURL().contains(LOGIN_URL))
     {
         // temp
         if(!isInitedJSConnection)
         {
             QFile file(":/xware/resources/xware/xware_connection.js");
-            qDebug()<<"              populate xware_connection js              ";
+            if(XWARE_CONSTANTS_STRUCT.DEBUG)
+                qDebug()<<" *********  populate xware_connection js  ***********  ";
             if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
                 if(XWARE_CONSTANTS_STRUCT.DEBUG)

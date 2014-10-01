@@ -42,6 +42,10 @@
 #include "Controler/topcontrl.h"
 #include "XMLHandler/downloadxmlhandler.h"
 
+
+#define GET_R_CODE_MAX_TRY 5  // 5t => 45s
+#define GET_R_DEFAULT_INTERVAL 3000  // second
+
 class XwareController : public QObject
 {
     Q_OBJECT
@@ -53,14 +57,15 @@ public:
     // called by setting dialog
     void login(QString userName, QString pwd, QString vertifyCode = QString(""));
     void logout();
-    void addXwareFirmware();   // add the xware firmware
+    void addXwareFirmware();                  // add the xware firmware
     void removeXwareFirmware();
     void tryAutomaticLogin(QString userName, QString pwd);
 
 signals:
     void sLoginResult(XwareLoginResultType);
-    void sAddXwareSupportResult(int);     // add xware support result (to the setting dialog)
+    void sAddXwareSupportResult(int);     // the result of downloading xware firmware and unziping it (to the setting dialog)
     void sFinishDownload(QString);
+    void sBindRouterCodeResult(int);    // the result of bind router code , 1: success, 0: timeout
 
 private slots:
     void allDestroyHandle();
@@ -69,15 +74,15 @@ private slots:
     void tryToStartAndBindXware(QStringList allPeerList);
     void getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus);   // finish downloading xware firmware
     void finishDownloadHandle(QString URL);
-    void initDefaultSetting();  // init default setting, like max running job and download & upload speed limit
+    void initDefaultSetting();                         // init default setting, like max running job and download & upload speed limit
 
 private:
     explicit XwareController(QObject *parent = 0);
     QString getValueFromEtmcfg(QString key);         // get etm.cfg value by key, ( it's a tool method )
-    QString getLocalPeerId();               // get local peer id(machine code) from etm.cfg
+    QString getLocalPeerId();                      // get local peer id(machine code) from etm.cfg
     bool startETM();
     bool tryToClearXwareCfg(QString cfgPath);
-    QString getCodeFromJson();          // get local peer id(machine code) from json , from "http://127.0.0.1:9000/getsysinfo"
+    QString getCodeFromJson();                // get local peer id(machine code) from json , from "http://127.0.0.1:9000/getsysinfo"
     void bindCodeToXware(QString code);
     bool tryToMakeDir(QString dirPath);
 
@@ -85,6 +90,7 @@ private:
     static XwareController * xwareController;
     QStringList allPeerIds;
     QProcess *ETMProcess;
+    short getRouterCodeCounter;
 };
 
 #endif // XWARECONTROLLER_H

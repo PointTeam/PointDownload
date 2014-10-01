@@ -47,6 +47,14 @@ class XwareWebController : public QObject
 {
     Q_OBJECT
 public:
+    enum LoginState
+    {
+        LoginNotReady,
+        LoginReady,
+        Logining,
+        Logined
+    };
+
     ~XwareWebController();
     static XwareWebController *getInstance();
 
@@ -70,7 +78,7 @@ public:
     void tryAutomaticLogin(QString userName, QString pwd);
 
     // return whether the login state is login
-    bool getIsLogin();
+    LoginState getLoginState();
 
 signals:
     void sLoginResult(XwareLoginResultType);
@@ -92,8 +100,8 @@ private:
 
     QWebView * webview;
 
-    QString URL3;
-    bool isLogined;
+    // login state
+    LoginState loginState;
 
     // login param
     QString userName;

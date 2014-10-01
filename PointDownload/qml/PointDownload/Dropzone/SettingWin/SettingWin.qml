@@ -28,7 +28,7 @@ import Singleton.PEventFilter 1.0
 
 Window {
     id:settingWin
-    flags:Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+    flags:Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
 
     color: "#00000000"
     width: 260

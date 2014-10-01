@@ -57,6 +57,7 @@ signals:
 
 private slots:
     void loginResultHandle(XwareLoginResultType rs);
+    void bindRouterCodeResultHandle(int rs);
 
 private:
     explicit XwareSettingControler(QObject *parent = 0);

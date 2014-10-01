@@ -41,7 +41,7 @@ QString XwarePopulateObject::saveVertifyImg(QString link)
     QNetworkReply *reply = MyNetworkAccessManager::getInstance()->get(QNetworkRequest(url));
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
-    \
+
     QImage img;
     img = img.fromData(reply->readAll());
     QString cmd = QString("rm ") + XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode*");
@@ -53,7 +53,7 @@ QString XwarePopulateObject::saveVertifyImg(QString link)
         qDebug()<<"[xware error] eccur an error when save vertify code !";
     }
 
-    qDebug()<<"save vertify code success !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111";
+    qDebug()<<"save login vertify code success, path:"<<savePath;
 
     return savePath;
 }
@@ -117,7 +117,7 @@ void XwarePopulateObject::setAllBindedPeerIds(QString ids)
     if(! ids.contains(spliterBtwData))
     {
         // debug
-        qDebug()<<"AllBindedPeerIds is empty ~~~";
+        qDebug()<<"AllBindedPeerIds from web is empty, it may be an error or first time to bind to your pc~~~";
     }
     else
     {
@@ -213,8 +213,10 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
         // emit hint
         if(errorMsg.startsWith("请"))
         {
-//            emit sHint(tr("Login Hint"), errorMsg);
-//            qDebug()<<" login vertify code hint =>"<<errorMsg;
+            // let it do nothing!!
+
+            // emit sHint(tr("Login Hint"), errorMsg);
+           // qDebug()<<" login vertify code hint =>"<<errorMsg;
         }
 
         // emit error

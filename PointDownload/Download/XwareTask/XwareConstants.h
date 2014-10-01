@@ -31,9 +31,10 @@ static struct XwareConstants
 {
     // is output the debug info
     static const bool DEBUG = false;
-    static const bool DEBUG_2 = false;  // show webview test
+      // show the test webview
+    static const bool DEBUG_2 = false;
 
-    int  ETM_PORT;  // default port
+    int  ETM_PORT;
 
     // cfg
     QString HOME_PATH;

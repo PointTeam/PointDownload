@@ -115,8 +115,13 @@ void URLServer::socketReadyReadHandler()
 
 void URLServer::taskParseFeedback(QString taskInfo)
 {
+    qDebug()<<" bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb before local socket ";
+    qDebug()<<taskInfo;
+
     tmp_socket->write(taskInfo.toStdString().c_str());
     tmp_socket->flush();
+
+    qDebug()<<" bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb after local socket ";
 }
 
 void URLServer::taskParseHandle(QString taskInfo)
@@ -127,7 +132,7 @@ void URLServer::taskParseHandle(QString taskInfo)
     }
 
     // xware not start or not login
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)
+    if(XwareWebController::getInstance()->getLoginState() != LoginedAndBinded)
     {
         QString msgType("XwareMsgType");
         QString msgConten("XwareNotStart");

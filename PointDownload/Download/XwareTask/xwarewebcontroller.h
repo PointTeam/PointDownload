@@ -43,18 +43,11 @@
 #include "completedlistwebview.h"
 #include "xwaresetting.h"
 
+
 class XwareWebController : public QObject
 {
     Q_OBJECT
 public:
-    enum LoginState
-    {
-        LoginNotReady,
-        LoginReady,
-        Logining,
-        Logined
-    };
-
     ~XwareWebController();
     static XwareWebController *getInstance();
 
@@ -62,11 +55,9 @@ public:
     void executeJS(QString js); // execute javascript
     QString setElemValueById(QString id, QString value);
 
-    // login and logout
     void login(QString userName, QString pwd, QString vertifyCode = QString(""));
     void logout();
 
-    // webview
     void initWebView();
     QWebView * reInitWebView();
     QString currentPageURL();
@@ -75,13 +66,16 @@ public:
     // reload/reflash
     void reloadWebView();
 
+    // auto login
     void tryAutomaticLogin(QString userName, QString pwd);
 
     // return whether the login state is login
-    LoginState getLoginState();
+    XwareLoginState getLoginState();
+
 
 signals:
     void sLoginResult(XwareLoginResultType);
+    void sLoginStateChanged(XwareLoginState);
 
 public slots:
 
@@ -91,6 +85,8 @@ private slots:
     void populateJavascript();  // populate default javascript to webview
     void webUrlChanged(QUrl url);
     void startLoginCtrlTimer();  // try to login, a slot of login-timer
+    void loginStateChanged(XwareLoginState state);
+    void bindRouterCodeResultHandle(int rs);
 
 private:
     explicit XwareWebController(QObject *parent = 0);
@@ -101,7 +97,7 @@ private:
     QWebView * webview;
 
     // login state
-    LoginState loginState;
+    XwareLoginState loginState;
 
     // login param
     QString userName;

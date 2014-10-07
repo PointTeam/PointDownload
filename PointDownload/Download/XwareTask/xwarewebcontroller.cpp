@@ -27,8 +27,12 @@ XwareWebController::XwareWebController(QObject *parent) :
     // init the web view
     initWebView();
 
+    // bind login state changed
+    connect(this, SIGNAL(sLoginStateChanged(XwareLoginState)), this, SLOT(loginStateChanged(XwareLoginState)));
+    connect(XwareController::getInstance(), SIGNAL(sBindRouterCodeResult(int)), this, SLOT(bindRouterCodeResultHandle(int)));
+
     // init login state
-    loginState = LoginNotReady;
+    emit sLoginStateChanged(LoginNotReady);
 
     loginCtrlTimer = new QTimer();
     loginTimeCount = 0;
@@ -38,6 +42,7 @@ XwareWebController::XwareWebController(QObject *parent) :
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
 
     isInitedJSConnection = false;
+
 }
 
 XwareWebController * XwareWebController::xwareWebController = NULL;
@@ -70,12 +75,29 @@ void XwareWebController::startLoginCtrlTimer()
 
         // emit this to javascript
         emit sLoginResult(x_LoginTimeOut);
-        loginState = LoginReady;
 
-        NormalNotice::getInstance()->showMessage(tr("Xware: Login Timeout"), Notice_Color_Error,
-                  tr("Sorry for this, Please check the network or restart Point and try again later"));
+        emit sLoginStateChanged(LoginReady);
+
+        NormalNotice::getInstance()->showMessage(tr("Login timeout"), Notice_Color_Error,
+                  tr("Please check the network or restart the Point to try again"));
     }
 
+}
+
+void XwareWebController::loginStateChanged(XwareLoginState state)
+{
+    this->loginState = state;
+}
+
+void XwareWebController::bindRouterCodeResultHandle(int rs)
+{
+    if(rs == 1)
+    {
+        emit sLoginStateChanged(LoginedAndBinded);
+
+        NormalNotice::getInstance()->showMessage(tr("Login successful"), Notice_Color_Success,
+                                                 tr("Thunder is available now!"));
+    }
 }
 
 void XwareWebController::executeJS(QString js)
@@ -95,18 +117,18 @@ void XwareWebController::login(QString userName, QString pwd, QString vertifyCod
 {
     if(loginState == LoginNotReady)
     {
-        NormalNotice::getInstance()->showMessage(tr("Xware: Login Service is not Ready"), Notice_Color_Notice,
-                                                 tr("Please check the network"));
+        NormalNotice::getInstance()->showMessage(tr("Login service not ready"), Notice_Color_Notice,
+                                                 tr("Please check the network and try again later!"));
         return;
     }
 
 
     // show hints
-    NormalNotice::getInstance()->showMessage(tr("Xware: Try to Login ..."), Notice_Color_Notice,
-                                             tr(""));
+    NormalNotice::getInstance()->showMessage(tr("Logining"), Notice_Color_Notice,
+                                             tr("Logining to Thunder, please wait..."));
 
     // changed login state
-    loginState = Logining;
+    emit sLoginStateChanged(Logining);
 
     this->userName = userName;
     this->userPwd = pwd;
@@ -142,6 +164,7 @@ QWebView *XwareWebController::reInitWebView()
 {
     if(webview != NULL)
     {
+        webview->disconnect();
         delete webview;
         webview = NULL;
     }
@@ -176,7 +199,7 @@ void XwareWebController::tryAutomaticLogin(QString userName, QString pwd)
     isHasAutoLoginTask = true;
 }
 
-XwareWebController::LoginState XwareWebController::getLoginState()
+XwareLoginState XwareWebController::getLoginState()
 {
     return loginState;
 }
@@ -194,7 +217,7 @@ void XwareWebController::loadingFinished(bool noError)
     }
 
     // http://yuancheng.xunlei.com/3/
-    if(currentPageURL() == MAIN_URL_3 && loginState != Logined)
+    if(currentPageURL() == MAIN_URL_3 && loginState < Logined)
     {
         // populate javascript to MAIN_URL_3
         populateJavascript();
@@ -202,10 +225,15 @@ void XwareWebController::loadingFinished(bool noError)
         // init completed task webview
         CompletedListWebView::getInstance()->init();
 
-        loginState = Logined;
         isHasAutoLoginTask = false;
 
+        qDebug()<<"[xware info] login success, initialise binding ...";
+
+        emit sLoginStateChanged(Logined);
         emit sLoginResult(x_LoginSuccess);
+
+        // wait for get the binded peer ids
+        QTimer::singleShot(2000, XwarePopulateObject::getInstance(), SLOT(getAllBindedPeerIds()));
     }
 
     // http://yuancheng.xunlei.com/login.html
@@ -218,7 +246,10 @@ void XwareWebController::loadingFinished(bool noError)
         {
 
             //  show the hints
-            NormalNotice::getInstance()->showMessage(tr("Xware: Logout"), Notice_Color_Success, tr(""));
+            NormalNotice::getInstance()->showMessage(tr("Logout"), Notice_Color_Success,
+                                                     tr("Thunder is unavailable now."));
+
+            XwareController::getInstance()->stopETM();
 
             // re init the webview
             reInitWebView();
@@ -229,7 +260,7 @@ void XwareWebController::loadingFinished(bool noError)
         if(loginState != Logining)
         {
             // changed login state
-            loginState = LoginReady;
+            emit sLoginStateChanged(LoginReady);
 
             // 仅在程序刚启动并且有自动登录记录时调用
             if(isHasAutoLoginTask)
@@ -238,8 +269,12 @@ void XwareWebController::loadingFinished(bool noError)
             }
             else
             {
-                NormalNotice::getInstance()->showMessage(tr("Xware: Login Service is Ready"), Notice_Color_Success,
-                                                         tr("You can login to Xware now"));
+                SettingXMLHandler xml;
+                if(xml.getChildElement(XwareSetting, "State") == "Enable")
+                {
+                    NormalNotice::getInstance()->showMessage(tr("Login ready"), Notice_Color_Success,
+                                                             tr("You can login to Thunder now"));
+                }
             }
         }
     }
@@ -308,7 +343,7 @@ void XwareWebController::populateJavascript()
             QString jsStr = textInput.readAll();
             webview->page()->mainFrame()->evaluateJavaScript(jsStr);
             file.close();
-            isInitedJSConnection = true;
+//            isInitedJSConnection = true;
         }
     }
 
@@ -319,18 +354,27 @@ void XwareWebController::webUrlChanged(QUrl url)
    if(XWARE_CONSTANTS_STRUCT.DEBUG)
        qDebug()<<"URL changed ==>" << url.toString() ;
 
-   if(url.toString() == MAIN_URL_3)
+   if(url.toString().contains(LOGIN_URL))
+   {
+       if(url.toString().startsWith(LOGIN_URL + QString("#")))
+       {
+           webview->triggerPageAction(QWebPage::Stop);
+           webview->page()->mainFrame()->load(QUrl(LOGIN_URL));
+       }
+   }
+
+   else if(url.toString() == MAIN_URL_3)
    {
        loginTimeCount = 0;
        loginCtrlTimer->stop();
-       qDebug()<<"[xware info] login success, initialise binding ...";
    }
 
-    if(url.toString() != MAIN_URL_3 &&  !url.toString().contains(LOGIN_URL))
+    else
     {
             webview->triggerPageAction(QWebPage::Stop);
             webview->page()->mainFrame()->load(QUrl(MAIN_URL_3));
     }
+
 
 }
 

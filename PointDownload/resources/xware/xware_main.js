@@ -37,13 +37,20 @@ var pointLocalDownloaderPid = "";
 // feedback the message to point
 App.bind("functions.msgbox.show",
             function(e) {
-                Point.feedbackMsgboxMessage(App.select("#d-msgbox-message").html());
+
+                if(e)
+                {
+                    Point.feedbackMsgboxMessage(App.select("#d-msgbox-message").html());
+                }
+
             });
 
 // if have not clicked the downloader then it become online, the controlling of task will not work
 var pointReloadDownloaderInterval = setInterval(
 function()
 {
+    Point.justForJSTest(".. downloader offline, please wait ..");
+
     if(pointLocalDownloaderPid !== "")
     {
         $("#downloader-list>li").each(
@@ -56,6 +63,8 @@ function()
                     {
                         $(this).click();
                         window.clearInterval(pointReloadDownloaderInterval);
+
+                        Point.justForJSTest(".. downloader online ..");
 
                         // hide the msgbox if exits
                         App.set("functions.msgbox.show", 0);
@@ -119,6 +128,8 @@ App.bind("si.urlInfo",
             );
             Point.feedbackURLParse(taskFileList);
             App.set("dialogs.createTask.show", false);
+
+            Point.justForJSTest("-------------- feedback url parse ---------------");
         }
     }
 );

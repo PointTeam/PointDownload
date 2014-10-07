@@ -42,6 +42,15 @@ enum XwareLoginResultType
     x_Logout
 };
 
+enum XwareLoginState
+{
+    LoginNotReady = 0,
+    LoginReady,
+    Logining,
+    Logined,
+    LoginedAndBinded
+};
+
 struct XwareTaskInfo
 {
     QString tid; // task ID

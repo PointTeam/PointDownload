@@ -64,6 +64,7 @@ private:
     explicit XwareTask(QObject *parent = 0);
     void updateXMLFile(DownloadingItemInfo info);
     void initConnection();
+    QString getTaskId(QString URL);         // -1: task isn't exist, -2: xware not login
 
 private:
     static XwareTask *xwareTask;

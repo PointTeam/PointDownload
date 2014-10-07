@@ -253,6 +253,9 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
 
 void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
 {
+
+    qDebug()<<" bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 1";
+
     DownloadXMLHandler tmpOpera;
     SDownloadThread threadStruct;
     threadStruct.startBlockIndex = "1";
@@ -302,6 +305,8 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
 
     //启动下载
     XwareTask::getInstance()->addNewDownload(info);
+
+    qDebug()<<" bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 2";
 }
 
 

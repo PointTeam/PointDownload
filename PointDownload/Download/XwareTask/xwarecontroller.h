@@ -54,23 +54,24 @@ public:
     static XwareController *getInstance();
     void startFeedbackDloadList();
 
-    // called by setting dialog
+    // ===================== called by setting dialog =============================== //
     void login(QString userName, QString pwd, QString vertifyCode = QString(""));
     void logout();
     void addXwareFirmware();                  // add the xware firmware
     void removeXwareFirmware();
     void tryAutomaticLogin(QString userName, QString pwd);
+    // =============================================================================== //
 
 signals:
-    void sLoginResult(XwareLoginResultType);
-    void sAddXwareSupportResult(int);     // the result of downloading xware firmware and unziping it (to the setting dialog)
+    void sAddXwareSupportResult(bool);     // the result of downloading xware firmware and unziping it (to the setting dialog)
     void sFinishDownload(QString);
     void sBindRouterCodeResult(int);    // the result of bind router code , 1: success, 0: timeout
 
+public slots:
+    void stopETM();
+
 private slots:
     void allDestroyHandle();
-
-    void loginResult(XwareLoginResultType rs);
     void tryToStartAndBindXware(QStringList allPeerList);
     void getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus);   // finish downloading xware firmware
     void finishDownloadHandle(QString URL);

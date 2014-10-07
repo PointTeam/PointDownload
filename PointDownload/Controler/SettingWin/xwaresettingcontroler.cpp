@@ -8,16 +8,17 @@ XwareSettingControler::XwareSettingControler(QObject *parent) :
     qmlRegisterSingletonType<XwareSettingControler>("Singleton.XwareSettingControler"
                                                     , 1, 0, "XwareSettingControler", xSCObj);
 
-    // login result
-    connect(XwareController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
-            this, SLOT(loginResultHandle(XwareLoginResultType)));
-
     // vertify code link update
     connect(XwarePopulateObject::getInstance(), SIGNAL(sVertifyCodeLink(QString)),
             this, SIGNAL(sVertifyCodeLinkChange(QString)));
 
-    connect(XwareController::getInstance(), SIGNAL(sBindRouterCodeResult(int)),
-            this, SLOT(bindRouterCodeResultHandle(int)));
+    // downloading xware firmware finish
+    connect(XwareController::getInstance(), SIGNAL(sAddXwareSupportResult(bool)),
+                this, SLOT(slotEanbleXware(bool)));
+
+    // login state changed
+    connect(XwareWebController::getInstance(), SIGNAL(sLoginStateChanged(XwareLoginState)),
+                    this, SLOT(loginStateChangedHandle(XwareLoginState)));
 
     initData();
 }
@@ -32,12 +33,18 @@ XwareSettingControler * XwareSettingControler::getInstance()
 
 void XwareSettingControler::enableXware()
 {
+    NormalNotice::getInstance()->showMessage(tr("Adding Thunder"),
+                                             Notice_Color_Notice,
+                                             tr("Please wait for the installation to complete"));
     XwareController::getInstance()->addXwareFirmware();
-    setXwareEnable(true);
 }
 
 void XwareSettingControler::disableXware()
 {
+    NormalNotice::getInstance()->showMessage(tr("Thunder Removed"),
+                                             Notice_Color_Notice,
+                                             tr("Thunder now unavailable"));
+
     XwareController::getInstance()->removeXwareFirmware();
     setXwareEnable(false);
 }
@@ -51,8 +58,9 @@ void XwareSettingControler::signOutXware()
 {
     // don't nothing temporiry
     NormalNotice::getInstance()->showMessage(tr("Logout Disable"), Notice_Color_Notice,
-                                             tr("Sorry, logout dose not enable for now, you can restart point to logout"));
-    //XwareController::getInstance()->logout();
+                                             tr("Sorry, logout dose not enable for now, you can close the Point to logout"));
+
+//    XwareController::getInstance()->logout();
 }
 
 void XwareSettingControler::refreshVertifyCode()
@@ -63,11 +71,10 @@ void XwareSettingControler::refreshVertifyCode()
 
 void XwareSettingControler::tryAutomaticLogin()
 {
-    setIsSignIn(false);   // added by Choldrim
+    setSignInFlag(1);
 
     if (!isSignIn && userName != "" & userPasswd != "" & automaticLogin)
     {
-        //signInXware(userName,userPasswd);
         XwareController::getInstance()->tryAutomaticLogin(userName, userPasswd);
     }
 }
@@ -100,6 +107,7 @@ QString XwareSettingControler::getUserPasswd()
 void XwareSettingControler::setXwareEnable(bool flag)
 {
     xwareEnable = flag;
+
     SettingXMLHandler tmpHandler;
 
     if (flag)
@@ -110,20 +118,24 @@ void XwareSettingControler::setXwareEnable(bool flag)
     emit sXwareEnableChange();
 }
 
-void XwareSettingControler::setIsSignIn(bool flag)
+void XwareSettingControler::setSignInFlag(int flag)
 {
-    isSignIn = flag;
+    if (flag == 0)
+    {
+        isSignIn = true;
 
-    SettingXMLHandler tmpHandler;
-
-    if (flag)
+        SettingXMLHandler tmpHandler;
         tmpHandler.setChildElement(XwareSetting,"Logged","True");
-    else
-        tmpHandler.setChildElement(XwareSetting,"Logged","False");
+    }
+    else if (flag == 1)
+    {
+        isSignIn = false;
 
-    emit sIsSignInChange();
+        SettingXMLHandler tmpHandler;
+        tmpHandler.setChildElement(XwareSetting,"Logged","False");
+    }
+
     emit sSignInFlagChange(flag);
-    emit sSignInFinish();
 }
 
 void XwareSettingControler::setAutomaticLogin(bool flag)
@@ -160,34 +172,45 @@ void XwareSettingControler::setUserPasswd(QString tmpPasswd)
     emit sUserPasswdChange();
 }
 
-void XwareSettingControler::loginResultHandle(XwareLoginResultType rs)
+
+void XwareSettingControler::loginStateChangedHandle(XwareLoginState state)
 {
-//    if(rs == x_LoginSuccess)
-//    {
-//        // save state
-//        setIsSignIn(true);
-//    }
-    if(rs == x_Logout)
+    if(state == LoginNotReady || state == LoginReady)
     {
-        // save state
-        setIsSignIn(false);
+        setSignInFlag(1);
     }
-    else if(rs == x_LoginTimeOut)
+
+    else if(state == Logining)
     {
-        // time out
-        setIsSignIn(false);
+        setSignInFlag(2);
     }
+
+    else if(state == Logined)
+    {
+        setSignInFlag(3);
+    }
+
+    else if(state == LoginedAndBinded)
+    {
+        setSignInFlag(0);
+    }
+
 }
 
-void XwareSettingControler::bindRouterCodeResultHandle(int rs)
+void XwareSettingControler::slotEanbleXware(bool result)
 {
-    if(rs == 0)
+    if (result)
     {
-        setIsSignIn(false);
+        setXwareEnable(true);
+        NormalNotice::getInstance()->showMessage(tr("Enable Thunder success"),
+                                                 Notice_Color_Success,
+                                                 tr("Thunder has been installed, you can log in Thunder now."));
     }
-    if(rs == 1)
+    else
     {
-        setIsSignIn(true);
+        NormalNotice::getInstance()->showMessage(tr("Enable Thunder error"),
+                                                 Notice_Color_Error,
+                                                 tr("Install Thunder failed, please check the network and try again later."));
     }
 }
 

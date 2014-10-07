@@ -10,19 +10,32 @@ Rectangle{
     Connections{
         target: XwareSettingControler
 
+        //每个数字对应按钮会显示得文字:0="Sign out";1="Sign in";2="Signing...";3="Binding..."
         onSSignInFlagChange:{
-            if (flag)
+            if (flag == 0)
             {
                 loginPage.visible = false
                 logoutPage.visible = true
                 verifyCodeRec.height = 0
                 logText.text = qsTr("Sign out")
             }
-            else
+            else if (flag == 1)
             {
                 loginPage.visible = true
                 logoutPage.visible = false
                 logText.text = qsTr("Sign in")
+            }
+            else if (flag == 2)
+            {
+                loginPage.visible = true
+                logoutPage.visible = false
+                logText.text = qsTr("Signing...")
+            }
+            else if (flag == 3)
+            {
+                loginPage.visible = true
+                logoutPage.visible = false
+                logText.text = qsTr("Binding...")
             }
         }
 
@@ -126,6 +139,21 @@ Rectangle{
             height: remeberInfoCheckImg.height
             visible: height == 0?false:true
             anchors {left: remeberInfoCheckImg.right;leftMargin: 5; top: remeberInfoCheckImg.top}
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (remeberInfoCheckImg.source == "qrc:/images/navigation/Breduncheck")
+                    {
+                        remeberInfoCheckImg.source = "qrc:/images/navigation/Brednone"
+                        XwareSettingControler.automaticLogin = false
+                    }
+                    else
+                    {
+                        remeberInfoCheckImg.source = "qrc:/images/navigation/Breduncheck"
+                        XwareSettingControler.automaticLogin = true
+                    }
+                }
+            }
         }
         Text{
             text:qsTr("Thunder License?")
@@ -177,7 +205,6 @@ Rectangle{
                         XwareSettingControler.userName = loginPage.getUsername();
                         XwareSettingControler.userPasswd = loginPage.getPassword();
                         XwareSettingControler.signInXware(loginPage.getUsername(),loginPage.getPassword(), vertifyCodeBox.text)
-                        logText.text = qsTr("Signing...")
                     }
                 }
             }

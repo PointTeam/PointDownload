@@ -27,10 +27,6 @@ XwareController::XwareController(QObject *parent) :
 {
     getRouterCodeCounter = 0;
 
-    // login result
-    connect(XwareWebController::getInstance(), SIGNAL(sLoginResult(XwareLoginResultType)),
-            this, SLOT(loginResult(XwareLoginResultType)));
-
     // all peer ids
     connect(XwarePopulateObject::getInstance(), SIGNAL(sReturnAllBindedPeerIds(QStringList)),
             this, SLOT(tryToStartAndBindXware(QStringList)));
@@ -60,7 +56,7 @@ XwareController * XwareController::getInstance()
 void XwareController::allDestroyHandle()
 {
     qDebug()<<"[xware info] xware exit and stop ETM";
-    system("pkill Embed");
+    stopETM();
 }
 
 QString XwareController::getValueFromEtmcfg(QString key)
@@ -69,7 +65,8 @@ QString XwareController::getValueFromEtmcfg(QString key)
     QFile file(XWARE_CONSTANTS_STRUCT.XWARE_ETM_CFG);
     if(!file.open(QIODevice::ReadOnly))
     {
-        qDebug()<<"[xware error]open xware etm.cfg file error or it doesn't exist !!";
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"[xware hints] would not open xware etm.cfg file,it doesn't exist' !!";
         return value;
     }
     QTextStream ts(&file);
@@ -94,7 +91,6 @@ bool XwareController::startETM()
     // kill all ETM process
     system("pkill Embed");
 
-
     SettingXMLHandler xmlHandle;
     QString defaultDloadPath = xmlHandle.getChildElement(GeneralSettings, "SavePath");
 
@@ -111,6 +107,8 @@ bool XwareController::startETM()
 
 
     /*
+     * old function: start ETM directly without use XwareStartUp!
+     *
     ETMProcess = new QProcess();
     QStringList args;
     args<<"--verbose";
@@ -133,6 +131,9 @@ bool XwareController::startETM()
             qDebug()<<"ETM has been started successfully!!";
         return true;
     }
+
+    NormalNotice::getInstance()->showMessage(tr("Failed to start Thunder"), Notice_Color_Error,
+                                             tr("Please re-enable Thunder in setting dialog and try to login again later."));
 
     return false;
 }
@@ -201,8 +202,13 @@ QString XwareController::getCodeFromJson()
         }
         else
         {
-//            NormalNotice::getInstance()->showMessage(tr("Fail to Get Router Code"), Notice_Color_Error,
-//                                                     tr("Fail to Get Router Code, Try to Get It Again"));
+            if(getRouterCodeCounter >= (GET_R_CODE_MAX_TRY/2)) // show the message more than 6 seconds
+            {
+                /*
+                NormalNotice::getInstance()->showMessage(tr("Binding fail"), Notice_Color_Notice,
+                                                         tr("Trying again, it may take a few seconds!"));
+                */
+            }
         }
     }
 
@@ -264,8 +270,6 @@ void XwareController::addXwareFirmware()
 
     connect(pro, SIGNAL(finished(int,QProcess::ExitStatus)),
             this, SLOT(getXwareFirmwareFinishHandle(int,QProcess::ExitStatus)));
-
-    // timer out @choldrim
 }
 
 void XwareController::removeXwareFirmware()
@@ -290,17 +294,17 @@ void XwareController::tryAutomaticLogin(QString userName, QString pwd)
     XwareWebController::getInstance()->tryAutomaticLogin(userName, pwd);
 }
 
-void XwareController::loginResult(XwareLoginResultType rs)
+void XwareController::stopETM()
 {
-    if(rs == x_LoginSuccess)
+    ETMProcess->kill();
+    system("pkill Embed");
+
+    if(ETMProcess != NULL)
     {
-        // this need to be improved
-        QTimer::singleShot(2000, XwarePopulateObject::getInstance(), SLOT(getAllBindedPeerIds()));
+        delete ETMProcess;
+        ETMProcess = NULL;
     }
-
-    emit sLoginResult(rs);
 }
-
 
 void XwareController::tryToStartAndBindXware(QStringList allPeerList)
 {
@@ -332,8 +336,6 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         // (5) start ETM
         if(!startETM())
         {
-            NormalNotice::getInstance()->showMessage(tr("Fail to Start ETM"), Notice_Color_Error,
-                                                     tr("Please check whether there is anything in ~/.PointConfig/XwarePlugin/Xware"));
             return;
         }
     }
@@ -344,8 +346,9 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         //  try to delete local xware config
         if (!tryToClearXwareCfg(XWARE_CONSTANTS_STRUCT.XWARE_CFG_DIR))
         {
-            NormalNotice::getInstance()->showMessage(tr("Error"), Notice_Color_Error,
-                                                     tr("occur a failure error when deleting xware config"));
+            NormalNotice::getInstance()->showMessage(tr("Failed to start Thunder"), Notice_Color_Error,
+                                                     tr("Please re-enable Thunder in setting dialog and try to login again later."));
+
             emit sBindRouterCodeResult(0);
             return;
         }
@@ -353,8 +356,6 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
         // (5) start ETM
         if(!startETM())
         {
-            NormalNotice::getInstance()->showMessage(tr("Fail to Start ETM"), Notice_Color_Error,
-                                                     tr("Please check whether there is anything in ~/.PointConfig/XwarePlugin/Xware"));
             emit sBindRouterCodeResult(0);
             return;
         }
@@ -368,16 +369,19 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
 
         if(jsonCode == "")
         {
-            NormalNotice::getInstance()->showMessage(tr("Router Code Error"), Notice_Color_Error,
-                                                     tr("Get Router Code Timeout, Code is Empty!"));
+            NormalNotice::getInstance()->showMessage(tr("Bind Router-Code timeout"), Notice_Color_Error,
+                                                     tr("Please check the network or restart the Point to try again."));
+
             emit sBindRouterCodeResult(0);
             return;
         }
+        /*
         else
         {
             NormalNotice::getInstance()->showMessage(tr("Get Router Code Successfully"), Notice_Color_Success,
                                                      tr("Get Router Code Successfully, Trying to Bind Xware now!"));
         }
+        */
 
         bindCodeToXware(jsonCode);
 
@@ -387,9 +391,6 @@ void XwareController::tryToStartAndBindXware(QStringList allPeerList)
     }
 
     QTimer::singleShot(200, this, SLOT(initDefaultSetting()));
-
-    NormalNotice::getInstance()->showMessage(tr("Xware Login Successfully"), Notice_Color_Success,
-                                             tr(":D"));
 
     emit sBindRouterCodeResult(1);
 }
@@ -406,7 +407,8 @@ void XwareController::initDefaultSetting()
 
 void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    if(exitStatus == QProcess::NormalExit)
+    // download xware successfully
+    if(exitStatus == QProcess::NormalExit && exitCode == 0)
     {
         // unzip
         system("unzip -o XwareFirmxware.zip");
@@ -414,15 +416,18 @@ void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitS
         system("rm -f XwareFirmxware.zip");
 
         // reflash the
-        XwareWebController::getInstance()->reloadWebView();
+        //XwareWebController::getInstance()->reloadWebView();
 
-        emit sAddXwareSupportResult(1);
+        emit sAddXwareSupportResult(true);
     }
+
+    // fail
     else
     {
-        emit sAddXwareSupportResult(0);
+        emit sAddXwareSupportResult(false);
     }
 
+    // free the process
     QProcess *pro = static_cast<QProcess*>(sender());
     delete pro;
     pro = NULL;

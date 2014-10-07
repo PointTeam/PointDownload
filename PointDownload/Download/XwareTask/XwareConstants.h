@@ -31,6 +31,7 @@ static struct XwareConstants
 {
     // is output the debug info
     static const bool DEBUG = false;
+
       // show the test webview
     static const bool DEBUG_2 = false;
 
@@ -57,9 +58,9 @@ static struct XwareConstants
     QString URLSTR;
 
     // msg spliter
-    const QString SPLITER_BTWN_DATA = "#..#";
-    const QString SPLITER_END = "#.^_^.#";
-    const QString SPLITER_DEFAULT_PARAM = "--";
+    QString SPLITER_BTWN_DATA;
+    QString SPLITER_END;
+    QString SPLITER_DEFAULT_PARAM;
 
     XwareConstants()
     {
@@ -84,6 +85,10 @@ static struct XwareConstants
 
         // url
         URLSTR = "http://127.0.0.1:" + QString::number(ETM_PORT) + "/";
+
+        SPLITER_BTWN_DATA = "#..#";
+        SPLITER_END = "#.^_^.#";
+        SPLITER_DEFAULT_PARAM = "--";
     }
 
 }XWARE_CONSTANTS_STRUCT;

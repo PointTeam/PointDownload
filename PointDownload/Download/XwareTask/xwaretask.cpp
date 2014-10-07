@@ -61,72 +61,52 @@ void XwareTask::stopDownload(QString URL)
 
 void XwareTask::suspendDownloading(QString URL)
 {
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
-    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
-    if(tid == "-1")
-    {
-        // error
-        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
-        return;
-    }
+    QString tid = getTaskId(URL);
 
-    XwarePopulateObject::getInstance()->suspendDownloadingTask(tid);
+    if(tid.toInt() >= 0)
+    {
+        XwarePopulateObject::getInstance()->suspendDownloadingTask(tid);
+    }
 }
 
 void XwareTask::resumeDownloading(QString URL)
 {
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
-    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
-    if(tid == "-1")
-    {
-        // error
-        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
-        return;
-    }
+    QString tid = getTaskId(URL);
 
-    XwarePopulateObject::getInstance()->resumeDownloadingTask(tid);
+    if(tid.toInt() >= 0)
+    {
+        XwarePopulateObject::getInstance()->resumeDownloadingTask(tid);
+    }
 }
 
 void XwareTask::removeDownloading(QString URL)
 {
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
-    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
-    if(tid == "-1")
-    {
-        // error
-        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
-        return;
-    }
+    QString tid = getTaskId(URL);
 
-    XwarePopulateObject::getInstance()->removeDownloadingTask(tid);
+    if(tid.toInt() >= 0)
+    {
+        XwarePopulateObject::getInstance()->removeDownloadingTask(tid);
+    }
 }
 
 void XwareTask::entryOfflineChannel(QString URL)
 {
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
-    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
-    if(tid == "-1")
-    {
-        // error
-        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
-        return;
-    }
+    QString tid = getTaskId(URL);
 
-    XwarePopulateObject::getInstance()->entryOfflineChannel(tid);
+    if(tid.toInt() >= 0)
+    {
+        XwarePopulateObject::getInstance()->entryOfflineChannel(tid);
+    }
 }
 
 void XwareTask::entryHighSpeedChannel(QString URL)
 {
-    if(XwareWebController::getInstance()->getLoginState() != XwareWebController::Logined)return;
-    QString tid = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
-    if(tid == "-1")
-    {
-        // error
-        NormalNotice::getInstance()->showMessage(tr("Task Miss"), Notice_Color_Error, tr("Task can not be found, Please try to add the task again"));
-        return;
-    }
+    QString tid = getTaskId(URL);
 
-    XwarePopulateObject::getInstance()->entryHighSpeedChannel(tid);
+    if(tid.toInt() >= 0)
+    {
+        XwarePopulateObject::getInstance()->entryHighSpeedChannel(tid);
+    }
 }
 
 void XwareTask::slotFinishDownload(QString URL)
@@ -156,4 +136,24 @@ void XwareTask::initConnection()
     // finish download
     connect(XwareTaskEntity::getInstance(), SIGNAL(sFinishDownload(QString)),
             this, SLOT(slotFinishDownload(QString)));
+}
+
+QString XwareTask::getTaskId(QString URL)
+{
+    if(XwareWebController::getInstance()->getLoginState() != LoginedAndBinded)
+    {
+        NormalNotice::getInstance()->showMessage(tr("Thunder isn't logined"), Notice_Color_Notice,
+                                                 tr("Please login to thunder before your operation!"));
+        return QString("-2");
+    }
+    else
+    {
+        QString id = XwareTaskEntity::getInstance()->getTaskIdByUrl(URL);
+        if(id == "-1")
+        {
+            NormalNotice::getInstance()->showMessage(tr("Task miss"), Notice_Color_Error,
+                                                     tr("You need to delete this task and create it again"));
+        }
+        return id;
+    }
 }

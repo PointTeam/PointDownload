@@ -28,6 +28,7 @@ XwarePopulateObject::XwarePopulateObject(QObject *parent) :
     spliterEnd =  XWARE_CONSTANTS_STRUCT.SPLITER_END;
     defaultPara = XWARE_CONSTANTS_STRUCT.SPLITER_DEFAULT_PARAM;
 
+    // show the hints or error
     connect(this, SIGNAL(sHint(QString,QString)), this, SLOT(handleHintEmit(QString,QString)));
     connect(this, SIGNAL(sError(QString,QString)), this, SLOT(handleErrorEmit(QString,QString)));
 }
@@ -37,7 +38,6 @@ QString XwarePopulateObject::saveVertifyImg(QString link)
     QUrl url(link);
 
     QEventLoop loop;
-//    QNetworkAccessManager manager;
     QNetworkReply *reply = MyNetworkAccessManager::getInstance()->get(QNetworkRequest(url));
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
@@ -116,8 +116,8 @@ void XwarePopulateObject::setAllBindedPeerIds(QString ids)
     QStringList list;
     if(! ids.contains(spliterBtwData))
     {
-        // debug
-        qDebug()<<"AllBindedPeerIds from web is empty, it may be an error or first time to bind to your pc~~~";
+        if(XWARE_CONSTANTS_STRUCT.DEBUG)
+            qDebug()<<"AllBindedPeerIds from web is empty, it may be an error or first time to bind to your pc~~~";
     }
     else
     {
@@ -190,14 +190,12 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
     {
     // username
     case 1:
-        emit sError(tr("Login Error"), errorMsg);
-        qDebug()<<" login username error =>"<<errorMsg;
+        emit sError(tr("User name error"), errorMsg);
         break;
 
     // password
     case 2:
-        emit sError(tr("Login Error"), errorMsg);
-        qDebug()<<" login password error =>"<<errorMsg;
+        emit sError(tr("User password error"), errorMsg);
         break;
 
     // vertify code
@@ -212,15 +210,12 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
         if(errorMsg.startsWith("请"))
         {
             // let it do nothing!!
-
-            // emit sHint(tr("Login Hint"), errorMsg);
-           // qDebug()<<" login vertify code hint =>"<<errorMsg;
         }
 
         // emit error
         else
         {
-            emit sError(tr("Login Error"), errorMsg);
+            emit sError(tr("Vertify code error"), errorMsg);
             qDebug()<<" login vertify code error =>"<<errorMsg;
         }
         break;
@@ -232,13 +227,12 @@ void XwarePopulateObject::feedbackMsgboxMessage(QString msg)
     // just handle one msg now
     if(msg.startsWith("您所选择的下载器没有连接到网络"))
     {
-        NormalNotice::getInstance()->showMessage(tr("Xware: wait a moment"), Notice_Color_Notice,
-                  tr("Please wait a moment for Thunder to connect to your computer"));
-
+        NormalNotice::getInstance()->showMessage(tr("Operation wait"), Notice_Color_Notice,
+                  tr("Please wait for the response of Thunder"));
     }
     else
     {
-        NormalNotice::getInstance()->showMessage(tr("Xware message"), Notice_Color_Notice, msg);
+        //NormalNotice::getInstance()->showMessage(tr("Xware message"), Notice_Color_Notice, msg);
     }
 
 }

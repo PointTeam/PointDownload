@@ -97,6 +97,8 @@ void XwareWebController::bindRouterCodeResultHandle(int rs)
 
         NormalNotice::getInstance()->showMessage(tr("Login successful"), Notice_Color_Success,
                                                  tr("Thunder is available now!"));
+
+        qDebug()<<"[xware info] Binding successful! => Login successful ";
     }
 }
 
@@ -227,7 +229,7 @@ void XwareWebController::loadingFinished(bool noError)
 
         isHasAutoLoginTask = false;
 
-        qDebug()<<"[xware info] login success, initialise binding ...";
+        qDebug()<<"[xware info] login completed, initialise binding ...";
 
         emit sLoginStateChanged(Logined);
         emit sLoginResult(x_LoginSuccess);

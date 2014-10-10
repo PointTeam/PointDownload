@@ -95,6 +95,7 @@ bool XwareController::startETM()
     QString defaultDloadPath = xmlHandle.getChildElement(GeneralSettings, "SavePath");
 
     ETMProcess = new QProcess();
+    connect(ETMProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(ETMProcessFinishedHandl(int,QProcess::ExitStatus)));
     QStringList args;
     args<<defaultDloadPath;
     args<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
@@ -296,14 +297,16 @@ void XwareController::tryAutomaticLogin(QString userName, QString pwd)
 
 void XwareController::stopETM()
 {
-    ETMProcess->kill();
     system("pkill Embed");
+    ETMProcess->kill();
 
+    /*
     if(ETMProcess != NULL)
     {
         delete ETMProcess;
         ETMProcess = NULL;
     }
+    */
 }
 
 void XwareController::tryToStartAndBindXware(QStringList allPeerList)
@@ -403,6 +406,15 @@ void XwareController::initDefaultSetting()
     // speed limits
     XwareSetting::setUploadSpeedLimit(-1);  // tmp speed, not limit
     XwareSetting::setDownloadSpeedLimit(-1); // tmp speed, not limit
+}
+
+void XwareController::ETMProcessFinishedHandl(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    // free the process
+    QProcess *pro = static_cast<QProcess*>(sender());
+    pro->disconnect();
+    delete pro;
+    pro = NULL;
 }
 
 void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus)

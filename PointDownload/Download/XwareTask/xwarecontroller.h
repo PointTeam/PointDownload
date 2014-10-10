@@ -76,6 +76,7 @@ private slots:
     void getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitStatus exitStatus);   // finish downloading xware firmware
     void finishDownloadHandle(QString URL);
     void initDefaultSetting();                         // init default setting, like max running job and download & upload speed limit
+    void ETMProcessFinishedHandl(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
     explicit XwareController(QObject *parent = 0);

@@ -5,7 +5,7 @@
 #include <QQmlEngine>
 #include <QtQml>
 #include <QTimer>
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 #include "Download/unifiedinterface.h"
 #include "../middlesender.h"
 

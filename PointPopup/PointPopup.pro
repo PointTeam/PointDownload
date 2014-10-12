@@ -24,10 +24,7 @@ QT += qml quick
 
 SOURCES += main.cpp \
     control/getsavepathdialog.cpp \
-    control/peventfilter.cpp \
     control/datacontroler.cpp \
-    control/settingxmlhandler.cpp \
-    control/downloadxmlhandler.cpp \
     BtAndMagnetInfo/bencodeparser.cpp \
     BtAndMagnetInfo/CyoDecode.cpp \
     BtAndMagnetInfo/CyoEncode.cpp \
@@ -47,10 +44,7 @@ OTHER_FILES += \
 
 HEADERS += \
     control/getsavepathdialog.h \
-    control/peventfilter.h \
     control/datacontroler.h \
-    control/settingxmlhandler.h \
-    control/downloadxmlhandler.h \
     BtAndMagnetInfo/bencodeparser.h \
     BtAndMagnetInfo/CyoDecode.h \
     BtAndMagnetInfo/CyoEncode.h \
@@ -66,5 +60,9 @@ SOURCES = main.qml \
     control/datacontroler.cpp\
     control/getsavepathdialog.cpp
 }
+
+include(../PInterface/XmlHandler/XmlHandler.pri)
+include(../PInterface/Message/Message.pri)
+include(../PInterface/PEventFilter/PEventFilter.pri)
 
 TRANSLATIONS = PointPopup_zh_CN.ts

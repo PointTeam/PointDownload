@@ -26,7 +26,7 @@
 
 #include "XwareDataType.h"
 #include "xwarepopulateobject.h"
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 #include "xwaretask.h"
 
 // 此类主要负责反馈和保存下载中任务的信息

@@ -27,7 +27,7 @@
 #include <QFile>
 #include <QTimer>
 #include "httpthread.h"
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 #include "Download/DataType.h"
 
 const QString POINT_FILE_FLAG = ".Point";

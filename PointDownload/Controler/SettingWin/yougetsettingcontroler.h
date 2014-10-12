@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QProcess>
 #include <QDebug>
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 
 class YouGetSettingControler : public QObject
 {

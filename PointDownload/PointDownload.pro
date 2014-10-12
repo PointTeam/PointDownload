@@ -64,7 +64,6 @@ QML_IMPORT_PATH =
 SOURCES += main.cpp \
     Controler/middlesender.cpp \
     Controler/monitorClipBoard.cpp \
-    Controler/peventfilter.cpp \
     Controler/topcontrl.cpp \
     Controler/urlserver.cpp \
     SysData/getspeed.cpp \
@@ -77,8 +76,6 @@ SOURCES += main.cpp \
     Download/YouGetTask/yougettask.cpp \
     Download/PointTask/HttpTask/httptask.cpp \
     Download/PointTask/HttpTask/httpthreadmanager.cpp \
-    XMLHandler/downloadxmlhandler.cpp \
-    XMLHandler/settingxmlhandler.cpp \
     Controler/SettingWin/settingcontroler.cpp \
     Controler/SettingWin/yougetsettingcontroler.cpp \
     Controler/SettingWin/dropzonesettingcontroler.cpp \
@@ -92,7 +89,6 @@ SOURCES += main.cpp \
     Download/XwareTask/xwaretaskentity.cpp \
     Controler/dldataconverter.cpp \
     Download/XwareTask/webctrlviewtest.cpp \
-    Controler/Message/normalnotice.cpp \
     Download/XwareTask/completedlistwebview.cpp \
     Download/XwareTask/xwaresetting.cpp
 
@@ -109,7 +105,6 @@ RESOURCES += \
 HEADERS += \
     Controler/middlesender.h \
     Controler/monitorClipBoard.h \
-    Controler/peventfilter.h \
     Controler/topcontrl.h \
     Controler/urlserver.h \
     SysData/getspeed.h \
@@ -123,8 +118,6 @@ HEADERS += \
     Download/PointTask/HttpTask/httpthread.h \
     Download/PointTask/HttpTask/httptask.h \
     Download/PointTask/HttpTask/httpthreadmanager.h \
-    XMLHandler/downloadxmlhandler.h \
-    XMLHandler/settingxmlhandler.h \
     Controler/SettingWin/settingcontroler.h \
     Controler/SettingWin/yougetsettingcontroler.h \
     Controler/SettingWin/dropzonesettingcontroler.h \
@@ -140,10 +133,13 @@ HEADERS += \
     Download/XwareTask/xwaretaskentity.h \
     Controler/dldataconverter.h \
     Download/XwareTask/webctrlviewtest.h \
-    Controler/Message/normalnotice.h \
     Download/XwareTask/completedlistwebview.h \
     Download/XwareTask/xwaresetting.h
-include(./QtSingleApplication/qtsinglecoreapplication.pri)
+
+include(../PInterface/QtSingleApplication/qtsinglecoreapplication.pri)
+include(../PInterface/XmlHandler/XmlHandler.pri)
+include(../PInterface/Message/Message.pri)
+include(../PInterface/PEventFilter/PEventFilter.pri)
 
 TRANSLATIONS += PointDownload_zh_CN.ts
 TRANSLATIONS += PointDownload_ja_JP.ts

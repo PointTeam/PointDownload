@@ -27,7 +27,7 @@
 #include <QTranslator>
 #include <QDebug>
 #include "Controler/middlesender.h"
-#include "Controler/peventfilter.h"
+#include "peventfilter.h"
 #include "Controler/SettingWin/settingcontroler.h"
 #include "Controler/SettingWin/dropzonesettingcontroler.h"
 #include "Controler/SettingWin/yougetsettingcontroler.h"
@@ -37,9 +37,9 @@
 #include "qtsinglecoreapplication.h"
 #include "Controler/monitorClipBoard.h"
 #include "Controler/dldataconverter.h"
-#include "Controler/Message/normalnotice.h"
 #include "Download/XwareTask/XwareConstants.h"
 #include "Download/XwareTask/webctrlviewtest.h"
+#include "normalnotice.h"
 
 
 int main(int argc, char *argv[])

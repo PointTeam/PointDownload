@@ -22,6 +22,7 @@
 import QtQuick 2.1
 import QtQuick.Window 2.1
 import Singleton.DataControler 1.0
+import Singleton.NormalNotice 1.0
 import Singleton.PEventFilter 1.0
 
 Window {

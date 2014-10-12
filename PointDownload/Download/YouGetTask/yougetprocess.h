@@ -27,8 +27,8 @@
 #include <QTimer>
 #include <QDebug>
 #include "Download/DataType.h"
-#include "XMLHandler/downloadxmlhandler.h"
-#include "XMLHandler/settingxmlhandler.h"
+#include "downloadxmlhandler.h"
+#include "settingxmlhandler.h"
 
 const int UPDATE_INTERVAL = 1000;
 

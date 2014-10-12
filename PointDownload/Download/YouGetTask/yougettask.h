@@ -28,7 +28,7 @@
 #include "yougetprocess.h"
 #include "Download/DataType.h"
 #include "Download/unifiedinterface.h"
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 
 class YouGetTask : public QObject
 {

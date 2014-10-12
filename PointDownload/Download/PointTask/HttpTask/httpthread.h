@@ -35,7 +35,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 
 
 class HttpThread : public QThread

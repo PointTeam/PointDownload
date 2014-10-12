@@ -40,7 +40,7 @@
 #include "XwareConstants.h"
 #include "Controler/SettingWin/xwaresettingcontroler.h"
 #include "Controler/topcontrl.h"
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 
 
 #define GET_R_CODE_MAX_TRY 5  // 5t => 45s

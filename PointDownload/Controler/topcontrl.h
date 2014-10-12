@@ -31,7 +31,7 @@
 #include <QMenu>
 #include <QUrl>
 #include <QDebug>
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 
 //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #ifdef DESKTOP_ENV_UBUNTU

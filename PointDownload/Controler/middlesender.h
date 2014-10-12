@@ -30,7 +30,7 @@
 #include <QDebug>
 #include "SysData/dataflow.h"
 #include "SysData/getspeed.h"
-#include "XMLHandler/downloadxmlhandler.h"
+#include "downloadxmlhandler.h"
 
 class MiddleSender : public QObject
 {

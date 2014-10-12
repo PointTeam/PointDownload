@@ -24,7 +24,7 @@
 
 #include <QObject>
 #include <QFileDialog>
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 #include "Download/unifiedinterface.h"
 
 class SettingControler : public QObject

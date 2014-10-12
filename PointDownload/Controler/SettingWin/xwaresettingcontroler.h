@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QQmlEngine>
-#include "XMLHandler/settingxmlhandler.h"
-#include "Controler/Message/normalnotice.h"
+#include "settingxmlhandler.h"
+#include "normalnotice.h"
 #include "Download/XwareTask/xwarecontroller.h"
 #include "Download/XwareTask/xwarewebcontroller.h"
 

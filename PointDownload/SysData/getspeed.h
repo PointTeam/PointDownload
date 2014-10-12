@@ -30,7 +30,7 @@
 #ifdef Q_OS_LINUX
     #include <sys/vfs.h>
 #endif
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 
 class GetSpeed : public QObject
 {

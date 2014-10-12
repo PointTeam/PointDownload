@@ -25,7 +25,8 @@
 #include <QString>
 #include <QTranslator>
 #include <control/datacontroler.h>
-#include "control/peventfilter.h"
+#include "peventfilter.h"
+#include "normalnotice.h"
 
 QString getChromeURL()
 {
@@ -106,6 +107,9 @@ int main(int argc, char *argv[])
     }
 
     DataControler::getInstance()->getURLFromBrowser(fileURL);
+    PEventFilter::getInstance();
+    NormalNotice::getInstance();
+
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));

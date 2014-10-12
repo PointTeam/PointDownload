@@ -27,7 +27,7 @@
 #include "Download/unifiedinterface.h"
 #include "xwarecontroller.h"
 #include "xwarewebcontroller.h"
-#include "XMLHandler/settingxmlhandler.h"
+#include "settingxmlhandler.h"
 #include "xwaretaskentity.h"
 #include "completedlistwebview.h"
 

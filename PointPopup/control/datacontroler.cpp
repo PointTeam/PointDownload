@@ -33,6 +33,15 @@ DataControler::DataControler(QObject *parent) :
 
     fileURL = "";
     fileNameList = "";
+    initData();
+
+    yougetProcess = NULL;
+
+    urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+}
+
+void DataControler::initData()
+{
     fileSavePath = gSettingHandler.getChildElement(GeneralSettings,"SavePath");
     freeSpace = getLinuxFreeSpace(fileSavePath);
     maxThread = gSettingHandler.getChildElement(GeneralSettings,"DefaultThreadCount");
@@ -42,11 +51,7 @@ DataControler::DataControler(QObject *parent) :
     setDefaultToolType(gSettingHandler.getChildElement(GeneralSettings,"PriorityTool"));
     setIsYouGetEnable(gSettingHandler.getChildElement(YouGetSetting,"State")=="Enable"?true:false);
     setIsAria2Enable(gSettingHandler.getChildElement(Aria2Setting,"State")=="Enable"?true:false);
-    setIsXwareEnable(gSettingHandler.getChildElement(XwareSetting,"State")=="Enable"?true:false);
-
-    yougetProcess = NULL;
-
-    urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+    setIsXwareEnable(gSettingHandler.getChildElement(XwareSetting,"Logged")=="True"?true:false);
 }
 
 //保证单例对象先于qml组件之前构建
@@ -136,6 +141,8 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
 
 void DataControler::getURLFromBrowser(QString URL)
 {
+    initData();
+
     setFileURL(URL);
     redirectURL = fileURL;
     setToolsType(getDLToolsTypeFromURL(URL));
@@ -145,6 +152,7 @@ void DataControler::getURLFromBrowser(QString URL)
         emit sIsWrongURL();
         return;
     }
+
 
     if(toolsType == "YouGet")
     {
@@ -159,8 +167,6 @@ void DataControler::getURLFromBrowser(QString URL)
     }
     else if(toolsType == "Xware")
     {
-        //qDebug()<<"before unity parse: => "<<URL;
-
         // 对带有%转译符的URL进行统一转码处理
         if(URL.contains("%"))
         {
@@ -168,8 +174,6 @@ void DataControler::getURLFromBrowser(QString URL)
             setFileURL(URL);
             redirectURL = fileURL;
         }
-
-        //qDebug()<<"after unity parse: => "<<URL;
 
         QTimer::singleShot(100,this,SLOT(getXwareURLOrBtInfo()));
     }
@@ -377,6 +381,7 @@ void DataControler::getURLInfo()
     setToolsType(toolsType);
 }
 
+
 void DataControler::getYougetFeedBack()
 {
     QString outPut = QString(yougetProcess->readAllStandardOutput());
@@ -491,6 +496,7 @@ QString DataControler::getHttpFileTypeSize(QString URL)
     } while (connectError && --tryTimes);
 
     int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << headReply->header(QNetworkRequest::ContentTypeHeader).toString();
 
 //    qDebug() << statusCode;
     if(statusCode == 302)
@@ -681,6 +687,78 @@ bool DataControler::isXwareParseType(QString task)
     return rex.exactMatch(task);
 }
 
+bool DataControler::isYouGetParseType(QString url)
+{
+    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
+            QString("http://v.yinyuetai.com/|") +
+            QString("http://v.youku.com/| ")+
+            QString(" http://v.ku6.com/|")+
+            QString("http://v.163.com/|") +
+            QString("http://v.qq.com/|") +
+            QString("http://www.acfun.com/v/|")+
+            QString("http://bilibili.kankanews.com/video/av|")+
+            QString("http://www.jpopsuki.tv/video/|")+
+            QString("http://video.sina.com.cn/|")+
+            QString("http://tv.sohu.com/|")+
+            QString("http://www.56.com/w|")+
+            QString("http://www.56.com/u|")+
+            QString("http://www.songtaste.com/song/).+");
+
+
+    QRegExp rex(videoURLRegex);
+    return rex.exactMatch(url);
+}
+
+bool DataControler::isNormalHttpParseType(QString url)
+{
+    QNetworkAccessManager * tmpManager = new QNetworkAccessManager;
+    QNetworkRequest headReq(url);
+    headReq.setRawHeader("User-Agent", "");  //Content-Length
+    QNetworkReply*  headReply = NULL;
+
+    bool connectError = false;
+    int tryTimes = 1;
+    //如果失败,连接尝试1次;
+    do{
+        connectError = false;
+        headReply =  tmpManager->head(headReq);
+        if(!headReply)
+        {
+            connectError = true;
+            continue;
+        }
+
+        QEventLoop loop;
+        connect(headReply, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
+        connectError = (headReply->error() != QNetworkReply::NoError);
+        if(connectError)
+        {
+            qDebug()<<"connect failed!";
+            qDebug() << headReply->errorString();
+        }
+        headReply->deleteLater();
+    } while (connectError && --tryTimes);
+
+
+    QString header = headReply->header(QNetworkRequest::ContentTypeHeader).toString();
+    int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if(statusCode == 302)
+    {
+        QUrl newUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
+        if(newUrl.isValid())
+        {
+            return isNormalHttpParseType(newUrl.toString());
+        }
+    }
+
+    if (header == "" || header.contains("text/"))
+        return false;
+    else
+        return true;
+}
+
 void DataControler::getXwareURLOrBtInfo()
 {
     if (urlInfoGeter->isRunning())
@@ -704,47 +782,24 @@ void DataControler::receiveXwareNameInfo(QString nameList)
 
 QString DataControler::getDLToolsTypeFromURL(QString URL)
 {
-    QRegExp rx;
-    rx.setPatternSyntax(QRegExp::RegExp);
-
-    QString normalURLRegex = QString("^((https|http|chrome)?://)")
-            + QString(".*\.(exe|asf|avi|exe|iso|mp3|mpeg|mpg|mpga|ra|rar|rm|rmvb|tar|wma|wmp|wmv|mov|zip|3gp|")
-            + QString("chm|mdf|torrent|jar|msi|arj|bin|dll|psd|hqx|sit|lzh|gz|tgz|xlsx|xls|doc|docx|ppt|pptx|flv|swf|mkv|")
-            + QString("tp|ts|flac|ape|wav|aac|txt|dat|7z|ttf|bat|xv|xvx|pdf|mp4|apk|ipa|epub|mobi|deb|sisx|cab|pxl|run|rpm|deb|dmg)")
-            + QString("($|[?]{1}.*$)");
-
-    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
-            QString("http://v.yinyuetai.com/|") +
-            QString("http://v.youku.com/| ")+
-            QString(" http://v.ku6.com/|")+
-            QString("http://v.163.com/|") +
-            QString("http://v.qq.com/|") +
-            QString("http://www.acfun.com/v/|")+
-            QString("http://bilibili.kankanews.com/video/av|")+
-            QString("http://www.jpopsuki.tv/video/|")+
-            QString("http://video.sina.com.cn/|")+
-            QString("http://tv.sohu.com/|")+
-            QString("http://www.56.com/w|")+
-            QString("http://www.56.com/u|")+
-            QString("http://www.songtaste.com/song/).+");
-
-    rx.setPattern(normalURLRegex);
-    int normalPos = URL.indexOf(rx);
-
-    if (normalPos >= 0)
-        return "Point";
-
-    rx.setPattern(videoURLRegex);
-    int videoPos = URL.indexOf(rx);
-
-    if (videoPos >= 0)
-        return "YouGet";
-
     if(isXwareParseType(URL))
     {
         return "Xware";
     }
-
+    else if (URL.contains("http://") || URL.contains("https://"))
+    {
+        if (isYouGetParseType(URL))
+        {
+            return "YouGet";
+        }
+        else if (isNormalHttpParseType(URL))
+        {
+            return "Point";
+        }
+        else
+            return "";
+    }
+    else
         return "";                  //排除两种可能性外,就是不合法的链接
 }
 

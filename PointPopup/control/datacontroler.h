@@ -127,6 +127,7 @@ private slots:
 
 private:
     explicit DataControler(QObject *parent = 0);
+    void initData();
 
     QString getLinuxFreeSpace(QString path);
 
@@ -145,8 +146,9 @@ private:
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
+    bool isYouGetParseType(QString url);
+    bool isNormalHttpParseType(QString url);
 
-    //url查询处理
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 
     QString mergeFileNameList(QString nameList);

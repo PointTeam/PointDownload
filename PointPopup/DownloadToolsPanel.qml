@@ -19,15 +19,6 @@ Rectangle{
         }
     }
 
-//    Text{
-//        id:titleText
-//        width: parent.width
-//        height: 15
-//        text: qsTr("Download Tools:")
-//        font.pixelSize: 12
-//        color: "#008dac"
-//        anchors {left: parent.left}
-//    }
 
     Image{
         id:pointCheckImg
@@ -125,8 +116,13 @@ Rectangle{
 
     function updateCheckState()
     {
+        var toolType = DataControler.toolsType
+
+        if (toolType === "")
+            toolType = DataControler.defaultTool
+
         //因为只有you-get才能下载网页探测的视频，所以其他的都不可选
-        if (DataControler.toolsType === "YouGet")
+        if (toolType === "YouGet")
         {
             pointCheckImg.source = "qrc:///images/uncheck";
             pointCheckImg.enabled = false;
@@ -137,7 +133,7 @@ Rectangle{
 
             updateToolType("YouGet")
         }
-        else if (DataControler.toolsType === "Aria2")
+        else if (toolType === "Aria2")
         {
             //因为某些链接只有aria2和xware才能分析下载，比如bt
             pointCheckImg.source = "qrc:///images/uncheck";
@@ -158,7 +154,7 @@ Rectangle{
                 updateToolType("Xware")
             }
         }
-        else if(DataControler.toolsType === "Xware" && DataControler.isXwareEnable)
+        else if(toolType === "Xware" && DataControler.isXwareEnable)
         {
             pointCheckImg.source = "qrc:///images/uncheck";
             pointCheckImg.enabled = false;
@@ -172,14 +168,14 @@ Rectangle{
         else//Point
         {
             pointCheckImg.enabled = true;
-            if (DataControler.isAria2Enable)
+            if (DataControler.isAria2Enable && DataControler.toolsType !== "")
             {
                 aria2CheckImg.source = "qrc:///images/checked";
                 aria2CheckImg.enabled = true;
 
                 updateToolType("Aria2")
             }
-            else if (DataControler.isXwareEnable)
+            else if (DataControler.isXwareEnable && DataControler.toolsType !== "")
             {
                 xwareCheckImg.source = "qrc:///images/checked";
                 xwareCheckImg.enabled = true;

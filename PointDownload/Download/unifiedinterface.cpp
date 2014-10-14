@@ -207,6 +207,7 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
         threadStruct.endBlockIndex = "1";
         threadStruct.completedBlockCount = "1";
         QList<SDownloadThread> tmpList;
+
         int threadCount = info.threadCount.toInt();
         for (int i = 0; i < threadCount; i ++)
             tmpList.append(threadStruct);

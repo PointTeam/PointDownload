@@ -69,7 +69,6 @@ SOURCES += main.cpp \
     SysData/getspeed.cpp \
     SysData/dataflow.cpp \
     Download/unifiedinterface.cpp \
-    Download/Aria2Task/a2ia2task.cpp \
     Download/PointTask/HttpTask/httpthread.cpp \
     Download/PointTask/pointtask.cpp \
     Download/YouGetTask/yougetprocess.cpp \
@@ -90,7 +89,9 @@ SOURCES += main.cpp \
     Controler/dldataconverter.cpp \
     Download/XwareTask/webctrlviewtest.cpp \
     Download/XwareTask/completedlistwebview.cpp \
-    Download/XwareTask/xwaresetting.cpp
+    Download/XwareTask/xwaresetting.cpp \
+    Download/Aria2Task/aria2task.cpp \
+    Download/Aria2Task/aria2process.cpp
 
 # Installation path
 # target.path =
@@ -111,7 +112,6 @@ HEADERS += \
     SysData/dataflow.h \
     Download/unifiedinterface.h \
     Download/DataType.h \
-    Download/Aria2Task/a2ia2task.h \
     Download/PointTask/pointtask.h \
     Download/YouGetTask/yougetprocess.h \
     Download/YouGetTask/yougettask.h \
@@ -134,7 +134,9 @@ HEADERS += \
     Controler/dldataconverter.h \
     Download/XwareTask/webctrlviewtest.h \
     Download/XwareTask/completedlistwebview.h \
-    Download/XwareTask/xwaresetting.h
+    Download/XwareTask/xwaresetting.h \
+    Download/Aria2Task/aria2task.h \
+    Download/Aria2Task/aria2process.h
 
 include(../PInterface/QtSingleApplication/qtsinglecoreapplication.pri)
 include(../PInterface/XmlHandler/XmlHandler.pri)

@@ -198,21 +198,71 @@ void UnifiedInterface::startPointDownload(PrepareDownloadInfo info)
 
 void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
 {
+    DownloadXMLHandler tmpOpera;
+
+    if (!tmpOpera.urlExit(info.downloadURL,"ing"))
+    {
+        SDownloadThread threadStruct;
+        threadStruct.startBlockIndex = "1";
+        threadStruct.endBlockIndex = "1";
+        threadStruct.completedBlockCount = "1";
+        QList<SDownloadThread> tmpList;
+        int threadCount = info.threadCount.toInt();
+        for (int i = 0; i < threadCount; i ++)
+            tmpList.append(threadStruct);
+
+        //插入xml文件
+        SDownloading tmpIngStruct;
+
+        tmpIngStruct.dlToolsType = "aria2";
+        tmpIngStruct.name = info.fileName;
+        tmpIngStruct.jobMaxSpeed = info.maxSpeed;
+        tmpIngStruct.savePath = info.storageDir;
+        tmpIngStruct.enableUpload = "false";
+        tmpIngStruct.URL = info.downloadURL;
+        tmpIngStruct.redirectRUL = info.redirectURl;
+        tmpIngStruct.blockCount = "1";
+        tmpIngStruct.blockSize = "1";
+        tmpIngStruct.totalSize = info.fileSize;
+        tmpIngStruct.readySize = "0";
+        tmpIngStruct.autoOpenFolder = "false";
+        tmpIngStruct.state = "dlstate_downloading";
+        tmpIngStruct.averageSpeed = "0";
+        tmpIngStruct.iconPath = info.iconPath;
+        tmpIngStruct.threadList = tmpList;
+
+        tmpOpera.insertDownloadingNode(tmpIngStruct);
+    }
+    else
+    {
+        //必须要及时改变状态
+        DownloadXMLHandler tmpOpera;
+        SDownloading tmpStruct;
+        tmpStruct.URL = info.downloadURL;
+        tmpStruct.state = "dlstate_downloading";
+
+        tmpOpera.writeDownloadingConfigFile(tmpStruct);
+    }
+
+
+    //启动下载
+    Aria2Task::getInstance()->startDownload(info);
 
 }
 
 void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
 {
     DownloadXMLHandler tmpOpera;
-    SDownloadThread threadStruct;
-    threadStruct.startBlockIndex = "1";
-    threadStruct.endBlockIndex = "1";
-    threadStruct.completedBlockCount = "1";
-    QList<SDownloadThread> tmpList;
-    tmpList.append(threadStruct);
 
     if (!tmpOpera.urlExit(info.downloadURL,"ing"))
     {
+        SDownloadThread threadStruct;
+        threadStruct.startBlockIndex = "1";
+        threadStruct.endBlockIndex = "1";
+        threadStruct.completedBlockCount = "1";
+        QList<SDownloadThread> tmpList;
+        tmpList.append(threadStruct);
+
         //插入xml文件
         SDownloading tmpIngStruct;
 
@@ -473,6 +523,9 @@ void UnifiedInterface::resumeDownloading(QString URL)
 
     switch(downloadingListMap.value(URL))
     {
+    case aria2:
+        Aria2Task::getInstance()->resumeDownloading(URL);
+        break;
     case youget:
         YouGetTask::getInstance()->resumeDownloading(URL);
         break;

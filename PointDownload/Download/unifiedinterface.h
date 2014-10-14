@@ -46,6 +46,7 @@ History:
 #include <QSoundEffect>
 #include <QDebug>
 #include "DataType.h"
+#include "Aria2Task/aria2task.h"
 #include "YouGetTask/yougettask.h"
 #include "PointTask/pointtask.h"
 #include "SysData/dataflow.h"

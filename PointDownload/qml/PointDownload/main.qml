@@ -65,7 +65,7 @@ Window {
         target: NormalNotice
 
         onSignalShowMessage:{
-            NormalNoticePage.showNormalNoticePage(mainUI,title,noticeTitleColor,message)
+            NormalNoticePage.showNormalNoticePage(undefined,title,noticeTitleColor,message)
         }
     }
 

@@ -5,7 +5,7 @@
 *.new
 build-*
 #chrome extension
-*.crx
+#*.crx
 # C++ objects and libs
 
 *.slo

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Categories=Network;FileTransfer;P2P;Qt;
+Exec=/opt/Point/PointDownload/PointDownload
+Icon=/opt/Point/PointDownload/point.png
+GenericName=Download client
+Comment=Point
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;
+Name=Point
+Terminal=false
+Type=Application
+

@@ -1,0 +1,7 @@
+PointFirefoxExtension.xpi/PointFirefoxExtension.xpi opt/Point/Extensions/
+PointChromeExtension/pointdownload.json opt/Point/Extensions/
+PointChromeExtension/nkbchchceepbameamioagcjlhnghdoff.json opt/Point/Extensions/
+PointChromeExtension/PointChromeExtension.crx opt/Point/Extensions/
+point.png opt/Point/PointDownload/
+pointdownload.desktop usr/share/applications/
+pointpopup.desktop usr/share/applications/

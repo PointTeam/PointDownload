@@ -91,36 +91,47 @@ bool XwareController::startETM()
     // kill all ETM process
     system("pkill Embed");
 
+    // get default download path
     SettingXMLHandler xmlHandle;
     QString defaultDloadPath = xmlHandle.getChildElement(GeneralSettings, "SavePath");
+
+    // clear the mounts file and add the default mount item
+    QFile mountsFile(XWARE_CONSTANTS_STRUCT.XWARE_MOUNTS_FILE);
+
+    if(!mountsFile.open(QFile::WriteOnly))
+    {
+        qDebug()<<"[xware fail] Fail to open mounts file when start ETM";
+        return false;
+    }
+
+    QTextStream mountOut(&mountsFile);
+    QString mountStrItem = QString("C: ") + defaultDloadPath + QString("")
+            + QString(" fuseblk rw,nosuid,nodev,relatime,user_id=0,group_id=0,default_permissions,allow_other,blksize=4096 0 0");
+    mountOut<<mountStrItem;
+    mountOut.flush();
+
+    mountsFile.close();
+
 
     ETMProcess = new QProcess();
     connect(ETMProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(ETMProcessFinishedHandl(int,QProcess::ExitStatus)));
     QStringList args;
-    args<<defaultDloadPath;
+
+    // arg 1:  so file
+    args<<XWARE_CONSTANTS_STRUCT.XWARE_SO_FILE;
+
+    // arg 2: xware path
     args<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
     args<<"--verbose";
+
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<< "start XwareStartUp to start ETM ==>"<<XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH;
+
     ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH);
     ETMProcess->setArguments(args);
     ETMProcess->start();
 
-
-    /*
-     * old function: start ETM directly without use XwareStartUp!
-     *
-    ETMProcess = new QProcess();
-    QStringList args;
-    args<<"--verbose";
-    if(XWARE_CONSTANTS_STRUCT.DEBUG)
-        qDebug()<< "start ETM ==>"<<XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH;
-    ETMProcess->setWorkingDirectory(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR); // set work directory
-    ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_ETM_PATH);
-    ETMProcess->setArguments(args);
-    ETMProcess->start();
-    */
-
+    // wait for running state
     QEventLoop loop;
     QTimer::singleShot(3000, &loop, SLOT(quit()));
     connect(ETMProcess, SIGNAL(started()), &loop, SLOT(quit()));
@@ -227,7 +238,65 @@ void XwareController::bindCodeToXware(QString code)
 bool XwareController::tryToMakeDir(QString dirPath)
 {
     QDir dir;
-    return dir.mkpath(dirPath);
+
+    if(dir.mkpath(dirPath))
+    {
+        return true;
+    }
+    else
+    {
+        qDebug()<<"[xware fail] Fail to create dir: "<<dirPath;
+        return false;
+    }
+}
+
+bool XwareController::tryToMakeFile(QString filePath)
+{
+    QFile file(filePath);
+    if(file.exists())
+    {
+        return true;
+    }
+
+    if(!file.open(QFile::WriteOnly))
+    {
+        qDebug()<<"[xware fail] Fail to create file: "<<filePath;
+        return false;
+    }
+
+    file.close();
+
+    return true;
+}
+
+bool XwareController::checkConfigFiles()
+{
+    // work space
+    if(!tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR))
+    {
+        return false;
+    }
+
+    // mounts dir
+    if(!tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_MOUNTS_DIR))
+    {
+        return false;
+    }
+
+    // default mounts file
+    if(!tryToMakeFile(XWARE_CONSTANTS_STRUCT.XWARE_MOUNTS_DIR))
+    {
+        return false;
+    }
+
+    // tmp (the thunder space)
+    if(!tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR))
+    {
+        return false;
+    }
+
+    return true;
+
 }
 
 void XwareController::login(QString userName, QString pwd, QString vertifyCode)
@@ -248,23 +317,23 @@ void XwareController::startFeedbackDloadList()
 
 void XwareController::addXwareFirmware()
 {
-    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
-
-    // ------------------- temp ----------------------------- //
-
-    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_MOUNTS_DIR + "PointXDownloads");
-    tryToMakeDir(XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR);
-
-    // ----------------------------------------------------- //
-
+    if(!checkConfigFiles())
+    {
+        NormalNotice::getInstance()->showMessage(tr("Checking config files not through"), Notice_Color_Error,
+                                                 tr("Please remove \" ~/.PointConfig/XwarePlugin \" dir and try again "));
+        return;
+    }
 
     // changed work dir
     QDir::setCurrent(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
 
+    // start download xware firmware
     QProcess *pro = new QProcess();
     pro->setProgram(QString("wget"));
     pro->setWorkingDirectory(XWARE_CONSTANTS_STRUCT.XWARE_WORK_DIR);
     QStringList arg;
+    arg<<QString("-O");
+    arg<<XWARE_CONSTANTS_STRUCT.XWARE_FIRMWARE_NAME;
     arg<<XWARE_CONSTANTS_STRUCT.XWARE_FIRMWARE_LOCATION;
     pro->setArguments(arg);
     pro->start();
@@ -427,7 +496,7 @@ void XwareController::getXwareFirmwareFinishHandle(int exitCode, QProcess::ExitS
 
         system("rm -f XwareFirmxware.zip");
 
-        // reflash the
+        // can not reflash now
         //XwareWebController::getInstance()->reloadWebView();
 
         emit sAddXwareSupportResult(true);

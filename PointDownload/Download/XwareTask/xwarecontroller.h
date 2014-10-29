@@ -87,6 +87,8 @@ private:
     QString getCodeFromJson();                // get local peer id(machine code) from json , from "http://127.0.0.1:9000/getsysinfo"
     void bindCodeToXware(QString code);
     bool tryToMakeDir(QString dirPath);
+    bool tryToMakeFile(QString filePath);
+    bool checkConfigFiles();
 
 private:
     static XwareController * xwareController;

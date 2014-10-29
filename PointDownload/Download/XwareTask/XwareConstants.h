@@ -43,6 +43,10 @@ static struct XwareConstants
     QString XWARE_CFG_DIR ;
     QString XWARE_ETM_CFG;
 
+    // files
+    QString XWARE_MOUNTS_FILE;
+    QString XWARE_SO_FILE;
+
     // work dir
     QString XWARE_HOME;
     QString XWARE_WORK_DIR;
@@ -53,6 +57,7 @@ static struct XwareConstants
 
     // xware firmware location
     QString XWARE_FIRMWARE_LOCATION;
+    QString XWARE_FIRMWARE_NAME;
 
     // url
     QString URLSTR;
@@ -80,8 +85,14 @@ static struct XwareConstants
         XWARE_ETM_PATH = XWARE_WORK_DIR + "EmbedThunderManager";
         XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
 
+        // file
+        XWARE_MOUNTS_FILE = XWARE_MOUNTS_DIR + "mounts";
+        XWARE_SO_FILE = XWARE_WORK_DIR + "mask.so";
+
         // xware firmware location
-        XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip";
+//        XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip";
+        XWARE_FIRMWARE_LOCATION = "http://linuxdeepin.com/forum/download?id=9303";
+        XWARE_FIRMWARE_NAME = "XwareFirmxware.zip";
 
         // url
         URLSTR = "http://127.0.0.1:" + QString::number(ETM_PORT) + "/";

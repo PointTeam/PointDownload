@@ -1,0 +1,2 @@
+shlibs:Depends=libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libqt5core5a (>= 5.2.0~alpha1), libqt5gui5 (>= 5.2.0), libqt5multimedia5, libqt5network5 (>= 5.0.2), libqt5qml5 (>= 5.1.0), libqt5quick5 (>= 5.0.2), libqt5webkit5 (>= 5.0.2), libqt5widgets5 (>= 5.0.2), libqt5xml5 (>= 5.0.2), libstdc++6 (>= 4.4.0)
+misc:Depends=

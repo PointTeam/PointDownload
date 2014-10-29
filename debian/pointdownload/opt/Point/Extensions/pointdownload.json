@@ -1,0 +1,9 @@
+{
+	"name": "pointdownload",
+	"description": "Chrome sent download url to native app.",
+	"path": "/opt/Point/PopupWindow/PointPopup",
+	"type": "stdio",
+	"allowed_origins": [
+		"chrome-extension://nkbchchceepbameamioagcjlhnghdoff/"
+	]
+}

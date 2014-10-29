@@ -1,0 +1,13 @@
+Package: pointdownload
+Version: 1.2.0
+Architecture: amd64
+Maintainer: PointTeam <PointTeam@qq.com>
+Installed-Size: 1976
+Depends: libqt5quick5 (>= 5.2.1), libqt5multimedia5, libqt5qml5 (>= 5.2.1), libqt5webkit5, libqt5widgets5, libqt5network5, libqt5xml5, libqt5gui5, libqt5core5a (>= 5.2.1)
+Replaces: pointdownload
+Provides: pointdownload
+Section: net
+Priority: optional
+Homepage: https://github.com/PointTeam/PointDownload/wiki
+Description: Efficient download tool
+ Efficient and easy to use to download for Http,Https,Ftp, P2P(BT、magnet、ed2k、thunder etc.) download

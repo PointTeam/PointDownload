@@ -159,7 +159,7 @@ void SettingXMLHandler::touchPointSettingFile()
         //Xware node
         QDomElement xwareSettingsNode = domDocument.createElement("XwareSetting");
         xwareSettingsNode.appendChild(createChildElement("State","Disable"));
-        xwareSettingsNode.appendChild(createChildElement("Version","1.10.16"));
+        xwareSettingsNode.appendChild(createChildElement("Version","1.0.31"));
         xwareSettingsNode.appendChild(createChildElement("Logged","False"));
         xwareSettingsNode.appendChild(createChildElement("UserName","Thunder User Name"));
         xwareSettingsNode.appendChild(createChildElement("UserPasswd","UGFzc3dvcmQ="));

@@ -265,7 +265,8 @@ void XwareWebController::loadingFinished(bool noError)
             emit sLoginStateChanged(LoginReady);
 
             // 仅在程序刚启动并且有自动登录记录时调用
-            if(isHasAutoLoginTask)
+            // 仅在Xthundar总开关为Enable时调用, 否则总开关为disable而autoLogin为enable也会执行.
+            if(XwareSettingControler::getInstance()->getXwareEnable() && isHasAutoLoginTask)
             {
                 this->login(userName, userPwd);
             }

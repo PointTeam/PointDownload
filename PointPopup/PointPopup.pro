@@ -22,6 +22,8 @@ QT += xml
 QT += widgets
 QT += qml quick
 
+QMAKE_CXXFLAGS += -std=c++14
+
 SOURCES += main.cpp \
     control/getsavepathdialog.cpp \
     control/datacontroler.cpp \
@@ -40,7 +42,7 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-OTHER_FILES += \
+OTHER_FILES +=
 
 HEADERS += \
     control/getsavepathdialog.h \

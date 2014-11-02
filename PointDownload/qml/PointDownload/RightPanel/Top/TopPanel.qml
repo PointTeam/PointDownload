@@ -145,7 +145,7 @@ Rectangle {
         imageWidth: 19
         imageHeigth: 19
         anchors {right: splitLine2.right; rightMargin: 3; verticalCenter: parent.verticalCenter}
-        onSBlueButtonClick: DLDataConverter.controlItem("dl_search","download_redownloed",MonitorClipBoard.tmpURL)
+        onSBlueButtonClick: DLDataConverter.controlItem("dl_search","download_redownload",MonitorClipBoard.tmpURL)
     }
 
     Rectangle {

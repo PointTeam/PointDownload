@@ -22,6 +22,8 @@ DLDataConverter * DLDataConverter::getInstance()
 
 void DLDataConverter::controlItem(QString dtype, QString otype, QString URL)
 {
+    qDebug() << dtype << otype << URL;
+
     if (dtype == "dl_downloaded")
     {
         if (otype == "download_redownload")
@@ -186,6 +188,8 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
             break;
         }
         break;
+    default:
+        qWarning() << "DownloadType not handled in switch. At: void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType otype, QString URL, bool result)";
     }
 }
 

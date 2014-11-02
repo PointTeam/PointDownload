@@ -148,19 +148,17 @@ QString DataFlow::getLineData(int lineIndex)
     {
         qDebug()<<"Cound't opend file!";
     }
-    else
-    {
-        QTextStream stream(&file);
 
-        QString lineData;
+    QTextStream stream(&file);
 
-        for (int i = 0; i < lineIndex + 1; i ++)
-            lineData = stream.readLine();
+    QString lineData;
 
-        file.close();
+    for (int i = 0; i < lineIndex + 1; i ++)
+        lineData = stream.readLine();
 
-        return lineData;
-    }
+    file.close();
+
+    return lineData;
 }
 
 int DataFlow::getWeekIndex(QString weekDay)

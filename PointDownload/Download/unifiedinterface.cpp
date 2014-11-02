@@ -183,6 +183,7 @@ void UnifiedInterface::controlDownload(DownloadType dtype, OperationType otype, 
 
 void UnifiedInterface::downloadFinish(QString URL)
 {
+    Q_UNUSED(URL);
 }
 
 void UnifiedInterface::downloadGetError(QString URL,QString err, DownloadToolsType toolType)
@@ -432,6 +433,8 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
 {
     QStringList arguments;
     arguments << QString(URL + "#..#FIREFOX");//仿照firefox格式发送数据
+
+    qDebug() << POPUP_PROGRAM_PATH << arguments;
 
     QProcess *myProcess = new QProcess(0);
     myProcess->start(POPUP_PROGRAM_PATH,arguments);

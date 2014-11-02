@@ -34,21 +34,19 @@ QStringList GetSpeed::getFileInfo(QString fileName)
     {
         qDebug()<<"Cound't opend file!";
     }
-    else
+
+    QTextStream stream(&file);
+    //QApplication::setOverrideCursor(Qt::WaitCursor);
+    QString fileText;
+    QStringList list1;
+    do
     {
-        QTextStream stream(&file);
-        //QApplication::setOverrideCursor(Qt::WaitCursor);
-        QString fileText;
-        QStringList list1;
-        do
-        {
-            fileText = stream.readLine();
-            list1.append(fileText);
-        } while (!fileText.isNull());
-        //QApplication::restoreOverrideCursor();
-        file.close();
-        return list1;
-    }
+        fileText = stream.readLine();
+        list1.append(fileText);
+    } while (!fileText.isNull());
+    //QApplication::restoreOverrideCursor();
+    file.close();
+    return list1;
 }
 
 
@@ -162,5 +160,7 @@ QString GetSpeed::getLinuxFolderInfo(QString path)
 
 QString GetSpeed::getWindowsFolderInfo(QString path)
 {
+    Q_UNUSED(path);
+
     return "";
 }

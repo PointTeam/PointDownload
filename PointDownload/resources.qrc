@@ -87,7 +87,6 @@
         <file>qml/PointDownload/RightPanel/Top/TopPanel.qml</file>
         <file>qml/PointDownload/RightPanel/Setting/SettingItem.qml</file>
         <file>qml/PointDownload/RightPanel/Setting/SettingMainPanel.qml</file>
-        <file>qml/PointDownload/RightPanel/Setting/PopupWin/PopupThreadCount.qml.autosave</file>
         <file>qml/PointDownload/RightPanel/Setting/PopupWin/SliderWin.qml</file>
         <file>qml/PointDownload/RightPanel/Setting/PopupWin/SliderWinCreater.js</file>
         <file>qml/PointDownload/RightPanel/Middle/HistogramPanel.qml</file>

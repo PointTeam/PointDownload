@@ -24,13 +24,14 @@
 #include <QQmlApplicationEngine>
 #include <QString>
 #include <QTranslator>
-#include <control/datacontroler.h>
+
+#include "control/datacontroler.h"
 #include "peventfilter.h"
 #include "normalnotice.h"
 
 QString getChromeURL()
 {
-    unsigned int length = 0;
+    int length = 0;
     //read the first four bytes (=> Length)
     //getwchar: receive char from stdin
     //putwchar: write char to stdout
@@ -51,7 +52,7 @@ QString getChromeURL()
         while(1)
         {
             char tmpChar = getwchar();
-            if (tmpChar == WEOF)
+            if (tmpChar == (char)WEOF)
                 break;
             else
                 fileURL += tmpChar;
@@ -75,6 +76,9 @@ QString getChromeURL()
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    for (int i(0); i != argc; ++i)
+        qDebug() << argv[i];
 
     QString local = QLocale::system().name();
     QTranslator translator;

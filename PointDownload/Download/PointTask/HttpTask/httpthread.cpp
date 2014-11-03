@@ -132,8 +132,6 @@ void HttpThread::stopDownload()
     this->quit();
 }
 
-
-
 /*****start ** getter &s setter *********************************************/
 QUrl HttpThread::getURL()
 {

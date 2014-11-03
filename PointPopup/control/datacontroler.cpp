@@ -124,7 +124,6 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         QFile::remove(gDownloadHandler.getDownloadedNode(fileURL).savePath + "/"
                       + gDownloadHandler.getDownloadedNode(fileURL).name);
         gDownloadHandler.removeDownloadedFileNode(fileURL);
-
     }
     else if (checkIsInDownloadTrash(fileURL))
     {
@@ -140,6 +139,8 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
             + savePath + "?:?"
             + threads + "?:?"
             + speed;
+
+    qDebug() << "send file to local socket:\n" << info;
 
     localSocket->write(info.toStdString().c_str());
     localSocket->flush();
@@ -379,7 +380,6 @@ void DataControler::getURLInfo()
         setFileNameList(tmpNameList);
         emit sFnishGetAllInfo();
     }
-
     else if (fileURL.contains(".torrent"))
     {
 
@@ -586,28 +586,37 @@ QString DataControler::getIconName()
     return iconName;
 }
 
-QString DataControler::getHttpFtpFileName(QString URL)
+QString DataControler::getHttpFtpFileName(const QString &URL)
 {
-    QRegExp rx;
-    rx.setPatternSyntax(QRegExp::RegExp);
-    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
-    rx.setPattern(QString("[^/]*$"));
-    int pos = URL.indexOf(rx);
 
-    if ( pos >= 0 )
-    {
-        QString tmpStr = rx.capturedTexts().at(0);
-        rx.setPattern(QString("\\.[^?@#$%&]+"));
-        tmpStr.indexOf(rx);
-        QString tmpName = rx.capturedTexts().at(0);
+    const QString fileName(QUrl(URL).fileName());
 
-        if (tmpName == "")
-            return "UnknownName";
-        else
-            return tmpName;
-    }
-    else
-        return "";
+    return fileName.isEmpty() ? "UnknownName" : fileName;
+
+//    qDebug() << url.fileName();
+
+//    QRegExp rx;
+//    rx.setPatternSyntax(QRegExp::RegExp);
+//    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
+//    rx.setPattern(QString("[^/]*$"));
+//    int pos = URL.indexOf(rx);
+
+//    if ( pos >= 0 )
+//    {
+//        QString tmpStr = rx.capturedTexts().at(0);
+//        rx.setPattern(QString("\\.[^?@#$%&]+"));
+//        tmpStr.indexOf(rx);
+//        QString tmpName = rx.capturedTexts().at(0);
+
+//        qDebug() << tmpName;
+
+//        if (tmpName == "")
+//            return "UnknownName";
+//        else
+//            return tmpName;
+//    }
+//    else
+//        return "";
 }
 
 
@@ -643,7 +652,6 @@ void DataControler::connectToMainProgram()
     {
         qDebug() << "connect to main program success";
         return;
-        // TODO:
     }
     else
     {
@@ -761,7 +769,7 @@ void DataControler::tryToNormalHttpParseType_finish()
             // 防止多次重定向: A跳转B再跳转C ....
             // 和循环重定向: A跳转B  B跳转C C跳转A ....
             if (httpParseHistory.size() != 10 && !httpParseHistory.contains(u))
-                tryToNormalHttpParseType(newUrl.toString());
+                tryToNormalHttpParseType(u);
         }
 
         goto end;
@@ -769,7 +777,10 @@ void DataControler::tryToNormalHttpParseType_finish()
 
     // done.
     if (!header.isEmpty() && !header.contains("text/"))
-        getURLInfo();
+    {
+        emit sGettingInfo(true);
+        QTimer::singleShot(100,this,SLOT(getURLInfo()));
+    }
 
 end:
     // 做完一次解析必须清空历史

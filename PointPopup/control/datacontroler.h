@@ -145,7 +145,7 @@ private:
     QString getFtpFileTypeSize(QString URL);  //从ftp链接中获取文件大小和类型type@size
     QString getIconName();                      //
 
-    QString getHttpFtpFileName(QString URL);    //
+    QString getHttpFtpFileName(const QString &URL);    //
 
     void startMainProgram();                    //尝试启动主程序
     void connectToMainProgram();                //主程序启动后连接到主程序

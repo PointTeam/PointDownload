@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    qDebug() << "Popup arguments:";
     for (int i(0); i != argc; ++i)
         qDebug() << argv[i];
 
@@ -114,7 +115,6 @@ int main(int argc, char *argv[])
     DataControler::getInstance()->getURLFromBrowser(fileURL);
     PEventFilter::getInstance();
     NormalNotice::getInstance();
-
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));

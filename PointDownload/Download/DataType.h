@@ -84,7 +84,7 @@ struct PrepareDownloadInfo
 {
     DownloadToolsType toolType;
     QString downloadURL;
-    QString redirectURl;
+    QString redirectURL;
     QString fileName;
     QString iconPath;
     QString fileSize;

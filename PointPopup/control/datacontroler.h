@@ -134,6 +134,7 @@ private slots:
 
 private:
     explicit DataControler(QObject *parent = 0);
+    ~DataControler();
     void initData();
 
     QString getLinuxFreeSpace(QString path);
@@ -154,7 +155,9 @@ private:
 
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
     bool isYouGetParseType(QString url);
-    bool isNormalHttpParseType(QString url);
+private slots:
+    void tryToNormalHttpParseType(QString url);
+    void tryToNormalHttpParseType_finish();
 
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 
@@ -166,6 +169,8 @@ private:
     DownloadXMLHandler gDownloadHandler;
 
     URLInfoGeter * urlInfoGeter;
+
+    QNetworkAccessManager *manager;
 
     //将要发送到qml界面上的数据
     QString fileURL;

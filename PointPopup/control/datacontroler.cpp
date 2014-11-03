@@ -27,6 +27,8 @@
 DataControler::DataControler(QObject *parent) :
     QObject(parent)
 {
+    manager = new QNetworkAccessManager(this);
+
 //    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataControler>("Singleton.DataControler", 1, 0, "DataControler", dataObj);
 
@@ -39,6 +41,11 @@ DataControler::DataControler(QObject *parent) :
     yougetProcess = NULL;
 
     urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+}
+
+DataControler::~DataControler()
+{
+    delete manager;
 }
 
 void DataControler::initData()
@@ -154,7 +161,6 @@ void DataControler::getURLFromBrowser(QString URL)
         return;
     }
 
-
     if(toolsType == "YouGet")
     {
         QTimer::singleShot(100,this,SLOT(getURLInfoFromYouget()));
@@ -164,7 +170,7 @@ void DataControler::getURLFromBrowser(QString URL)
         //此处会导致警告：QString::arg: Argument missing: 无法解析res_nclose中的符号“res_nclose”：libresolv.so.2,
         //获取http、ftp、Bt等类型的信息
         //延迟时间，防止qml组件未初始化前就发送了信号
-        QTimer::singleShot(100,this,SLOT(getURLInfo()));
+        //QTimer::singleShot(100,this,SLOT(getURLInfo()));
     }
     else if(toolsType == "Xware")
     {
@@ -700,74 +706,67 @@ bool DataControler::isXwareParseType(QString task)
 
 bool DataControler::isYouGetParseType(QString url)
 {
-    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
-            QString("http://v.yinyuetai.com/|") +
-            QString("http://v.youku.com/| ")+
-            QString(" http://v.ku6.com/|")+
-            QString("http://v.163.com/|") +
-            QString("http://v.qq.com/|") +
-            QString("http://www.acfun.com/v/|")+
-            QString("http://bilibili.kankanews.com/video/av|")+
-            QString("http://www.jpopsuki.tv/video/|")+
-            QString("http://video.sina.com.cn/|")+
-            QString("http://tv.sohu.com/|")+
-            QString("http://www.56.com/w|")+
-            QString("http://www.56.com/u|")+
-            QString("http://www.songtaste.com/song/).+");
-
+    QString videoURLRegex = QString("^(http://www\\.tudou\\.com/|") +
+            QString("http://v\\.yinyuetai\\.com/|") +
+            QString("http://v\\.youku\\.com/| ")+
+            QString("http://v\\.ku6\\.com/|")+
+            QString("http://v\\.163\\.com/|") +
+            QString("http://v\\.qq\\.com/|") +
+            QString("http://www\\.acfun\\.com/v/|")+
+            QString("http://bilibili\\.kankanews\\.com/video/av|")+
+            QString("http://www\\.jpopsuki\\.tv/video/|")+
+            QString("http://video\\.sina\\.com\\.cn/|")+
+            QString("http://tv\\.sohu\\.com/|")+
+            QString("http://www\\.56\\.com/w|")+
+            QString("http://www\\.56\\.com/u|")+
+            QString("http://www\\.songtaste\\.com/song/).+");
 
     QRegExp rex(videoURLRegex);
     return rex.exactMatch(url);
 }
 
-bool DataControler::isNormalHttpParseType(QString url)
+void DataControler::tryToNormalHttpParseType(QString url)
 {
-    QNetworkAccessManager * tmpManager = new QNetworkAccessManager;
-    QNetworkRequest headReq(url);
-    headReq.setRawHeader("User-Agent", "");  //Content-Length
-    QNetworkReply*  headReply = NULL;
+    QNetworkRequest req(url);
+    req.setRawHeader("User-Agent", "");
+    QNetworkReply *reply = manager->head(req);
 
-    bool connectError = false;
-    int tryTimes = 1;
-    //如果失败,连接尝试1次;
-    do{
-        connectError = false;
-        headReply =  tmpManager->head(headReq);
-        if(!headReply)
-        {
-            connectError = true;
-            continue;
-        }
+    if (!reply)
+        return ;
 
-        QEventLoop loop;
-        connect(headReply, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
-        connectError = (headReply->error() != QNetworkReply::NoError);
-        if(connectError)
-        {
-            qDebug()<<"connect failed!";
-            qDebug() << headReply->errorString();
-        }
-        headReply->deleteLater();
-    } while (connectError && --tryTimes);
+    connect(reply, SIGNAL(finished()), this, SLOT(tryToNormalHttpParseType_finish()));
+}
 
+void DataControler::tryToNormalHttpParseType_finish()
+{
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    QString header;
+    int statusCode;
 
-    QString header = headReply->header(QNetworkRequest::ContentTypeHeader).toString();
-    int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-    if(statusCode == 302)
+    if (reply->error() != QNetworkReply::NoError)
     {
-        QUrl newUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
-        if(newUrl.isValid())
-        {
-            return isNormalHttpParseType(newUrl.toString());
-        }
+        qDebug() << "connect Failed! => " << reply->errorString();
+        goto end;
     }
 
-    if (header == "" || header.contains("text/"))
-        return false;
-    else
-        return true;
+    header = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if (statusCode == 302)
+    {
+        QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
+        if (newUrl.isValid())
+            tryToNormalHttpParseType(newUrl.toString());
+
+        goto end;
+    }
+
+    // done.
+    if (!header.isEmpty() && !header.contains("text/"))
+        getURLInfo();
+
+end:
+    reply->deleteLater();
 }
 
 void DataControler::getXwareURLOrBtInfo()
@@ -802,25 +801,18 @@ void DataControler::startProcessError(const QProcess::ProcessError &error)
 
 QString DataControler::getDLToolsTypeFromURL(QString URL)
 {
-    if(isXwareParseType(URL))
-    {
+    if (isXwareParseType(URL))
         return "Xware";
-    }
-    else if (URL.contains("http://") || URL.contains("https://"))
+
+    if (URL.contains("http://") || URL.contains("https://"))
     {
         if (isYouGetParseType(URL))
-        {
             return "YouGet";
-        }
-        else if (isNormalHttpParseType(URL))
-        {
-            return "Point";
-        }
-        else
-            return "";
+
+        tryToNormalHttpParseType(URL);
     }
-    else
-        return "";                  //排除两种可能性外,就是不合法的链接
+
+    return "";
 }
 
 QString DataControler::mergeFileNameList(QString nameList)

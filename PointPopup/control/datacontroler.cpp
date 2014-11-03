@@ -725,15 +725,13 @@ bool DataControler::isYouGetParseType(QString url)
     return rex.exactMatch(url);
 }
 
-void DataControler::tryToNormalHttpParseType(QString url)
+void DataControler::tryToNormalHttpParseType(const QString &url)
 {
     QNetworkRequest req(url);
     req.setRawHeader("User-Agent", "");
     QNetworkReply *reply = manager->head(req);
 
-    if (!reply)
-        return ;
-
+    httpParseHistory.append(url);
     connect(reply, SIGNAL(finished()), this, SLOT(tryToNormalHttpParseType_finish()));
 }
 
@@ -755,8 +753,16 @@ void DataControler::tryToNormalHttpParseType_finish()
     if (statusCode == 302)
     {
         QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
+
         if (newUrl.isValid())
-            tryToNormalHttpParseType(newUrl.toString());
+        {
+            const QString u = newUrl.toString();
+
+            // 防止多次重定向: A跳转B再跳转C ....
+            // 和循环重定向: A跳转B  B跳转C C跳转A ....
+            if (httpParseHistory.size() != 10 && !httpParseHistory.contains(u))
+                tryToNormalHttpParseType(newUrl.toString());
+        }
 
         goto end;
     }
@@ -766,6 +772,8 @@ void DataControler::tryToNormalHttpParseType_finish()
         getURLInfo();
 
 end:
+    // 做完一次解析必须清空历史
+    httpParseHistory.clear();
     reply->deleteLater();
 }
 

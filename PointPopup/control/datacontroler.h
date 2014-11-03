@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <sys/vfs.h>
 #include <QTextStream>
+#include <QList>
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 #include "BtAndMagnetInfo/metainfo.h"
@@ -156,7 +157,7 @@ private:
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
     bool isYouGetParseType(QString url);
 private slots:
-    void tryToNormalHttpParseType(QString url);
+    void tryToNormalHttpParseType(const QString &url);
     void tryToNormalHttpParseType_finish();
 
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
@@ -171,6 +172,8 @@ private:
     URLInfoGeter * urlInfoGeter;
 
     QNetworkAccessManager *manager;
+    // http解析列表，用于302跳转时防止循环重定向
+    QStringList httpParseHistory;
 
     //将要发送到qml界面上的数据
     QString fileURL;

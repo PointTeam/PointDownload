@@ -78,7 +78,7 @@ void URLInfoGeter::slotGetInfoFromServer()
 
 QString URLInfoGeter::getFileTypeByName(QString fileName)
 {
-    QString vidioRexStr = QString(".*\.(asf|avi|wm|wmp|wmv|ram|rm|rmvb|rp|rt|")
+    QString vidioRexStr = QString(".*\\.(asf|avi|wm|wmp|wmv|ram|rm|rmvb|rp|rt|")
             + QString("smil|scm|dat|m1v|m2v|m2p|m2ts|mp2v|mpe|mpeg|")
             + QString("mpeg1|mpeg2|mpg|mpv2|pss|pva|tp|tpr|ts|m4b|")
             + QString("m4p|m4v|mp4|mpeg4|3g2|3gp|3gp2|3gpp|mov|qt|")

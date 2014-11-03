@@ -22,11 +22,12 @@
 
 #include "datacontroler.h"
 #include <QtQml>
+#include <QProcess>
 
 DataControler::DataControler(QObject *parent) :
     QObject(parent)
 {
-    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
+//    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataControler>("Singleton.DataControler", 1, 0, "DataControler", dataObj);
 
     startMainProgram();
@@ -373,10 +374,10 @@ void DataControler::getURLInfo()
         emit sFnishGetAllInfo();
     }
 
-//    else if (fileURL.contains(".torrent"))
-//    {
+    else if (fileURL.contains(".torrent"))
+    {
 
-//    }
+    }
     //确保toolsType参数在获取信息后一定会发送至界面
     setToolsType(toolsType);
 }
@@ -498,13 +499,13 @@ QString DataControler::getHttpFileTypeSize(QString URL)
     int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << headReply->header(QNetworkRequest::ContentTypeHeader).toString();
 
-//    qDebug() << statusCode;
+    qDebug() << statusCode;
     if(statusCode == 302)
     {
         QUrl newUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
         if(newUrl.isValid())
         {
-//            qDebug()<<"Redirect："<<newUrl;
+            qDebug()<<"Redirect："<<newUrl;
             URL = newUrl.toString();
             redirectURL = URL;
             return getHttpFileTypeSize(URL);
@@ -590,7 +591,7 @@ QString DataControler::getHttpFtpFileName(QString URL)
     if ( pos >= 0 )
     {
         QString tmpStr = rx.capturedTexts().at(0);
-        rx.setPattern(QString("\.[^?@#$%&]+"));
+        rx.setPattern(QString("\\.[^?@#$%&]+"));
         tmpStr.indexOf(rx);
         QString tmpName = rx.capturedTexts().at(0);
 
@@ -606,16 +607,26 @@ QString DataControler::getHttpFtpFileName(QString URL)
 
 void DataControler::startMainProgram()
 {
+    // 如果这里的路径错误了，会产生一个非常难调试出的运行时错误.
+#ifdef QT_DEBUG
+    QFile file(MAIN_PROGRAM_PATH);
+    if (!file.exists())
+        qWarning() << "Error: MAIN_PROGRAM_PATH Not Found!!!";
+#endif
+
     //每次启动前先尝试启动主程序
-    QObject * mparent;
     QStringList arguments;
     arguments << "-c";
 
     //该指针指向另外一个被启动的程序，所以 绝对不能被delete
-    QProcess * myProcess = new QProcess(mparent);
+    QProcess * myProcess = new QProcess();
     myProcess->start(MAIN_PROGRAM_PATH,arguments);
+
+    connect(myProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(startProcessError(QProcess::ProcessError)));
+    connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
+
     mainProgramStarted();
-//    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
+    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
 }
 
 void DataControler::connectToMainProgram()
@@ -779,6 +790,15 @@ void DataControler::receiveXwareNameInfo(QString nameList)
     setFileNameList(nameList);
 }
 
+void DataControler::startProcessError(const QProcess::ProcessError &error)
+{
+#ifndef QT_DEBUG
+    Q_UNUSED(error);
+#else
+    qWarning() << "open process error! QProcess::ProcessError = " << error;
+#endif
+}
+
 
 QString DataControler::getDLToolsTypeFromURL(QString URL)
 {
@@ -839,7 +859,6 @@ QString DataControler::mergeFileNameList(QString nameList)
     return "application/x-gzip" + ITEM_INFO_SPLIT_CHAR + QString::number(totalSize) +
             ITEM_INFO_SPLIT_CHAR + maxName;
 }
-
 
 
 

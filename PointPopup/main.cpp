@@ -24,6 +24,7 @@
 #include <QQmlApplicationEngine>
 #include <QString>
 #include <QTranslator>
+#include <QDebug>
 
 #include "control/datacontroler.h"
 #include "peventfilter.h"

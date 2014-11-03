@@ -38,7 +38,11 @@
 #include "BtAndMagnetInfo/metainfo.h"
 #include "urlinfogeter.h"
 
+#ifndef QT_DEBUG
 const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+#else
+const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
+#endif
 
 class DataControler : public QObject
 {
@@ -124,6 +128,9 @@ private slots:
 
     void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
     void receiveXwareNameInfo(QString nameList);
+
+    // open process error handle
+    void startProcessError(const QProcess::ProcessError &error);
 
 private:
     explicit DataControler(QObject *parent = 0);

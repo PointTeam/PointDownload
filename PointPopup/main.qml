@@ -47,7 +47,6 @@ Window {
     x: winx
     y: winy
 
-
     //连接单例的信号
     Connections {
         target: DataControler

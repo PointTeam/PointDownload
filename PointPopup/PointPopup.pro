@@ -57,10 +57,10 @@ lupdate_only{
 SOURCES = main.qml \
           FileNameListPanel.qml\
           SavePathPanel.qml\
-            SettingSpinBox.qml\
-    DownloadToolsPanel.qml\
+          SettingSpinBox.qml\
     control/datacontroler.cpp\
-    control/getsavepathdialog.cpp
+    control/getsavepathdialog.cpp\
+    DownloadToolsPanel.qml
 }
 
 include(../PInterface/XmlHandler/XmlHandler.pri)

@@ -436,8 +436,16 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
 
     qDebug() << POPUP_PROGRAM_PATH << arguments;
 
-    QProcess *myProcess = new QProcess(0);
+    QProcess *myProcess = new QProcess();
     myProcess->start(POPUP_PROGRAM_PATH,arguments);
+
+    // delete when process finish
+    connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
+
+    //URL.replace("\"", "\\\"");
+    //const QString cmd(POPUP_PROGRAM_PATH + " \"" + URL +"#..#FIREFOX\"");
+    //qDebug() << cmd;
+    //system(cmd.toStdString().c_str());
 }
 
 

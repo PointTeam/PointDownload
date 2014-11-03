@@ -20,9 +20,10 @@ DLDataConverter * DLDataConverter::getInstance()
 }
 
 
-void DLDataConverter::controlItem(QString dtype, QString otype, QString URL)
+void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
-    qDebug() << dtype << otype << URL;
+    // remove witespace character at start and end
+    URL = URL.trimmed();
 
     if (dtype == "dl_downloaded")
     {
@@ -78,7 +79,6 @@ void DLDataConverter::resumeAllDownloading()
 {
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
-
 
 void DLDataConverter::addDownloadingItem(QString infoList)
 {

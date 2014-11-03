@@ -13,7 +13,7 @@ class DLDataConverter : public QObject
 public:
     static DLDataConverter * getInstance();
     //qml中能直接调用此方法
-    Q_INVOKABLE void controlItem(QString dtype, QString otype, QString URL);//dtype:DownloadType otype:OperationType
+    Q_INVOKABLE void controlItem(const QString &dtype, const QString &otype, QString URL);//dtype:DownloadType otype:OperationType
     Q_INVOKABLE void suspendAllDownloading();
     Q_INVOKABLE void resumeAllDownloading();
 

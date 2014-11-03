@@ -103,7 +103,7 @@ bool MonitorClipBoard::isLegalURL(QString URL)
         return true;
     }
 
-        return false;                  //排除两种可能性外,就是不合法的链接
+    return false;                  //排除两种可能性外,就是不合法的链接
 }
 
 bool MonitorClipBoard::isXwareParseType(QString URL)

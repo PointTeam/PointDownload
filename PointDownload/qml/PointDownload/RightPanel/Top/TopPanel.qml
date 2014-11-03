@@ -112,6 +112,18 @@ Rectangle {
         color: "#eeeff3"
     }
 
+    Image {
+        id: searchImg
+        source: "qrc:/images/navigation/search"
+        anchors {rightMargin: 10; verticalCenter: parent.verticalCenter; right: splitLine4.left}
+    }
+
+    InputBox {
+        id: searchBox
+        boxHeigth: parent.height
+        anchors {left: splitLine1.right; leftMargin: 5; verticalCenter: parent.verticalCenter; right: searchImg.left}
+    }
+
     BlueButton {
         id: quitButton
         imagePath: "qrc:/images/navigation/quit"

@@ -22,7 +22,7 @@ QT += xml
 QT += widgets
 QT += qml quick
 
-QMAKE_CXXFLAGS += -std=c++14
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp \
     control/getsavepathdialog.cpp \

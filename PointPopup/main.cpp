@@ -25,6 +25,7 @@
 #include <QString>
 #include <QTranslator>
 #include <QDebug>
+#include <QIcon>
 
 #include "control/datacontroler.h"
 #include "peventfilter.h"
@@ -86,6 +87,9 @@ int main(int argc, char *argv[])
     QTranslator translator;
     translator.load(QString(":/LANG/PointPopup_") + local);
     app.installTranslator(&translator);
+
+    // 为程序设置一个Icon
+    app.setWindowIcon(QIcon(QPixmap(":/images/resources/images/point-32.png")));
 
     QString fileURL = "";
 

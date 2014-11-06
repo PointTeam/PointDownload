@@ -75,7 +75,7 @@ PrepareDownloadInfo Aria2Task::getPrepareInfoFromXML(QString URL)
     tmpInfo.fileSize = ingNode.totalSize;
     tmpInfo.iconPath = ingNode.iconPath;
     tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toLongLong();
-    tmpInfo.redirectURL = ingNode.redirectRUL;
+    tmpInfo.redirectURL = ingNode.redirectURL;
     tmpInfo.storageDir = ingNode.savePath;
     tmpInfo.threadCount = QString::number(ingNode.threadList.count());
     tmpInfo.toolType = aria2;

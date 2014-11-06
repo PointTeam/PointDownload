@@ -179,7 +179,7 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
 
     SDownloading tmpStruct;
     tmpStruct.URL = gDownloadInfo.downloadURL;
-    tmpStruct.redirectRUL = URL.toString();
+    tmpStruct.redirectURL = URL.toString();
 
     xmlOpera.writeDownloadingConfigFile(tmpStruct);
 
@@ -290,7 +290,7 @@ void HttpThreadManager::inserToXMLFile(PrepareDownloadInfo &info)
     sdownlaoding.dlToolsType = "Point";
     sdownlaoding.name = info.fileName;                               //文件名
     sdownlaoding.URL = info.downloadURL;                                 //url
-    sdownlaoding.redirectRUL = info.redirectURL;                 //
+    sdownlaoding.redirectURL = info.redirectURL;                 //
     sdownlaoding.savePath = info.storageDir;      //文件保存路径
     sdownlaoding.totalSize = info.fileSize;       //总大小
     sdownlaoding.readySize = "0";                           //已经下载字节数
@@ -318,7 +318,7 @@ PrepareDownloadInfo HttpThreadManager::getPrepareInfoFromXML(QString URL)
     tmpInfo.fileSize = ingNode.totalSize;
     tmpInfo.iconPath = ingNode.iconPath;
     tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toDouble();
-    tmpInfo.redirectURL = ingNode.redirectRUL;
+    tmpInfo.redirectURL = ingNode.redirectURL;
     tmpInfo.storageDir = ingNode.savePath;
     tmpInfo.threadCount = QString::number(ingNode.threadList.count());
     tmpInfo.toolType = Point;

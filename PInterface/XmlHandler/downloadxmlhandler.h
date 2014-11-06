@@ -40,7 +40,7 @@ struct SDownloading
     QString savePath;                           //此文件的保存路径
     QString enableUpload;                    //此文件是否允许上传共享
     QString URL;                                   //文件下载URL
-    QString redirectRUL;
+    QString redirectURL;
     QString dlToolsType;                        //下载后端类型 2014.6.1add
     QString blockCount;                         //这个文件被分解成的数据块数量
     QString blockSize;                            //每个数据块的大小，Byte

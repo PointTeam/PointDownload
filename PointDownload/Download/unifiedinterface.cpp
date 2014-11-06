@@ -222,7 +222,7 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
         tmpIngStruct.savePath = info.storageDir;
         tmpIngStruct.enableUpload = "false";
         tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectRUL = info.redirectURL;
+        tmpIngStruct.redirectURL = info.redirectURL;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = info.fileSize;
@@ -274,7 +274,7 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
         tmpIngStruct.savePath = info.storageDir;
         tmpIngStruct.enableUpload = "false";
         tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectRUL = info.redirectURL;
+        tmpIngStruct.redirectURL = info.redirectURL;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = info.fileSize;
@@ -324,7 +324,7 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
         tmpIngStruct.savePath = info.storageDir;
         tmpIngStruct.enableUpload = "false";
         tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectRUL = info.redirectURL;
+        tmpIngStruct.redirectURL = info.redirectURL;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = info.fileSize;
@@ -793,7 +793,7 @@ void UnifiedInterface::initdownloadingList()
         QString info =  ingList.at(i).dlToolsType + "?:?"
                 + ingList.at(i).name + "?:?"
                 + ingList.at(i).URL + "?:?"
-                + ingList.at(i).redirectRUL + "?:?"
+                + ingList.at(i).redirectURL + "?:?"
                 + ingList.at(i).iconPath + "?:?"
                 + ingList.at(i).totalSize + "?:?"
                 + ingList.at(i).savePath + "?:?"
@@ -1004,7 +1004,7 @@ PrepareDownloadInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloadin
     tmpInfo.fileSize = infoStruct.totalSize;
     tmpInfo.iconPath = infoStruct.iconPath;
     tmpInfo.maxSpeed = infoStruct.jobMaxSpeed.toDouble();
-    tmpInfo.redirectURL = infoStruct.redirectRUL;
+    tmpInfo.redirectURL = infoStruct.redirectURL;
     tmpInfo.storageDir = infoStruct.savePath;
     tmpInfo.threadCount = QString::number(infoStruct.threadList.count());
     if (infoStruct.dlToolsType == "Point")

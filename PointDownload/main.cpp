@@ -55,6 +55,9 @@ int main(int argc, char *argv[])
     translator.load(QString(":/languages/:/languages/resources/LANG/PointDownload_") + local);
     app.installTranslator(&translator);
 
+    // 为程序设置一个Icon
+    app.setWindowIcon(QIcon(QPixmap(":/images/main/point-32-b")));
+
     //这样能保证系统托盘类的初始化在qml初始化之前完成，避免造 成gtk的一些错误
     NormalNotice::getInstance();
     TopContrl::getInstance()->initTrayIcon();

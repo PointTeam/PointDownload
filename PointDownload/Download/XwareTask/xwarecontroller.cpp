@@ -165,7 +165,7 @@ bool XwareController::tryToClearXwareCfg(QString cfgPath)
         foreach(QString file , list)
         {
             // romve all file (not include dir)
-            if(file != "\." && file != "\..")
+            if(file != "." && file != "..")
             {
                 tag = xwareCfgDir.remove(file);
                 if(!tag)break;
@@ -349,7 +349,7 @@ void XwareController::removeXwareFirmware()
 
     // remove xware firmware
     QDir xwareCfgDir(XWARE_CONSTANTS_STRUCT.XWARE_HOME);
-    bool tag = true;
+    //bool tag = true;
     if(xwareCfgDir.exists())
     {
         if(XWARE_CONSTANTS_STRUCT.DEBUG)

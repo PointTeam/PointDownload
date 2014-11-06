@@ -58,7 +58,7 @@ void HttpThreadManager::startDownload()
         qint64 start = (qint64) tmpList.at(i).startBlockIndex.toLongLong(0);
         qint64 end = (qint64) tmpList.at(i).endBlockIndex.toLongLong(0);
 
-        HttpThread * tmpThread = new HttpThread( i, start , end, completed, gDownloadInfo.redirectURl);
+        HttpThread * tmpThread = new HttpThread( i, start , end, completed, gDownloadInfo.redirectURL);
         threadList.append(tmpThread);
 
         connect(tmpThread,SIGNAL(progressChanged(qint64)),
@@ -67,7 +67,7 @@ void HttpThreadManager::startDownload()
         connect(tmpThread, SIGNAL(URLChanged(QUrl)), this, SLOT(slotGetNewRedirectURL(QUrl)));
         connect(tmpThread, SIGNAL(threadsIslimited()), this, SLOT(slotThreadsIsLimited()));
 
-        threadList.at( i )->start();                 //启动线程下载
+        threadList.at(i)->start();                 //启动线程下载
     }
 
     updateXMLTimer->start(UPDATE_XML_INTERVAL);         //每UPDATE_XML_INTERVAL秒更新一次xml文件，记录下载信息
@@ -179,11 +179,11 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
 
     SDownloading tmpStruct;
     tmpStruct.URL = gDownloadInfo.downloadURL;
-    tmpStruct.redirectRUL = URL.toString();
+    tmpStruct.redirectURL = URL.toString();
 
     xmlOpera.writeDownloadingConfigFile(tmpStruct);
 
-    gDownloadInfo.redirectURl = URL.toString();
+    gDownloadInfo.redirectURL = URL.toString();
 
     stopDownload();
     startDownload();
@@ -290,7 +290,7 @@ void HttpThreadManager::inserToXMLFile(PrepareDownloadInfo &info)
     sdownlaoding.dlToolsType = "Point";
     sdownlaoding.name = info.fileName;                               //文件名
     sdownlaoding.URL = info.downloadURL;                                 //url
-    sdownlaoding.redirectRUL = info.redirectURl;                 //
+    sdownlaoding.redirectURL = info.redirectURL;                 //
     sdownlaoding.savePath = info.storageDir;      //文件保存路径
     sdownlaoding.totalSize = info.fileSize;       //总大小
     sdownlaoding.readySize = "0";                           //已经下载字节数
@@ -318,7 +318,7 @@ PrepareDownloadInfo HttpThreadManager::getPrepareInfoFromXML(QString URL)
     tmpInfo.fileSize = ingNode.totalSize;
     tmpInfo.iconPath = ingNode.iconPath;
     tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toDouble();
-    tmpInfo.redirectURl = ingNode.redirectRUL;
+    tmpInfo.redirectURL = ingNode.redirectURL;
     tmpInfo.storageDir = ingNode.savePath;
     tmpInfo.threadCount = QString::number(ingNode.threadList.count());
     tmpInfo.toolType = Point;

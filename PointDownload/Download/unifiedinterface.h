@@ -55,7 +55,11 @@ History:
 #include "Download/XwareTask/xwaretask.h"
 #include "normalnotice.h"
 
+#ifndef QT_DEBUG
 const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
+#else
+const QString POPUP_PROGRAM_PATH ="/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
+#endif
 
 class UnifiedInterface : public QObject
 {

@@ -33,12 +33,17 @@
 #include <QProcess>
 #include <sys/vfs.h>
 #include <QTextStream>
+#include <QList>
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 #include "BtAndMagnetInfo/metainfo.h"
 #include "urlinfogeter.h"
 
+#ifndef QT_DEBUG
 const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+#else
+const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
+#endif
 
 class DataControler : public QObject
 {
@@ -125,8 +130,12 @@ private slots:
     void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
     void receiveXwareNameInfo(QString nameList);
 
+    // open process error handle
+    void startProcessError(const QProcess::ProcessError &error);
+
 private:
     explicit DataControler(QObject *parent = 0);
+    ~DataControler();
     void initData();
 
     QString getLinuxFreeSpace(QString path);
@@ -136,7 +145,7 @@ private:
     QString getFtpFileTypeSize(QString URL);  //从ftp链接中获取文件大小和类型type@size
     QString getIconName();                      //
 
-    QString getHttpFtpFileName(QString URL);    //
+    QString getHttpFtpFileName(const QString &URL);    //
 
     void startMainProgram();                    //尝试启动主程序
     void connectToMainProgram();                //主程序启动后连接到主程序
@@ -147,7 +156,9 @@ private:
 
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
     bool isYouGetParseType(QString url);
-    bool isNormalHttpParseType(QString url);
+private slots:
+    void tryToNormalHttpParseType(const QString &url);
+    void tryToNormalHttpParseType_finish();
 
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 
@@ -159,6 +170,10 @@ private:
     DownloadXMLHandler gDownloadHandler;
 
     URLInfoGeter * urlInfoGeter;
+
+    QNetworkAccessManager *manager;
+    // http解析列表，用于302跳转时防止循环重定向
+    QStringList httpParseHistory;
 
     //将要发送到qml界面上的数据
     QString fileURL;

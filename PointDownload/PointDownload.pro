@@ -27,6 +27,8 @@ QT += multimedia
 QT += webkitwidgets
 #CONFIG += static
 
+# QMAKE FLAGS
+QMAKE_CXXFLAGS += -std=c++11
 
 #Get distributions type
 DISTRIBUTION_NAME = $$system(cat /etc/os-release)

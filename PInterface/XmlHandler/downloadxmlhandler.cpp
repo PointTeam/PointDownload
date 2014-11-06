@@ -39,7 +39,7 @@ bool DownloadXMLHandler::writeDownloadingConfigFile(SDownloading downloading)
     setDownloadingNodeValue(domDocument, downloading.URL,"AutoOpenFolder", downloading.autoOpenFolder);
     setDownloadingThreadNodeValue(domDocument, downloading.URL, downloading.threadList);//only set CompleteBlockCount
 
-    setDownloadingNodeValue(domDocument, downloading.URL,"RedirectURL", downloading.redirectRUL);  //20140521 zwy
+    setDownloadingNodeValue(domDocument, downloading.URL,"RedirectURL", downloading.redirectURL);  //20140521 zwy
     //写xml文件
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
@@ -120,7 +120,7 @@ bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
     fileElement.appendChild(createChildElement("SavePath", tmpStruct.savePath));
     fileElement.appendChild(createChildElement("EnableUpload", tmpStruct.enableUpload));
     fileElement.appendChild(createChildElement("URL", tmpStruct.URL));
-    fileElement.appendChild(createChildElement("RedirectURL", tmpStruct.redirectRUL));
+    fileElement.appendChild(createChildElement("RedirectURL", tmpStruct.redirectURL));
     fileElement.appendChild(createChildElement("DLToolsType", tmpStruct.dlToolsType));
     fileElement.appendChild(createChildElement("BlockCount", tmpStruct.blockCount));
     fileElement.appendChild(createChildElement("BlockSize", tmpStruct.blockSize));
@@ -399,7 +399,7 @@ QList<SDownloading> DownloadXMLHandler::getDownloadingNodes()
             else if (tagName == "URL")
                 tmpNodeStruct.URL = nodeValue;
             else if (tagName == "RedirectURL")
-                tmpNodeStruct.redirectRUL = nodeValue;
+                tmpNodeStruct.redirectURL = nodeValue;
             else if (tagName == "DLToolsType")
                 tmpNodeStruct.dlToolsType = nodeValue;
             else if (tagName == "BlockCount")
@@ -524,7 +524,7 @@ SDownloading DownloadXMLHandler::getDownloadingNode(QString URL)
     QList<SDownloading> tmpList = getDownloadingNodes();
     for (int i = 0; i < tmpList.count(); i ++)
     {
-        if (tmpList.at(i).URL == URL || tmpList.at(i).redirectRUL == URL)
+        if (tmpList.at(i).URL == URL || tmpList.at(i).redirectURL == URL)
         {
             tmpNode = tmpList.at(i);
             break;

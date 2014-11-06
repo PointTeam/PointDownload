@@ -153,6 +153,9 @@ ProtocalType PointTask::getProtocalTypeFromURL(QString URL)
         return point_ed2k;
     else if (URL.contains(".torrent"))
         return point_bt;
+
+    qWarning() << "warning! url not match any result. At: ProtocalType PointTask::getProtocalTypeFromURL(QString URL)";
+    qWarning() << URL;
 }
 
 void PointTask::startHttpDownload(PrepareDownloadInfo info)

@@ -20,8 +20,11 @@ DLDataConverter * DLDataConverter::getInstance()
 }
 
 
-void DLDataConverter::controlItem(QString dtype, QString otype, QString URL)
+void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
+    // remove witespace character at start and end
+    URL = URL.trimmed();
+
     if (dtype == "dl_downloaded")
     {
         if (otype == "download_redownload")
@@ -76,7 +79,6 @@ void DLDataConverter::resumeAllDownloading()
 {
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
-
 
 void DLDataConverter::addDownloadingItem(QString infoList)
 {
@@ -186,6 +188,8 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
             break;
         }
         break;
+    default:
+        qWarning() << "DownloadType not handled in switch. At: void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType otype, QString URL, bool result)";
     }
 }
 

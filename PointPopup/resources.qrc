@@ -6,6 +6,7 @@
         <file alias="checked">resources/images/checkBox-blue-check.png</file>
         <file alias="loading">resources/images/loading.gif</file>
         <file alias="bt-24">resources/images/bt-24.png</file>
+        <file>resources/images/point-32.png</file>
     </qresource>
     <qresource prefix="/LANG">
         <file alias="PointPopup_zh_CN">resources/LANG/PointPopup_zh_CN.qm</file>

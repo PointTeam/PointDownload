@@ -73,7 +73,8 @@ void XwareSettingControler::tryAutomaticLogin()
 {
     setSignInFlag(1);
 
-    if (!isSignIn && userName != "" & userPasswd != "" & automaticLogin)
+    if (!isSignIn && XwareSettingControler::getInstance()->getXwareEnable() &&
+            userName != "" && userPasswd != "" && automaticLogin)
     {
         XwareController::getInstance()->tryAutomaticLogin(userName, userPasswd);
     }

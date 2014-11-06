@@ -24,13 +24,16 @@
 #include <QQmlApplicationEngine>
 #include <QString>
 #include <QTranslator>
-#include <control/datacontroler.h>
+#include <QDebug>
+#include <QIcon>
+
+#include "control/datacontroler.h"
 #include "peventfilter.h"
 #include "normalnotice.h"
 
 QString getChromeURL()
 {
-    unsigned int length = 0;
+    int length = 0;
     //read the first four bytes (=> Length)
     //getwchar: receive char from stdin
     //putwchar: write char to stdout
@@ -51,7 +54,7 @@ QString getChromeURL()
         while(1)
         {
             char tmpChar = getwchar();
-            if (tmpChar == WEOF)
+            if (tmpChar == (char)WEOF)
                 break;
             else
                 fileURL += tmpChar;
@@ -76,10 +79,17 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+    qDebug() << "Popup arguments:";
+    for (int i(0); i != argc; ++i)
+        qDebug() << argv[i];
+
     QString local = QLocale::system().name();
     QTranslator translator;
     translator.load(QString(":/LANG/PointPopup_") + local);
     app.installTranslator(&translator);
+
+    // 为程序设置一个Icon
+    app.setWindowIcon(QIcon(QPixmap(":/images/resources/images/point-32.png")));
 
     QString fileURL = "";
 
@@ -109,7 +119,6 @@ int main(int argc, char *argv[])
     DataControler::getInstance()->getURLFromBrowser(fileURL);
     PEventFilter::getInstance();
     NormalNotice::getInstance();
-
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));

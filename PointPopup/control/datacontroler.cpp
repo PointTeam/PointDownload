@@ -22,11 +22,14 @@
 
 #include "datacontroler.h"
 #include <QtQml>
+#include <QProcess>
 
 DataControler::DataControler(QObject *parent) :
     QObject(parent)
 {
-    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
+    manager = new QNetworkAccessManager(this);
+
+//    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataControler>("Singleton.DataControler", 1, 0, "DataControler", dataObj);
 
     startMainProgram();
@@ -38,6 +41,11 @@ DataControler::DataControler(QObject *parent) :
     yougetProcess = NULL;
 
     urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+}
+
+DataControler::~DataControler()
+{
+    delete manager;
 }
 
 void DataControler::initData()
@@ -116,7 +124,6 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         QFile::remove(gDownloadHandler.getDownloadedNode(fileURL).savePath + "/"
                       + gDownloadHandler.getDownloadedNode(fileURL).name);
         gDownloadHandler.removeDownloadedFileNode(fileURL);
-
     }
     else if (checkIsInDownloadTrash(fileURL))
     {
@@ -132,6 +139,8 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
             + savePath + "?:?"
             + threads + "?:?"
             + speed;
+
+    qDebug() << "send file to local socket:\n" << info;
 
     localSocket->write(info.toStdString().c_str());
     localSocket->flush();
@@ -153,7 +162,6 @@ void DataControler::getURLFromBrowser(QString URL)
         return;
     }
 
-
     if(toolsType == "YouGet")
     {
         QTimer::singleShot(100,this,SLOT(getURLInfoFromYouget()));
@@ -163,7 +171,7 @@ void DataControler::getURLFromBrowser(QString URL)
         //此处会导致警告：QString::arg: Argument missing: 无法解析res_nclose中的符号“res_nclose”：libresolv.so.2,
         //获取http、ftp、Bt等类型的信息
         //延迟时间，防止qml组件未初始化前就发送了信号
-        QTimer::singleShot(100,this,SLOT(getURLInfo()));
+        //QTimer::singleShot(100,this,SLOT(getURLInfo()));
     }
     else if(toolsType == "Xware")
     {
@@ -372,11 +380,10 @@ void DataControler::getURLInfo()
         setFileNameList(tmpNameList);
         emit sFnishGetAllInfo();
     }
+    else if (fileURL.contains(".torrent"))
+    {
 
-//    else if (fileURL.contains(".torrent"))
-//    {
-
-//    }
+    }
     //确保toolsType参数在获取信息后一定会发送至界面
     setToolsType(toolsType);
 }
@@ -498,13 +505,13 @@ QString DataControler::getHttpFileTypeSize(QString URL)
     int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << headReply->header(QNetworkRequest::ContentTypeHeader).toString();
 
-//    qDebug() << statusCode;
+    qDebug() << statusCode;
     if(statusCode == 302)
     {
         QUrl newUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
         if(newUrl.isValid())
         {
-//            qDebug()<<"Redirect："<<newUrl;
+            qDebug()<<"Redirect："<<newUrl;
             URL = newUrl.toString();
             redirectURL = URL;
             return getHttpFileTypeSize(URL);
@@ -579,43 +586,62 @@ QString DataControler::getIconName()
     return iconName;
 }
 
-QString DataControler::getHttpFtpFileName(QString URL)
+QString DataControler::getHttpFtpFileName(const QString &URL)
 {
-    QRegExp rx;
-    rx.setPatternSyntax(QRegExp::RegExp);
-    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
-    rx.setPattern(QString("[^/]*$"));
-    int pos = URL.indexOf(rx);
 
-    if ( pos >= 0 )
-    {
-        QString tmpStr = rx.capturedTexts().at(0);
-        rx.setPattern(QString("\.[^?@#$%&]+"));
-        tmpStr.indexOf(rx);
-        QString tmpName = rx.capturedTexts().at(0);
+    const QString fileName(QUrl(URL).fileName());
 
-        if (tmpName == "")
-            return "UnknownName";
-        else
-            return tmpName;
-    }
-    else
-        return "";
+    return fileName.isEmpty() ? "UnknownName" : fileName;
+
+//    qDebug() << url.fileName();
+
+//    QRegExp rx;
+//    rx.setPatternSyntax(QRegExp::RegExp);
+//    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
+//    rx.setPattern(QString("[^/]*$"));
+//    int pos = URL.indexOf(rx);
+
+//    if ( pos >= 0 )
+//    {
+//        QString tmpStr = rx.capturedTexts().at(0);
+//        rx.setPattern(QString("\\.[^?@#$%&]+"));
+//        tmpStr.indexOf(rx);
+//        QString tmpName = rx.capturedTexts().at(0);
+
+//        qDebug() << tmpName;
+
+//        if (tmpName == "")
+//            return "UnknownName";
+//        else
+//            return tmpName;
+//    }
+//    else
+//        return "";
 }
 
 
 void DataControler::startMainProgram()
 {
+    // 如果这里的路径错误了，会产生一个非常难调试出的运行时错误.
+#ifdef QT_DEBUG
+    QFile file(MAIN_PROGRAM_PATH);
+    if (!file.exists())
+        qWarning() << "Error: MAIN_PROGRAM_PATH Not Found!!!";
+#endif
+
     //每次启动前先尝试启动主程序
-    QObject * mparent;
     QStringList arguments;
     arguments << "-c";
 
     //该指针指向另外一个被启动的程序，所以 绝对不能被delete
-    QProcess * myProcess = new QProcess(mparent);
+    QProcess * myProcess = new QProcess();
     myProcess->start(MAIN_PROGRAM_PATH,arguments);
+
+    connect(myProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(startProcessError(QProcess::ProcessError)));
+    connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
+
     mainProgramStarted();
-//    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
+    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
 }
 
 void DataControler::connectToMainProgram()
@@ -626,7 +652,6 @@ void DataControler::connectToMainProgram()
     {
         qDebug() << "connect to main program success";
         return;
-        // TODO:
     }
     else
     {
@@ -689,74 +714,78 @@ bool DataControler::isXwareParseType(QString task)
 
 bool DataControler::isYouGetParseType(QString url)
 {
-    QString videoURLRegex = QString("^(http://www.tudou.com/|") +
-            QString("http://v.yinyuetai.com/|") +
-            QString("http://v.youku.com/| ")+
-            QString(" http://v.ku6.com/|")+
-            QString("http://v.163.com/|") +
-            QString("http://v.qq.com/|") +
-            QString("http://www.acfun.com/v/|")+
-            QString("http://bilibili.kankanews.com/video/av|")+
-            QString("http://www.jpopsuki.tv/video/|")+
-            QString("http://video.sina.com.cn/|")+
-            QString("http://tv.sohu.com/|")+
-            QString("http://www.56.com/w|")+
-            QString("http://www.56.com/u|")+
-            QString("http://www.songtaste.com/song/).+");
-
+    QString videoURLRegex = QString("^(http://www\\.tudou\\.com/|") +
+            QString("http://v\\.yinyuetai\\.com/|") +
+            QString("http://v\\.youku\\.com/| ")+
+            QString("http://v\\.ku6\\.com/|")+
+            QString("http://v\\.163\\.com/|") +
+            QString("http://v\\.qq\\.com/|") +
+            QString("http://www\\.acfun\\.com/v/|")+
+            QString("http://bilibili\\.kankanews\\.com/video/av|")+
+            QString("http://www\\.jpopsuki\\.tv/video/|")+
+            QString("http://video\\.sina\\.com\\.cn/|")+
+            QString("http://tv\\.sohu\\.com/|")+
+            QString("http://www\\.56\\.com/w|")+
+            QString("http://www\\.56\\.com/u|")+
+            QString("http://www\\.songtaste\\.com/song/).+");
 
     QRegExp rex(videoURLRegex);
     return rex.exactMatch(url);
 }
 
-bool DataControler::isNormalHttpParseType(QString url)
+void DataControler::tryToNormalHttpParseType(const QString &url)
 {
-    QNetworkAccessManager * tmpManager = new QNetworkAccessManager;
-    QNetworkRequest headReq(url);
-    headReq.setRawHeader("User-Agent", "");  //Content-Length
-    QNetworkReply*  headReply = NULL;
+    QNetworkRequest req(url);
+    req.setRawHeader("User-Agent", "");
+    QNetworkReply *reply = manager->head(req);
 
-    bool connectError = false;
-    int tryTimes = 1;
-    //如果失败,连接尝试1次;
-    do{
-        connectError = false;
-        headReply =  tmpManager->head(headReq);
-        if(!headReply)
-        {
-            connectError = true;
-            continue;
-        }
+    httpParseHistory.append(url);
+    connect(reply, SIGNAL(finished()), this, SLOT(tryToNormalHttpParseType_finish()));
+}
 
-        QEventLoop loop;
-        connect(headReply, SIGNAL(finished()), &loop, SLOT(quit()));
-        loop.exec();
-        connectError = (headReply->error() != QNetworkReply::NoError);
-        if(connectError)
-        {
-            qDebug()<<"connect failed!";
-            qDebug() << headReply->errorString();
-        }
-        headReply->deleteLater();
-    } while (connectError && --tryTimes);
+void DataControler::tryToNormalHttpParseType_finish()
+{
+    QNetworkReply *reply = static_cast<QNetworkReply *>(sender());
+    QString header;
+    int statusCode;
 
-
-    QString header = headReply->header(QNetworkRequest::ContentTypeHeader).toString();
-    int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-    if(statusCode == 302)
+    if (reply->error() != QNetworkReply::NoError)
     {
-        QUrl newUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
-        if(newUrl.isValid())
-        {
-            return isNormalHttpParseType(newUrl.toString());
-        }
+        qDebug() << "connect Failed! => " << reply->errorString();
+        goto end;
     }
 
-    if (header == "" || header.contains("text/"))
-        return false;
-    else
-        return true;
+    header = reply->header(QNetworkRequest::ContentTypeHeader).toString();
+    statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+    if (statusCode == 302)
+    {
+        QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
+
+        if (newUrl.isValid())
+        {
+            const QString u = newUrl.toString();
+
+            // 防止多次重定向: A跳转B再跳转C ....
+            // 和循环重定向: A跳转B  B跳转C C跳转A ....
+            if (httpParseHistory.size() != 10 && !httpParseHistory.contains(u))
+                tryToNormalHttpParseType(u);
+        }
+
+        goto end;
+    }
+
+    // done.
+    if (!header.isEmpty() && !header.contains("text/"))
+    {
+        emit sGettingInfo(true);
+        QTimer::singleShot(100,this,SLOT(getURLInfo()));
+    }
+
+end:
+    // 做完一次解析必须清空历史
+    httpParseHistory.clear();
+    reply->deleteLater();
 }
 
 void DataControler::getXwareURLOrBtInfo()
@@ -779,28 +808,30 @@ void DataControler::receiveXwareNameInfo(QString nameList)
     setFileNameList(nameList);
 }
 
+void DataControler::startProcessError(const QProcess::ProcessError &error)
+{
+#ifndef QT_DEBUG
+    Q_UNUSED(error);
+#else
+    qWarning() << "open process error! QProcess::ProcessError = " << error;
+#endif
+}
+
 
 QString DataControler::getDLToolsTypeFromURL(QString URL)
 {
-    if(isXwareParseType(URL))
-    {
+    if (isXwareParseType(URL))
         return "Xware";
-    }
-    else if (URL.contains("http://") || URL.contains("https://"))
+
+    if (URL.contains("http://") || URL.contains("https://"))
     {
         if (isYouGetParseType(URL))
-        {
             return "YouGet";
-        }
-        else if (isNormalHttpParseType(URL))
-        {
-            return "Point";
-        }
-        else
-            return "";
+
+        tryToNormalHttpParseType(URL);
     }
-    else
-        return "";                  //排除两种可能性外,就是不合法的链接
+
+    return "";
 }
 
 QString DataControler::mergeFileNameList(QString nameList)
@@ -839,7 +870,6 @@ QString DataControler::mergeFileNameList(QString nameList)
     return "application/x-gzip" + ITEM_INFO_SPLIT_CHAR + QString::number(totalSize) +
             ITEM_INFO_SPLIT_CHAR + maxName;
 }
-
 
 
 

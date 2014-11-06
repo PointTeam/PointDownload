@@ -95,7 +95,7 @@ PrepareDownloadInfo YouGetTask::getPrepareInfoFromXML(QString URL)
     tmpInfo.fileSize = ingNode.totalSize;
     tmpInfo.iconPath = ingNode.iconPath;
     tmpInfo.maxSpeed = 0;
-    tmpInfo.redirectURl = ingNode.redirectRUL;
+    tmpInfo.redirectURL = ingNode.redirectURL;
     tmpInfo.storageDir = ingNode.savePath;
     tmpInfo.threadCount = QString::number(ingNode.threadList.count());
     tmpInfo.toolType = youget;

@@ -38,44 +38,6 @@ UnifiedInterface * UnifiedInterface::getInstance()
     return unifiedInterface;
 }
 
-void UnifiedInterface::getPrepareDownloadInfo(PrepareDownloadInfo info)
-{
-    NormalNotice::getInstance()->showMessage(tr("New Task"), info.fileName);
-    //确保将要下载的文件不会重复
-    deleteFileFromDisk(info.storageDir, info.fileName);
-
-    //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
-    SettingXMLHandler tmphandler;
-    if (tmphandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() <= downloadingListMap.count())
-    {
-        //移除最慢的一项
-        dropSlowest();
-    }
-
-    //将下载项插入全局map中
-    downloadingListMap.insert(info.downloadURL,info.toolType);
-
-    switch (info.toolType)
-    {
-    case Point:
-        startPointDownload(info);
-        break;
-    case aria2:
-        startAria2Download(info);
-        break;
-    case youget:
-        startYougetDownload(info);
-        break;
-    case Xware:
-        startXwareDownload(info);
-        break;
-    default:
-        break;
-    }
-
-    refreshDownloadingItem();
-}
-
 void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
 {
     //向已下载xml记录文件插入新项
@@ -103,7 +65,7 @@ void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
     //取出一个合适的项进行下载
     startReady();
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 
     //统计流量
     QString day = current_date_time.toString("dddd");
@@ -134,7 +96,7 @@ void UnifiedInterface::changeMaxJobCount(int newCount)
         startReady();
     }
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::suspendAllDownloading()
@@ -186,22 +148,23 @@ void UnifiedInterface::downloadFinish(QString URL)
     Q_UNUSED(URL);
 }
 
-void UnifiedInterface::downloadGetError(QString URL,QString err, DownloadToolsType toolType)
+void UnifiedInterface::downloadGetError(QString URL,QString err, int toolType)
 {
+    Q_UNUSED(toolType);
     NormalNotice::getInstance()->showMessage(tr("Download Error"), Notice_Color_Error, QString(URL + ":\n" + err));
 }
 
-void UnifiedInterface::startPointDownload(PrepareDownloadInfo info)
+void UnifiedInterface::startPointDownload(const TaskInfo &taskInfo)
 {
     //启动下载
-    PointTask::getInstance()->startDownload(info);
+    PointTask::getInstance()->startDownload(taskInfo);
 }
 
-void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
+void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(info.downloadURL,"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -209,28 +172,27 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
         threadStruct.completedBlockCount = "1";
         QList<SDownloadThread> tmpList;
 
-        int threadCount = info.threadCount.toInt();
-        for (int i = 0; i < threadCount; i ++)
+        for (int i = 0; i != taskInfo.maxThreads; i ++)
             tmpList.append(threadStruct);
 
         //插入xml文件
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "aria2";
-        tmpIngStruct.name = info.fileName;
-        tmpIngStruct.jobMaxSpeed = info.maxSpeed;
-        tmpIngStruct.savePath = info.storageDir;
+        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
+        tmpIngStruct.jobMaxSpeed = taskInfo.maxSpeed;
+        tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectURL = info.redirectURL;
+        tmpIngStruct.URL = taskInfo.rawUrl.toString();
+        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = info.fileSize;
+        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = info.iconPath;
+        tmpIngStruct.iconPath = taskInfo.taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -240,7 +202,7 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = info.downloadURL;
+        tmpStruct.URL = taskInfo.rawUrl.toString();
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -248,15 +210,15 @@ void UnifiedInterface::startAria2Download(PrepareDownloadInfo info)
 
 
     //启动下载
-    Aria2Task::getInstance()->startDownload(info);
+    Aria2Task::getInstance()->startDownload(taskInfo);
 
 }
 
-void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
+void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(info.downloadURL,"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -269,20 +231,20 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "youget";
-        tmpIngStruct.name = info.fileName;
+        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
         tmpIngStruct.jobMaxSpeed = "0";   //you-get无法控制网速
-        tmpIngStruct.savePath = info.storageDir;
+        tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectURL = info.redirectURL;
+        tmpIngStruct.URL = taskInfo.rawUrl.toString();
+        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = info.fileSize;
+        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = info.iconPath;
+        tmpIngStruct.iconPath = taskInfo.taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -292,7 +254,7 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = info.downloadURL;
+        tmpStruct.URL = taskInfo.rawUrl.toString();
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -300,10 +262,10 @@ void UnifiedInterface::startYougetDownload(PrepareDownloadInfo info)
 
 
     //启动下载
-    YouGetTask::getInstance()->startDownload(info);
+    YouGetTask::getInstance()->startDownload(taskInfo);
 }
 
-void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
+void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
 {
     DownloadXMLHandler tmpOpera;
     SDownloadThread threadStruct;
@@ -313,26 +275,26 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
     QList<SDownloadThread> tmpList;
     tmpList.append(threadStruct);
 
-    if (!tmpOpera.urlExit(info.downloadURL,"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
     {
         //插入xml文件
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "xware";
-        tmpIngStruct.name = info.fileName;
+        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
         tmpIngStruct.jobMaxSpeed = "0";   // xware 暂时不作网速控制
-        tmpIngStruct.savePath = info.storageDir;
+        tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = info.downloadURL;
-        tmpIngStruct.redirectURL = info.redirectURL;
+        tmpIngStruct.URL = taskInfo.rawUrl.toString();
+        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = info.fileSize;
+        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = info.iconPath;
+        tmpIngStruct.iconPath = taskInfo.taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -342,7 +304,7 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = info.downloadURL;
+        tmpStruct.URL = taskInfo.rawUrl.toString();
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -353,7 +315,46 @@ void UnifiedInterface::startXwareDownload(PrepareDownloadInfo info)
 
 
     //启动下载
-    XwareTask::getInstance()->addNewDownload(info);
+    XwareTask::getInstance()->addNewDownload(taskInfo);
+}
+
+// 开始下载
+void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
+{
+    //确保将要下载的文件不会重复
+    deleteFileFromDisk(taskInfo.savePath, taskInfo.fileList.at(0).fileName);
+
+    //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
+    SettingXMLHandler tmphandler;
+    if (tmphandler.getChildElement(GeneralSettings,"MaxJobCount").toInt() <= downloadingListMap.count())
+    {
+        //移除最慢的一项
+        dropSlowest();
+    }
+
+    //将下载项插入全局map中
+    downloadingListMap.insert(taskInfo.rawUrl.toString(), taskInfo.toolType);
+
+    switch (taskInfo.toolType)
+    {
+    case TOOL_POINT:
+        startPointDownload(taskInfo);
+        break;
+    case TOOL_ARIA2:
+        startAria2Download(taskInfo);
+        break;
+    case TOOL_XWARE:
+        startXwareDownload(taskInfo);
+        break;
+    case TOOL_YOUGET:
+        startYougetDownload(taskInfo);
+        break;
+    default:
+        qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
+    }
+
+    NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo.fileListString());
+    emit sDownloadItemChanged();
 }
 
 
@@ -453,13 +454,13 @@ void UnifiedInterface::stopDownloading(QString URL)
 {
     switch(downloadingListMap.value(URL))
     {
-    case youget:
+    case TOOL_YOUGET:
         YouGetTask::getInstance()->stopDownload(URL);
         break;
-    case Point:
+    case TOOL_POINT:
         PointTask::getInstance()->stopDownload(URL);
         break;
-    case Xware:
+    case TOOL_XWARE:
         XwareTask::getInstance()->stopDownload(URL);
         break;
     default:
@@ -467,7 +468,7 @@ void UnifiedInterface::stopDownloading(QString URL)
     }
 
     downloadingListMap.remove(URL);
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::suspendDownloading(QString URL)
@@ -485,13 +486,13 @@ void UnifiedInterface::suspendDownloading(QString URL)
 
     switch(downloadingListMap.value(URL))
     {
-    case youget:
+    case TOOL_YOUGET:
         YouGetTask::getInstance()->suspendDownloading(URL);
         break;
-    case Point:
+    case TOOL_POINT:
         PointTask::getInstance()->suspendDownloading(URL);
         break;
-    case Xware:
+    case TOOL_XWARE:
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
             qDebug()<<" xxxxxxx UnifiedInterface  suspend  xxxxxxx";
         XwareTask::getInstance()->suspendDownloading(URL);
@@ -500,7 +501,7 @@ void UnifiedInterface::suspendDownloading(QString URL)
         break;
     }
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::resumeDownloading(QString URL)
@@ -525,26 +526,26 @@ void UnifiedInterface::resumeDownloading(QString URL)
 
     QString tmpToolType = downloadHandler.getDownloadingNode(URL).dlToolsType;
     if (tmpToolType == "xware")
-        downloadingListMap.insert(URL, Xware);
+        downloadingListMap.insert(URL, TOOL_XWARE);
     else if (tmpToolType == "aria2")
-        downloadingListMap.insert(URL, aria2);
+        downloadingListMap.insert(URL, TOOL_ARIA2);
     else if (tmpToolType == "youget")
-        downloadingListMap.insert(URL, youget);
+        downloadingListMap.insert(URL, TOOL_YOUGET);
     else
-        downloadingListMap.insert(URL, Point);
+        downloadingListMap.insert(URL, TOOL_POINT);
 
     switch(downloadingListMap.value(URL))
     {
-    case aria2:
+    case TOOL_ARIA2:
         Aria2Task::getInstance()->resumeDownloading(URL);
         break;
-    case youget:
+    case TOOL_YOUGET:
         YouGetTask::getInstance()->resumeDownloading(URL);
         break;
-    case Point:
+    case TOOL_POINT:
         PointTask::getInstance()->resumeDownloading(URL);
         break;
-    case Xware:
+    case TOOL_XWARE:
         if(XWARE_CONSTANTS_STRUCT.DEBUG)
             qDebug()<<"xxxxxxx UnifiedInterface resume  xxxxxxx";
         XwareTask::getInstance()->resumeDownloading(URL);
@@ -553,7 +554,7 @@ void UnifiedInterface::resumeDownloading(QString URL)
         break;
     }
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::priorityDownloading(QString URL)
@@ -593,7 +594,7 @@ void UnifiedInterface::priorityDownloading(QString URL)
             startYougetDownload(getPrepareInfoFromSDownloading(tmpOpera.getDownloadingNode(URL)));
     }
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::openFolderDownloading(QString URL)
@@ -630,7 +631,7 @@ void UnifiedInterface::trashDownloading(QString URL)
     emit sReturnControlResult(dl_downloading,download_trash,URL,true);
 
     startReady();
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::deleteDownloading(QString URL)
@@ -646,7 +647,7 @@ void UnifiedInterface::deleteDownloading(QString URL)
     emit sReturnControlResult(dl_downloading,download_delete,URL,true);
 
     startReady();
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::offlineDownloadDownloading(QString URL)
@@ -686,7 +687,7 @@ void UnifiedInterface::finishDownloading(QString URL)
     //取出一个合适的项进行下载
     startReady();
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 
     //统计流量
     QString day = current_date_time.toString("dddd");
@@ -765,15 +766,17 @@ void UnifiedInterface::initDownloadedList()
     QList<SDownloaded> edList = tmpOpera.getDownloadedNodes();
     for (int i = 0;i < edList.count(); i++)
     {
-        //infoList: dlToolsType?:?fileName?:?URL?:?iconName?:?fileSize?:?completeDate
-        QString info =  edList.at(i).dlToolsType + "?:?"
-                + edList.at(i).name + "?:?"
-                + edList.at(i).URL + "?:?"
-                + edList.at(i).iconPath + "?:?"
-                + edList.at(i).Size + "?:?"
-                + edList.at(i).completeDate;
+        TaskInfo taskInfo;
+        TaskFileItem fileItem;
+        taskInfo.setToolTypeFromString(edList.at(i).dlToolsType);
+        taskInfo.rawUrl = edList.at(i).URL;
+        taskInfo.taskIconPath = edList.at(i).iconPath;
+        taskInfo.completeDate = edList.at(i).completeDate;
+        fileItem.fileName = edList.at(i).name;
+        fileItem.fileSize = edList.at(i).Size.toInt();
+        taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadedItem(info);
+        emit sAddDownloadedItem(taskInfo);
     }
 }
 
@@ -790,35 +793,25 @@ void UnifiedInterface::initdownloadingList()
         if (totalSize != 0)
             percentage =100 *  readySize / (double)totalSize;
 
-        QString info =  ingList.at(i).dlToolsType + "?:?"
-                + ingList.at(i).name + "?:?"
-                + ingList.at(i).URL + "?:?"
-                + ingList.at(i).redirectURL + "?:?"
-                + ingList.at(i).iconPath + "?:?"
-                + ingList.at(i).totalSize + "?:?"
-                + ingList.at(i).savePath + "?:?"
-                + QString::number(ingList.at(i).threadList.count()) + "?:?"
-                + ingList.at(i).jobMaxSpeed + "?:?"
-                + QString::number(percentage,'f',1) + "?:?" // ready percentage
-                + ingList.at(i).state;
-        emit sAddDownloadingItem(info);
+        TaskInfo taskInfo;
+        TaskFileItem fileItem;
+        taskInfo.setToolTypeFromString(ingList.at(i).dlToolsType);
+        taskInfo.setDownStateFromString(ingList.at(i).state);
+        taskInfo.rawUrl = ingList.at(i).URL;
+        taskInfo.taskIconPath = ingList.at(i).iconPath;
+        taskInfo.parseUrl = ingList.at(i).redirectURL;
+        taskInfo.maxThreads = ingList.at(i).threadList.size();
+        taskInfo.maxSpeed = ingList.at(i).jobMaxSpeed.toInt();
+        taskInfo.percentage = percentage;
+        fileItem.fileName = ingList.at(i).name;
+        fileItem.fileSize = ingList.at(i).totalSize.toInt();
+        taskInfo.fileList.append(fileItem);
 
-        DownloadToolsType dlToolsType;
-        if (ingList.at(i).dlToolsType == "Point")
-            dlToolsType = Point;
-        else if (ingList.at(i).dlToolsType == "aria2")
-            dlToolsType = aria2;
-
-        // added by choldrim , not sure
-        else if (ingList.at(i).dlToolsType == "xware")
-            dlToolsType = Xware;
-
-        else
-            dlToolsType = youget;
+        emit sAddDownloadedItem(taskInfo);
 
         if (ingList.at(i).state == "dlstate_downloading")
         {
-            downloadingListMap.insert(ingList.at(i).URL, dlToolsType);  //只添加到下载列表，暂时不下载
+            downloadingListMap.insert(ingList.at(i).URL, ingList.at(i).dlToolsType.toInt());  //只添加到下载列表，暂时不下载
         }
     }
 }
@@ -829,14 +822,16 @@ void UnifiedInterface::initTrashList()
     QList<SDownloadTrash> trashList = tmpOpera.getDownloadTrashNodes();
     for (int i = 0;i < trashList.count(); i++)
     {
-        //infoList: dlToolsType?:?fileName?:?URL?:?iconName?:?fileSize
-        QString info = trashList.at(i).dlToolsType + "?:?"
-                + trashList.at(i).name + "?:?"
-                + trashList.at(i).URL + "?:?"
-                + trashList.at(i).iconPath + "?:?"
-                + trashList.at(i).totalSize;
+        TaskInfo taskInfo;
+        TaskFileItem fileItem;
+        taskInfo.setToolTypeFromString(trashList.at(i).dlToolsType);
+        taskInfo.taskIconPath = trashList.at(i).iconPath;
+        taskInfo.rawUrl = trashList.at(i).URL;
+        fileItem.fileName = trashList.at(i).name;
+        fileItem.fileSize = trashList.at(i).totalSize.toInt();
+        taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadTrashItem(info);
+        emit sAddDownloadTrashItem(taskInfo);
     }
 }
 
@@ -867,7 +862,7 @@ void UnifiedInterface::initDownloadingStart()
         }
     }
 
-    refreshDownloadingItem();
+    emit sDownloadItemChanged();
 }
 
 void UnifiedInterface::deleteFileFromDisk(QString path, QString fileName)
@@ -932,25 +927,25 @@ void UnifiedInterface::startReady()
         {
             if (ingList.at(i).dlToolsType == "Point")
             {
-                downloadingListMap.insert(ingList.at(i).URL, Point);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_POINT);
                 startPointDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
             else if (ingList.at(i).dlToolsType == "aria2")
             {
-                downloadingListMap.insert(ingList.at(i).URL, aria2);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_ARIA2);
                 startAria2Download(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
 
             // added by choldrim , not sure
             else if (ingList.at(i).dlToolsType == "Xware")
             {
-                downloadingListMap.insert(ingList.at(i).URL, Xware);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_XWARE);
                 startXwareDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
 
             else if (ingList.at(i).dlToolsType == "youget")
             {
-                downloadingListMap.insert(ingList.at(i).URL, youget);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_YOUGET);
                 startYougetDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
 
@@ -965,25 +960,25 @@ void UnifiedInterface::startReady()
         {
             if (ingList.at(i).dlToolsType == "Point")
             {
-                downloadingListMap.insert(ingList.at(i).URL, Point);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_POINT);
                 startPointDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
             else if (ingList.at(i).dlToolsType == "aria2")
             {
-                downloadingListMap.insert(ingList.at(i).URL, aria2);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_ARIA2);
                 startAria2Download(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
 
             // added by choldrim , not sure
             else if (ingList.at(i).dlToolsType == "Xware")
             {
-                downloadingListMap.insert(ingList.at(i).URL, Xware);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_XWARE);
                 startXwareDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
 
             else if (ingList.at(i).dlToolsType == "youget")
             {
-                downloadingListMap.insert(ingList.at(i).URL, youget);
+                downloadingListMap.insert(ingList.at(i).URL, TOOL_YOUGET);
                 startYougetDownload(getPrepareInfoFromSDownloading(ingList.at(i)));
             }
         }
@@ -991,35 +986,24 @@ void UnifiedInterface::startReady()
 
 }
 
-void UnifiedInterface::refreshDownloadingItem()
+TaskInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruct)
 {
-    QTimer::singleShot(2000, this, SIGNAL(sRefreshDownloadingItem()));
-}
+    TaskInfo taskInfo;
+    TaskFileItem fileItem;
 
-PrepareDownloadInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruct)
-{
-    PrepareDownloadInfo tmpInfo;
-    tmpInfo.downloadURL = infoStruct.URL;
-    tmpInfo.fileName = infoStruct.name;
-    tmpInfo.fileSize = infoStruct.totalSize;
-    tmpInfo.iconPath = infoStruct.iconPath;
-    tmpInfo.maxSpeed = infoStruct.jobMaxSpeed.toDouble();
-    tmpInfo.redirectURL = infoStruct.redirectURL;
-    tmpInfo.storageDir = infoStruct.savePath;
-    tmpInfo.threadCount = QString::number(infoStruct.threadList.count());
-    if (infoStruct.dlToolsType == "Point")
-        tmpInfo.toolType = Point;
-    else if (infoStruct.dlToolsType == "aria2")
-        tmpInfo.toolType = aria2;
+    taskInfo.setToolTypeFromString(infoStruct.dlToolsType);
+    taskInfo.rawUrl = infoStruct.URL;
+    taskInfo.taskIconPath = infoStruct.iconPath;
+    taskInfo.maxSpeed = infoStruct.jobMaxSpeed.toInt();
+    taskInfo.parseUrl = infoStruct.redirectURL;
+    taskInfo.savePath = infoStruct.savePath;
+    taskInfo.maxThreads = infoStruct.threadList.count();
 
-    // added by choldrim , not sure
-    else if (infoStruct.dlToolsType == "xware")
-        tmpInfo.toolType = Xware;
+    fileItem.fileName = infoStruct.name;
+    fileItem.fileSize = infoStruct.totalSize.toInt();
+    taskInfo.fileList.append(fileItem);
 
-    else
-        tmpInfo.toolType = youget;
-
-    return tmpInfo;
+    return taskInfo;
 }
 
 

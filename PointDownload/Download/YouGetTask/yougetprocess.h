@@ -30,6 +30,8 @@
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 
+#include "../Common/taskinfo.h"
+
 const int UPDATE_INTERVAL = 1000;
 
 class YouGetProcess : public QObject
@@ -37,13 +39,13 @@ class YouGetProcess : public QObject
     Q_OBJECT
 public:
     const int UPDATE_XML_INTERVAL = 3;//second
-    explicit YouGetProcess(PrepareDownloadInfo info, QObject *parent = 0);
+    explicit YouGetProcess(const TaskInfo & taskInfo, QObject *parent = 0);
 
     void startDownload();
     void stopDownload();
 signals:
     void updateData(DownloadingItemInfo info);
-    void yougetError(QString URL,QString err, DownloadToolsType toolType);
+    void yougetError(QString URL,QString err, int toolType);
     void sFinishYouGetDownload(QString URL);
 
 private slots:
@@ -54,7 +56,7 @@ private slots:
     void getError();
 private:
     QString gFeedBackInfo;
-    PrepareDownloadInfo gInfo;
+    TaskInfo taskInfo;
     QProcess * tmpProcess;
     QString lastDataSize;
     QTimer * updateTimer;

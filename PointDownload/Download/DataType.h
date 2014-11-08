@@ -22,15 +22,6 @@
 #ifndef DATATYPE_H
 #define DATATYPE_H
 
-//使用的下载后端类型
-enum DownloadToolsType
-{
-    Point,  //point自己的下载后端，目前支持http协议
-    aria2,  //目前支持大部分下载协议，支持断电续传，支持多线程下载
-    Xware,  //迅雷路由固件
-    youget//在线视频下载工具，支持断点续传，下载完成后自动合并视频,支持大部分主流在线视频音乐网站
-};
-
 enum DownloadType
 {
     dl_downloading,
@@ -77,20 +68,6 @@ struct DownloadingItemInfo
     QString thunderHightSpeed;
     DownloadState downloadState;
     double downloadPercent;
-};
-
-//弹出界面传递到下载类所必须的信息的数据结构
-struct PrepareDownloadInfo
-{
-    DownloadToolsType toolType;
-    QString downloadURL;
-    QString redirectURL;
-    QString fileName;
-    QString iconPath;
-    QString fileSize;
-    QString storageDir;
-    QString threadCount;
-    double maxSpeed;
 };
 
 #endif // DATATYPE_H

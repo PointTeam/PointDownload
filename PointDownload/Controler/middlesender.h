@@ -45,6 +45,7 @@ class MiddleSender : public QObject
 
 public:
     static MiddleSender * getInstance();
+    static QObject * middleObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     double getCpuUsage();
     void setCpuUsage(double usage);
@@ -84,13 +85,4 @@ private:
 
     double statisticsProgress();
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * middleObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return MiddleSender::getInstance();
-}
 #endif // MIDDLESENDER_H

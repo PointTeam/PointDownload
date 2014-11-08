@@ -18,6 +18,14 @@ NormalNotice * NormalNotice::getInstance()
     return normalNotice;
 }
 
+QObject *NormalNotice::normalNoticeObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return NormalNotice::getInstance();
+}
+
 void NormalNotice::initData()
 {
     noticeTitle = tr("Notice");

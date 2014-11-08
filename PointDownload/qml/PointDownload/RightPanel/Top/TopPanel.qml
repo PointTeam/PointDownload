@@ -112,6 +112,24 @@ Rectangle {
         color: "#eeeff3"
     }
 
+    MouseArea{
+        id:middleMouse
+        anchors.fill: topPanel
+
+        onPressed:  {
+            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
+            middleMouse.cursorShape=Qt.DragMoveCursor
+        }
+        onReleased: {
+            rightMainPanel.middlePanelRelease()
+            middleMouse.cursorShape=Qt.ArrowCursor
+        }
+
+        onPositionChanged: {
+            rightMainPanel.middlePanelPositionChange()
+        }
+    }
+
     BlueButton {
         id: quitButton
         imagePath: "qrc:/images/navigation/quit"

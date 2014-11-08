@@ -31,6 +31,14 @@ XwareSettingControler * XwareSettingControler::getInstance()
     return xwareSettingControler;
 }
 
+QObject *XwareSettingControler::xSCObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return XwareSettingControler::getInstance();
+}
+
 void XwareSettingControler::enableXware()
 {
     NormalNotice::getInstance()->showMessage(tr("Adding Thunder"),

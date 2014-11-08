@@ -31,11 +31,16 @@ Rectangle {
     //连接单例的信号
     Connections {
         target: DLDataConverter
-        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
-        onSFileInfoChange: {
-            if (dlType === "dl_downloading")
-                DownloadingScript.addNewItem(fileInfo)
+
+        onTaskAdded: {
+            DownloadingScript.addNewItem(infoString);
         }
+//        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
+//        onSFileInfoChange: {
+//            console.log(dlType);
+//            if (dlType === "dl_downloading")
+//                DownloadingScript.addNewItem(fileInfo)
+//        }
         onSDLSpeedChange: {
             DownloadingScript.updateNetSpeed(dlURL, dlSpeed)
         }

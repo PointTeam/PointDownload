@@ -43,6 +43,7 @@ void WebCtrlViewTest::execJS(QString js)
 
 void WebCtrlViewTest::tabChangedHandle(int index)
 {
+    Q_UNUSED(index);
     this->webview = qobject_cast<QWebView*>(tabWG->currentWidget());
 }
 

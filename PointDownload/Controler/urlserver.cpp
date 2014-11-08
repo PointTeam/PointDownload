@@ -63,64 +63,20 @@ void URLServer::socketReadyReadHandler()
     if (!socket)
         return ;
 
-    QTextStream stream(socket);
+    TaskInfo taskInfo(socket);
 
-    QString urlInfo = stream.readAll();
-
-    qDebug() << "fetch download request:\n" << urlInfo;
-
-    // parse URL and BT file
-    if(urlInfo.startsWith(XwareParseURLHander))
-    {
+//    if (taskInfo.toolType == "XwareParseURLHander")
+//    {
         // take URL from msg
-        taskParseHandle(urlInfo.split(XwareParseURLHander).at(1));
-        return;
-    }
-
-    //取出数据，调用统一接口启动下载
-    QStringList infoList = urlInfo.split("?:?");
-
-    //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-    if (infoList.count() != 8)
-    {
-        qDebug() << "download infoList format error:\n";
-        for (QString i : infoList)
-            qDebug() << i;
-
-        return ;
-    }
-
-    PrepareDownloadInfo dlInfo;
-    if (infoList.at(0) == "Point")
-        dlInfo.toolType = Point;
-    else if (infoList.at(0) == "YouGet")
-        dlInfo.toolType = youget;
-    else if (infoList.at(0) == "Xware")
-        dlInfo.toolType = Xware;
-    else
-        dlInfo.toolType = aria2;
-
-    dlInfo.fileName = infoList.at(1).split(ITEM_INFO_SPLIT_CHAR).at(2);
-    dlInfo.downloadURL = infoList.at(2);
-    dlInfo.redirectURL = infoList.at(3);
-    dlInfo.iconPath = infoList.at(4);
-    dlInfo.fileSize = infoList.at(1).split(ITEM_INFO_SPLIT_CHAR).at(1);
-    dlInfo.storageDir = infoList.at(5);
-    dlInfo.threadCount = infoList.at(6);
-    dlInfo.maxSpeed = infoList.at(7).toDouble();
+//        taskParseHandle(urlInfo.split(XwareParseURLHander).at(1));
+//        qDebug() << "XwareParseURLHander";
+//        return ;
+//    }
 
     //启动下载
-    UnifiedInterface::getInstance()->getPrepareDownloadInfo(dlInfo);
+    UnifiedInterface::getInstance()->startDownload(taskInfo);
 
-    //将信息传到界面，在界面新增一个下载项
-    //fileSize: B
-    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage
-    urlInfo = infoList.at(0)  + "?:?" + dlInfo.fileName + "?:?" + dlInfo.downloadURL + "?:?"
-            + dlInfo.redirectURL + "?:?" + dlInfo.iconPath + "?:?" + dlInfo.fileSize + "?:?" + dlInfo.storageDir + "?:?"
-            + dlInfo.threadCount + "?:?" + QString::number(dlInfo.maxSpeed) + "?:?0";
-
-    emit getNewURL(urlInfo);                //此信号连接到downloadingsender类
-
+    emit newTaskAdded(taskInfo);                //此信号连接到downloadingsender类
 }
 
 void URLServer::taskParseFeedback(QString taskInfo)

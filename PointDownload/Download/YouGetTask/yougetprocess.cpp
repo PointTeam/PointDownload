@@ -21,8 +21,8 @@
 
 #include "yougetprocess.h"
 
-YouGetProcess::YouGetProcess(PrepareDownloadInfo info,QObject *parent) :
-    QObject(parent),gInfo(info)
+YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
+    QObject(parent),taskInfo(taskInfo)
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
@@ -38,8 +38,8 @@ void YouGetProcess::startDownload()
     QStringList arguments;
 
     arguments << tmpHandler.getChildElement(YouGetSetting,"ExecutePath");
-    arguments << gInfo.downloadURL;
-    tmpProcess->setWorkingDirectory(gInfo.storageDir);
+    arguments << taskInfo.rawUrl.toString();
+    tmpProcess->setWorkingDirectory(taskInfo.savePath);
     tmpProcess->start("python3",arguments);
 }
 
@@ -78,7 +78,7 @@ void YouGetProcess::getTimerUpdate()
     tmpInfo.downloadSpeed = QString::number((downloadSize * 1024) / (UPDATE_INTERVAL / 1000),'f',1) + " KB/S";
     tmpInfo.downloadPercent = gFeedBackInfo.mid(0,perIndex).toDouble();                        //下载百分比
     tmpInfo.downloadState = dlstate_downloading;
-    tmpInfo.downloadURL = gInfo.downloadURL;
+    tmpInfo.downloadURL = taskInfo.rawUrl.toString();
 
     //下载已完成则结束进程
     if (tmpInfo.downloadPercent == 100)
@@ -87,7 +87,7 @@ void YouGetProcess::getTimerUpdate()
         tmpProcess->terminate();
         this->deleteLater();
 
-        emit sFinishYouGetDownload(gInfo.downloadURL);
+        emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
     }
 
     //send to yougettask
@@ -118,5 +118,5 @@ void YouGetProcess::updateXMLFile(DownloadingItemInfo info)
 void YouGetProcess::getError()
 {
     qDebug() << tmpProcess->readAllStandardError();
-    emit yougetError(gInfo.downloadURL, QString(tmpProcess->readAllStandardError()), youget);
+    emit yougetError(taskInfo.rawUrl.toString(), QString(tmpProcess->readAllStandardError()), TOOL_YOUGET);
 }

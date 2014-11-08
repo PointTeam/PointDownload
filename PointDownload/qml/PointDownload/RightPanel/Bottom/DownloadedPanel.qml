@@ -33,10 +33,10 @@ Rectangle {
     Connections {
         target: DLDataConverter
         //当c++中的DLDataConverter类触发以下信号时，更改相应属性
-        onSFileInfoChange: {
-            if (dlType === "dl_downloaded")
-                DownloadedScript.addNewItem(fileInfo)
-        }
+//        onSFileInfoChange: {
+//            if (dlType === "dl_downloaded")
+//                DownloadedScript.addNewItem(fileInfo)
+//        }
     }
 
     ListModel {

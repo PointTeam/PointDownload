@@ -710,6 +710,8 @@ QDomNode DownloadXMLHandler::getMatchFileNode(QDomDocument &domDoc,QString URL)
             }
         }
     }
+
+    return QDomNode();
 }
 
 QDomElement DownloadXMLHandler::createChildElement(QString tagName, QString tagValue)

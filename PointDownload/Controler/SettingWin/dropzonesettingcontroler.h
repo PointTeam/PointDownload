@@ -20,6 +20,7 @@ class DropzoneSettingControler : public QObject
     Q_PROPERTY(int winY READ getWinY WRITE setWinY NOTIFY sWinYChange)
 public:
     static DropzoneSettingControler * getInstance();
+    static QObject * dzSettingCtrlObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     int getOpacity();
     int getInfoInterval();
@@ -71,15 +72,4 @@ private:
 
     const int REFRESH_INTERVAL = 1000;
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * dzSettingCtrlObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return DropzoneSettingControler::getInstance();
-}
-
-
 #endif // DROPZONESETTINGCONTROLER_H

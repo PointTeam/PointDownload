@@ -3,6 +3,7 @@
 URLInfoGeter::URLInfoGeter(QLocalSocket * socket, QString &url, QObject *parent) :
     QThread(parent)
 {
+    Q_UNUSED(socket);
     mURL = url;
 }
 

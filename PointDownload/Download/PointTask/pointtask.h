@@ -35,7 +35,7 @@ public:
     static PointTask * getInstance();
 
     //对正在下载的处理
-    void startDownload(PrepareDownloadInfo info);
+    void startDownload(const TaskInfo &taskInfo);
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
@@ -43,7 +43,7 @@ public:
 
 signals:
     void sRealTimeData(DownloadingItemInfo info);
-    void sPointError(QString URL,QString err, DownloadToolsType toolType);
+    void sPointError(QString URL,QString err, int toolType);
 
 public slots:
     void slotFinishDownload(QString URL);
@@ -56,25 +56,25 @@ private:
     ProtocalType getProtocalTypeFromURL(QString URL);
 
     //对http,https的下载处理
-    void startHttpDownload(PrepareDownloadInfo info);
+    void startHttpDownload(const TaskInfo &taskInfo);
     void stopHttpDownload(QString URL);
     void suspendHttpDownload(QString URL);
     void resumeHttpDownload(QString URL);
 
     //对ftp的下载处理
-    void startFtpDownload(PrepareDownloadInfo info);
+    void startFtpDownload(const TaskInfo &taskInfo);
     void stopFtpDownload(QString URL);
     void suspendFtpDownload(QString URL);
     void resumeFtpDownload(QString URL);
 
     //对ed2k的下载处理
-    void startEd2kDownload(PrepareDownloadInfo info);
+    void startEd2kDownload(const TaskInfo &taskInfo);
     void stopEd2kDownload(QString URL);
     void suspendEd2kDownload(QString URL);
     void resumeEd2kDownload(QString URL);
 
     //对bt的下载处理
-    void startBTDownload(PrepareDownloadInfo info);
+    void startBTDownload(const TaskInfo &taskInfo);
     void stopBTDownload(QString URL);
     void suspendBTDownload(QString URL);
     void resumeBTDownload(QString URL);

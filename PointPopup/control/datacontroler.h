@@ -62,6 +62,7 @@ class DataControler : public QObject
 
 public:
     static DataControler * getInstance();
+    static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     //qml中能直接调用此方法,将数据发送到服务端
     Q_INVOKABLE void selectSavePath(QString buttonName);
@@ -199,14 +200,4 @@ private:
     const QString NAME_LIST_SPLIT_CHAR = "#:#";
     const QString ITEM_INFO_SPLIT_CHAR = "@:@";
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return DataControler::getInstance();
-}
-
 #endif // DATACONTROLER_H

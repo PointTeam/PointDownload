@@ -19,6 +19,13 @@ DLDataConverter * DLDataConverter::getInstance()
     return dlDataConverter;
 }
 
+QObject *DLDataConverter::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return DLDataConverter::getInstance();
+}
 
 void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
@@ -80,19 +87,25 @@ void DLDataConverter::resumeAllDownloading()
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
 
-void DLDataConverter::addDownloadingItem(QString infoList)
+void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_downloading",infoList);
+//    emit sFileInfoChange("dl_downloading", taskInfo);
+
+    emit taskAdded(taskInfo.getInfoToString());
 }
 
-void DLDataConverter::addDownloadedItem(QString infoList)
+void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_downloaded",infoList);
+//    emit sFileInfoChange("dl_downloaded", taskInfo);
+
+    emit taskCompleted(taskInfo.getInfoToString());
 }
 
-void DLDataConverter::addDownloadTrashItem(QString infoList)
+void DLDataConverter::addDownloadTrashItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_trash",infoList);
+//    emit sFileInfoChange("dl_trash", taskInfo);
+
+    emit taskRemoved(taskInfo.getInfoToString());
 }
 
 void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
@@ -196,7 +209,7 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
 void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
-    connect(urlServer, SIGNAL(getNewURL(QString)), this, SLOT(addDownloadingItem(QString)));
+    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo)), this, SLOT(addDownloadingItem(TaskInfo)));
     urlServer->runServer();
 
 }
@@ -204,15 +217,15 @@ void DLDataConverter::initURLServer()
 
 void DLDataConverter::initConnection()
 {
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(QString)), this, SLOT(addDownloadedItem(QString)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadingItem(QString)), this,SLOT(addDownloadingItem(QString)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadTrashItem(QString)),this, SLOT(addDownloadTrashItem(QString)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(TaskInfo)), this, SLOT(addDownloadedItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
 
     connect(UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SLOT(slotGetDownloadingInfo(DownloadingItemInfo)));
     connect(UnifiedInterface::getInstance(), SIGNAL(sReturnControlResult(DownloadType,OperationType,QString,bool)),
             this, SLOT(slotGetContrlFeedback(DownloadType,OperationType,QString,bool)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sRefreshDownloadingItem()),
-            this, SIGNAL(sRefreshDownloadingItem()));
+    //connect(UnifiedInterface::getInstance(), SIGNAL(sRefreshDownloadingItem()),
+    //        this, SIGNAL(sRefreshDownloadingItem()));
 }
 

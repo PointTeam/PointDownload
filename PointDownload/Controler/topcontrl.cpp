@@ -33,6 +33,13 @@ TopContrl * TopContrl::getInstance()
     return topControl;
 }
 
+QObject *TopContrl::pTopContrlObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return TopContrl::getInstance();
+}
 
 //for ubuntu only+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #ifdef DESKTOP_ENV_UBUNTU
@@ -64,6 +71,7 @@ void gtkCompletelyExit(GtkMenu *menu, gpointer data)
 TopContrl::TopContrl(QObject *parent) :
     QObject(parent)
 {
+    Q_UNUSED(pTopContrlObj);
     //import时使用Singleton.TopContrl，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<TopContrl>("Singleton.TopContrl", 1, 0, "TopContrl", pTopContrlObj);
 

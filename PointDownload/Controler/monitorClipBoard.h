@@ -40,6 +40,7 @@ class MonitorClipBoard : public QObject
     Q_PROPERTY(QString tmpURL  READ getTmpURL WRITE setTmpURL NOTIFY tmpURLChange)
 public:
     static MonitorClipBoard * getInstance();
+    static QObject * clipboardObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     QString getTmpURL();
     void setTmpURL(QString URL);
@@ -63,14 +64,4 @@ private:
     QString tmpURL;
 
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * clipboardObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return MonitorClipBoard::getInstance();
-}
-
 #endif // MONITORCLIPBOARD_H

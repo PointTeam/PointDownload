@@ -22,6 +22,8 @@
 #ifndef URLSERVER_H
 #define URLSERVER_H
 
+#include "../Common/taskinfo.h"
+
 #include <QObject>
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -38,7 +40,7 @@ public:
 
     void runServer();
 signals:
-    void getNewURL(QString info);//info: fileName?:?fileURL?:?fileIconPath
+    void newTaskAdded(const TaskInfo & taskInfo);
 
 private slots:
     void serverNewConnectionHandler();

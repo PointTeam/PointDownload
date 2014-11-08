@@ -48,6 +48,7 @@ class PEventFilter : public QObject
     Q_PROPERTY(int globalY  READ getGlobalY WRITE setGlobalY NOTIFY globalYChange)
 public:
     static PEventFilter * getInstance();        //返回该类的单例对象
+    static QObject * pEventObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     int getGlobalX();
     void setGlobalX(int value);
@@ -72,15 +73,4 @@ private:
 
 
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * pEventObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return PEventFilter::getInstance();
-}
-
-
 #endif // PCLOSEEVENTFILTER_H

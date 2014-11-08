@@ -46,6 +46,13 @@ MiddleSender * MiddleSender::getInstance()
     return middleSender;
 }
 
+QObject *MiddleSender::middleObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return MiddleSender::getInstance();
+}
 
 double MiddleSender::getCpuUsage()
 {

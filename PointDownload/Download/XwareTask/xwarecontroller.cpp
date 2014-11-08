@@ -479,6 +479,9 @@ void XwareController::initDefaultSetting()
 
 void XwareController::ETMProcessFinishedHandl(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    Q_UNUSED(exitCode);
+    Q_UNUSED(exitStatus);
+
     // free the process
     QProcess *pro = static_cast<QProcess*>(sender());
     pro->disconnect();

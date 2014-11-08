@@ -31,6 +31,8 @@
 #include "xwaretaskentity.h"
 #include "completedlistwebview.h"
 
+#include "../Common/taskinfo.h"
+
 class XwareTask : public QObject
 {
     Q_OBJECT
@@ -39,8 +41,8 @@ public:
     static XwareTask *getInstance();
 
     //对正在下载的处理
-    void addNewDownload(PrepareDownloadInfo info);
-    void addNewBTDownload(PrepareDownloadInfo info);
+    void addNewDownload(const TaskInfo &taskInfo);
+    void addNewBTDownload(const TaskInfo &taskInfo);
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
@@ -51,7 +53,7 @@ public:
 
 signals:
     void sRealTimeData(DownloadingItemInfo);
-    void sXwareError(QString, QString, DownloadToolsType);
+    void sXwareError(QString, QString, int);
     void sFinishXwareDownload(QString);
 
 public slots:

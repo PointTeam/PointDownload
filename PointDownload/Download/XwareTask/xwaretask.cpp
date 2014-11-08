@@ -43,7 +43,7 @@ XwareTask * XwareTask::getInstance()
     return xwareTask;
 }
 
-void XwareTask::addNewDownload(PrepareDownloadInfo info)
+void XwareTask::addNewDownload(const TaskInfo &taskInfo)
 {
     // clear the completed task
     CompletedListWebView::getInstance()->clearAllCompletedTask(false);
@@ -51,7 +51,7 @@ void XwareTask::addNewDownload(PrepareDownloadInfo info)
     QString mappingDir = "";
     // mappingDir = XwareDloadFolderController::getInstance()->getMappingFolder(info.storageDir);
 
-    XwarePopulateObject::getInstance()->addNewDownloadTask(info.downloadURL, mappingDir, QStringList()<<info.fileName);
+    XwarePopulateObject::getInstance()->addNewDownloadTask(taskInfo.rawUrl.toString(), mappingDir, QStringList()<<taskInfo.fileList.at(0).fileName);
 }
 
 void XwareTask::stopDownload(QString URL)
@@ -124,8 +124,8 @@ void XwareTask::initConnection()
     // UnifiedInterface
     connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(this, SIGNAL(sXwareError(QString,QString,DownloadToolsType)),
-            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(this, SIGNAL(sXwareError(QString,QString, int)),
+            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,int)));
     connect(this, SIGNAL(sFinishXwareDownload(QString)),
             UnifiedInterface::getInstance(), SLOT(downloadFinish(QString)));
 

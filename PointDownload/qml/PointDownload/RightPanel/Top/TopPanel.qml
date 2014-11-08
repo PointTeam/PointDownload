@@ -112,16 +112,22 @@ Rectangle {
         color: "#eeeff3"
     }
 
-    Image {
-        id: searchImg
-        source: "qrc:/images/navigation/search"
-        anchors {rightMargin: 10; verticalCenter: parent.verticalCenter; right: splitLine4.left}
-    }
+    MouseArea{
+        id:middleMouse
+        anchors.fill: topPanel
 
-    InputBox {
-        id: searchBox
-        boxHeigth: parent.height
-        anchors {left: splitLine1.right; leftMargin: 5; verticalCenter: parent.verticalCenter; right: searchImg.left}
+        onPressed:  {
+            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
+            middleMouse.cursorShape=Qt.DragMoveCursor
+        }
+        onReleased: {
+            rightMainPanel.middlePanelRelease()
+            middleMouse.cursorShape=Qt.ArrowCursor
+        }
+
+        onPositionChanged: {
+            rightMainPanel.middlePanelPositionChange()
+        }
     }
 
     BlueButton {

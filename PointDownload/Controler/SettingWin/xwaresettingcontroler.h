@@ -19,6 +19,7 @@ class XwareSettingControler : public QObject
     Q_PROPERTY(QString userPasswd READ getUserPasswd WRITE setUserPasswd NOTIFY sUserPasswdChange)
 public:
     static XwareSettingControler * getInstance();
+    static QObject * xSCObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     Q_INVOKABLE void enableXware();
     Q_INVOKABLE void disableXware();
@@ -72,15 +73,4 @@ private:
     QString userPasswd;
 
 };
-
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * xSCObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return XwareSettingControler::getInstance();
-}
-
 #endif // XWARESETTINGCONTROLER_H

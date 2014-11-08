@@ -30,6 +30,8 @@
 #include "downloadxmlhandler.h"
 #include "Download/DataType.h"
 
+#include "../Common/taskinfo.h"
+
 const QString POINT_FILE_FLAG = ".Point";
 const QString SUSPEND_STATE = "dlstate_suspend";
 const QString DOWNLOADING_STATE = "dlstate_downloading";
@@ -40,7 +42,7 @@ class HttpThreadManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit HttpThreadManager(PrepareDownloadInfo &info, QObject *parent = 0);
+    explicit HttpThreadManager(const TaskInfo & taskInfo, QObject *parent = 0);
     explicit HttpThreadManager(QString URL, QObject *parent = 0);
 
     void startDownload();
@@ -48,7 +50,7 @@ public:
 
 signals:
     void sRealTimeData(DownloadingItemInfo info);
-    void sHttpError(QString URL,QString err, DownloadToolsType toolType);
+    void sHttpError(QString URL,QString err, int toolType);
     void sDownloadFinish(QString);
 
 public slots:
@@ -71,8 +73,8 @@ private:
     //根据任务的大小及线程数对任务进行分割下载（即实现多线程下载）
     QList<SDownloadThread> splitTask(short threadCount, qint64 size);
     //启动下载前先将下载信息写入正在下载的xml记录文件中
-    void inserToXMLFile(PrepareDownloadInfo &info);
-    PrepareDownloadInfo getPrepareInfoFromXML(QString URL);
+    void inserToXMLFile(const TaskInfo & taskInfo);
+    TaskInfo getPrepareInfoFromXML(QString URL);
 
     QString getDownloadSpeed();
     double getDownloadPercent();
@@ -85,7 +87,7 @@ private:
     QMutex mutex;
     QList<HttpThread *> threadList;
     DownloadXMLHandler  xmlOpera;
-    PrepareDownloadInfo gDownloadInfo;
+    TaskInfo taskInfo;
 
     QTimer * updateXMLTimer;//定时更新xml文件的计时器
     QTimer * updateDataTimer;//定时更新向界面传送信息的计时器

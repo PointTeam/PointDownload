@@ -21,8 +21,12 @@
 
 
 #include "datacontroler.h"
+
+#include "../Common/taskinfo.h"
+
 #include <QtQml>
 #include <QProcess>
+#include <QDebug>
 
 DataControler::DataControler(QObject *parent) :
     QObject(parent)
@@ -67,6 +71,14 @@ DataControler * DataControler::dataControler = new DataControler();
 DataControler * DataControler::getInstance()
 {
     return dataControler;
+}
+
+QObject *DataControler::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return DataControler::getInstance();
 }
 
 void DataControler::selectSavePath(QString buttonName)
@@ -114,6 +126,8 @@ void DataControler::selectBTFile()
 
 void DataControler::sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType)
 {
+    qDebug() << fileURL;
+
     if (checkIsInDownloading(fileURL))
     {
         return;//no need to do anything
@@ -130,19 +144,34 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         gDownloadHandler.removeDownloadTrashFileNode(fileURL);
     }
 
-    //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-    QString info = newToolType + "?:?"
-            + mergeFileNameList(fileNameList) + "?:?"
-            + fileURL + "?:?"
-            + redirectURL + "?:?"
-            + "qrc:/images/right/filetype/" +getIconName() + "?:?"
-            + savePath + "?:?"
-            + threads + "?:?"
-            + speed;
+    QList<TaskFileItem> fileItemList;
+    QStringList fileList = fileNameList.split(NAME_LIST_SPLIT_CHAR);
 
-    qDebug() << "send file to local socket:\n" << info;
+    for (QString fileItem : fileList)
+    {
+        TaskFileItem item;
+        QStringList list = fileItem.split(ITEM_INFO_SPLIT_CHAR);
+        item.fileType = list[0];
+        item.fileSize = list[1].toInt();
+        item.fileName = list[2];
+        fileItemList.append(item);
+    }
 
-    localSocket->write(info.toStdString().c_str());
+    int type;
+    if (newToolType == "Point")
+        type = TOOL_POINT;
+    else if (newToolType == "YouGet")
+        type = TOOL_YOUGET;
+    else if (newToolType == "Xware")
+        type = TOOL_XWARE;
+    else
+        type = TOOL_ARIA2;
+
+    TaskInfo taskInfo(type, fileItemList, fileURL, redirectURL, "qrc:/images/right/filetype/" + getIconName(), savePath, threads.toInt(), speed.toInt());
+
+    qDebug() << taskInfo;
+
+    localSocket->write(taskInfo.toQByteArray());
     localSocket->flush();
 
     qApp->quit();
@@ -532,6 +561,7 @@ QString DataControler::getHttpFileTypeSize(QString URL)
 
 QString DataControler::getFtpFileTypeSize(QString URL)
 {
+    Q_UNUSED(URL);
     return "unknown@unknown";
 }
 
@@ -781,7 +811,6 @@ void DataControler::tryToNormalHttpParseType_finish()
         emit sGettingInfo(true);
         QTimer::singleShot(100,this,SLOT(getURLInfo()));
     }
-
 end:
     // 做完一次解析必须清空历史
     httpParseHistory.clear();

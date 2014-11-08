@@ -12,6 +12,7 @@ class DLDataConverter : public QObject
     Q_OBJECT
 public:
     static DLDataConverter * getInstance();
+    static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine);
     //qml中能直接调用此方法
     Q_INVOKABLE void controlItem(const QString &dtype, const QString &otype, QString URL);//dtype:DownloadType otype:OperationType
     Q_INVOKABLE void suspendAllDownloading();
@@ -19,9 +20,12 @@ public:
 
 
 signals:
+    void taskAdded(const QString& infoString);
+    void taskCompleted(const QString& infoString);
+    void taskRemoved(const QString& infoString);
     //dlType：Downloading、Downloaded、DownloadTrash
-    void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
-    void sFileInfoChange(QString dlType, QString fileInfo);
+//    void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
+//    void sFileInfoChange(QString dlType, const TaskInfo &taskInfo);
     //dlState,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
     void sDLStateChange(QString dlURL, QString dlState);
     void sDLSpeedChange(QString dlURL, QString dlSpeed);
@@ -38,9 +42,9 @@ signals:
 public slots:
     //用于接收统一接口类信号的接收
     //为列表面板添加项
-    void addDownloadingItem(QString infoList);
-    void addDownloadedItem(QString infoList);
-    void addDownloadTrashItem(QString infoList);
+    void addDownloadingItem(const TaskInfo &taskInfo);
+    void addDownloadedItem(const TaskInfo &taskInfo);
+    void addDownloadTrashItem(const TaskInfo &taskInfo);
 
     void slotGetDownloadingInfo(DownloadingItemInfo infoList);
     //操作返回值
@@ -55,14 +59,4 @@ private:
 private:
     static DLDataConverter * dlDataConverter;
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return DLDataConverter::getInstance();
-}
-
 #endif // DLDATACONVERTER_H

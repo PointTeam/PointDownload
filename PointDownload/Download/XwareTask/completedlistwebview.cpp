@@ -27,7 +27,7 @@
 
 CompletedListWebView::CompletedListWebView(QObject *parent)
 {
-
+    Q_UNUSED(parent);
 }
 
 void CompletedListWebView::initConnection()
@@ -136,6 +136,7 @@ void CompletedListWebView::loadFinishHandle()
 
 void CompletedListWebView::removeComletedTask(QString taskId, bool deleteFile)
 {
+    Q_UNUSED(taskId);
     if(deleteFile)
     {
 

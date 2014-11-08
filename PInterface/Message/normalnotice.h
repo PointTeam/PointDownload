@@ -18,6 +18,7 @@ class NormalNotice : public QObject
     Q_OBJECT
 public:
     static NormalNotice * getInstance();
+    static QObject * normalNoticeObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     void initData();
 
@@ -47,14 +48,4 @@ private:
     QString gmessage;
     NoticeTitleColor gnoticeTitleColor;
 };
-
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * normalNoticeObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return NormalNotice::getInstance();
-}
 #endif // NORMALNOTICE_H

@@ -18,6 +18,14 @@ DropzoneSettingControler * DropzoneSettingControler::getInstance()
     return dropzoneSettingControler;
 }
 
+QObject *DropzoneSettingControler::dzSettingCtrlObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return DropzoneSettingControler::getInstance();
+}
+
 void DropzoneSettingControler::initData()
 {
     setOpacity(gHandler.getChildElement(DropzoneSetting,"Opacity").toInt());

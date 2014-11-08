@@ -53,6 +53,7 @@ class TopContrl : public QObject
     Q_OBJECT
 public:
     static TopContrl * getInstance();
+    static QObject * pTopContrlObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     void initTrayIcon();
 
@@ -93,14 +94,4 @@ private:
      void showUnityAppIndicator();
      void showQtTrayIcon();
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * pTopContrlObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return TopContrl::getInstance();
-}
-
 #endif // TOPCONTRL_H

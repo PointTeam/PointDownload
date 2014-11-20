@@ -55,6 +55,9 @@ QByteArray TaskInfo::toQByteArray() const
     return data;
 }
 
+/*!
+    获取当前任务的文件列表
+*/
 QString TaskInfo::fileListString() const
 {
     QString str;
@@ -68,7 +71,7 @@ QString TaskInfo::fileListString() const
 }
 
 /*!
-  虽然一个任务中可能包含多个文件但代码中一直以第一个文件做为任务名称
+    虽然一个任务中可能包含多个文件但代码中一直以第一个文件做为任务名称
 */
 QString TaskInfo::taskName() const
 {
@@ -81,7 +84,7 @@ QString TaskInfo::taskName() const
 }
 
 /*!
-  任务包含文件的大小总和作为任务的总大小
+    任务包含文件的大小总和作为任务的总大小
 */
 int TaskInfo::taskSize() const
 {
@@ -92,7 +95,7 @@ int TaskInfo::taskSize() const
 }
 
 /*!
-  注意序列化和反序列化时各个成员的顺序[必须]一致
+    注意序列化和反序列化时各个成员的顺序[必须]一致
 */
 QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 {
@@ -109,7 +112,7 @@ QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 }
 
 /*!
-  注意序列化和反序列化时各个成员的顺序[必须]一致
+    注意序列化和反序列化时各个成员的顺序[必须]一致
 */
 QDataStream &operator <<(QDataStream &out, const TaskInfo &what)
 {
@@ -141,8 +144,8 @@ QDebug operator <<(QDebug out, const TaskInfo &what)
 }
 
 /*!
-  请注意！ 此函数用于旧版本的数据到新数据的转换，以后设置toolType时最好以
-  taskinfo.h文件中定义的类型来设置。
+    请注意！ 此函数用于旧版本的数据到新数据的转换，以后设置toolType时最好以
+    taskinfo.h文件中定义的类型来设置。
 */
 void TaskInfo::setToolTypeFromString(const QString &tool)
 {
@@ -162,8 +165,8 @@ void TaskInfo::setToolTypeFromString(const QString &tool)
 }
 
 /*!
-  请注意！ 此函数用于旧版本的数据到新数据的转换，以后设置taskState时最好以
-  taskinfo.h文件中定义的类型来设置。
+    请注意！ 此函数用于旧版本的数据到新数据的转换，以后设置taskState时最好以
+    taskinfo.h文件中定义的类型来设置。
 */
 void TaskInfo::setDownStateFromString(const QString &state)
 {
@@ -181,7 +184,7 @@ void TaskInfo::setDownStateFromString(const QString &state)
 }
 
 /*!
-  请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
+    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
 */
 QString TaskInfo::getToolTypeToString() const
 {
@@ -196,7 +199,7 @@ QString TaskInfo::getToolTypeToString() const
 }
 
 /*!
-  请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
+    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
 */
 QString TaskInfo::getDownStateToString() const
 {
@@ -210,7 +213,7 @@ QString TaskInfo::getDownStateToString() const
 }
 
 /*!
-  请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
+    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
 */
 QString TaskInfo::getInfoToString() const
 {
@@ -224,7 +227,7 @@ QString TaskInfo::getInfoToString() const
     infoStr += QString::number(taskSize()) + split;
     infoStr += savePath + split;
     infoStr += QString::number(maxThreads) + split;
-    infoStr += QString::number(percentage);
+    infoStr += QString::number(percentage, 'f', 1);
     return infoStr;
 }
 

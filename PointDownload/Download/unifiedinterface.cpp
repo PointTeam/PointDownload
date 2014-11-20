@@ -807,7 +807,7 @@ void UnifiedInterface::initdownloadingList()
         fileItem.fileSize = ingList.at(i).totalSize.toInt();
         taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadedItem(taskInfo);
+        emit sAddDownloadingItem(taskInfo);
 
         if (ingList.at(i).state == "dlstate_downloading")
         {
@@ -921,6 +921,7 @@ void UnifiedInterface::startReady()
 
     QList<SDownloading> ingList = downloadHandler.getDownloadingNodes();
 
+    qWarning() << "state maybe error";
     for (int i =0; i < ingList.count(); i ++)
     {
         if (ingList.at(i).state == "dlstate_ready")

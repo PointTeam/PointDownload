@@ -18,14 +18,13 @@ public:
     Q_INVOKABLE void suspendAllDownloading();
     Q_INVOKABLE void resumeAllDownloading();
 
-
 signals:
     void taskAdded(const QString& infoString);
     void taskCompleted(const QString& infoString);
     void taskRemoved(const QString& infoString);
     //dlType：Downloading、Downloaded、DownloadTrash
-//    void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
-//    void sFileInfoChange(QString dlType, const TaskInfo &taskInfo);
+    void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
+    void sFileInfoChange(QString dlType, const TaskInfo &taskInfo);
     //dlState,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
     void sDLStateChange(QString dlURL, QString dlState);
     void sDLSpeedChange(QString dlURL, QString dlSpeed);

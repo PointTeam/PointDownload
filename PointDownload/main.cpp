@@ -75,7 +75,6 @@ int main(int argc, char *argv[])
     //注册的参数格式：import settingControler 1.0
     qmlRegisterType<SettingControler>("settingControler", 1, 0, "SettingControler");
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
-    qmlRegisterType<TaskInfo>("taskInfo", 1, 0, "TaskInfo");
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
 

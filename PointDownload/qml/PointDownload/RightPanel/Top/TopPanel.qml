@@ -83,6 +83,24 @@ Rectangle {
         color: "#eeeff3"
     }
 
+    MouseArea{
+        id:middleMouse
+        anchors.fill: topPanel
+
+        onPressed:  {
+            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
+            middleMouse.cursorShape=Qt.DragMoveCursor
+        }
+        onReleased: {
+            rightMainPanel.middlePanelRelease()
+            middleMouse.cursorShape=Qt.ArrowCursor
+        }
+
+        onPositionChanged: {
+            rightMainPanel.middlePanelPositionChange()
+        }
+    }
+
     BlueButton {
         id: settingButton
         imagePath: "qrc:/images/navigation/style"
@@ -110,24 +128,6 @@ Rectangle {
         height: parent.height
         anchors {left: settingButton.right; }
         color: "#eeeff3"
-    }
-
-    MouseArea{
-        id:middleMouse
-        anchors.fill: topPanel
-
-        onPressed:  {
-            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
-            middleMouse.cursorShape=Qt.DragMoveCursor
-        }
-        onReleased: {
-            rightMainPanel.middlePanelRelease()
-            middleMouse.cursorShape=Qt.ArrowCursor
-        }
-
-        onPositionChanged: {
-            rightMainPanel.middlePanelPositionChange()
-        }
     }
 
     BlueButton {

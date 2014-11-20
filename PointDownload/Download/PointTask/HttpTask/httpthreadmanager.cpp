@@ -341,5 +341,8 @@ QString HttpThreadManager::getDownloadSpeed()
 
 double HttpThreadManager::getDownloadPercent()
 {
-    return taskInfo.fileList.at(0).fileSize;
+    if (!taskInfo.fileList.at(0).fileSize)
+        return 0;
+
+    return (double)100 * totalDoneSize / taskInfo.taskSize();
 }

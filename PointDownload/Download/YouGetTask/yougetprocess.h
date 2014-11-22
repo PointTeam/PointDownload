@@ -45,7 +45,7 @@ public:
     void stopDownload();
 signals:
     void updateData(DownloadingItemInfo info);
-    void yougetError(QString URL,QString err, int toolType);
+    void yougetError(QString URL, QString err, int toolType);
     void sFinishYouGetDownload(QString URL);
 
 private slots:

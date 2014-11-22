@@ -22,7 +22,7 @@
 #include "yougetprocess.h"
 
 YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
-    QObject(parent),taskInfo(taskInfo)
+    QObject(parent), taskInfo(taskInfo)
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
@@ -31,16 +31,28 @@ YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
 void YouGetProcess::startDownload()
 {
     SettingXMLHandler tmpHandler;
+
     tmpProcess = new QProcess(0);
-    connect(tmpProcess,SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
+    connect(tmpProcess, SIGNAL(finished(int)), tmpProcess, SLOT(deleteLater()));
+    connect(tmpProcess, SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
     connect(tmpProcess, SIGNAL(started()), this, SLOT(yougetStarted()));
+
+    const QString yougetPath = tmpHandler.getChildElement(YouGetSetting, "ExecutePath");
     QStringList arguments;
 
-    arguments << tmpHandler.getChildElement(YouGetSetting,"ExecutePath");
-    arguments << taskInfo.rawUrl.toString();
-    tmpProcess->setWorkingDirectory(taskInfo.savePath);
-    tmpProcess->start("python3",arguments);
+    // you-get 路径
+    arguments << yougetPath;
+    // 覆盖已有文件 - 因为主程序当前没有对此的判断
+    arguments << "-f";
+    // 输出目录
+    arguments << "-o" << taskInfo.savePath;
+    // 设置url参数，这里用解析后的url，以减少重定向开销
+    arguments << taskInfo.parseUrl.toString();
+
+    qDebug() << "YouGet command line arguments: " << arguments;
+
+    tmpProcess->start("python3", arguments);
 }
 
 void YouGetProcess::stopDownload()
@@ -84,8 +96,10 @@ void YouGetProcess::getTimerUpdate()
     if (tmpInfo.downloadPercent == 100)
     {
         updateTimer->stop();
-        tmpProcess->terminate();
-        this->deleteLater();
+        // youget 下载完成（100%）之后并不是任务结束，因为后面还要进行
+        // 文件连接，所以不能强制结束youget进程！
+//        tmpProcess->terminate();
+//        this->deleteLater();
 
         emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
     }

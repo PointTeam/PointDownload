@@ -44,8 +44,8 @@ void YouGetTask::startDownload(const TaskInfo &taskInfo)
 {
     YouGetProcess * yougetProcess = new YouGetProcess(taskInfo);
     connect(yougetProcess, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(yougetProcess, SIGNAL(yougetError(QString,QString,DownloadToolsType))
-            ,this ,SIGNAL(sYouGetError(QString,QString,DownloadToolsType)));
+    connect(yougetProcess, SIGNAL(yougetError(QString,QString,int))
+            ,this ,SIGNAL(sYouGetError(QString,QString,int)));
     connect(yougetProcess, SIGNAL(sFinishYouGetDownload(QString)),
             this, SLOT(slotFinishDownload(QString)));
 
@@ -114,6 +114,6 @@ void YouGetTask::initConnection()
 {
     connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(this, SIGNAL(sYouGetError(QString,QString,DownloadToolsType)),
-            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(this, SIGNAL(sYouGetError(QString,QString,int)),
+            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,int)));
 }

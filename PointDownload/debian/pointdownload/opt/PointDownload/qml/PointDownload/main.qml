@@ -45,7 +45,7 @@ Window {
     flags: Qt.FramelessWindowHint
     visible: true
     color: "#00ffffff"
-    title: qsTr(" ")
+    title: qsTr("PointDownload")
     width: Screen.width < 1641?820:Screen.width / 2
     height: Screen.height < 800? Screen.height * 4 / 5 - 50: Screen.height * 3 / 5 - 30
 

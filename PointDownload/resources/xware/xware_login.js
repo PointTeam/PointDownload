@@ -4,21 +4,22 @@ var spliterBtwData = "#..#";
 var spliterEnd = "#.^_^.#";
 
 var pointLoginCheckInterval;
-var pointLoginCheckHandle;
+var pointLoginCheckHandle;  // record the login warning check state
 
 var pointVertifyChangeIntervalId;
 
+// login frame
+$p_lf = $("#loginIframe").contents();
+
 function pointSlotLogin(userName, pwd, vertifyCode)
 {
-    $("#login-input-username").click();
-    $("#login-input-username").val(userName);
-    $("#login-input-password").click();
-    $("#login-input-password").val(pwd);
-
-    $("#login-input-verify-code").val(vertifyCode);
+    $p_lf.find("#al_c").val(vertifyCode);
+    $p_lf.find("#al_u").val(userName);
+    $p_lf.find("#al_p").val(pwd);
+    $p_lf.find("#al_c").val(vertifyCode);
 
     pointLoginCheckHandle = false;
-    pointLoginCheckInterval = setInterval("pointLoginCheckSlot()", 500);
+    pointLoginCheckInterval = setInterval("pointLoginCheckSlot()", 800);
 
     setTimeout(
     function()
@@ -26,31 +27,19 @@ function pointSlotLogin(userName, pwd, vertifyCode)
         // debug
         Point.justForJSTest("login");
 
-        $("#login-button").click();
+        $p_lf.find("#al_submit").get(0).click();
     }, 500
     );
 }
 
+// check login even (pwd incorrect, username not exist ...)
 function pointLoginCheckSlot()
 {
     if(pointLoginCheckHandle === false)
     {
-        if($("#login-account-username-error-box").css("display") === "block")
+        if($p_lf.find("#al_warn").css("display") === "block")
         {
-            Point.loginError(1, $("#login-account-username-error-msg").html());
-            pointLoginCheckHandle = true;
-        }
-
-        if($("#login-account-password-error-box").css("display") === "block")
-        {
-            Point.loginError(2, $("#login-account-password-error-msg").html());
-            pointLoginCheckHandle = true;
-        }
-
-        if($("#login-verify-code-error-box").css("display") === "block")
-        {
-            Point.loginError(3, $("#login-verify-code-error-msg").html() + spliterBtwData
-                             + $("#verify-code-image").attr("src"));
+            Point.loginError(1, $p_lf.find("#al_warn").html());
             pointLoginCheckHandle = true;
         }
 
@@ -63,28 +52,21 @@ function pointLoginCheckSlot()
 }
 
 pointVertifyChangeIntervalId = setInterval("pointVertifyCodeCheckSlot()", 200);
-
-var vertifyCodeLink = "/img/wh.png";
+var lastVc = ""
 function pointVertifyCodeCheckSlot()
 {
-//    Point.justForJSTest("pointVertifyCodeCheckSlot" + $("#verify-code-image").attr("src"));
-    var vertifyCodeLinkTmp = $("#verify-code-image").attr("src");
-    if(vertifyCodeLink != vertifyCodeLinkTmp
-            && vertifyCodeLinkTmp != "/img/wh.png"
-        && vertifyCodeLinkTmp != "")
+    var vc = $p_lf.find("#al_c_img").attr("src")
+    if(vc !== lastVc)
     {
-        vertifyCodeLink = vertifyCodeLinkTmp;
-        var msg = $("#login-verify-code-error-msg").html();
-        if(msg != "" && Login.isLogining !== 1)
-        {
-            Point.loginError(3, msg + spliterBtwData + vertifyCodeLink);
-        }
+        Point.justForJSTest("pointVertifyCodeCheckSlot: " + vc)
+        Point.loginError(2,  vc);
+        lastVc = vc;
     }
 }
 
 function pointUpdateVertifyCode()
 {
-    $("#verify-code-image").click();
+    $p_lf.find("#al_c_img").click();
 }
 
 

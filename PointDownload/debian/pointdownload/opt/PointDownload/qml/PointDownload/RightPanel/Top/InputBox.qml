@@ -40,6 +40,13 @@ FocusScope {
     id: inputBox
     width: boxWidth; height: boxHeigth
 
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.IBeamCursor
+
+        onEntered: textInput.forceActiveFocus()
+    }
+
     Rectangle {
         id: spaceRec
         anchors {top: parent.top; horizontalCenter: parent.horizontalCenter}
@@ -77,7 +84,7 @@ FocusScope {
             //Key_Enter通常位于小键盘上
             if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
             {
-                DLDataConverter.controlItem("dl_search","download_redownloed",textInput.text)
+                DLDataConverter.controlItem("dl_search","download_redownload",textInput.text)
                 textInput.text = ""
             }
         }

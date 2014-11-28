@@ -230,6 +230,7 @@ function pointSlotGetAllBindedPeerIds()
     Point.setAllBindedPeerIds(peerList);
 }
 
+// @Deprecated, Replace by json on XwareTaskEntity
 function pointRefashDloadListTimer()
 {
     var allTaskInfo = '';
@@ -295,6 +296,8 @@ function pointBindNewMachine(code)
         return;
     }
 
+    pointPopDownloader();
+
     $pop_sjbox_div = $("#d-add-downloader-panels > div.pop_addd_unit > div.pop_de_inp > div.pop_sjbox");
     $pop_sjbox_div.find(".sel_txt > input.sel_inptxt").val(code).blur().trigger('input');
     $pop_sjbox_div.find("a.btn_inp").click();
@@ -303,11 +306,37 @@ function pointBindNewMachine(code)
     App.set("functions.msgbox.show", 0);
 }
 
+function pointPopDownloader()
+{
+    $ds = $("#manage-list>li");
+    if( $ds.length > 5)
+    {
+        var old = "";
+        var dloader  = "";
+        $ds.each(function(){
+            var str  = $(this).find(".managebox_info>.managebox_p5>span:last").html();
+            str = str.replace(/-/g,"/");
+            if(old === "")
+            {
+                old = str;
+                dloader = $(this).attr("data-pid");
+            }
+            else if((new Date(old) -  new Date(str)) > 0)
+            {
+                old = str;
+                dloader = $(this).attr("data-pid");
+            }
+        });
+        Point.justForJSTest("cleans a downloader : " + dloader)
+        pointUnbindMachine(dloader);
+    }
+}
 
 function pointUnbindMachine(pid)
 {
+    // this may delete the wrong downloader, I dont konw why yet.
     $("#downloader-list>li[data-pid="+pid+"]>div").find("a[title='解除绑定']").click();
 
     // click confirm
-
+    App.set("dialogs.removeDownloader.confirmEVT", true);
 }

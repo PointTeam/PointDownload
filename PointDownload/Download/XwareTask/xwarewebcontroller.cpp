@@ -100,6 +100,10 @@ void XwareWebController::bindRouterCodeResultHandle(int rs)
 
         qDebug()<<"[xware info] Binding successful! => Login successful ";
     }
+    else if(rs == 0)
+    {
+        emit sLoginStateChanged(LoginReady);
+    }
 }
 
 void XwareWebController::executeJS(QString js)

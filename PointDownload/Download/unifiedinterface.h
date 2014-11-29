@@ -58,8 +58,8 @@ History:
 #include "taskinfo.h"
 
 #ifndef QT_DEBUG
-//const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
-const QString POPUP_PROGRAM_PATH ="/usr/bin/pointpopup";
+const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
+//const QString POPUP_PROGRAM_PATH ="/usr/bin/pointpopup";
 #else
 const QString POPUP_PROGRAM_PATH ="/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
 #endif

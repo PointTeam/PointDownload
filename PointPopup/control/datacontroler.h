@@ -40,8 +40,8 @@
 #include "urlinfogeter.h"
 
 #ifndef QT_DEBUG
-//const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
-const QString MAIN_PROGRAM_PATH = "/usr/bin/pointdownload";
+const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+//const QString MAIN_PROGRAM_PATH = "/usr/bin/pointdownload";
 #else
 const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
 #endif

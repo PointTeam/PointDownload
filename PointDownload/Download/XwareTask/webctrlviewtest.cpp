@@ -10,12 +10,13 @@ WebCtrlViewTest::WebCtrlViewTest()
     connect(tabWG, SIGNAL(currentChanged(int)), this, SLOT(tabChangedHandle(int)));
 
     execJSLE = new QLineEdit();
-    execJSLE->show();
+//    execJSLE->show();
     connect(execJSLE, SIGNAL(returnPressed()), this, SLOT(lineEditReturnHandle()));
 
     mainLayout = new QGridLayout();
 
-    mainLayout->addWidget(this->tabWG);
+    mainLayout->addWidget(this->tabWG, 0, 0);
+    mainLayout->addWidget(this->execJSLE, 1, 0);
 
     this->setLayout(mainLayout);
 }
@@ -45,5 +46,7 @@ void WebCtrlViewTest::tabChangedHandle(int index)
 {
     Q_UNUSED(index);
     this->webview = qobject_cast<QWebView*>(tabWG->currentWidget());
+
+//    qDebug()<<this->webview->page()->mainFrame()->toHtml();
 }
 

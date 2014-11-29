@@ -190,36 +190,36 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
 {
     switch (type)
     {
-    // username
+    // username & password
     case 1:
-        emit sError(tr("User name error"), errorMsg);
+        emit sError(tr("Login  failed"), errorMsg);
         break;
 
     // password
-    case 2:
-        emit sError(tr("User password error"), errorMsg);
-        break;
+//    case 2:
+//        emit sError(tr("User password error"), errorMsg);
+//        break;
 
     // vertify code
-    case 3:
+    case 2:
         // emit vertify code link
-        QString vertifyCodeUrl = errorMsg.split(this->spliterBtwData).at(1);
+        QString vertifyCodeUrl = errorMsg;
         emit sVertifyCodeLink(saveVertifyImg(vertifyCodeUrl));
 
         errorMsg = errorMsg.split(this->spliterBtwData).at(0);
 
         // emit hint
-        if(errorMsg.startsWith("请"))
-        {
-            // let it do nothing!!
-        }
+//        if(errorMsg.startsWith("请"))
+//        {
+//            // let it do nothing!!
+//        }
 
         // emit error
-        else
-        {
-            emit sError(tr("Vertify code error"), errorMsg);
-            qDebug()<<" login vertify code error =>"<<errorMsg;
-        }
+//        else
+//        {
+//            emit sError(tr("Vertify code error"), errorMsg);
+//            qDebug()<<" login vertify code error =>"<<errorMsg;
+//        }
         break;
     }
 }

@@ -9,7 +9,7 @@
 
 #include "xwarewebcontroller.h"
 
-// 这个类仅做测试使用，除了调用显示本类窗口的函数show()外，不得调用其它函数
+// 这个类仅做测试使用
 class WebCtrlViewTest : public QWidget
 {
     Q_OBJECT

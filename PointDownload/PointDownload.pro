@@ -93,9 +93,7 @@ SOURCES += main.cpp \
     Download/XwareTask/completedlistwebview.cpp \
     Download/XwareTask/xwaresetting.cpp \
     Download/Aria2Task/aria2task.cpp \
-    Download/Aria2Task/aria2process.cpp \
-    ../Common/taskinfo.cpp \
-    ../Common/taskfileitem.cpp
+    Download/Aria2Task/aria2process.cpp
 
 # Installation path
 # target.path =
@@ -140,14 +138,13 @@ HEADERS += \
     Download/XwareTask/completedlistwebview.h \
     Download/XwareTask/xwaresetting.h \
     Download/Aria2Task/aria2task.h \
-    Download/Aria2Task/aria2process.h \
-    ../Common/taskfileitem.h \
-    ../Common/taskinfo.h
+    Download/Aria2Task/aria2process.h
 
 include(../PInterface/QtSingleApplication/qtsinglecoreapplication.pri)
 include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
 include(../PInterface/PEventFilter/PEventFilter.pri)
+include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS += PointDownload_zh_CN.ts
 TRANSLATIONS += PointDownload_ja_JP.ts

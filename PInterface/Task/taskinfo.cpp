@@ -21,23 +21,26 @@ TaskInfo::TaskInfo(QIODevice *in) :
     ins >> *this;
 }
 
+TaskInfo::TaskInfo(TaskInfo &&taskInfo)
+{
+    fileList = std::move(taskInfo.fileList);
+    rawUrl = std::move(taskInfo.rawUrl);
+    parseUrl = std::move(taskInfo.parseUrl);
+    taskIconPath = std::move(taskInfo.taskIconPath);
+    savePath = std::move(taskInfo.savePath);
+    toolType = taskInfo.toolType;
+    maxThreads = taskInfo.maxThreads;
+    maxSpeed = taskInfo.maxSpeed;
+
+    completeDate = std::move(taskInfo.completeDate);
+    percentage = taskInfo.percentage;
+    taskState = taskInfo.taskState;
+}
+
 TaskInfo::TaskInfo(const TaskInfo &taskInfo) :
     QObject(0)
 {
     *this = taskInfo;
-}
-
-TaskInfo::TaskInfo(const int toolType, const QList<TaskFileItem> &fileNameList, const QUrl &rawUrl, const QUrl &parseUrl, const QString &taskIconPath, const QString &savePath, const int maxThreads, const int maxSpeed) :
-    QObject(0)
-{
-    this->toolType = toolType;
-    this->fileList = fileNameList;
-    this->rawUrl = rawUrl;
-    this->parseUrl = parseUrl;
-    this->taskIconPath = taskIconPath;
-    this->savePath = savePath;
-    this->maxThreads = maxThreads;
-    this->maxSpeed = maxSpeed;
 }
 
 TaskInfo::~TaskInfo()
@@ -52,7 +55,8 @@ QByteArray TaskInfo::toQByteArray() const
 
     out << *this;
 
-    return data;
+    // 使用移动语义以减小 QByteArray 的拷贝开销
+    return std::move(data);
 }
 
 /*!
@@ -194,7 +198,9 @@ QString TaskInfo::getToolTypeToString() const
     case TOOL_ARIA2:    return "Aria2";
     case TOOL_XWARE:    return "Xware";
     case TOOL_YOUGET:   return "YouGet";
-    default:            return "Undefined";
+    default:
+        qWarning() << "ToolType Undefined!";
+        return "Undefined";
     }
 }
 
@@ -208,7 +214,9 @@ QString TaskInfo::getDownStateToString() const
     case DLSTATE_SUSPEND:       return "dlstate_suspend";
     case DLSTATE_DOWNLOADING:   return "dlstate_downloading";
     case DLSTATE_READY:         return "dlstate_ready";
-    default:                    return "undefined";
+    default:
+        qWarning() << "DownState Undefined!";
+        return "undefined";
     }
 }
 
@@ -228,7 +236,8 @@ QString TaskInfo::getInfoToString() const
     infoStr += savePath + split;
     infoStr += QString::number(maxThreads) + split;
     infoStr += QString::number(percentage, 'f', 1);
-    return infoStr;
+
+    return std::move(infoStr);
 }
 
 TaskInfo &TaskInfo::operator =(const TaskInfo &what)

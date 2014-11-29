@@ -21,26 +21,26 @@
 
 #include "yougettask.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
-YouGetTask::YouGetTask(QObject *parent) :
+YouGetTask_::YouGetTask_(QObject *parent) :
     QObject(parent)
 {
     initConnection();
 }
 
 
-YouGetTask * YouGetTask::youGetTask = NULL;
-YouGetTask * YouGetTask::getInstance()
+YouGetTask_ * YouGetTask_::youGetTask = NULL;
+YouGetTask_ * YouGetTask_::getInstance()
 {
     if (youGetTask == NULL)
     {
-        youGetTask = new YouGetTask();
+        youGetTask = new YouGetTask_();
     }
     return youGetTask;
 }
 
-void YouGetTask::startDownload(const TaskInfo &taskInfo)
+void YouGetTask_::startDownload(const TaskInfo &taskInfo)
 {
     YouGetProcess * yougetProcess = new YouGetProcess(taskInfo);
     connect(yougetProcess, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
@@ -55,21 +55,21 @@ void YouGetTask::startDownload(const TaskInfo &taskInfo)
     gProcessMap.insert(taskInfo.rawUrl.toString(), yougetProcess);
 }
 
-void YouGetTask::stopDownload(QString URL)
+void YouGetTask_::stopDownload(QString URL)
 {
     if (gProcessMap.value(URL) == NULL)
         return;
     gProcessMap.value(URL)->stopDownload();
 }
 
-void YouGetTask::suspendDownloading(QString URL)
+void YouGetTask_::suspendDownloading(QString URL)
 {
     if (gProcessMap.value(URL) == NULL)
         return
     gProcessMap.value(URL)->stopDownload();
 }
 
-void YouGetTask::resumeDownloading(QString URL)
+void YouGetTask_::resumeDownloading(QString URL)
 {
     if (gProcessMap.value(URL) == NULL)
     {
@@ -79,14 +79,14 @@ void YouGetTask::resumeDownloading(QString URL)
         gProcessMap.value(URL)->startDownload();
 }
 
-void YouGetTask::slotFinishDownload(QString URL)
+void YouGetTask_::slotFinishDownload(QString URL)
 {
     gProcessMap.remove(URL);
 
     UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 }
 
-TaskInfo YouGetTask::getPrepareInfoFromXML(QString URL)
+TaskInfo YouGetTask_::getPrepareInfoFromXML(QString URL)
 {
     DownloadXMLHandler xmlOpera;
     SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
@@ -110,7 +110,7 @@ TaskInfo YouGetTask::getPrepareInfoFromXML(QString URL)
 }
 
 
-void YouGetTask::initConnection()
+void YouGetTask_::initConnection()
 {
     connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));

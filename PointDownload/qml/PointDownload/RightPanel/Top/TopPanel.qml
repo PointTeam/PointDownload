@@ -51,11 +51,13 @@ Rectangle {
         target: TopContrl
         onSignalShowMainWindow:{
             mainWindow.show()
+            mainWindow.flags &= ~Qt.ToolTip
             DropzonePage.destroyDropzone()
         }
 
         onSignalHideMainWindow:{
             mainWindow.hide()
+            mainWindow.flags |= Qt.ToolTip
             if (settingCtrl.enableDropzone)
                 DropzonePage.showDropzone(topPanel)
         }

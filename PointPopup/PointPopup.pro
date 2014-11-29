@@ -31,9 +31,7 @@ SOURCES += main.cpp \
     BtAndMagnetInfo/CyoDecode.cpp \
     BtAndMagnetInfo/CyoEncode.cpp \
     BtAndMagnetInfo/metainfo.cpp \
-    control/urlinfogeter.cpp \
-    ../Common/taskinfo.cpp \
-    ../Common/taskfileitem.cpp
+    control/urlinfogeter.cpp
 
 RESOURCES += qml.qrc \
     resources.qrc
@@ -53,9 +51,7 @@ HEADERS += \
     BtAndMagnetInfo/CyoDecode.h \
     BtAndMagnetInfo/CyoEncode.h \
     BtAndMagnetInfo/metainfo.h \
-    control/urlinfogeter.h \
-    ../Common/taskfileitem.h \
-    ../Common/taskinfo.h
+    control/urlinfogeter.h
 
 lupdate_only{
 SOURCES = main.qml \
@@ -70,5 +66,6 @@ SOURCES = main.qml \
 include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
 include(../PInterface/PEventFilter/PEventFilter.pri)
+include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS = PointPopup_zh_CN.ts

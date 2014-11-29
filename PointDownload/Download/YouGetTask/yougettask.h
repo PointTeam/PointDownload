@@ -30,13 +30,13 @@
 #include "Download/unifiedinterface.h"
 #include "downloadxmlhandler.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
-class YouGetTask : public QObject
+class YouGetTask_ : public QObject
 {
     Q_OBJECT
 public:
-    static YouGetTask * getInstance();
+    static YouGetTask_ * getInstance();
 
     //对正在下载的处理
     void startDownload(const TaskInfo & taskInfo);
@@ -52,12 +52,12 @@ public slots:
     void slotFinishDownload(QString URL);
 
 private:
-    explicit YouGetTask(QObject *parent = 0);
+    explicit YouGetTask_(QObject *parent = 0);
 
     TaskInfo getPrepareInfoFromXML(QString URL);
     void initConnection();
 private:
-    static YouGetTask * youGetTask;
+    static YouGetTask_ * youGetTask;
     //URL,Process
     QMap<QString,YouGetProcess *> gProcessMap;
 };

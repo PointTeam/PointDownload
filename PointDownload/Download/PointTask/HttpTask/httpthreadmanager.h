@@ -30,7 +30,7 @@
 #include "downloadxmlhandler.h"
 #include "Download/DataType.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 const QString POINT_FILE_FLAG = ".Point";
 const QString SUSPEND_STATE = "dlstate_suspend";

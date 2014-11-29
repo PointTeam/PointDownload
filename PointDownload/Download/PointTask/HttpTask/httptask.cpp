@@ -21,7 +21,7 @@
 
 #include "httptask.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 HttpTask::HttpTask(QObject *parent) :
     QObject(parent)

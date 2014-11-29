@@ -9,7 +9,7 @@
 #include "downloadxmlhandler.h"
 #include "settingxmlhandler.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 class Aria2Process : public QObject
 {

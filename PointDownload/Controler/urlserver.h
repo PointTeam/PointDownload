@@ -22,7 +22,7 @@
 #ifndef URLSERVER_H
 #define URLSERVER_H
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 #include <QObject>
 #include <QLocalServer>

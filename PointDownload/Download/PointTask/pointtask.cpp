@@ -21,7 +21,7 @@
 
 #include "pointtask.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 PointTask::PointTask(QObject *parent) :
     QObject(parent)

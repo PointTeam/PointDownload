@@ -31,7 +31,7 @@
 #include "xwaretaskentity.h"
 #include "completedlistwebview.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 class XwareTask : public QObject
 {

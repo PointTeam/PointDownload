@@ -71,13 +71,12 @@ void UnifiedInterface::cleanDownloadFinishItem(QString dlURL)
     QString day = current_date_time.toString("dddd");
     DataFlow::addData(day,edStruct.Size);
 
-
     //完成提示消息
     NormalNotice::getInstance()->showMessage(tr("Finish Download"), Notice_Color_Success, edStruct.name);
 
     //完成提示音
     SettingXMLHandler tmpHandler;
-    if(tmpHandler.getChildElement(GeneralSettings,"AlertTone") == "Enable")
+    if(tmpHandler.getChildElement(GeneralSettings, "AlertTone") == "Enable")
         QSound::play(":/tone/resources/Tone/complete.wav");
 }
 
@@ -262,7 +261,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
 
 
     //启动下载
-    YouGetTask::getInstance()->startDownload(taskInfo);
+    YouGetTask_::getInstance()->startDownload(taskInfo);
 }
 
 void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
@@ -455,7 +454,7 @@ void UnifiedInterface::stopDownloading(QString URL)
     switch(downloadingListMap.value(URL))
     {
     case TOOL_YOUGET:
-        YouGetTask::getInstance()->stopDownload(URL);
+        YouGetTask_::getInstance()->stopDownload(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->stopDownload(URL);
@@ -487,7 +486,7 @@ void UnifiedInterface::suspendDownloading(QString URL)
     switch(downloadingListMap.value(URL))
     {
     case TOOL_YOUGET:
-        YouGetTask::getInstance()->suspendDownloading(URL);
+        YouGetTask_::getInstance()->suspendDownloading(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->suspendDownloading(URL);
@@ -540,7 +539,7 @@ void UnifiedInterface::resumeDownloading(QString URL)
         Aria2Task::getInstance()->resumeDownloading(URL);
         break;
     case TOOL_YOUGET:
-        YouGetTask::getInstance()->resumeDownloading(URL);
+        YouGetTask_::getInstance()->resumeDownloading(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->resumeDownloading(URL);
@@ -1004,7 +1003,7 @@ TaskInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruc
     fileItem.fileSize = infoStruct.totalSize.toInt();
     taskInfo.fileList.append(fileItem);
 
-    return taskInfo;
+    return std::move(taskInfo);
 }
 
 

@@ -40,7 +40,8 @@
 #include "urlinfogeter.h"
 
 #ifndef QT_DEBUG
-const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+//const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+const QString MAIN_PROGRAM_PATH = "/usr/bin/pointdownload";
 #else
 const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
 #endif
@@ -156,7 +157,7 @@ private:
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
-    bool isYouGetParseType(QString url);
+    bool isYouGetSupportUrl(const QUrl& url);
 private slots:
     void tryToNormalHttpParseType(const QString &url);
     void tryToNormalHttpParseType_finish();
@@ -175,6 +176,9 @@ private:
     QNetworkAccessManager *manager;
     // http解析列表，用于302跳转时防止循环重定向
     QStringList httpParseHistory;
+
+    // 支持使用YouGet下载的网站列表
+    QStringList supportYouGetHostList;
 
     //将要发送到qml界面上的数据
     QString fileURL;

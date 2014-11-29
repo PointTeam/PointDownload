@@ -41,7 +41,7 @@
 #include "Download/XwareTask/webctrlviewtest.h"
 #include "normalnotice.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 int main(int argc, char *argv[])
 {

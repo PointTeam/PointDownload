@@ -22,7 +22,7 @@
 
 #include "datacontroler.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 #include <QtQml>
 #include <QProcess>
@@ -45,6 +45,21 @@ DataControler::DataControler(QObject *parent) :
     yougetProcess = NULL;
 
     urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+
+    supportYouGetHostList.reserve(32);
+    supportYouGetHostList << "www.tudou.com";
+    supportYouGetHostList << "v.yinyuetai.com";
+    supportYouGetHostList << "v.youku.com";
+    supportYouGetHostList << "v.ku6.com";
+    supportYouGetHostList << "v.163.com";
+    supportYouGetHostList << "v.qq.com";
+    supportYouGetHostList << "www.acfun.com";
+    supportYouGetHostList << "bilibili.kankannews.com" << "www.bilibili.com" << "www.bilibili.tv";
+    supportYouGetHostList << "www.jpopsuki.tv";
+    supportYouGetHostList << "video.sina.com.cn";
+    supportYouGetHostList << "tv.sohu.com";
+    supportYouGetHostList << "www.56.com";
+    supportYouGetHostList << "www.songtaste.com";
 }
 
 DataControler::~DataControler()
@@ -157,19 +172,15 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         fileItemList.append(item);
     }
 
-    int type;
-    if (newToolType == "Point")
-        type = TOOL_POINT;
-    else if (newToolType == "YouGet")
-        type = TOOL_YOUGET;
-    else if (newToolType == "Xware")
-        type = TOOL_XWARE;
-    else
-        type = TOOL_ARIA2;
-
-    TaskInfo taskInfo(type, fileItemList, fileURL, redirectURL, "qrc:/images/right/filetype/" + getIconName(), savePath, threads.toInt(), speed.toInt());
-
-    qDebug() << taskInfo;
+    TaskInfo taskInfo;
+    taskInfo.setToolTypeFromString(newToolType);
+    taskInfo.fileList = fileItemList;
+    taskInfo.rawUrl = fileURL;
+    taskInfo.parseUrl = redirectURL;
+    taskInfo.taskIconPath = "qrc:/images/right/filetype/" + getIconName();
+    taskInfo.savePath = savePath;
+    taskInfo.maxThreads = threads.toInt();
+    taskInfo.maxSpeed = speed.toInt();
 
     localSocket->write(taskInfo.toQByteArray());
     localSocket->flush();
@@ -653,11 +664,7 @@ QString DataControler::getHttpFtpFileName(const QString &URL)
 void DataControler::startMainProgram()
 {
     // 如果这里的路径错误了，会产生一个非常难调试出的运行时错误.
-#ifdef QT_DEBUG
-    QFile file(MAIN_PROGRAM_PATH);
-    if (!file.exists())
-        qWarning() << "Error: MAIN_PROGRAM_PATH Not Found!!!";
-#endif
+    Q_ASSERT(QFile(MAIN_PROGRAM_PATH).exists());
 
     //每次启动前先尝试启动主程序
     QStringList arguments;
@@ -742,25 +749,28 @@ bool DataControler::isXwareParseType(QString task)
     return rex.exactMatch(task);
 }
 
-bool DataControler::isYouGetParseType(QString url)
+bool DataControler::isYouGetSupportUrl(const QUrl &url)
 {
-    QString videoURLRegex = QString("^(http://www\\.tudou\\.com/|") +
-            QString("http://v\\.yinyuetai\\.com/|") +
-            QString("http://v\\.youku\\.com/| ")+
-            QString("http://v\\.ku6\\.com/|")+
-            QString("http://v\\.163\\.com/|") +
-            QString("http://v\\.qq\\.com/|") +
-            QString("http://www\\.acfun\\.com/v/|")+
-            QString("http://bilibili\\.kankanews\\.com/video/av|")+
-            QString("http://www\\.jpopsuki\\.tv/video/|")+
-            QString("http://video\\.sina\\.com\\.cn/|")+
-            QString("http://tv\\.sohu\\.com/|")+
-            QString("http://www\\.56\\.com/w|")+
-            QString("http://www\\.56\\.com/u|")+
-            QString("http://www\\.songtaste\\.com/song/).+");
+    return supportYouGetHostList.contains(url.host(), Qt::CaseInsensitive);
 
-    QRegExp rex(videoURLRegex);
-    return rex.exactMatch(url);
+//    QString videoURLRegex =
+//            QString("^(http://www\\.tudou\\.com/|") +
+//            QString("http://v\\.yinyuetai\\.com/|") +
+//            QString("http://v\\.youku\\.com/| ")+
+//            QString("http://v\\.ku6\\.com/|")+
+//            QString("http://v\\.163\\.com/|") +
+//            QString("http://v\\.qq\\.com/|") +
+//            QString("http://www\\.acfun\\.com/v/|")+
+//            QString("http://bilibili\\.kankanews\\.com/video/av|")+
+//            QString("http://www\\.bilibili.com/video/av|")+
+//            QString("http://www\\.jpopsuki\\.tv/video/|")+
+//            QString("http://video\\.sina\\.com\\.cn/|")+
+//            QString("http://tv\\.sohu\\.com/|")+
+//            QString("http://www\\.56\\.com/[wu]{1}|")+
+//            QString("http://www\\.songtaste\\.com/song/).+");
+
+//    QRegExp rex(videoURLRegex);
+//    return rex.exactMatch(url);
 }
 
 void DataControler::tryToNormalHttpParseType(const QString &url)
@@ -854,7 +864,7 @@ QString DataControler::getDLToolsTypeFromURL(QString URL)
 
     if (URL.contains("http://") || URL.contains("https://"))
     {
-        if (isYouGetParseType(URL))
+        if (isYouGetSupportUrl(URL))
             return "YouGet";
 
         tryToNormalHttpParseType(URL);

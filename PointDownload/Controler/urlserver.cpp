@@ -65,6 +65,8 @@ void URLServer::socketReadyReadHandler()
 
     TaskInfo taskInfo(socket);
 
+    qDebug() << taskInfo;
+
 //    if (taskInfo.toolType == "XwareParseURLHander")
 //    {
         // take URL from msg

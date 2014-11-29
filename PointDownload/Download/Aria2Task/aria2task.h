@@ -7,7 +7,7 @@
 #include "Download/unifiedinterface.h"
 #include "downloadxmlhandler.h"
 
-#include "../Common/taskinfo.h"
+#include "taskinfo.h"
 
 class Aria2Task : public QObject
 {

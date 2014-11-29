@@ -44,7 +44,7 @@ void YouGetProcess::startDownload()
     // you-get 路径
     arguments << yougetPath;
     // 覆盖已有文件 - 因为主程序当前没有对此的判断
-    arguments << "-f";
+//    arguments << "-f";
     // 输出目录
     arguments << "-o" << taskInfo.savePath;
     // 设置url参数，这里用解析后的url，以减少重定向开销

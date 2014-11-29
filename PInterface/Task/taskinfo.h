@@ -31,11 +31,8 @@ class TaskInfo : public QObject
 public:
     TaskInfo();
     TaskInfo(QIODevice *in);
+    TaskInfo(TaskInfo &&taskInfo);
     TaskInfo(const TaskInfo &taskInfo);
-    TaskInfo(const int toolType, const QList<TaskFileItem> &fileList,
-             const QUrl &rawUrl, const QUrl &parseUrl,
-             const QString &taskIconPath, const QString &savePath,
-             const int maxThreads, const int maxSpeed);
     virtual ~TaskInfo();
 
 public:
@@ -71,7 +68,7 @@ public:
 
 public:
     QString completeDate;
-    float percentage; //ready percentage
+    float percentage; // ready percentage
     int taskState;
 
 private:

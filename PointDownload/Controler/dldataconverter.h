@@ -20,6 +20,8 @@ public:
 
 signals:
     void taskAdded(const QString& infoString);
+    void downloadedAdded(const QString& infoString);
+    void trashAdded(const QString& infoString);
     void taskCompleted(const QString& infoString);
     void taskRemoved(const QString& infoString);
     //dlType：Downloading、Downloaded、DownloadTrash

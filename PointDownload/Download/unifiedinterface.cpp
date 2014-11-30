@@ -261,7 +261,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
 
 
     //启动下载
-    YouGetTask_::getInstance()->startDownload(taskInfo);
+    YouGetTask::getInstance()->startDownload(taskInfo);
 }
 
 void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
@@ -434,10 +434,8 @@ void UnifiedInterface::handleDownloadSearchControl(QString URL)
     QStringList arguments;
     arguments << QString(URL + "#..#FIREFOX");//仿照firefox格式发送数据
 
-    qDebug() << POPUP_PROGRAM_PATH << arguments;
-
     QProcess *myProcess = new QProcess();
-    myProcess->start(POPUP_PROGRAM_PATH,arguments);
+    myProcess->start(POPUP_PROGRAM_EXEC, arguments);
 
     // delete when process finish
     connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
@@ -454,7 +452,7 @@ void UnifiedInterface::stopDownloading(QString URL)
     switch(downloadingListMap.value(URL))
     {
     case TOOL_YOUGET:
-        YouGetTask_::getInstance()->stopDownload(URL);
+        YouGetTask::getInstance()->stopDownload(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->stopDownload(URL);
@@ -486,7 +484,7 @@ void UnifiedInterface::suspendDownloading(QString URL)
     switch(downloadingListMap.value(URL))
     {
     case TOOL_YOUGET:
-        YouGetTask_::getInstance()->suspendDownloading(URL);
+        YouGetTask::getInstance()->suspendDownloading(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->suspendDownloading(URL);
@@ -539,7 +537,7 @@ void UnifiedInterface::resumeDownloading(QString URL)
         Aria2Task::getInstance()->resumeDownloading(URL);
         break;
     case TOOL_YOUGET:
-        YouGetTask_::getInstance()->resumeDownloading(URL);
+        YouGetTask::getInstance()->resumeDownloading(URL);
         break;
     case TOOL_POINT:
         PointTask::getInstance()->resumeDownloading(URL);

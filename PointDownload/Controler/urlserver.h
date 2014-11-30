@@ -38,7 +38,6 @@ public:
     explicit URLServer(QObject *parent = 0);
     ~URLServer();
 
-    void runServer();
 signals:
     void newTaskAdded(const TaskInfo & taskInfo);
 
@@ -51,8 +50,6 @@ private:
       // taskInfo: margent, ftp, BT file, or other which can not be handle by the popup window
     void taskParseHandle(QString taskInfo);
     QLocalServer * localServer;
-
-    QLocalSocket * tmp_socket;
     QString XwareParseURLHander;
 
     const QString ITEM_INFO_SPLIT_CHAR = "@:@";

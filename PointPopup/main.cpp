@@ -79,10 +79,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    qDebug() << "Popup arguments:";
-    for (int i(0); i != argc; ++i)
-        qDebug() << argv[i];
-
     QString local = QLocale::system().name();
     QTranslator translator;
     translator.load(QString(":/LANG/PointPopup_") + local);
@@ -123,7 +119,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
-    //    //添加全局事件过滤
+    // 添加全局事件过滤
     app.installEventFilter(PEventFilter::getInstance());
 
     return app.exec();

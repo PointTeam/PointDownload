@@ -1,6 +1,5 @@
 
-#include "taskinfo.h"
-#include "taskfileitem.h"
+#include "task.h"
 
 #include <QDebug>
 
@@ -55,7 +54,6 @@ QByteArray TaskInfo::toQByteArray() const
 
     out << *this;
 
-    // 使用移动语义以减小 QByteArray 的拷贝开销
     return std::move(data);
 }
 
@@ -236,6 +234,24 @@ QString TaskInfo::getInfoToString() const
     infoStr += savePath + split;
     infoStr += QString::number(maxThreads) + split;
     infoStr += QString::number(percentage, 'f', 1);
+
+    return std::move(infoStr);
+}
+
+/*!
+    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
+*/
+QString TaskInfo::getDownloadedInfoToString() const
+{
+    //info: dlToolsType?:?fileName?:?URL?:?iconName?:?fileSize?:?completeDate
+    const QString split("?:?");
+    QString infoStr;
+    infoStr += getToolTypeToString() + split;
+    infoStr += taskName() + split;
+    infoStr += rawUrl.toString() + split;
+    infoStr += taskIconPath + split;
+    infoStr += QString::number(taskSize()) + split;
+    infoStr += completeDate;
 
     return std::move(infoStr);
 }

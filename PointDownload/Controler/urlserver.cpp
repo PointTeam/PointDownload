@@ -24,8 +24,14 @@
 URLServer::URLServer(QObject *parent) :
     QObject(parent)
 {
+
+    QLocalServer::removeServer("PointURLServer");
     localServer = new QLocalServer(this);
+    if (!localServer->listen("PointURLServer"))
+        qWarning() << "localServer listen error!" << localServer->errorString();
+
     connect(localServer, SIGNAL(newConnection()), this, SLOT(serverNewConnectionHandler()));
+
     connect(XwarePopulateObject::getInstance(), SIGNAL(sFeedbackURLParse(QString)), this, SLOT(taskParseFeedback(QString)));
 
     XwareParseURLHander = "XwareParseURLOrBT:";
@@ -37,21 +43,9 @@ URLServer::~URLServer()
     delete localServer;
 }
 
-void URLServer::runServer()
-{
-    qDebug() << "Run server ok!";
-
-    QLocalServer::removeServer("PointURLServer");
-    bool ok = localServer->listen("PointURLServer");
-    if (!ok)
-        qDebug() << "Add listener faild!";
-}
-
-
 void URLServer::serverNewConnectionHandler()
 {
     QLocalSocket * socket = localServer->nextPendingConnection();
-    tmp_socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadyReadHandler()));
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
 }
@@ -59,10 +53,6 @@ void URLServer::serverNewConnectionHandler()
 void URLServer::socketReadyReadHandler()
 {
     QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
-
-    if (!socket)
-        return ;
-
     TaskInfo taskInfo(socket);
 
     qDebug() << taskInfo;
@@ -83,8 +73,9 @@ void URLServer::socketReadyReadHandler()
 
 void URLServer::taskParseFeedback(QString taskInfo)
 {
-    tmp_socket->write(taskInfo.toStdString().c_str());
-    tmp_socket->flush();
+    QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
+    socket->write(taskInfo.toStdString().c_str());
+    socket->flush();
 }
 
 void URLServer::taskParseHandle(QString taskInfo)

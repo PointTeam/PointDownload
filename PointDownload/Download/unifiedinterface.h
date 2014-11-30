@@ -57,11 +57,12 @@ History:
 
 #include "taskinfo.h"
 
-#ifndef QT_DEBUG
-const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
-//const QString POPUP_PROGRAM_PATH ="/usr/bin/pointpopup";
+// linux 下命令一般全小写, 新建窗口的命令名字
+#ifdef QT_DEBUG
+const QString POPUP_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
 #else
-const QString POPUP_PROGRAM_PATH ="/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
+//const QString POPUP_PROGRAM_EXEC = "pointpopup";
+const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
 #endif
 
 class UnifiedInterface : public QObject

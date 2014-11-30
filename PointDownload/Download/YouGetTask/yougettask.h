@@ -32,11 +32,11 @@
 
 #include "taskinfo.h"
 
-class YouGetTask_ : public QObject
+class YouGetTask : public QObject
 {
     Q_OBJECT
 public:
-    static YouGetTask_ * getInstance();
+    static YouGetTask * getInstance();
 
     //对正在下载的处理
     void startDownload(const TaskInfo & taskInfo);
@@ -52,12 +52,12 @@ public slots:
     void slotFinishDownload(QString URL);
 
 private:
-    explicit YouGetTask_(QObject *parent = 0);
+    explicit YouGetTask(QObject *parent = 0);
 
     TaskInfo getPrepareInfoFromXML(QString URL);
     void initConnection();
 private:
-    static YouGetTask_ * youGetTask;
+    static YouGetTask * youGetTask;
     //URL,Process
     QMap<QString,YouGetProcess *> gProcessMap;
 };

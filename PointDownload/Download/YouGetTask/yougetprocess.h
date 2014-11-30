@@ -54,6 +54,8 @@ private slots:
     void getTimerUpdate();
     void updateXMLFile(DownloadingItemInfo info);
     void getError();
+    void yougetProcessFinish(int ret);
+
 private:
     QString gFeedBackInfo;
     TaskInfo taskInfo;

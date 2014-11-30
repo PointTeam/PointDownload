@@ -34,6 +34,7 @@ void YouGetProcess::startDownload()
 
     tmpProcess = new QProcess(0);
     connect(tmpProcess, SIGNAL(finished(int)), tmpProcess, SLOT(deleteLater()));
+    connect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
     connect(tmpProcess, SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
     connect(tmpProcess, SIGNAL(started()), this, SLOT(yougetStarted()));
@@ -92,18 +93,6 @@ void YouGetProcess::getTimerUpdate()
     tmpInfo.downloadState = dlstate_downloading;
     tmpInfo.downloadURL = taskInfo.rawUrl.toString();
 
-    //下载已完成则结束进程
-    if (tmpInfo.downloadPercent == 100)
-    {
-        updateTimer->stop();
-        // youget 下载完成（100%）之后并不是任务结束，因为后面还要进行
-        // 文件连接，所以不能强制结束youget进程！
-//        tmpProcess->terminate();
-//        this->deleteLater();
-
-        emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
-    }
-
     //send to yougettask
     emit updateData(tmpInfo);
 
@@ -132,5 +121,14 @@ void YouGetProcess::updateXMLFile(DownloadingItemInfo info)
 void YouGetProcess::getError()
 {
     qDebug() << tmpProcess->readAllStandardError();
-    emit yougetError(taskInfo.rawUrl.toString(), QString(tmpProcess->readAllStandardError()), TOOL_YOUGET);
+}
+
+void YouGetProcess::yougetProcessFinish(int ret)
+{
+    updateTimer->stop();
+
+    if (!ret)
+        emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
+    else
+        emit yougetError(taskInfo.rawUrl.toString(), "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
 }

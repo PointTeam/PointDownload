@@ -32,6 +32,7 @@ DataControler::DataControler(QObject *parent) :
     QObject(parent)
 {
     manager = new QNetworkAccessManager(this);
+    localSocket = new QLocalSocket(this);
 
 //    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataControler>("Singleton.DataControler", 1, 0, "DataControler", dataObj);
@@ -141,8 +142,6 @@ void DataControler::selectBTFile()
 
 void DataControler::sendToMainServer(QString threads, QString speed, QString savePath,QString newToolType)
 {
-    qDebug() << fileURL;
-
     if (checkIsInDownloading(fileURL))
     {
         return;//no need to do anything
@@ -182,8 +181,12 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
     taskInfo.maxThreads = threads.toInt();
     taskInfo.maxSpeed = speed.toInt();
 
-    localSocket->write(taskInfo.toQByteArray());
+    qDebug() << taskInfo;
+
+    if (localSocket->write(taskInfo.toQByteArray()) == -1)
+        qWarning() << "localSocket write error";
     localSocket->flush();
+    localSocket->waitForBytesWritten();
 
     qApp->quit();
 }
@@ -497,19 +500,6 @@ QStringList DataControler::getMovieYouGetFeedBackInfo(QString data)
     return tmpList;
 }
 
-bool isConnected = false;
-void DataControler::mainProgramStarted()
-{
-    //要保证主程序启动才连接到主程序
-    if (!isConnected)
-    {
-        localSocket = new QLocalSocket();
-        connectToMainProgram();
-        isConnected = true;
-    }
-}
-
-
 QString DataControler::getHttpFileTypeSize(QString URL)
 {
     qint64 totalSize = -1;
@@ -663,38 +653,31 @@ QString DataControler::getHttpFtpFileName(const QString &URL)
 
 void DataControler::startMainProgram()
 {
-    // 如果这里的路径错误了，会产生一个非常难调试出的运行时错误.
-    Q_ASSERT(QFile(MAIN_PROGRAM_PATH).exists());
-
     //每次启动前先尝试启动主程序
     QStringList arguments;
     arguments << "-c";
 
     //该指针指向另外一个被启动的程序，所以 绝对不能被delete
     QProcess * myProcess = new QProcess();
-    myProcess->start(MAIN_PROGRAM_PATH,arguments);
 
     connect(myProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(startProcessError(QProcess::ProcessError)));
     connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
 
-    mainProgramStarted();
-    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
+    myProcess->start(MAIN_PROGRAM_EXEC, arguments);
+    connectToMainProgram();
 }
 
 void DataControler::connectToMainProgram()
 {
-    // 服务端的serverNewConnectionHandler成员方法将被调用
-    localSocket->connectToServer("PointURLServer");
-    if (localSocket->waitForConnected())
+    while (true)
     {
-        qDebug() << "connect to main program success";
-        return;
+        localSocket->connectToServer("PointURLServer");
+        if (localSocket->waitForConnected(1000))
+            break;
+        qWarning() << "localSocket connect to localServer Error: " << localSocket->errorString();
     }
-    else
-    {
-        //不成功就循环地尝试连接，这里要保证此函数在主程序启动后再调用
-        connectToMainProgram();
-    }
+
+    qDebug() << "connect to main program success";
 }
 
 bool DataControler::checkIsInDownloading(QString URL)

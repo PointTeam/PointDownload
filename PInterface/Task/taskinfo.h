@@ -18,12 +18,6 @@
 #define TOOL_XWARE  3   // 迅雷路由固件
 #define TOOL_YOUGET 4   // 在线视频下载工具，支持断点续传，下载完成后自动合并视频,支持大部分主流在线视频音乐网站
 
-// 任务状态
-#define DLSTATE_UNDEF       0
-#define DLSTATE_SUSPEND     1   // 暂停
-#define DLSTATE_DOWNLOADING 2   // 正在下载
-#define DLSTATE_READY       3   //
-
 class TaskInfo : public QObject
 {
     Q_OBJECT
@@ -47,6 +41,7 @@ public:
     QString getToolTypeToString() const;
     QString getDownStateToString() const;
     QString getInfoToString() const;
+    QString getDownloadedInfoToString() const;
 
 public:
     TaskInfo &operator =(const TaskInfo &what);

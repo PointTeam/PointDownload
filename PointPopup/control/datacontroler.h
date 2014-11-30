@@ -39,11 +39,12 @@
 #include "BtAndMagnetInfo/metainfo.h"
 #include "urlinfogeter.h"
 
-#ifndef QT_DEBUG
-const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
-//const QString MAIN_PROGRAM_PATH = "/usr/bin/pointdownload";
+// 主程序
+#ifdef QT_DEBUG
+const QString MAIN_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
 #else
-const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
+//const QString MAIN_PROGRAM_EXEC = "pointdownload";
+const QString MAIN_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
 #endif
 
 class DataControler : public QObject
@@ -127,8 +128,6 @@ private slots:
     QStringList getNormalYouGetFeedBackInfo(QString data);
     QStringList getMovieYouGetFeedBackInfo(QString data);
 
-    void mainProgramStarted();                  //主程序启动后，连接主程序
-
     void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
     void receiveXwareNameInfo(QString nameList);
 
@@ -150,7 +149,6 @@ private:
     QString getHttpFtpFileName(const QString &URL);    //
 
     void startMainProgram();                    //尝试启动主程序
-    void connectToMainProgram();                //主程序启动后连接到主程序
 
     bool checkIsInDownloading(QString URL);     //查看URL是否已经在正在下载列表
     bool checkIsInDownloaded(QString URL);      //查看URL是否已经在已完成下载列表
@@ -161,6 +159,8 @@ private:
 private slots:
     void tryToNormalHttpParseType(const QString &url);
     void tryToNormalHttpParseType_finish();
+
+    void connectToMainProgram();                //主程序启动后连接到主程序
 
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 

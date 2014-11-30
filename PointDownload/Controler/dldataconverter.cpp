@@ -89,23 +89,18 @@ void DLDataConverter::resumeAllDownloading()
 
 void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
 {
-//    emit sFileInfoChange("dl_downloading", taskInfo);
-
     emit taskAdded(taskInfo.getInfoToString());
 }
 
 void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)
 {
-//    emit sFileInfoChange("dl_downloaded", taskInfo);
-
-    emit taskCompleted(taskInfo.getInfoToString());
+    emit downloadedAdded(taskInfo.getDownloadedInfoToString());
 }
 
 void DLDataConverter::addDownloadTrashItem(const TaskInfo &taskInfo)
 {
-//    emit sFileInfoChange("dl_trash", taskInfo);
-
-    emit taskRemoved(taskInfo.getInfoToString());
+    // 由于trash的string结构和downloaded的string(?:?)结构一样，所以使用了dowbloaded的信息来代替，以后这种信息结构将废弃
+    emit trashAdded(taskInfo.getDownloadedInfoToString());
 }
 
 void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
@@ -210,16 +205,13 @@ void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
     connect(urlServer, SIGNAL(newTaskAdded(TaskInfo)), this, SLOT(addDownloadingItem(TaskInfo)));
-    urlServer->runServer();
-
 }
-
 
 void DLDataConverter::initConnection()
 {
     connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(TaskInfo)), this, SLOT(addDownloadedItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
 
     connect(UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SLOT(slotGetDownloadingInfo(DownloadingItemInfo)));

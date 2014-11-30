@@ -31,11 +31,7 @@ Rectangle {
     //连接单例的信号
     Connections {
         target: DLDataConverter
-        //当c++中的DownloadingDataSender类触发以下信号时，更改相应属性
-//        onSFileInfoChange: {
-//            if (dlType === "dl_trash")
-//                TrashScript.addNewItem(fileInfo)
-//        }
+        onTrashAdded: TrashScript.addNewItem(infoString);
     }
 
     ListModel {

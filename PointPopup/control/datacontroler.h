@@ -39,10 +39,12 @@
 #include "BtAndMagnetInfo/metainfo.h"
 #include "urlinfogeter.h"
 
-#ifndef QT_DEBUG
-const QString MAIN_PROGRAM_PATH = "/opt/Point/PointDownload/PointDownload";
+// 主程序
+#ifdef QT_DEBUG
+const QString MAIN_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
 #else
-const QString MAIN_PROGRAM_PATH = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
+//const QString MAIN_PROGRAM_EXEC = "pointdownload";
+const QString MAIN_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointDownload";
 #endif
 
 class DataControler : public QObject
@@ -62,6 +64,7 @@ class DataControler : public QObject
 
 public:
     static DataControler * getInstance();
+    static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     //qml中能直接调用此方法,将数据发送到服务端
     Q_INVOKABLE void selectSavePath(QString buttonName);
@@ -125,8 +128,6 @@ private slots:
     QStringList getNormalYouGetFeedBackInfo(QString data);
     QStringList getMovieYouGetFeedBackInfo(QString data);
 
-    void mainProgramStarted();                  //主程序启动后，连接主程序
-
     void getXwareURLOrBtInfo();   // send the url or bt file to main window to parse the task
     void receiveXwareNameInfo(QString nameList);
 
@@ -148,17 +149,18 @@ private:
     QString getHttpFtpFileName(const QString &URL);    //
 
     void startMainProgram();                    //尝试启动主程序
-    void connectToMainProgram();                //主程序启动后连接到主程序
 
     bool checkIsInDownloading(QString URL);     //查看URL是否已经在正在下载列表
     bool checkIsInDownloaded(QString URL);      //查看URL是否已经在已完成下载列表
     bool checkIsInDownloadTrash(QString URL);   //查看URL是否已经在垃圾桶列表
 
     bool isXwareParseType(QString task);  // is task url or Bt file parsed by xware
-    bool isYouGetParseType(QString url);
+    bool isYouGetSupportUrl(const QUrl& url);
 private slots:
     void tryToNormalHttpParseType(const QString &url);
     void tryToNormalHttpParseType_finish();
+
+    void connectToMainProgram();                //主程序启动后连接到主程序
 
     QString getDLToolsTypeFromURL(QString URL);//如果是有效的下载连接,则直接返回下载工具的类型,返回空证明是无效下载连接
 
@@ -174,6 +176,9 @@ private:
     QNetworkAccessManager *manager;
     // http解析列表，用于302跳转时防止循环重定向
     QStringList httpParseHistory;
+
+    // 支持使用YouGet下载的网站列表
+    QStringList supportYouGetHostList;
 
     //将要发送到qml界面上的数据
     QString fileURL;
@@ -199,14 +204,4 @@ private:
     const QString NAME_LIST_SPLIT_CHAR = "#:#";
     const QString ITEM_INFO_SPLIT_CHAR = "@:@";
 };
-
-//将单例对象注册到qml中使用的回调函数
-static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
-{
-    Q_UNUSED(engine)
-    Q_UNUSED(scriptEngine)
-
-    return DataControler::getInstance();
-}
-
 #endif // DATACONTROLER_H

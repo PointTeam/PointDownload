@@ -55,10 +55,14 @@ History:
 #include "Download/XwareTask/xwaretask.h"
 #include "normalnotice.h"
 
-#ifndef QT_DEBUG
-const QString POPUP_PROGRAM_PATH ="/opt/Point/PopupWindow/PointPopup";
+#include "taskinfo.h"
+
+// linux 下命令一般全小写, 新建窗口的命令名字
+#ifdef QT_DEBUG
+const QString POPUP_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
 #else
-const QString POPUP_PROGRAM_PATH ="/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
+//const QString POPUP_PROGRAM_EXEC = "pointpopup";
+const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
 #endif
 
 class UnifiedInterface : public QObject
@@ -68,7 +72,6 @@ class UnifiedInterface : public QObject
 public:
     static UnifiedInterface * getInstance();            //获取此类的单例对象
 
-    void getPrepareDownloadInfo(PrepareDownloadInfo info);  //获取到从弹出界面传递过来的信息并调用相应的类进行下载处理
     void cleanDownloadFinishItem(QString dlURL);
 
     void changeMaxJobCount(int newCount);
@@ -77,22 +80,22 @@ public:
     void resumeAllDownloading();
     int getJobCount();
 signals:
-    void sAddDownloadingItem(QString infoList);
-    void sAddDownloadedItem(QString infolist);
-    void sAddDownloadTrashItem(QString infoList);
+    void sAddDownloadingItem(const TaskInfo &taskInfo);
+    void sAddDownloadedItem(const TaskInfo &taskInfo);
+    void sAddDownloadTrashItem(const TaskInfo &taskInfo);
 
     //实时数据
     void sRealTimeData(DownloadingItemInfo info);
     //动作反馈信号
     void sReturnControlResult(DownloadType dtype,OperationType otype, QString URL,bool result);
     //主动请求刷新正在下载列表界面
-    void sRefreshDownloadingItem();
+    void sDownloadItemChanged();
 
 public slots:
     void controlDownload(DownloadType dtype, OperationType otype, QString URL);
 
     void downloadFinish(QString URL);
-    void downloadGetError(QString URL,QString err, DownloadToolsType toolType);
+    void downloadGetError(QString URL,QString err, int toolType);
 
 private slots:
     //获取初始化信息，显示到界面
@@ -103,11 +106,15 @@ private:
     //构造函数
     explicit UnifiedInterface(QObject *parent = 0);
 
-    void startPointDownload(PrepareDownloadInfo info);
-    void startAria2Download(PrepareDownloadInfo info);
-    void startYougetDownload(PrepareDownloadInfo info);
-    void startXwareDownload(PrepareDownloadInfo info);
+    void startPointDownload(const TaskInfo &taskInfo);
+    void startAria2Download(const TaskInfo &taskInfo);
+    void startYougetDownload(const TaskInfo &taskInfo);
+    void startXwareDownload(const TaskInfo &taskInfo);
+public:
+    // 唯一的公共下载接口
+    void startDownload(const TaskInfo &taskInfo);
 
+private:
     //分类处理
     void handleDownloadingControl(OperationType otype, QString URL);
     void handleDownloadedControl(OperationType otype, QString URL);
@@ -148,12 +155,12 @@ private:
     //把就绪队列中的一个提到下载队列
     void startReady();
     void refreshDownloadingItem();
-    PrepareDownloadInfo getPrepareInfoFromSDownloading(SDownloading infoStruct);
+    TaskInfo getPrepareInfoFromSDownloading(SDownloading infoStruct);
 
 private:
     static UnifiedInterface * unifiedInterface;        //全局唯一对象
     //Map:URL,Otype
-    QMap<QString,DownloadToolsType>  downloadingListMap;
+    QMap<QString, int>  downloadingListMap;
 };
 
 #endif // UNIFIEDINTERFACE_H

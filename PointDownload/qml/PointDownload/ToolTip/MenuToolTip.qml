@@ -4,7 +4,7 @@ import Singleton.PEventFilter 1.0
 
 Window {
     id:dropzonePage
-    flags:Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+    flags: Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.ToolTip
 
     color: "#00000000"
 

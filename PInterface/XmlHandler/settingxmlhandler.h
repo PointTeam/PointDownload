@@ -28,12 +28,6 @@ public:
     QString getChildElement(RootTagName rootTagName, QString childTagName);
     void setChildElement(RootTagName rootTagName, QString childTagName, QString value);
 
-public:
-
-signals:
-
-public slots:
-
 private:
     void touchAll();                                 //从调用下面的探测函年数，被构造函数调用
     void touchConfigDir();                          //探测配置文件夹是否存在，不存在则创建

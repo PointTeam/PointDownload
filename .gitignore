@@ -38,3 +38,11 @@ Makefile*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# makefile
+Makefile
+makefile
+
+#binary file
+PointDownload/PointDownload
+PointPopup/PointPopup

@@ -62,42 +62,6 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-# The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp \
-    Controler/middlesender.cpp \
-    Controler/monitorClipBoard.cpp \
-    Controler/topcontrl.cpp \
-    Controler/urlserver.cpp \
-    SysData/getspeed.cpp \
-    SysData/dataflow.cpp \
-    Download/unifiedinterface.cpp \
-    Download/PointTask/HttpTask/httpthread.cpp \
-    Download/PointTask/pointtask.cpp \
-    Download/YouGetTask/yougetprocess.cpp \
-    Download/YouGetTask/yougettask.cpp \
-    Download/PointTask/HttpTask/httptask.cpp \
-    Download/PointTask/HttpTask/httpthreadmanager.cpp \
-    Controler/SettingWin/settingcontroler.cpp \
-    Controler/SettingWin/yougetsettingcontroler.cpp \
-    Controler/SettingWin/dropzonesettingcontroler.cpp \
-    Controler/SettingWin/xwaresettingcontroler.cpp \
-    Download/XwareTask/xwarecontroller.cpp \
-    Download/XwareTask/xwarepopulateobject.cpp \
-    Download/XwareTask/xwaretask.cpp \
-    Download/XwareTask/xwarewebcontroller.cpp \
-    Download/XwareTask/mynetworkaccessmanager.cpp \
-    Download/XwareTask/mywebview.cpp \
-    Download/XwareTask/xwaretaskentity.cpp \
-    Controler/dldataconverter.cpp \
-    Download/XwareTask/webctrlviewtest.cpp \
-    Download/XwareTask/completedlistwebview.cpp \
-    Download/XwareTask/xwaresetting.cpp \
-    Download/Aria2Task/aria2task.cpp \
-    Download/Aria2Task/aria2process.cpp
-
-# Installation path
-# target.path =
-
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
@@ -140,10 +104,44 @@ HEADERS += \
     Download/Aria2Task/aria2task.h \
     Download/Aria2Task/aria2process.h
 
+# The .cpp file which was generated for your project. Feel free to hack it.
+SOURCES += main.cpp \
+    Controler/middlesender.cpp \
+    Controler/monitorClipBoard.cpp \
+    Controler/topcontrl.cpp \
+    Controler/urlserver.cpp \
+    SysData/getspeed.cpp \
+    SysData/dataflow.cpp \
+    Download/unifiedinterface.cpp \
+    Download/PointTask/HttpTask/httpthread.cpp \
+    Download/PointTask/pointtask.cpp \
+    Download/YouGetTask/yougetprocess.cpp \
+    Download/YouGetTask/yougettask.cpp \
+    Download/PointTask/HttpTask/httptask.cpp \
+    Download/PointTask/HttpTask/httpthreadmanager.cpp \
+    Controler/SettingWin/settingcontroler.cpp \
+    Controler/SettingWin/yougetsettingcontroler.cpp \
+    Controler/SettingWin/dropzonesettingcontroler.cpp \
+    Controler/SettingWin/xwaresettingcontroler.cpp \
+    Download/XwareTask/xwarecontroller.cpp \
+    Download/XwareTask/xwarepopulateobject.cpp \
+    Download/XwareTask/xwaretask.cpp \
+    Download/XwareTask/xwarewebcontroller.cpp \
+    Download/XwareTask/mynetworkaccessmanager.cpp \
+    Download/XwareTask/mywebview.cpp \
+    Download/XwareTask/xwaretaskentity.cpp \
+    Controler/dldataconverter.cpp \
+    Download/XwareTask/webctrlviewtest.cpp \
+    Download/XwareTask/completedlistwebview.cpp \
+    Download/XwareTask/xwaresetting.cpp \
+    Download/Aria2Task/aria2task.cpp \
+    Download/Aria2Task/aria2process.cpp
+
 include(../PInterface/QtSingleApplication/qtsinglecoreapplication.pri)
 include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
 include(../PInterface/PEventFilter/PEventFilter.pri)
+include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS += PointDownload_zh_CN.ts
 TRANSLATIONS += PointDownload_ja_JP.ts

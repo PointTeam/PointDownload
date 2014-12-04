@@ -34,13 +34,13 @@ public:
     static HttpTask * getInstance();
 
     //对正在下载的处理
-    void startDownload(PrepareDownloadInfo info);
+    void startDownload(const TaskInfo &taskInfo);
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
 signals:
     void sRealTimeData(DownloadingItemInfo info);
-    void sHttpError(QString URL,QString err, DownloadToolsType toolType);
+    void sHttpError(QString URL,QString err, int toolType);
     void sDownloadFinish(QString URL);
 
 public slots:

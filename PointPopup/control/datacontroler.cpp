@@ -21,13 +21,18 @@
 
 
 #include "datacontroler.h"
+
+#include "taskinfo.h"
+
 #include <QtQml>
 #include <QProcess>
+#include <QDebug>
 
 DataControler::DataControler(QObject *parent) :
     QObject(parent)
 {
     manager = new QNetworkAccessManager(this);
+    localSocket = new QLocalSocket(this);
 
 //    //import时使用Singleton.DataControler，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataControler>("Singleton.DataControler", 1, 0, "DataControler", dataObj);
@@ -41,6 +46,21 @@ DataControler::DataControler(QObject *parent) :
     yougetProcess = NULL;
 
     urlInfoGeter = new URLInfoGeter(localSocket,fileURL,0);
+
+    supportYouGetHostList.reserve(32);
+    supportYouGetHostList << "www.tudou.com";
+    supportYouGetHostList << "v.yinyuetai.com";
+    supportYouGetHostList << "v.youku.com";
+    supportYouGetHostList << "v.ku6.com";
+    supportYouGetHostList << "v.163.com";
+    supportYouGetHostList << "v.qq.com";
+    supportYouGetHostList << "www.acfun.com";
+    supportYouGetHostList << "bilibili.kankannews.com" << "www.bilibili.com" << "www.bilibili.tv";
+    supportYouGetHostList << "www.jpopsuki.tv";
+    supportYouGetHostList << "video.sina.com.cn";
+    supportYouGetHostList << "tv.sohu.com";
+    supportYouGetHostList << "www.56.com";
+    supportYouGetHostList << "www.songtaste.com";
 }
 
 DataControler::~DataControler()
@@ -67,6 +87,14 @@ DataControler * DataControler::dataControler = new DataControler();
 DataControler * DataControler::getInstance()
 {
     return dataControler;
+}
+
+QObject *DataControler::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return DataControler::getInstance();
 }
 
 void DataControler::selectSavePath(QString buttonName)
@@ -130,20 +158,35 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         gDownloadHandler.removeDownloadTrashFileNode(fileURL);
     }
 
-    //info: toolsType?:?fileNameList?:?URL?:?RedirectURL?:?iconName?:?savePath?:?threadCount?:?maxSpeed
-    QString info = newToolType + "?:?"
-            + mergeFileNameList(fileNameList) + "?:?"
-            + fileURL + "?:?"
-            + redirectURL + "?:?"
-            + "qrc:/images/right/filetype/" +getIconName() + "?:?"
-            + savePath + "?:?"
-            + threads + "?:?"
-            + speed;
+    QList<TaskFileItem> fileItemList;
+    QStringList fileList = fileNameList.split(NAME_LIST_SPLIT_CHAR);
 
-    qDebug() << "send file to local socket:\n" << info;
+    for (QString fileItem : fileList)
+    {
+        TaskFileItem item;
+        QStringList list = fileItem.split(ITEM_INFO_SPLIT_CHAR);
+        item.fileType = list[0];
+        item.fileSize = list[1].toInt();
+        item.fileName = list[2];
+        fileItemList.append(item);
+    }
 
-    localSocket->write(info.toStdString().c_str());
+    TaskInfo taskInfo;
+    taskInfo.setToolTypeFromString(newToolType);
+    taskInfo.fileList = fileItemList;
+    taskInfo.rawUrl = fileURL;
+    taskInfo.parseUrl = redirectURL;
+    taskInfo.taskIconPath = "qrc:/images/right/filetype/" + getIconName();
+    taskInfo.savePath = savePath;
+    taskInfo.maxThreads = threads.toInt();
+    taskInfo.maxSpeed = speed.toInt();
+
+    qDebug() << taskInfo;
+
+    if (localSocket->write(taskInfo.toQByteArray()) == -1)
+        qWarning() << "localSocket write error";
     localSocket->flush();
+    localSocket->waitForBytesWritten();
 
     qApp->quit();
 }
@@ -457,19 +500,6 @@ QStringList DataControler::getMovieYouGetFeedBackInfo(QString data)
     return tmpList;
 }
 
-bool isConnected = false;
-void DataControler::mainProgramStarted()
-{
-    //要保证主程序启动才连接到主程序
-    if (!isConnected)
-    {
-        localSocket = new QLocalSocket();
-        connectToMainProgram();
-        isConnected = true;
-    }
-}
-
-
 QString DataControler::getHttpFileTypeSize(QString URL)
 {
     qint64 totalSize = -1;
@@ -532,6 +562,7 @@ QString DataControler::getHttpFileTypeSize(QString URL)
 
 QString DataControler::getFtpFileTypeSize(QString URL)
 {
+    Q_UNUSED(URL);
     return "unknown@unknown";
 }
 
@@ -588,76 +619,38 @@ QString DataControler::getIconName()
 
 QString DataControler::getHttpFtpFileName(const QString &URL)
 {
-
     const QString fileName(QUrl(URL).fileName());
-
     return fileName.isEmpty() ? "UnknownName" : fileName;
-
-//    qDebug() << url.fileName();
-
-//    QRegExp rx;
-//    rx.setPatternSyntax(QRegExp::RegExp);
-//    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
-//    rx.setPattern(QString("[^/]*$"));
-//    int pos = URL.indexOf(rx);
-
-//    if ( pos >= 0 )
-//    {
-//        QString tmpStr = rx.capturedTexts().at(0);
-//        rx.setPattern(QString("\\.[^?@#$%&]+"));
-//        tmpStr.indexOf(rx);
-//        QString tmpName = rx.capturedTexts().at(0);
-
-//        qDebug() << tmpName;
-
-//        if (tmpName == "")
-//            return "UnknownName";
-//        else
-//            return tmpName;
-//    }
-//    else
-//        return "";
 }
 
 
 void DataControler::startMainProgram()
 {
-    // 如果这里的路径错误了，会产生一个非常难调试出的运行时错误.
-#ifdef QT_DEBUG
-    QFile file(MAIN_PROGRAM_PATH);
-    if (!file.exists())
-        qWarning() << "Error: MAIN_PROGRAM_PATH Not Found!!!";
-#endif
-
     //每次启动前先尝试启动主程序
     QStringList arguments;
     arguments << "-c";
 
     //该指针指向另外一个被启动的程序，所以 绝对不能被delete
     QProcess * myProcess = new QProcess();
-    myProcess->start(MAIN_PROGRAM_PATH,arguments);
 
     connect(myProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(startProcessError(QProcess::ProcessError)));
     connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
 
-    mainProgramStarted();
-    connect(myProcess,SIGNAL(started()),this,SLOT(mainProgramStarted()));
+    myProcess->start(MAIN_PROGRAM_EXEC, arguments);
+    connectToMainProgram();
 }
 
 void DataControler::connectToMainProgram()
 {
-    // 服务端的serverNewConnectionHandler成员方法将被调用
-    localSocket->connectToServer("PointURLServer");
-    if (localSocket->waitForConnected())
+    while (true)
     {
-        qDebug() << "connect to main program success";
-        return;
+        localSocket->connectToServer("PointURLServer");
+        if (localSocket->waitForConnected(100))
+            break;
+        qWarning() << "localSocket connect to localServer Error: " << localSocket->errorString();
     }
-    else
-    {
-        //不成功就循环地尝试连接，这里要保证此函数在主程序启动后再调用
-        connectToMainProgram();
-    }
+
+    qDebug() << "connect to main program success";
 }
 
 bool DataControler::checkIsInDownloading(QString URL)
@@ -712,25 +705,28 @@ bool DataControler::isXwareParseType(QString task)
     return rex.exactMatch(task);
 }
 
-bool DataControler::isYouGetParseType(QString url)
+bool DataControler::isYouGetSupportUrl(const QUrl &url)
 {
-    QString videoURLRegex = QString("^(http://www\\.tudou\\.com/|") +
-            QString("http://v\\.yinyuetai\\.com/|") +
-            QString("http://v\\.youku\\.com/| ")+
-            QString("http://v\\.ku6\\.com/|")+
-            QString("http://v\\.163\\.com/|") +
-            QString("http://v\\.qq\\.com/|") +
-            QString("http://www\\.acfun\\.com/v/|")+
-            QString("http://bilibili\\.kankanews\\.com/video/av|")+
-            QString("http://www\\.jpopsuki\\.tv/video/|")+
-            QString("http://video\\.sina\\.com\\.cn/|")+
-            QString("http://tv\\.sohu\\.com/|")+
-            QString("http://www\\.56\\.com/w|")+
-            QString("http://www\\.56\\.com/u|")+
-            QString("http://www\\.songtaste\\.com/song/).+");
+    return supportYouGetHostList.contains(url.host(), Qt::CaseInsensitive);
 
-    QRegExp rex(videoURLRegex);
-    return rex.exactMatch(url);
+//    QString videoURLRegex =
+//            QString("^(http://www\\.tudou\\.com/|") +
+//            QString("http://v\\.yinyuetai\\.com/|") +
+//            QString("http://v\\.youku\\.com/| ")+
+//            QString("http://v\\.ku6\\.com/|")+
+//            QString("http://v\\.163\\.com/|") +
+//            QString("http://v\\.qq\\.com/|") +
+//            QString("http://www\\.acfun\\.com/v/|")+
+//            QString("http://bilibili\\.kankanews\\.com/video/av|")+
+//            QString("http://www\\.bilibili.com/video/av|")+
+//            QString("http://www\\.jpopsuki\\.tv/video/|")+
+//            QString("http://video\\.sina\\.com\\.cn/|")+
+//            QString("http://tv\\.sohu\\.com/|")+
+//            QString("http://www\\.56\\.com/[wu]{1}|")+
+//            QString("http://www\\.songtaste\\.com/song/).+");
+
+//    QRegExp rex(videoURLRegex);
+//    return rex.exactMatch(url);
 }
 
 void DataControler::tryToNormalHttpParseType(const QString &url)
@@ -781,7 +777,6 @@ void DataControler::tryToNormalHttpParseType_finish()
         emit sGettingInfo(true);
         QTimer::singleShot(100,this,SLOT(getURLInfo()));
     }
-
 end:
     // 做完一次解析必须清空历史
     httpParseHistory.clear();
@@ -825,7 +820,7 @@ QString DataControler::getDLToolsTypeFromURL(QString URL)
 
     if (URL.contains("http://") || URL.contains("https://"))
     {
-        if (isYouGetParseType(URL))
+        if (isYouGetSupportUrl(URL))
             return "YouGet";
 
         tryToNormalHttpParseType(URL);

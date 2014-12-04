@@ -41,14 +41,19 @@
 #include "Download/XwareTask/webctrlviewtest.h"
 #include "normalnotice.h"
 
+#include "taskinfo.h"
 
 int main(int argc, char *argv[])
 {
     QtSingleCoreApplication app(argc, argv);
+
     if (app.isRunning())
-    {
         return 0;
-    }
+    QLocalSocket socket;
+    socket.connectToServer("PointURLServer");
+    if (socket.waitForConnected(100))
+        return 0;
+
 
     QString local = QLocale::system().name();
     QTranslator translator;

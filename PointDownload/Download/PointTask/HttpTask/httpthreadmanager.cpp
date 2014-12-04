@@ -21,8 +21,8 @@
 
 #include "httpthreadmanager.h"
 
-HttpThreadManager::HttpThreadManager(PrepareDownloadInfo &info,QObject *parent) :
-    QObject(parent),gDownloadInfo(info)
+HttpThreadManager::HttpThreadManager(const TaskInfo &taskInfo, QObject *parent) :
+    QObject(parent),taskInfo(taskInfo)
 {
     touchDownloadFile();
     initUpdateTimer();
@@ -32,7 +32,7 @@ HttpThreadManager::HttpThreadManager(PrepareDownloadInfo &info,QObject *parent) 
 HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
     QObject(parent)
 {
-    gDownloadInfo = getPrepareInfoFromXML(URL);
+    taskInfo = getPrepareInfoFromXML(URL);
     initUpdateTimer();
     initData();
 }
@@ -40,25 +40,25 @@ HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
 void HttpThreadManager::startDownload()
 {
     //不存在则先插入xml文件中
-    if (!xmlOpera.urlExit(gDownloadInfo.downloadURL,"ing"))
+    if (!xmlOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
     {
-        inserToXMLFile(gDownloadInfo);
+        inserToXMLFile(taskInfo);
     }
     else
     {
         //必须要及时改变状态
-        changeStateToDownloading(gDownloadInfo.downloadURL);
+        changeStateToDownloading(taskInfo.rawUrl.toString());
     }
 
     //开始下载，全新下载和断点续传操作相同
-    QList<SDownloadThread> tmpList = xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).threadList;
+    QList<SDownloadThread> tmpList = xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).threadList;
     for( int i = 0; i < tmpList.count(); i ++)
     {
         qint64 completed = (qint64) tmpList.at(i).completedBlockCount.toLongLong(0);
         qint64 start = (qint64) tmpList.at(i).startBlockIndex.toLongLong(0);
         qint64 end = (qint64) tmpList.at(i).endBlockIndex.toLongLong(0);
 
-        HttpThread * tmpThread = new HttpThread( i, start , end, completed, gDownloadInfo.redirectURL);
+        HttpThread * tmpThread = new HttpThread( i, start , end, completed, taskInfo.parseUrl.toString());
         threadList.append(tmpThread);
 
         connect(tmpThread,SIGNAL(progressChanged(qint64)),
@@ -91,7 +91,7 @@ void HttpThreadManager::stopDownload()
 void HttpThreadManager::slotSendDataToUI()
 {
     DownloadingItemInfo tmpInfo;
-    tmpInfo.downloadURL = gDownloadInfo.downloadURL;
+    tmpInfo.downloadURL = taskInfo.rawUrl.toString();
     tmpInfo.downloadSpeed = getDownloadSpeed();
     tmpInfo.uploadSpeed = "0";
     tmpInfo.downloadState = dlstate_downloading;
@@ -115,12 +115,12 @@ void HttpThreadManager::slotUpdataXMLFile()
             readySize += threadList.at(i)->getCompleteBytes() + threadList.at(i)->getDoneByte();                        // 0518
         }
         SDownloading sd;
-        sd.URL = gDownloadInfo.downloadURL;
+        sd.URL = taskInfo.rawUrl.toString();
         sd.readySize = QString::number( readySize /*getDownloadedSize() */);
         sd.state = DOWNLOADING_STATE;//如果没有达到间隔时间就被终止，会导致该项状态保持为suspend
 
         //平均下载速度
-        QString averageSpeed0 = xmlOpera.getDownloadingNode( gDownloadInfo.downloadURL ).averageSpeed;
+        QString averageSpeed0 = xmlOpera.getDownloadingNode( taskInfo.rawUrl.toString() ).averageSpeed;
         QString speed = QString::number( ( averageSpeed0.toLongLong() + receiveBytesPerSecond) / 2 );
         sd.averageSpeed = speed;
 
@@ -155,7 +155,7 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
 
     slotUpdataXMLFile();
     finishThreadCount ++;
-    if (finishThreadCount == xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).threadList.count())
+    if (finishThreadCount == xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).threadList.count())
     {
         updateDataTimer->stop();
         updateXMLTimer->stop();
@@ -165,10 +165,10 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
         slotSendDataToUI();
         //重命名文件
         QFile downloadFile;
-        QDir::setCurrent( xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).savePath);
-        downloadFile.rename(gDownloadInfo.fileName + POINT_FILE_FLAG, gDownloadInfo.fileName);
+        QDir::setCurrent( xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).savePath);
+        downloadFile.rename(taskInfo.fileList.at(0).fileName + POINT_FILE_FLAG, taskInfo.fileList.at(0).fileName);
         //向上层发送已完成下载的信号
-        emit sDownloadFinish(gDownloadInfo.downloadURL);
+        emit sDownloadFinish(taskInfo.rawUrl.toString());
     }
 }
 
@@ -178,12 +178,12 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
     updateDataTimer->stop();
 
     SDownloading tmpStruct;
-    tmpStruct.URL = gDownloadInfo.downloadURL;
+    tmpStruct.URL = taskInfo.rawUrl.toString();
     tmpStruct.redirectURL = URL.toString();
 
     xmlOpera.writeDownloadingConfigFile(tmpStruct);
 
-    gDownloadInfo.redirectURL = URL.toString();
+    taskInfo.parseUrl = URL.toString();
 
     stopDownload();
     startDownload();
@@ -200,18 +200,18 @@ void HttpThreadManager::slotThreadsIsLimited()
     updateDataTimer->stop();
     stopDownload();
 
-    gDownloadInfo.threadCount = "1";
+    taskInfo.maxThreads = 1;
 
-    xmlOpera.removeDownloadingFileNode(gDownloadInfo.downloadURL);
+    xmlOpera.removeDownloadingFileNode(taskInfo.rawUrl.toString());
 
     startDownload();
 }
 
 void HttpThreadManager::touchDownloadFile()
 {
-    if (!QDir::setCurrent(gDownloadInfo.storageDir))
+    if (!QDir::setCurrent(taskInfo.savePath))
         return;
-    QFile * file = new QFile( gDownloadInfo.fileName + POINT_FILE_FLAG );
+    QFile * file = new QFile( taskInfo.fileList.at(0).fileName + POINT_FILE_FLAG );
     if( file->open( QIODevice::WriteOnly) )
     {
         file->close();
@@ -235,7 +235,7 @@ void HttpThreadManager::initUpdateTimer()
 void HttpThreadManager::initData()
 {
     finishThreadCount = 0;
-    totalDoneSize = xmlOpera.getDownloadingNode(gDownloadInfo.downloadURL).readySize.toLongLong();
+    totalDoneSize = xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).readySize.toLongLong();
     receiveBytesPerSecond = 0;
 
     changeLimited = false;
@@ -280,7 +280,7 @@ QList<SDownloadThread> HttpThreadManager::splitTask(short threadCount, qint64 si
     return tmpList;
 }
 
-void HttpThreadManager::inserToXMLFile(PrepareDownloadInfo &info)
+void HttpThreadManager::inserToXMLFile(const TaskInfo &taskInfo)
 {
     //获取当前时间
     QDateTime currentTime = QDateTime::currentDateTime();
@@ -288,42 +288,45 @@ void HttpThreadManager::inserToXMLFile(PrepareDownloadInfo &info)
 
     SDownloading sdownlaoding;
     sdownlaoding.dlToolsType = "Point";
-    sdownlaoding.name = info.fileName;                               //文件名
-    sdownlaoding.URL = info.downloadURL;                                 //url
-    sdownlaoding.redirectURL = info.redirectURL;                 //
-    sdownlaoding.savePath = info.storageDir;      //文件保存路径
-    sdownlaoding.totalSize = info.fileSize;       //总大小
+    sdownlaoding.name = taskInfo.fileList.at(0).fileName;                               //文件名
+    sdownlaoding.URL = taskInfo.rawUrl.toString();                                 //url
+    sdownlaoding.redirectURL = taskInfo.parseUrl.toString();                 //
+    sdownlaoding.savePath = taskInfo.savePath;      //文件保存路径
+    sdownlaoding.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);       //总大小
     sdownlaoding.readySize = "0";                           //已经下载字节数
     sdownlaoding.enableUpload = "false";                    //是否允许上传
     sdownlaoding.blockCount = "1";
     sdownlaoding.state = DOWNLOADING_STATE;                           //状态
     sdownlaoding.lastModifyTime = current_date;             //最后修改的时间
     sdownlaoding.averageSpeed = "0";                        //kb/s
-    sdownlaoding.jobMaxSpeed = info.maxSpeed; //最大速度
+    sdownlaoding.jobMaxSpeed = taskInfo.maxSpeed; //最大速度
     sdownlaoding.blockSize = "1";
     sdownlaoding.autoOpenFolder = "false";                  //完成后是否自动打开文件夹
-    sdownlaoding.iconPath = info.iconPath;
-    sdownlaoding.threadList = splitTask(info.threadCount.toShort(), (qint64)info.fileSize.toLongLong());                   //多线程list
+    sdownlaoding.iconPath = taskInfo.taskIconPath;
+    sdownlaoding.threadList = splitTask((short)taskInfo.maxThreads, (qint64)taskInfo.fileList.at(0).fileSize);                   //多线程list
 
     xmlOpera.insertDownloadingNode( sdownlaoding );   //写入到xml文件中
 }
 
-PrepareDownloadInfo HttpThreadManager::getPrepareInfoFromXML(QString URL)
+TaskInfo HttpThreadManager::getPrepareInfoFromXML(QString URL)
 {
     SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
 
-    PrepareDownloadInfo tmpInfo;
-    tmpInfo.downloadURL = ingNode.URL;
-    tmpInfo.fileName = ingNode.name;
-    tmpInfo.fileSize = ingNode.totalSize;
-    tmpInfo.iconPath = ingNode.iconPath;
-    tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toDouble();
-    tmpInfo.redirectURL = ingNode.redirectURL;
-    tmpInfo.storageDir = ingNode.savePath;
-    tmpInfo.threadCount = QString::number(ingNode.threadList.count());
-    tmpInfo.toolType = Point;
+    TaskInfo taskInfo;
+    TaskFileItem fileItem;
+    taskInfo.rawUrl = ingNode.URL;
+    taskInfo.taskIconPath = ingNode.iconPath;
+    taskInfo.maxSpeed = ingNode.jobMaxSpeed.toInt();
+    taskInfo.parseUrl = ingNode.redirectURL;
+    taskInfo.savePath = ingNode.savePath;
+    taskInfo.maxThreads = ingNode.threadList.count();
+    taskInfo.toolType = TOOL_POINT;
 
-    return tmpInfo;
+    fileItem.fileName = ingNode.name;
+    fileItem.fileSize = ingNode.totalSize.toInt();
+    taskInfo.fileList.append(fileItem);
+
+    return taskInfo;
 }
 
 QString HttpThreadManager::getDownloadSpeed()
@@ -338,8 +341,8 @@ QString HttpThreadManager::getDownloadSpeed()
 
 double HttpThreadManager::getDownloadPercent()
 {
-    if (gDownloadInfo.fileSize.toDouble())
-        return QString::number(100 * totalDoneSize / gDownloadInfo.fileSize.toDouble(),'f',1).toDouble();
-    else
+    if (!taskInfo.fileList.at(0).fileSize)
         return 0;
+
+    return (double)100 * totalDoneSize / taskInfo.taskSize();
 }

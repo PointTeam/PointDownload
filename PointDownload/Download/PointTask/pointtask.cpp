@@ -21,6 +21,8 @@
 
 #include "pointtask.h"
 
+#include "taskinfo.h"
+
 PointTask::PointTask(QObject *parent) :
     QObject(parent)
 {
@@ -35,22 +37,22 @@ PointTask * PointTask::getInstance()
     return pointTask;
 }
 
-void PointTask::startDownload(PrepareDownloadInfo info)
+void PointTask::startDownload(const TaskInfo & taskInfo)
 {
-    pointTaskMap.insert(info.downloadURL,getProtocalTypeFromURL(info.downloadURL));
-    switch (getProtocalTypeFromURL(info.downloadURL))
+    pointTaskMap.insert(taskInfo.rawUrl.toString() ,getProtocalTypeFromURL(taskInfo.rawUrl.toString()));
+    switch (getProtocalTypeFromURL(taskInfo.rawUrl.toString()))
     {
     case point_http:
-        startHttpDownload(info);
+        startHttpDownload(taskInfo);
         break;
     case point_ftp:
-        startFtpDownload(info);
+        startFtpDownload(taskInfo);
         break;
     case point_ed2k:
-        startEd2kDownload(info);
+        startEd2kDownload(taskInfo);
         break;
     case point_bt:
-        startBTDownload(info);
+        startBTDownload(taskInfo);
         break;
     default:
         break;
@@ -131,16 +133,15 @@ void PointTask::initConnection()
 {
     connect(HttpTask::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(HttpTask::getInstance(), SIGNAL(sHttpError(QString,QString,DownloadToolsType)),
-            this, SIGNAL(sPointError(QString,QString,DownloadToolsType)));
+    connect(HttpTask::getInstance(), SIGNAL(sHttpError(QString,QString,int)),
+            this, SIGNAL(sPointError(QString,QString,int)));
     //完成下载的信号连接
     connect(HttpTask::getInstance(), SIGNAL(sDownloadFinish(QString)), this, SLOT(slotFinishDownload(QString)));
 
-
     connect(this, SIGNAL(sRealTimeData(DownloadingItemInfo)),
             UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)));
-    connect(this, SIGNAL(sPointError(QString,QString,DownloadToolsType)),
-            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,DownloadToolsType)));
+    connect(this, SIGNAL(sPointError(QString,QString,int)),
+            UnifiedInterface::getInstance(), SLOT(downloadGetError(QString,QString,int)));
 }
 
 ProtocalType PointTask::getProtocalTypeFromURL(QString URL)
@@ -154,13 +155,14 @@ ProtocalType PointTask::getProtocalTypeFromURL(QString URL)
     else if (URL.contains(".torrent"))
         return point_bt;
 
-    qWarning() << "warning! url not match any result. At: ProtocalType PointTask::getProtocalTypeFromURL(QString URL)";
-    qWarning() << URL;
+    // 消除警告
+    qWarning() << "没有匹配的格式！  At: ProtocalType PointTask::getProtocalTypeFromURL(QString URL)";
+    return point_http;
 }
 
-void PointTask::startHttpDownload(PrepareDownloadInfo info)
+void PointTask::startHttpDownload(const TaskInfo & taskInfo)
 {
-    HttpTask::getInstance()->startDownload(info);
+    HttpTask::getInstance()->startDownload(taskInfo);
 }
 
 void PointTask::stopHttpDownload(QString URL)
@@ -178,64 +180,64 @@ void PointTask::resumeHttpDownload(QString URL)
     HttpTask::getInstance()->resumeDownloading(URL);
 }
 
-void PointTask::startFtpDownload(PrepareDownloadInfo info)
+void PointTask::startFtpDownload(const TaskInfo & taskInfo)
 {
-
+    Q_UNUSED(taskInfo);
 }
 
 void PointTask::stopFtpDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::suspendFtpDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::resumeFtpDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
-void PointTask::startEd2kDownload(PrepareDownloadInfo info)
+void PointTask::startEd2kDownload(const TaskInfo &taskInfo)
 {
-
+    Q_UNUSED(taskInfo);
 }
 
 void PointTask::stopEd2kDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::suspendEd2kDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::resumeEd2kDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
-void PointTask::startBTDownload(PrepareDownloadInfo info)
+void PointTask::startBTDownload(const TaskInfo &taskInfo)
 {
-
+    Q_UNUSED(taskInfo);
 }
 
 void PointTask::stopBTDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::suspendBTDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 void PointTask::resumeBTDownload(QString URL)
 {
-
+    Q_UNUSED(URL);
 }
 
 

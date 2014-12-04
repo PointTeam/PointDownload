@@ -146,6 +146,7 @@ void run()
 
 int main(int argc, char** argv)
 {
+    (void)argc;
     // move the pointer of agrc
     ++argv;
     int ret = setenv("POINT-SO-PATH", argv[0], 1);

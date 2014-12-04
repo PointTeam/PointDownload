@@ -32,14 +32,14 @@ import "OuterCircle"
 
 Window {
     id:dropzonePage
-    flags:Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
+    flags: Qt.WindowStaysOnTopHint |Qt.FramelessWindowHint | Qt.ToolTip
 
     color: "#00000000"
-    width: 80
-    height: 80
+    width: 135
+    height: 135
     opacity: DropzoneSettingControler.opacity/10
 
-    property string dragIng: "false"
+    property bool dragIng: false
     property int winx:DropzoneSettingControler.winX
     property int winy:DropzoneSettingControler.winY
     property int oldWinx: 0
@@ -49,8 +49,6 @@ Window {
 
     x:winx
     y:winy
-
-
 
     Timer{
         id:updateTimer
@@ -98,27 +96,14 @@ Window {
 
         OuterMainCircle{
             id:outerCircle
-            width: parent.width - 20
-            height: parent.height - 20
+            width: 142
+            height: 142
             anchors {verticalCenter: parent.verticalCenter; horizontalCenter: parent.horizontalCenter}
             onMenuButtonHover: {
                 if (buttonTips == "")
                     innerMainCircle.hideButtonTips()
                 else
                     innerMainCircle.showButtonTips(buttonTips)
-            }
-            onCompleteHideMenu: {
-                if (completed)
-                {
-                    //保证过渡顺畅
-                    do
-                    {
-                        dropzonePage.height -= 2
-                        dropzonePage.width -= 2
-                        winx += 1
-                        winy += 1
-                    }while(dropzonePage.width > 80)
-                }
             }
         }
 
@@ -197,18 +182,18 @@ Window {
                 oldX = mouseX + parent.width / 3;
                 oldY = mouseY + parent.width / 3;
                 oldWinx = winx; oldWiny = winy
-                dragIng = "true"
-                mArea.cursorShape=Qt.DragMoveCursor
+                dragIng = true
 
             }
             onReleased: {
-                dragIng = "false"
+                dragIng = false
                 mArea.cursorShape=Qt.ArrowCursor
             }
 
             onPositionChanged: {
-                if (dragIng == "true")
+                if (dragIng)
                 {
+                    mArea.cursorShape=Qt.DragMoveCursor
                     winx = PEventFilter.globalX- oldX
                     winy = PEventFilter.globalY - oldY;
 
@@ -219,20 +204,7 @@ Window {
 
             onClicked: {
                 if (oldWinx == winx && oldWiny == winy)
-                {
-                    if (dropzonePage.width < 170)
-                    {
-                        //保证过渡顺畅
-                        do
-                        {
-                            dropzonePage.height += 2
-                            dropzonePage.width += 2
-                            winx -= 1
-                            winy -= 1
-                        }while(dropzonePage.width < 170)
-                    }
                     outerCircle.updateMenuState()
-                }
             }
 
             onDoubleClicked: {
@@ -247,11 +219,11 @@ Window {
     //阴影必须在所有组件之后才会在最底层
     DropShadow {
         anchors.fill: mainViewItem
-        horizontalOffset: 3
-        verticalOffset: 3
+        horizontalOffset: 1
+        verticalOffset: 2
         radius: 2.0
         samples: 16
-        fast: false
+        fast: true
         color: "#1d2833"
         source: mainViewItem
     }

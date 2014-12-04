@@ -1,7 +1,7 @@
 #include "aria2process.h"
 
-Aria2Process::Aria2Process(PrepareDownloadInfo info, QObject *parent) :
-    QObject(parent),gInfo(info)
+Aria2Process::Aria2Process(const TaskInfo &taskInfo, QObject *parent) :
+    QObject(parent),taskInfo(taskInfo)
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
@@ -18,9 +18,9 @@ void Aria2Process::startDownload()
 
     arguments << QString("--auto-save-interval=10");
     arguments << QString("--summary-interval=1");
-    arguments << QString("-x ") + gInfo.threadCount;
-    arguments << gInfo.downloadURL;
-    tmpProcess->setWorkingDirectory(gInfo.storageDir);
+    arguments << QString("-x ") + QString::number(taskInfo.maxThreads);
+    arguments << taskInfo.rawUrl.toString();
+    tmpProcess->setWorkingDirectory(taskInfo.savePath);
     tmpProcess->start(tmpHandler.getChildElement(Aria2Setting,"ExecutePath"),arguments);
 }
 
@@ -56,7 +56,7 @@ void Aria2Process::getTimerUpdate()
             tmpInfo.downloadSpeed =  "0 KB/S";
             tmpInfo.downloadPercent = 100;//下载百分比
             tmpInfo.downloadState = dlstate_downloading;
-            tmpInfo.downloadURL = gInfo.downloadURL;
+            tmpInfo.downloadURL = taskInfo.rawUrl.toString();
             //send to aria2task,last update
             emit updateData(tmpInfo);
 
@@ -64,11 +64,11 @@ void Aria2Process::getTimerUpdate()
             tmpProcess->terminate();
             this->deleteLater();
 
-            emit sFinishAria2Download(gInfo.downloadURL);
+            emit sFinishAria2Download(taskInfo.rawUrl.toString());
         }
         else
         {
-            emit aria2Error(gInfo.downloadURL,gFeedBackInfo,aria2);
+            emit aria2Error(taskInfo.rawUrl.toString(),gFeedBackInfo, TOOL_ARIA2);
         }
     }
     else
@@ -80,12 +80,12 @@ void Aria2Process::getTimerUpdate()
         tmpInfo.downloadSpeed
                 = analysisFeedBackSpeed(gFeedBackInfo.mid(gFeedBackInfo.indexOf("DL:") + 3
                                                           ,gFeedBackInfo.indexOf(" ",gFeedBackInfo.indexOf("DL:"))
-                                                          - gFeedBackInfo.indexOf("DL:") - 3)); "0 KB/S";
+                                                          - gFeedBackInfo.indexOf("DL:") - 3));
         tmpInfo.downloadPercent
                 = gFeedBackInfo.mid(tmpInfoString.indexOf("(") + 1
                                     ,tmpInfoString.indexOf("%)") - tmpInfoString.indexOf("(") - 1).toDouble();//下载百分比
         tmpInfo.downloadState = dlstate_downloading;
-        tmpInfo.downloadURL = gInfo.downloadURL;
+        tmpInfo.downloadURL = taskInfo.rawUrl.toString();
 
         //send to aria2task
         emit updateData(tmpInfo);
@@ -116,7 +116,7 @@ void Aria2Process::updateXMLFile(DownloadingItemInfo info)
 void Aria2Process::getError()
 {
     qDebug() << tmpProcess->readAllStandardError();
-    emit aria2Error(gInfo.downloadURL, QString(tmpProcess->readAllStandardError()), aria2);
+    emit aria2Error(taskInfo.rawUrl.toString(), QString(tmpProcess->readAllStandardError()), TOOL_ARIA2);
 }
 
 QString Aria2Process::analysisFeedBackSpeed(QString data)

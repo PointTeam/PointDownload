@@ -19,6 +19,13 @@ DLDataConverter * DLDataConverter::getInstance()
     return dlDataConverter;
 }
 
+QObject *DLDataConverter::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return DLDataConverter::getInstance();
+}
 
 void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
@@ -56,6 +63,7 @@ void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QS
             UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_hightSpeedChannel,URL);
         else if (otype == "download_finishDownload")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_finishDownload, URL);
+        emit sDLStateChange(URL, otype);
     }
     else if (dtype == "dl_search")
     {
@@ -80,19 +88,20 @@ void DLDataConverter::resumeAllDownloading()
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
 
-void DLDataConverter::addDownloadingItem(QString infoList)
+void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_downloading",infoList);
+    emit taskAdded(taskInfo.getDownloadingInfoToString());
 }
 
-void DLDataConverter::addDownloadedItem(QString infoList)
+void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_downloaded",infoList);
+    emit downloadedAdded(taskInfo.getDownloadedInfoToString());
 }
 
-void DLDataConverter::addDownloadTrashItem(QString infoList)
+void DLDataConverter::addDownloadTrashItem(const TaskInfo &taskInfo)
 {
-    emit sFileInfoChange("dl_trash",infoList);
+    // 由于trash的string结构和downloaded的string(?:?)结构一样，所以使用了dowbloaded的信息来代替，以后这种信息结构将废弃
+    emit trashAdded(taskInfo.getDownloadedInfoToString());
 }
 
 void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
@@ -196,23 +205,20 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
 void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
-    connect(urlServer, SIGNAL(getNewURL(QString)), this, SLOT(addDownloadingItem(QString)));
-    urlServer->runServer();
-
+    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo)), this, SLOT(addDownloadingItem(TaskInfo)));
 }
-
 
 void DLDataConverter::initConnection()
 {
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(QString)), this, SLOT(addDownloadedItem(QString)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadingItem(QString)), this,SLOT(addDownloadingItem(QString)));
-    connect(UnifiedInterface::getInstance(),SIGNAL(sAddDownloadTrashItem(QString)),this, SLOT(addDownloadTrashItem(QString)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(TaskInfo)), this, SLOT(addDownloadedItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
 
     connect(UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SLOT(slotGetDownloadingInfo(DownloadingItemInfo)));
     connect(UnifiedInterface::getInstance(), SIGNAL(sReturnControlResult(DownloadType,OperationType,QString,bool)),
             this, SLOT(slotGetContrlFeedback(DownloadType,OperationType,QString,bool)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sRefreshDownloadingItem()),
-            this, SIGNAL(sRefreshDownloadingItem()));
+    //connect(UnifiedInterface::getInstance(), SIGNAL(sRefreshDownloadingItem()),
+    //        this, SIGNAL(sRefreshDownloadingItem()));
 }
 

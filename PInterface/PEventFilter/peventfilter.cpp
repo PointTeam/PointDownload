@@ -106,10 +106,20 @@ bool PEventFilter::eventFilter(QObject *obj, QEvent *event)
     {
         return QObject::eventFilter(obj, event);
     }
+
+    return false;
 }
 
 
 PEventFilter * PEventFilter::getInstance()
 {
     return peventFilter;
+}
+
+QObject *PEventFilter::pEventObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return PEventFilter::getInstance();
 }

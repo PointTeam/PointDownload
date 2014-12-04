@@ -122,13 +122,17 @@ function addNewItem(infoList)
             sizeByte = (infoArry[5] / 1).toFixed(1) + " B"
     }
 
+    console.log(infoArry);
+    console.log(infoArry[9])
+    console.log(parseFloat(infoArry[9]))
+
     //从已下载项和垃圾桶传过来的值中没有下载百分比(infoArry[7])的数据
     ingItemModel.append({"tmpDLToolsType":infoArry[0],
                         "tmpName":infoArry[1],
                         "tmpURL":infoArry[2],
                         "tmpPath":infoArry[4],
                         "tmpSize":sizeByte,
-                        "tmpPercentage":infoArry[9] === undefined ? 0 : parseFloat(infoArry[9],10),
+                        "tmpPercentage":infoArry[9] === undefined ? 0 : parseFloat(infoArry[9]),
                         "tmpState":infoArry[10] === undefined ? "dlstate_downloading" : infoArry[10],
                         "tmpSpeed": "0KB/S",
                         "tmpOfflineSpeed":"",

@@ -114,10 +114,6 @@ private:
     //设置Threads节点下的所有Thread节点的CompleteBlockCount值
     void setDownloadingThreadNodeValue(QDomDocument &domDoc, QString URL, QList<SDownloadThread> nodeValue);
 
-
-
-
-
 private:
     //以下是各个配置文件的路径
     const QString CONFIG_DIR_PATH =

@@ -21,6 +21,8 @@
 
 #include "httptask.h"
 
+#include "taskinfo.h"
+
 HttpTask::HttpTask(QObject *parent) :
     QObject(parent)
 {
@@ -34,14 +36,14 @@ HttpTask * HttpTask::getInstance()
     return httpTask;
 }
 
-void HttpTask::startDownload(PrepareDownloadInfo info)
+void HttpTask::startDownload(const TaskInfo & taskInfo)
 {
-    HttpThreadManager * tmpManager = new HttpThreadManager(info);
+    HttpThreadManager * tmpManager = new HttpThreadManager(taskInfo);
     connect(tmpManager, SIGNAL(sDownloadFinish(QString)), this, SLOT(slotDownloadFinish(QString)));
     connect(tmpManager, SIGNAL(sRealTimeData(DownloadingItemInfo)),
            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
     tmpManager->startDownload();
-    managerMap.insert(info.downloadURL, tmpManager);
+    managerMap.insert(taskInfo.rawUrl.toString(), tmpManager);
 }
 
 void HttpTask::stopDownload(QString URL)

@@ -40,6 +40,14 @@ MonitorClipBoard * MonitorClipBoard::getInstance()
     return monitorClipBord;
 }
 
+QObject *MonitorClipBoard::clipboardObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return MonitorClipBoard::getInstance();
+}
+
 void MonitorClipBoard::slot_clipDataChange()
 {
     setTmpURL(clipBoard->text());

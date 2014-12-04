@@ -147,6 +147,7 @@ Others:
 **************************************************************************************************/
 QString GetSavePathDialog::getWindowsFolderInfo(QString path)
 {
+    Q_UNUSED(path);
     return "";
 }
 

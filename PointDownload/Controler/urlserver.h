@@ -22,6 +22,8 @@
 #ifndef URLSERVER_H
 #define URLSERVER_H
 
+#include "taskinfo.h"
+
 #include <QObject>
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -36,9 +38,8 @@ public:
     explicit URLServer(QObject *parent = 0);
     ~URLServer();
 
-    void runServer();
 signals:
-    void getNewURL(QString info);//info: fileName?:?fileURL?:?fileIconPath
+    void newTaskAdded(const TaskInfo & taskInfo);
 
 private slots:
     void serverNewConnectionHandler();
@@ -49,8 +50,6 @@ private:
       // taskInfo: margent, ftp, BT file, or other which can not be handle by the popup window
     void taskParseHandle(QString taskInfo);
     QLocalServer * localServer;
-
-    QLocalSocket * tmp_socket;
     QString XwareParseURLHander;
 
     const QString ITEM_INFO_SPLIT_CHAR = "@:@";

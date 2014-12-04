@@ -51,11 +51,13 @@ Rectangle {
         target: TopContrl
         onSignalShowMainWindow:{
             mainWindow.show()
+            mainWindow.flags &= ~Qt.ToolTip
             DropzonePage.destroyDropzone()
         }
 
         onSignalHideMainWindow:{
             mainWindow.hide()
+            mainWindow.flags |= Qt.ToolTip
             if (settingCtrl.enableDropzone)
                 DropzonePage.showDropzone(topPanel)
         }
@@ -81,6 +83,24 @@ Rectangle {
         height: parent.height
         anchors {left: parent.left; }
         color: "#eeeff3"
+    }
+
+    MouseArea{
+        id:middleMouse
+        anchors.fill: topPanel
+
+        onPressed:  {
+            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
+            middleMouse.cursorShape=Qt.DragMoveCursor
+        }
+        onReleased: {
+            rightMainPanel.middlePanelRelease()
+            middleMouse.cursorShape=Qt.ArrowCursor
+        }
+
+        onPositionChanged: {
+            rightMainPanel.middlePanelPositionChange()
+        }
     }
 
     BlueButton {

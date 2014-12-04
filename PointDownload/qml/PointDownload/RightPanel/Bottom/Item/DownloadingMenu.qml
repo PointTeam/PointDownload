@@ -50,22 +50,29 @@ Rectangle {
         target: DLDataConverter
         //当c++中的DLDataConverter类触发以下信号时，更改相应属性
         onSDLStateChange: {
-            if (dlURL == downloadURL)
+            if (dlURL == downloadURL && (dlState === "download_suspend" ||
+                                         dlState === "download_resume"))
             {
-                if (dlState == "dlstate_downloading")
-                    menuSuspend.iconPath = "qrc:/images/right/suspend"
-                else if (dlState == "dlstate_suspend")
-                    menuSuspend.iconPath = "qrc:/images/right/resume"
+                menuSuspend.setDownloadIcon(dlState);
             }
         }
     }
 
+
     MenuButton {
         id: menuSuspend
         height: parent.height - 10
-        iconPath: downloadState === "dlstate_downloading"? "qrc:/images/right/suspend" :
-                                                              "qrc:/images/right/resume";
+        iconPath: downloadState === "dlstate_downloading" ? "qrc:/images/right/suspend"
+                                                          : "qrc:/images/right/resume";
         anchors {left: parent.left;leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
+
+        function setDownloadIcon(stat) {
+            if (stat === "download_suspend")
+                menuSuspend.iconPath = "qrc:/images/right/resume"
+            else if (stat === "download_resume")
+                menuSuspend.iconPath = "qrc:/images/right/suspend"
+        }
+
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
@@ -78,16 +85,11 @@ Rectangle {
                 parent.opacity = 1;
             }
             onClicked: {
-                if (parent.iconPath === "qrc:/images/right/suspend")
-                {
-                    parent.iconPath = "qrc:/images/right/resume"
-                    DLDataConverter.controlItem("dl_downloading","download_suspend",downloadURL)
-                }
-                else
-                {
-                    parent.iconPath = "qrc:/images/right/suspend"
+                console.log(menuSuspend.iconPath);
+                if (menuSuspend.iconPath === "qrc:/images/right/resume")
                     DLDataConverter.controlItem("dl_downloading","download_resume",downloadURL)
-                }
+                else if (menuSuspend.iconPath === "qrc:/images/right/suspend")
+                    DLDataConverter.controlItem("dl_downloading","download_suspend",downloadURL)
             }
         }
     }

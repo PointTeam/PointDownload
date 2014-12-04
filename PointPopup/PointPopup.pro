@@ -66,5 +66,6 @@ SOURCES = main.qml \
 include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
 include(../PInterface/PEventFilter/PEventFilter.pri)
+include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS = PointPopup_zh_CN.ts

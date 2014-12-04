@@ -17,9 +17,9 @@ Aria2Task * Aria2Task::getInstance()
 }
 
 
-void Aria2Task::startDownload(PrepareDownloadInfo info)
+void Aria2Task::startDownload(const TaskInfo &taskInfo)
 {
-    Aria2Process * aria2Process = new Aria2Process(info);
+    Aria2Process * aria2Process = new Aria2Process(taskInfo);
     connect(aria2Process, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
     connect(aria2Process, SIGNAL(aria2Error(QString,QString,DownloadToolsType))
             ,this ,SIGNAL(sAria2Error(QString,QString,DownloadToolsType)));
@@ -29,7 +29,7 @@ void Aria2Task::startDownload(PrepareDownloadInfo info)
     aria2Process->startDownload();
 
     //保存下载列表
-    gProcessMap.insert(info.downloadURL, aria2Process);
+    gProcessMap.insert(taskInfo.rawUrl.toString(), aria2Process);
 }
 
 void Aria2Task::stopDownload(QString URL)
@@ -64,23 +64,27 @@ void Aria2Task::slotFinishDownload(QString URL)
 }
 
 
-PrepareDownloadInfo Aria2Task::getPrepareInfoFromXML(QString URL)
+TaskInfo Aria2Task::getPrepareInfoFromXML(QString URL)
 {
     DownloadXMLHandler xmlOpera;
     SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
 
-    PrepareDownloadInfo tmpInfo;
-    tmpInfo.downloadURL = ingNode.URL;
-    tmpInfo.fileName = ingNode.name;
-    tmpInfo.fileSize = ingNode.totalSize;
-    tmpInfo.iconPath = ingNode.iconPath;
-    tmpInfo.maxSpeed = ingNode.jobMaxSpeed.toLongLong();
-    tmpInfo.redirectURL = ingNode.redirectURL;
-    tmpInfo.storageDir = ingNode.savePath;
-    tmpInfo.threadCount = QString::number(ingNode.threadList.count());
-    tmpInfo.toolType = aria2;
+    TaskInfo taskInfo;
+    TaskFileItem fileItem;
 
-    return tmpInfo;
+    taskInfo.rawUrl = ingNode.URL;
+    taskInfo.taskIconPath = ingNode.iconPath;
+    taskInfo.maxSpeed = 0;
+    taskInfo.parseUrl = ingNode.redirectURL;
+    taskInfo.savePath = ingNode.savePath;
+    taskInfo.maxThreads = ingNode.threadList.size();
+    taskInfo.toolType = TOOL_ARIA2;
+
+    fileItem.fileName = ingNode.name;
+    fileItem.fileSize = ingNode.totalSize.toInt();
+    taskInfo.fileList.append(fileItem);
+
+    return taskInfo;
 }
 
 

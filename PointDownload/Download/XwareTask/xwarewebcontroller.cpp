@@ -282,8 +282,7 @@ void XwareWebController::loadingFinished(bool noError)
             emit sLoginStateChanged(LoginReady);
 
             // 仅在程序刚启动并且有自动登录记录时调用
-            // 仅在Xthundar总开关为Enable时调用, 否则总开关为disable而autoLogin为enable也会执行.
-            if(XwareSettingControler::getInstance()->getXwareEnable() && isHasAutoLoginTask)
+            if(isHasAutoLoginTask)
             {
                 QEventLoop loop;
                 QTimer::singleShot(1000, &loop, SLOT(quit()));
@@ -332,7 +331,6 @@ void XwareWebController::populateJavascript()
     {
         filePath = ":/xware/resources/xware/xware_main.js";
     }
-
     else
     {
         return;

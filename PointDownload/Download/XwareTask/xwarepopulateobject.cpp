@@ -49,13 +49,15 @@ QString XwarePopulateObject::saveVertifyImg(QString link)
 
     QImage img;
     img = img.fromData(reply->readAll());
-    QString cmd = QString("rm ") + XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode*");
+    QString cmd = QString("rm -rf ") + XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode*");
     system(cmd.toLatin1().data());
     QString savePath = XWARE_CONSTANTS_STRUCT.XWARE_TMP_DIR + QString("vertifyCode")
             + QString::number(QDateTime::currentDateTime().toMSecsSinceEpoch()) +QString(".jpg");
+
     if(!img.save(savePath))
     {
         qDebug()<<"[xware error] eccur an error when save vertify code !";
+        qDebug() << savePath;
     }
 
     qDebug()<<"save login vertify code success, path:"<<savePath;

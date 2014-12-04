@@ -21,8 +21,8 @@
 
 #include "yougetprocess.h"
 
-YouGetProcess::YouGetProcess(PrepareDownloadInfo info,QObject *parent) :
-    QObject(parent),gInfo(info)
+YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
+    QObject(parent), taskInfo(taskInfo)
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
@@ -31,21 +31,34 @@ YouGetProcess::YouGetProcess(PrepareDownloadInfo info,QObject *parent) :
 void YouGetProcess::startDownload()
 {
     SettingXMLHandler tmpHandler;
+
     tmpProcess = new QProcess(0);
-    connect(tmpProcess,SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
+    connect(tmpProcess, SIGNAL(finished(int)), tmpProcess, SLOT(deleteLater()));
+    connect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
+    connect(tmpProcess, SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
     connect(tmpProcess, SIGNAL(started()), this, SLOT(yougetStarted()));
+
+    const QString yougetPath = tmpHandler.getChildElement(YouGetSetting, "ExecutePath");
     QStringList arguments;
 
-    arguments << tmpHandler.getChildElement(YouGetSetting,"ExecutePath");
-    arguments << gInfo.downloadURL;
-    tmpProcess->setWorkingDirectory(gInfo.storageDir);
-    tmpProcess->start("python3",arguments);
+    // you-get 路径
+    arguments << yougetPath;
+    // 覆盖已有文件 - 因为主程序当前没有对此的判断
+//    arguments << "-f";
+    // 输出目录
+    arguments << "-o" << taskInfo.savePath;
+    // 设置url参数，这里用解析后的url，以减少重定向开销
+    arguments << taskInfo.parseUrl.toString();
+
+    qDebug() << "YouGet command line arguments: " << arguments;
+
+    tmpProcess->start("python3", arguments);
 }
 
 void YouGetProcess::stopDownload()
 {
-    tmpProcess->terminate();
+    tmpProcess->kill();
 }
 
 void YouGetProcess::yougetStarted()
@@ -78,17 +91,7 @@ void YouGetProcess::getTimerUpdate()
     tmpInfo.downloadSpeed = QString::number((downloadSize * 1024) / (UPDATE_INTERVAL / 1000),'f',1) + " KB/S";
     tmpInfo.downloadPercent = gFeedBackInfo.mid(0,perIndex).toDouble();                        //下载百分比
     tmpInfo.downloadState = dlstate_downloading;
-    tmpInfo.downloadURL = gInfo.downloadURL;
-
-    //下载已完成则结束进程
-    if (tmpInfo.downloadPercent == 100)
-    {
-        updateTimer->stop();
-        tmpProcess->terminate();
-        this->deleteLater();
-
-        emit sFinishYouGetDownload(gInfo.downloadURL);
-    }
+    tmpInfo.downloadURL = taskInfo.rawUrl.toString();
 
     //send to yougettask
     emit updateData(tmpInfo);
@@ -118,5 +121,19 @@ void YouGetProcess::updateXMLFile(DownloadingItemInfo info)
 void YouGetProcess::getError()
 {
     qDebug() << tmpProcess->readAllStandardError();
-    emit yougetError(gInfo.downloadURL, QString(tmpProcess->readAllStandardError()), youget);
+}
+
+void YouGetProcess::yougetProcessFinish(int ret)
+{
+    // 由于 you-get 暂停使用的是强制结束进程，所以这里要区分进程的退出是主动退出还是被kill
+    int perIndex = gFeedBackInfo.indexOf("%");
+    if (gFeedBackInfo.mid(0,perIndex).toDouble() <= 99.9)
+        return;
+
+    updateTimer->stop();
+
+    if (!ret)
+        emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
+    else
+        emit yougetError(taskInfo.rawUrl.toString(), "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
 }

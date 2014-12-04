@@ -31,6 +31,14 @@ XwareSettingControler * XwareSettingControler::getInstance()
     return xwareSettingControler;
 }
 
+QObject *XwareSettingControler::xSCObj(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    return XwareSettingControler::getInstance();
+}
+
 void XwareSettingControler::enableXware()
 {
     NormalNotice::getInstance()->showMessage(tr("Adding Thunder"),
@@ -74,7 +82,7 @@ void XwareSettingControler::tryAutomaticLogin()
     setSignInFlag(1);
 
     if (!isSignIn && XwareSettingControler::getInstance()->getXwareEnable() &&
-            userName != "" && userPasswd != "" && automaticLogin)
+            automaticLogin && !userName.isEmpty() && !userPasswd.isEmpty() )
     {
         XwareController::getInstance()->tryAutomaticLogin(userName, userPasswd);
     }

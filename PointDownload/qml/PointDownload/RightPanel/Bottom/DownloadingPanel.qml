@@ -31,10 +31,9 @@ Rectangle {
     //连接单例的信号
     Connections {
         target: DLDataConverter
-        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
-        onSFileInfoChange: {
-            if (dlType === "dl_downloading")
-                DownloadingScript.addNewItem(fileInfo)
+
+        onTaskAdded: {
+            DownloadingScript.addNewItem(infoString);
         }
         onSDLSpeedChange: {
             DownloadingScript.updateNetSpeed(dlURL, dlSpeed)
@@ -56,7 +55,9 @@ Rectangle {
             DownloadingScript.moveItemToTop();
         }
         onSDLProgressChange:{
-            if (progress >= 100)
+            // 这里可能存在精度问题导致永远不会达到 100
+            // 判断下载完成不应该简单以百分比确定因为有时文件总大小不可获取
+            if (progress >= 99.99)
             {
                 if (dlURL == "")
                     return;
@@ -64,7 +65,9 @@ Rectangle {
                 downloadedPage.addItem(getFileInfo(dlURL))
                 downloadingPage.moveItem(dlURL)
             }
-            DownloadingScript.updatePercentage(dlURL, progress)
+
+            // 这里有点问题 不能显示 xx.x0% 或者 xx.00%这样的数值 因为底层的数据格式问题
+            DownloadingScript.updatePercentage(dlURL, Number(Number(progress).toFixed(2)));
         }
         onSControlFeedback: {
 

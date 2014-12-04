@@ -26,6 +26,7 @@ XwareController::XwareController(QObject *parent) :
     QObject(parent)
 {
     getRouterCodeCounter = 0;
+    ETMProcess = NULL;
 
     // all peer ids
     connect(XwarePopulateObject::getInstance(), SIGNAL(sReturnAllBindedPeerIds(QStringList)),
@@ -369,11 +370,15 @@ void XwareController::tryAutomaticLogin(QString userName, QString pwd)
 void XwareController::stopETM()
 {
     system("pkill Embed");
-    ETMProcess->kill();
+    if(ETMProcess != NULL)
+    {
+        ETMProcess->kill();
+    }
 
     /*
     if(ETMProcess != NULL)
     {
+        ETMProcess->kill();
         delete ETMProcess;
         ETMProcess = NULL;
     }

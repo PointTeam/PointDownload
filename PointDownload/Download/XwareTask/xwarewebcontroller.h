@@ -25,8 +25,9 @@
 #define MAIN_URL_3 "http://yuancheng.xunlei.com/3/"
 #define MAIN_URL_OLD "http://yuancheng.xunlei.com/"
 #define LOGIN_URL  "http://yuancheng.xunlei.com/login.html"
-#define LOGIN_MAX_TRY 2
-#define LOGIN_DEFAULT_INTERVAL 3000
+#define LOGIN_MAX_TRY 1
+#define LOGIN_MAX_TIMEOUT 5
+#define LOGIN_DEFAULT_INTERVAL 1000
 
 #include <QObject>
 #include <QtWebKitWidgets/QWebView>
@@ -87,6 +88,7 @@ private slots:
     void startLoginCtrlTimer();  // try to login, a slot of login-timer
     void loginStateChanged(XwareLoginState state);
     void bindRouterCodeResultHandle(int rs);
+    void loginErrorHandle(QString, QString);
 
 private:
     explicit XwareWebController(QObject *parent = 0);
@@ -108,7 +110,8 @@ private:
     int loginTimeCount;
     bool isHasAutoLoginTask;   // 仅在程序刚启动并且有自动登录记录时置true
 
-    bool isInitedJSConnection;
+    bool initLoginJsState;
+    bool showLoginReadyHint;
 };
 
 #endif // XWAREWEBCONTROLLER_H

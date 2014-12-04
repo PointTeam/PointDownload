@@ -31,10 +31,15 @@ XwarePopulateObject::XwarePopulateObject(QObject *parent) :
     // show the hints or error
     connect(this, SIGNAL(sHint(QString,QString)), this, SLOT(handleHintEmit(QString,QString)));
     connect(this, SIGNAL(sError(QString,QString)), this, SLOT(handleErrorEmit(QString,QString)));
+    connect(this, SIGNAL(sLoginHint(QString,QString)), this, SLOT(handleLoginHintEmit(QString,QString)));
+    connect(this, SIGNAL(sLoginError(QString,QString)), this, SLOT(handleLoginErrorEmit(QString,QString)));
 }
 
 QString XwarePopulateObject::saveVertifyImg(QString link)
 {
+
+    qDebug()<<"XwarePopulateObject::saveVertifyImg , link: "<<link;
+
     QUrl url(link);
 
     QEventLoop loop;
@@ -190,7 +195,7 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
     {
     // username & password
     case 1:
-        emit sError(tr("Login  failed"), errorMsg);
+        emit sLoginError(tr("Login  failed"), errorMsg);
         break;
 
     // password
@@ -245,6 +250,16 @@ void XwarePopulateObject::handleErrorEmit(QString title, QString msg)
 void XwarePopulateObject::handleHintEmit(QString title, QString msg)
 {
     NormalNotice::getInstance()->showMessage(title, Notice_Color_Warning, msg);
+}
+
+void XwarePopulateObject::handleLoginErrorEmit(QString title, QString msg)
+{
+    emit sError(title, msg);
+}
+
+void XwarePopulateObject::handleLoginHintEmit(QString title, QString msg)
+{
+    emit sHint(title, msg);
 }
 
 QString XwarePopulateObject::getDefaultTaskPara()

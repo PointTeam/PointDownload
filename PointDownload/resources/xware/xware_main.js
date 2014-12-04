@@ -49,7 +49,7 @@ App.bind("functions.msgbox.show",
 var pointReloadDownloaderInterval = setInterval(
 function()
 {
-    Point.justForJSTest(".. downloader offline, please wait ..");
+    Point.justForJSTest(".. downloader offline, please wait for thunder response ..");
 
     if(pointLocalDownloaderPid !== "")
     {
@@ -167,6 +167,31 @@ function pointAddNewDownloadTask(url, storage, fileList)
 
 function pointLogout()
 {
+/*
+    // ======================= disconnect Singals ======================= //
+    Point.sJSGetAllBindedPeerIds.disconnect(pointSlotGetAllBindedPeerIds);
+    Point.sJSReflashDownloadList.disconnect(pointSlotReflashDownloadList);
+
+    // add new task
+    Point.sJSAddNewDownloadTask.disconnect(pointAddNewDownloadTask);
+    //Point.sAddNewBTDownloadTask.disconnect(pointAddNewBTDownloadTask);
+
+    // task controller
+    Point.sJSSuspendDownloadingTask.disconnect(pointSuspendDownloadingTask);
+    Point.sJSResumeDownloadingTask.disconnect(pointResumeDownloadingTask);
+    Point.sJSRemoveDownloadingTask.disconnect(pointRemoveDownloadingTask);
+    Point.sJSEntryOfflineChannel.disconnect(pointEntryOfflineChannel);
+    Point.sJSEntryHighSpeedChannel.disconnect(pointEntryHighSpeedChannel);
+    Point.sJSUrlParse.disconnect(pointUrlParse);
+
+    // set default downloader
+    Point.sSetDefaultDownloader.disconnect(pointSetDefaultDownloader);
+
+    // logout
+    Point.sJSLogout.disconnect(pointLogout);
+    // ======================================================== //
+*/
+
     // debugger
     Point.justForJSTest("----------------- logOut -----------------------");
 

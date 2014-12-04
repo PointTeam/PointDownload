@@ -1,10 +1,10 @@
-//Point.sJSLogin.connect(pointSlotLogin);
+Point.sJSLogin.connect(pointSlotLogin);
+Point.sJSUpdateVertifyCode.connect(pointUpdateVertifyCode);
 
 var spliterBtwData = "#..#";
 var spliterEnd = "#.^_^.#";
 
 var pointLoginCheckInterval;
-var pointLoginCheckHandle;  // record the login warning check state
 
 var pointVertifyChangeIntervalId;
 
@@ -18,9 +18,6 @@ function pointSlotLogin(userName, pwd, vertifyCode)
     $p_lf.find("#al_p").val(pwd);
     $p_lf.find("#al_c").val(vertifyCode);
 
-    pointLoginCheckHandle = false;
-    pointLoginCheckInterval = setInterval("pointLoginCheckSlot()", 800);
-
     setTimeout(
     function()
     {
@@ -32,22 +29,22 @@ function pointSlotLogin(userName, pwd, vertifyCode)
     );
 }
 
+var pointLoginCheckValid = true;  // whether login check valid flag
+pointLoginCheckInterval = setInterval("pointLoginCheckSlot()", 500);
 // check login even (pwd incorrect, username not exist ...)
 function pointLoginCheckSlot()
 {
-    if(pointLoginCheckHandle === false)
+    if($p_lf.find("#al_warn").css("display") === "block")
     {
-        if($p_lf.find("#al_warn").css("display") === "block")
+        if(pointLoginCheckValid)
         {
             Point.loginError(1, $p_lf.find("#al_warn").html());
-            pointLoginCheckHandle = true;
         }
-
-        // is any wrong handled
-        if(pointLoginCheckHandle)
-        {
-            window.clearInterval(pointLoginCheckInterval);
-        }
+        pointLoginCheckValid = false;
+    }
+    else
+    {
+        pointLoginCheckValid = true;
     }
 }
 

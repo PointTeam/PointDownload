@@ -90,8 +90,8 @@ static struct XwareConstants
         XWARE_SO_FILE = XWARE_WORK_DIR + "mask.so";
 
         // xware firmware location
-//        XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareTest/raw/master/XwareFirmxware.zip";
-        XWARE_FIRMWARE_LOCATION = "http://linuxdeepin.com/forum/download?id=9303";
+        XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareFirmware/raw/master/XwareFirmxware.zip";
+//        XWARE_FIRMWARE_LOCATION = "http://www.linuxdeepin.com/forum/download?id=9303";
         XWARE_FIRMWARE_NAME = "XwareFirmxware.zip";
 
         // url

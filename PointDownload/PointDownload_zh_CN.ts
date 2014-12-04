@@ -336,7 +336,7 @@ Also, if you can provide more help, please contact us. </source>
 <context>
     <name>NormalNotice</name>
     <message>
-        <location filename="Controler/Message/normalnotice.cpp" line="23"/>
+        <location filename="../PInterface/Message/normalnotice.cpp" line="23"/>
         <source>Notice</source>
         <translation>提示</translation>
     </message>
@@ -601,7 +601,7 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
         <translation>下载完成</translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="190"/>
+        <location filename="Download/unifiedinterface.cpp" line="191"/>
         <source>Download Error</source>
         <translation>下载出错</translation>
     </message>
@@ -609,25 +609,35 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
 <context>
     <name>XwareController</name>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="136"/>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="352"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="150"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="428"/>
         <source>Failed to start Thunder</source>
         <translation>启动迅雷失败</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="137"/>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="353"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="151"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="429"/>
         <source>Please re-enable Thunder in setting dialog and try to login again later.</source>
         <oldsource>Please disable Thunder in setting dialog and enable it again later.</oldsource>
         <translation>请在设置面板中重新启用迅雷后重试</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="376"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="325"/>
+        <source>Checking config files not through</source>
+        <translation>配置文件检测失败</translation>
+    </message>
+    <message>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="326"/>
+        <source>Please remove &quot; ~/.PointConfig/XwarePlugin &quot; dir and try again </source>
+        <translation>请手动删除~/.PointConfig/XwarePlugin目录</translation>
+    </message>
+    <message>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="452"/>
         <source>Please check the network or restart the Point to try again.</source>
         <translation>绑定路由码超时</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="375"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="451"/>
         <source>Bind Router-Code timeout</source>
         <translation>请检查网络或重新启动Point后再重试</translation>
     </message>
@@ -635,28 +645,30 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
 <context>
     <name>XwarePopulateObject</name>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="193"/>
         <source>User name error</source>
         <oldsource>Login Error</oldsource>
-        <translation>用户名错误</translation>
+        <translation type="vanished">用户名错误</translation>
+    </message>
+    <message>
+        <source>User password error</source>
+        <translation type="vanished">密码错误</translation>
+    </message>
+    <message>
+        <source>Vertify code error</source>
+        <translation type="vanished">验证码错误</translation>
     </message>
     <message>
         <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="198"/>
-        <source>User password error</source>
-        <translation>密码错误</translation>
+        <source>Login  failed</source>
+        <translation>登录失败</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="218"/>
-        <source>Vertify code error</source>
-        <translation>验证码错误</translation>
-    </message>
-    <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="230"/>
+        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="235"/>
         <source>Operation wait</source>
         <translation>请稍等</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="231"/>
+        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="236"/>
         <source>Please wait for the response of Thunder</source>
         <translation>迅雷正在响应中，请稍等片刻再重试该操作</translation>
     </message>
@@ -694,22 +706,22 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
         <translation>抱歉，注销登录功能还未完善，请退出程序以注销登录</translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="205"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="206"/>
         <source>Enable Thunder success</source>
         <translation>迅雷组件添加成功</translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="207"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="208"/>
         <source>Thunder has been installed, you can log in Thunder now.</source>
         <translation>现在您可以登录迅雷了</translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="211"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="212"/>
         <source>Enable Thunder error</source>
         <translation>迅雷固件添加失败</translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="213"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="214"/>
         <source>Install Thunder failed, please check the network and try again later.</source>
         <translation>请检查网络连接并重试</translation>
     </message>
@@ -775,68 +787,68 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
 <context>
     <name>XwareWebController</name>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="81"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="82"/>
         <source>Login timeout</source>
         <oldsource>Login Timeout</oldsource>
         <translation>登录超时</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="82"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="83"/>
         <source>Please check the network or restart the Point to try again</source>
         <oldsource>Sorry for this, Please check the network or restart Point to try again</oldsource>
         <translation>请检查网络连接或重启动Point后重试</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="98"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="99"/>
         <source>Login successful</source>
         <oldsource>Login Successfully</oldsource>
         <translation>登录成功</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="99"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="100"/>
         <source>Thunder is available now!</source>
         <translation>现在您可以使用迅雷了!</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="123"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="139"/>
         <source>Please check the network and try again later!</source>
         <oldsource>Please check the network or try again later!</oldsource>
         <translation>请检查网络连接或重新启动Point后再重新登录!</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="129"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="151"/>
         <source>Logining</source>
         <translation>登录中</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="252"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="269"/>
         <source>Thunder is unavailable now.</source>
         <translation>迅雷服务已停止.</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="277"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="300"/>
         <source>Login ready</source>
         <oldsource>Ready</oldsource>
         <translation>登录服务已启用</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="278"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="301"/>
         <source>You can login to Thunder now</source>
         <translation>您现在可以登录迅雷了</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="130"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="152"/>
         <source>Logining to Thunder, please wait...</source>
         <oldsource>Please wait...</oldsource>
         <translation>正在登录到迅雷，请稍候...</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="122"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="138"/>
         <source>Login service not ready</source>
         <translation>登录服务未被启用</translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="251"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="268"/>
         <source>Logout</source>
         <oldsource>Xware: Logout</oldsource>
         <translation>注销成功</translation>
@@ -854,7 +866,7 @@ Copyright © &lt;2014&gt; &lt;点载团队&gt;
     <name>main</name>
     <message>
         <location filename="qml/PointDownload/main.qml" line="48"/>
-        <source> </source>
+        <source>PointDownload</source>
         <translation></translation>
     </message>
 </context>

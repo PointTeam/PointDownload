@@ -323,7 +323,7 @@ Also, if you can provide more help, please contact us. </source>
 <context>
     <name>NormalNotice</name>
     <message>
-        <location filename="Controler/Message/normalnotice.cpp" line="23"/>
+        <location filename="../PInterface/Message/normalnotice.cpp" line="23"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
@@ -561,7 +561,7 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/unifiedinterface.cpp" line="190"/>
+        <location filename="Download/unifiedinterface.cpp" line="191"/>
         <source>Download Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -569,25 +569,35 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
 <context>
     <name>XwareController</name>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="136"/>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="352"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="150"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="428"/>
         <source>Failed to start Thunder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="137"/>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="353"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="151"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="429"/>
         <source>Please re-enable Thunder in setting dialog and try to login again later.</source>
         <oldsource>Please disable Thunder in setting dialog and enable it again later.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="376"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="325"/>
+        <source>Checking config files not through</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="326"/>
+        <source>Please remove &quot; ~/.PointConfig/XwarePlugin &quot; dir and try again </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="452"/>
         <source>Please check the network or restart the Point to try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarecontroller.cpp" line="375"/>
+        <location filename="Download/XwareTask/xwarecontroller.cpp" line="451"/>
         <source>Bind Router-Code timeout</source>
         <translation type="unfinished"></translation>
     </message>
@@ -595,28 +605,17 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
 <context>
     <name>XwarePopulateObject</name>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="193"/>
-        <source>User name error</source>
-        <oldsource>Login Error</oldsource>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="198"/>
-        <source>User password error</source>
+        <source>Login  failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="218"/>
-        <source>Vertify code error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="230"/>
+        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="235"/>
         <source>Operation wait</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="231"/>
+        <location filename="Download/XwareTask/xwarepopulateobject.cpp" line="236"/>
         <source>Please wait for the response of Thunder</source>
         <translation type="unfinished"></translation>
     </message>
@@ -654,22 +653,22 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="205"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="206"/>
         <source>Enable Thunder success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="207"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="208"/>
         <source>Thunder has been installed, you can log in Thunder now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="211"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="212"/>
         <source>Enable Thunder error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="213"/>
+        <location filename="Controler/SettingWin/xwaresettingcontroler.cpp" line="214"/>
         <source>Install Thunder failed, please check the network and try again later.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -735,68 +734,68 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
 <context>
     <name>XwareWebController</name>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="81"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="82"/>
         <source>Login timeout</source>
         <oldsource>Login Timeout</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="82"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="83"/>
         <source>Please check the network or restart the Point to try again</source>
         <oldsource>Sorry for this, Please check the network or restart Point to try again</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="98"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="99"/>
         <source>Login successful</source>
         <oldsource>Login Successfully</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="99"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="100"/>
         <source>Thunder is available now!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="123"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="139"/>
         <source>Please check the network and try again later!</source>
         <oldsource>Please check the network or try again later!</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="129"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="151"/>
         <source>Logining</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="252"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="269"/>
         <source>Thunder is unavailable now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="277"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="300"/>
         <source>Login ready</source>
         <oldsource>Ready</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="278"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="301"/>
         <source>You can login to Thunder now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="130"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="152"/>
         <source>Logining to Thunder, please wait...</source>
         <oldsource>Please wait...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="122"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="138"/>
         <source>Login service not ready</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="251"/>
+        <location filename="Download/XwareTask/xwarewebcontroller.cpp" line="268"/>
         <source>Logout</source>
         <oldsource>Xware: Logout</oldsource>
         <translation type="unfinished"></translation>
@@ -814,7 +813,7 @@ For more details:&lt;http://www.gnu.org/licenses/gpl-3.0.html&gt;</source>
     <name>main</name>
     <message>
         <location filename="qml/PointDownload/main.qml" line="48"/>
-        <source> </source>
+        <source>PointDownload</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

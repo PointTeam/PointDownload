@@ -30,19 +30,21 @@ XwareWebController::XwareWebController(QObject *parent) :
     // bind login state changed
     connect(this, SIGNAL(sLoginStateChanged(XwareLoginState)), this, SLOT(loginStateChanged(XwareLoginState)));
     connect(XwareController::getInstance(), SIGNAL(sBindRouterCodeResult(int)), this, SLOT(bindRouterCodeResultHandle(int)));
+    connect(XwarePopulateObject::getInstance(), SIGNAL(sLoginError(QString, QString)), this, SLOT(loginErrorHandle(QString, QString)));
 
     // init login state
     emit sLoginStateChanged(LoginNotReady);
 
     loginCtrlTimer = new QTimer();
+    loginCtrlTimer->setInterval(LOGIN_DEFAULT_INTERVAL);
     loginTimeCount = 0;
     isHasAutoLoginTask = false;
 
     // login control timer
     connect(loginCtrlTimer, SIGNAL(timeout()), this, SLOT(startLoginCtrlTimer()));
 
-    isInitedJSConnection = false;
-
+    initLoginJsState = false;
+    showLoginReadyHint = true;
 }
 
 XwareWebController * XwareWebController::xwareWebController = NULL;
@@ -62,10 +64,9 @@ XwareWebController * XwareWebController::getInstance()
 
 void XwareWebController::startLoginCtrlTimer()
 {
-    if(loginTimeCount < LOGIN_MAX_TRY)
+    if(loginTimeCount < LOGIN_MAX_TIMEOUT)
     {
         ++loginTimeCount;
-        XwarePopulateObject::getInstance()->login(userName, userPwd, vertifyCode);
     }
 
     else
@@ -106,6 +107,17 @@ void XwareWebController::bindRouterCodeResultHandle(int rs)
     }
 }
 
+void XwareWebController::loginErrorHandle(QString, QString)
+{
+    loginTimeCount = 0;
+    loginCtrlTimer->stop();
+
+    // emit this to javascript
+    emit sLoginResult(x_UserOrPwdError);
+
+    emit sLoginStateChanged(LoginReady);
+}
+
 void XwareWebController::executeJS(QString js)
 {
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
@@ -128,6 +140,12 @@ void XwareWebController::login(QString userName, QString pwd, QString vertifyCod
         return;
     }
 
+    this->userName = userName;
+    this->userPwd = pwd;
+    this->vertifyCode = vertifyCode;
+
+    // login action
+    XwarePopulateObject::getInstance()->login(this->userName, this->userPwd, this->vertifyCode);
 
     // show hints
     NormalNotice::getInstance()->showMessage(tr("Logining"), Notice_Color_Notice,
@@ -136,12 +154,8 @@ void XwareWebController::login(QString userName, QString pwd, QString vertifyCod
     // changed login state
     emit sLoginStateChanged(Logining);
 
-    this->userName = userName;
-    this->userPwd = pwd;
-    this->vertifyCode = vertifyCode;
-
     startLoginCtrlTimer();
-    loginCtrlTimer->start(LOGIN_DEFAULT_INTERVAL);
+    loginCtrlTimer->start();
 }
 
 void XwareWebController::logout()
@@ -250,7 +264,6 @@ void XwareWebController::loadingFinished(bool noError)
 
         if(loginState == Logined)
         {
-
             //  show the hints
             NormalNotice::getInstance()->showMessage(tr("Logout"), Notice_Color_Success,
                                                      tr("Thunder is unavailable now."));
@@ -272,15 +285,22 @@ void XwareWebController::loadingFinished(bool noError)
             // 仅在Xthundar总开关为Enable时调用, 否则总开关为disable而autoLogin为enable也会执行.
             if(XwareSettingControler::getInstance()->getXwareEnable() && isHasAutoLoginTask)
             {
-                this->login(userName, userPwd);
+                QEventLoop loop;
+                QTimer::singleShot(1000, &loop, SLOT(quit()));
+                loop.exec();
+                this->login(this->userName, this->userPwd);
             }
             else
             {
                 SettingXMLHandler xml;
                 if(xml.getChildElement(XwareSetting, "State") == "Enable")
                 {
-                    NormalNotice::getInstance()->showMessage(tr("Login ready"), Notice_Color_Success,
-                                                             tr("You can login to Thunder now"));
+                    if (showLoginReadyHint)
+                    {
+                        NormalNotice::getInstance()->showMessage(tr("Login ready"), Notice_Color_Success,
+                                                                 tr("You can login to Thunder now"));
+                        showLoginReadyHint = false;
+                    }
                 }
             }
         }
@@ -304,6 +324,8 @@ void XwareWebController::populateJavascript()
     QString filePath = "";
     if(currentPageURL().contains(LOGIN_URL))
     {
+        if(initLoginJsState)return;
+        initLoginJsState = true;
         filePath = ":/xware/resources/xware/xware_login.js";
     }
     else if(currentPageURL() == MAIN_URL_3)
@@ -331,29 +353,6 @@ void XwareWebController::populateJavascript()
     QString jsStr = textInput.readAll();
     webview->page()->mainFrame()->evaluateJavaScript(jsStr);
     file.close();
-
-    if(currentPageURL().contains(LOGIN_URL))
-    {
-        // temp
-        if(!isInitedJSConnection)
-        {
-            QFile file(":/xware/resources/xware/xware_connection.js");
-            if(XWARE_CONSTANTS_STRUCT.DEBUG)
-                qDebug()<<" *********  populate xware_connection js  ***********  ";
-            if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            {
-                if(XWARE_CONSTANTS_STRUCT.DEBUG)
-                    qDebug()<<"open error";
-                return;
-            }
-            QTextStream textInput(&file);
-            QString jsStr = textInput.readAll();
-            webview->page()->mainFrame()->evaluateJavaScript(jsStr);
-            file.close();
-//            isInitedJSConnection = true;
-        }
-    }
-
 }
 
 void XwareWebController::webUrlChanged(QUrl url)

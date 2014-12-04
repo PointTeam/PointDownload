@@ -70,9 +70,12 @@ signals:
     void sFinishDownload(QString);  // QString: URL
     void sFeedbackDownloadList(QString);
 
-    // login hints or errors
+    // hints and errors
     void sHint(QString, QString);
     void sError(QString, QString);
+    // login hints and errors
+    void sLoginHint(QString, QString);
+    void sLoginError(QString, QString);
 
     // emit to the login pannel for updating the vertify code
     void sVertifyCodeLink(QString);
@@ -131,6 +134,8 @@ private slots:
     // show the error or hint
     void handleErrorEmit(QString title, QString msg);
     void handleHintEmit(QString title, QString msg);
+    void handleLoginErrorEmit(QString title, QString msg);
+    void handleLoginHintEmit(QString title, QString msg);
 
 private:
     explicit XwarePopulateObject(QObject *parent = 0);

@@ -273,3 +273,53 @@ TaskInfo &TaskInfo::operator =(const TaskInfo &what)
 
     return *this;
 }
+
+QString TaskInfo::qml_getRawUrl()
+{
+    return rawUrl.toString();
+}
+
+QString TaskInfo::qml_getParseUrl()
+{
+    return parseUrl.toString();
+}
+
+QString TaskInfo::qml_getIconPath()
+{
+    return taskIconPath;
+}
+
+QString TaskInfo::qml_getSavePath()
+{
+    return savePath;
+}
+
+QString TaskInfo::qml_getCompleteDate()
+{
+    return completeDate;
+}
+
+float TaskInfo::qml_getPercentage()
+{
+    return percentage;
+}
+
+int TaskInfo::qml_getToolType()
+{
+    return toolType;
+}
+
+int TaskInfo::qml_getMaxThreads()
+{
+    return maxThreads;
+}
+
+int TaskInfo::qml_getMaxSpeed()
+{
+    return maxSpeed;
+}
+
+int TaskInfo::qml_getTaskState()
+{
+    return taskState;
+}

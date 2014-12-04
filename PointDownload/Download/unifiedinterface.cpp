@@ -472,8 +472,8 @@ void UnifiedInterface::suspendDownloading(QString URL)
 {
     DownloadXMLHandler tmpOpera;
 //    //如果已经处于暂停状态则不作处理
-//    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_suspend")
-//        return;
+    if (tmpOpera.getDownloadingNode(URL).state == "dlstate_suspend")
+        return;
 
     //在xml文件中将该项标注为暂停
     SDownloading tmpStruct;

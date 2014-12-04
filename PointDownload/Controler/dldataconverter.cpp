@@ -63,6 +63,7 @@ void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QS
             UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_hightSpeedChannel,URL);
         else if (otype == "download_finishDownload")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_finishDownload, URL);
+        emit sDLStateChange(URL, otype);
     }
     else if (dtype == "dl_search")
     {

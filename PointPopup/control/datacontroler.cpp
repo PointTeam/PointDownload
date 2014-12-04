@@ -619,35 +619,8 @@ QString DataControler::getIconName()
 
 QString DataControler::getHttpFtpFileName(const QString &URL)
 {
-
     const QString fileName(QUrl(URL).fileName());
-
     return fileName.isEmpty() ? "UnknownName" : fileName;
-
-//    qDebug() << url.fileName();
-
-//    QRegExp rx;
-//    rx.setPatternSyntax(QRegExp::RegExp);
-//    rx.setCaseSensitivity(Qt::CaseSensitive); //大小写敏感
-//    rx.setPattern(QString("[^/]*$"));
-//    int pos = URL.indexOf(rx);
-
-//    if ( pos >= 0 )
-//    {
-//        QString tmpStr = rx.capturedTexts().at(0);
-//        rx.setPattern(QString("\\.[^?@#$%&]+"));
-//        tmpStr.indexOf(rx);
-//        QString tmpName = rx.capturedTexts().at(0);
-
-//        qDebug() << tmpName;
-
-//        if (tmpName == "")
-//            return "UnknownName";
-//        else
-//            return tmpName;
-//    }
-//    else
-//        return "";
 }
 
 
@@ -672,7 +645,7 @@ void DataControler::connectToMainProgram()
     while (true)
     {
         localSocket->connectToServer("PointURLServer");
-        if (localSocket->waitForConnected(1000))
+        if (localSocket->waitForConnected(100))
             break;
         qWarning() << "localSocket connect to localServer Error: " << localSocket->errorString();
     }

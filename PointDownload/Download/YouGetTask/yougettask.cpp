@@ -65,7 +65,7 @@ void YouGetTask::stopDownload(QString URL)
 void YouGetTask::suspendDownloading(QString URL)
 {
     if (gProcessMap.value(URL) == NULL)
-        return
+        return;
     gProcessMap.value(URL)->stopDownload();
 }
 

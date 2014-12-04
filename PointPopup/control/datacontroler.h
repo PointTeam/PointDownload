@@ -44,7 +44,7 @@
 const QString MAIN_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointDownload/PointDownload";
 #else
 //const QString MAIN_PROGRAM_EXEC = "pointdownload";
-const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointDownload";
+const QString MAIN_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointDownload";
 #endif
 
 class DataControler : public QObject

@@ -90,7 +90,7 @@ void DLDataConverter::resumeAllDownloading()
 
 void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
 {
-    emit taskAdded(taskInfo.getInfoToString());
+    emit taskAdded(taskInfo.getDownloadingInfoToString());
 }
 
 void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)

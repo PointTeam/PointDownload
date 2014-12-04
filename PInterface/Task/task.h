@@ -12,12 +12,6 @@
 
 #include "taskinfo.h"
 
-// 任务状态
-#define DLSTATE_UNDEF       0
-#define DLSTATE_SUSPEND     1   // 暂停
-#define DLSTATE_DOWNLOADING 2   // 正在下载
-#define DLSTATE_READY       3   //
-
 class Task : public QObject
 {
     Q_OBJECT

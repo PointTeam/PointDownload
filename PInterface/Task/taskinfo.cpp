@@ -178,6 +178,8 @@ void TaskInfo::setDownStateFromString(const QString &state)
         taskState = DLSTATE_DOWNLOADING;
     else if (!state.compare("dlstate_ready", Qt::CaseInsensitive))
         taskState = DLSTATE_READY;
+    else if (!state.compare("dlstate_downloaded", Qt::CaseInsensitive))
+        taskState = DLSTATE_DOWNLOADED;
     else
     {
         qWarning() << "download state not match any case At: void TaskInfo::setDownStateFromString(const QString &state)";
@@ -233,7 +235,7 @@ QString TaskInfo::getInfoToString() const
     infoStr += QString::number(taskSize()) + split;
     infoStr += savePath + split;
     infoStr += QString::number(maxThreads) + split;
-    infoStr += QString::number(percentage, 'f', 1);
+    infoStr += QString::number(percentage, 'f', 2);
 
     return std::move(infoStr);
 }
@@ -252,6 +254,25 @@ QString TaskInfo::getDownloadedInfoToString() const
     infoStr += taskIconPath + split;
     infoStr += QString::number(taskSize()) + split;
     infoStr += completeDate;
+
+    return std::move(infoStr);
+}
+
+QString TaskInfo::getDownloadingInfoToString() const
+{
+    const QString split("?:?");
+    QString infoStr;
+    infoStr += getToolTypeToString() + split;
+    infoStr += taskName() + split;
+    infoStr += rawUrl.toString() + split;
+    infoStr += split;
+    infoStr += savePath + split;
+    infoStr += QString::number(taskSize()) + split;
+    infoStr += split;
+    infoStr += split;
+    infoStr += split;
+    infoStr += QString::number(percentage, 'f', 2) + split;
+    infoStr += getDownStateToString();
 
     return std::move(infoStr);
 }

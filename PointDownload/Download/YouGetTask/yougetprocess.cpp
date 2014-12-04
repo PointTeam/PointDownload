@@ -58,7 +58,7 @@ void YouGetProcess::startDownload()
 
 void YouGetProcess::stopDownload()
 {
-    tmpProcess->terminate();
+    tmpProcess->kill();
 }
 
 void YouGetProcess::yougetStarted()
@@ -125,6 +125,11 @@ void YouGetProcess::getError()
 
 void YouGetProcess::yougetProcessFinish(int ret)
 {
+    // 由于 you-get 暂停使用的是强制结束进程，所以这里要区分进程的退出是主动退出还是被kill
+    int perIndex = gFeedBackInfo.indexOf("%");
+    if (gFeedBackInfo.mid(0,perIndex).toDouble() <= 99.9)
+        return;
+
     updateTimer->stop();
 
     if (!ret)

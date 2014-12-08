@@ -93,8 +93,6 @@ public:
      * because QUrl can not store ed2k, thunder.. protocol
      *  altered QUrl to QString (by Choldrim, 2015.1.2)
     */
-//    QUrl rawUrl;
-//    QUrl parseUrl;
     QString rawUrl;
     QString parseUrl;
     QString taskIconPath;

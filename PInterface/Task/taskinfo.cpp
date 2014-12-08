@@ -278,8 +278,8 @@ QString TaskInfo::getDownloadingInfoToString() const
     infoStr += getToolTypeToString() + split;
     infoStr += taskName() + split;
     infoStr += rawUrl + split;
-    infoStr += parseUrl + split;
-    infoStr += taskIconPath + split;
+    infoStr += split;
+    infoStr += savePath + split;
     infoStr += QString::number(taskSize()) + split;
     infoStr += savePath + split;
     infoStr += maxThreads + split;

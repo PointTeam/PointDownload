@@ -120,7 +120,7 @@ void HttpThreadManager::slotUpdataXMLFile()
         sd.state = DOWNLOADING_STATE;//如果没有达到间隔时间就被终止，会导致该项状态保持为suspend
 
         //平均下载速度
-        QString averageSpeed0 = xmlOpera.getDownloadingNode( taskInfo.rawUrl ).averageSpeed;
+        QString averageSpeed0 = xmlOpera.getDownloadingNode(taskInfo.rawUrl).averageSpeed;
         QString speed = QString::number( ( averageSpeed0.toLongLong() + receiveBytesPerSecond) / 2 );
         sd.averageSpeed = speed;
 

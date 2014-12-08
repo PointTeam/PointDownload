@@ -52,7 +52,7 @@ void YouGetTask::startDownload(const TaskInfo &taskInfo)
     yougetProcess->startDownload();
 
     //保存下载列表
-    gProcessMap.insert(taskInfo.rawUrl.toString(), yougetProcess);
+    gProcessMap.insert(taskInfo.rawUrl, yougetProcess);
 }
 
 void YouGetTask::stopDownload(QString URL)

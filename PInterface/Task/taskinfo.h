@@ -87,8 +87,8 @@ public:
 public:
     // 需要序列化/反序列化的成员
     QList<TaskFileItem> fileList;
-    QUrl rawUrl;
-    QUrl parseUrl;
+    QString rawUrl;
+    QString parseUrl;
     QString taskIconPath;
     QString savePath;
     int toolType;

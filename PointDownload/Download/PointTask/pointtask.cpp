@@ -39,8 +39,8 @@ PointTask * PointTask::getInstance()
 
 void PointTask::startDownload(const TaskInfo & taskInfo)
 {
-    pointTaskMap.insert(taskInfo.rawUrl.toString() ,getProtocalTypeFromURL(taskInfo.rawUrl.toString()));
-    switch (getProtocalTypeFromURL(taskInfo.rawUrl.toString()))
+    pointTaskMap.insert(taskInfo.rawUrl ,getProtocalTypeFromURL(taskInfo.rawUrl));
+    switch (getProtocalTypeFromURL(taskInfo.rawUrl))
     {
     case point_http:
         startHttpDownload(taskInfo);

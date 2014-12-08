@@ -49,7 +49,7 @@ void YouGetProcess::startDownload()
     // 输出目录
     arguments << "-o" << taskInfo.savePath;
     // 设置url参数，这里用解析后的url，以减少重定向开销
-    arguments << taskInfo.parseUrl.toString();
+    arguments << taskInfo.parseUrl;
 
     qDebug() << "YouGet command line arguments: " << arguments;
 
@@ -91,7 +91,7 @@ void YouGetProcess::getTimerUpdate()
     tmpInfo.downloadSpeed = QString::number((downloadSize * 1024) / (UPDATE_INTERVAL / 1000),'f',1) + " KB/S";
     tmpInfo.downloadPercent = gFeedBackInfo.mid(0,perIndex).toDouble();                        //下载百分比
     tmpInfo.downloadState = dlstate_downloading;
-    tmpInfo.downloadURL = taskInfo.rawUrl.toString();
+    tmpInfo.downloadURL = taskInfo.rawUrl;
 
     //send to yougettask
     emit updateData(tmpInfo);
@@ -133,7 +133,7 @@ void YouGetProcess::yougetProcessFinish(int ret)
     updateTimer->stop();
 
     if (!ret)
-        emit sFinishYouGetDownload(taskInfo.rawUrl.toString());
+        emit sFinishYouGetDownload(taskInfo.rawUrl);
     else
-        emit yougetError(taskInfo.rawUrl.toString(), "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
+        emit yougetError(taskInfo.rawUrl, "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
 }

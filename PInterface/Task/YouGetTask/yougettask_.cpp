@@ -33,7 +33,7 @@ void YouGetTask_::start()
     // 输出目录
     arguments << "-o" << infomation.savePath;
     // 设置url参数，这里用解析后的url，以减少重定向开销
-    arguments << infomation.parseUrl.toString();
+    arguments << infomation.parseUrl;
 
     youget->start("python3", arguments);
 }

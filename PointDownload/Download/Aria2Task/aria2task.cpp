@@ -29,7 +29,7 @@ void Aria2Task::startDownload(const TaskInfo &taskInfo)
     aria2Process->startDownload();
 
     //保存下载列表
-    gProcessMap.insert(taskInfo.rawUrl.toString(), aria2Process);
+    gProcessMap.insert(taskInfo.rawUrl, aria2Process);
 }
 
 void Aria2Task::stopDownload(QString URL)

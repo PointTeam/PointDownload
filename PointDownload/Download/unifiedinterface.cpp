@@ -163,7 +163,7 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -182,8 +182,8 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
         tmpIngStruct.jobMaxSpeed = taskInfo.maxSpeed;
         tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl.toString();
-        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
+        tmpIngStruct.URL = taskInfo.rawUrl;
+        tmpIngStruct.redirectURL = taskInfo.parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
@@ -201,7 +201,7 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl.toString();
+        tmpStruct.URL = taskInfo.rawUrl;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -217,7 +217,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -234,8 +234,8 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
         tmpIngStruct.jobMaxSpeed = "0";   //you-get无法控制网速
         tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl.toString();
-        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
+        tmpIngStruct.URL = taskInfo.rawUrl;
+        tmpIngStruct.redirectURL = taskInfo.parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
@@ -253,7 +253,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl.toString();
+        tmpStruct.URL = taskInfo.rawUrl;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -274,7 +274,7 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
     QList<SDownloadThread> tmpList;
     tmpList.append(threadStruct);
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
+    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
     {
         //插入xml文件
         SDownloading tmpIngStruct;
@@ -284,8 +284,8 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
         tmpIngStruct.jobMaxSpeed = "0";   // xware 暂时不作网速控制
         tmpIngStruct.savePath = taskInfo.savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl.toString();
-        tmpIngStruct.redirectURL = taskInfo.parseUrl.toString();
+        tmpIngStruct.URL = taskInfo.rawUrl;
+        tmpIngStruct.redirectURL = taskInfo.parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
         tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
@@ -303,7 +303,8 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl.toString();
+        tmpStruct.URL = taskInfo.rawUrl
+                ;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -332,7 +333,7 @@ void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
     }
 
     //将下载项插入全局map中
-    downloadingListMap.insert(taskInfo.rawUrl.toString(), taskInfo.toolType);
+    downloadingListMap.insert(taskInfo.rawUrl, taskInfo.toolType);
 
     switch (taskInfo.toolType)
     {

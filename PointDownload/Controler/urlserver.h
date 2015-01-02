@@ -44,15 +44,14 @@ signals:
 private slots:
     void serverNewConnectionHandler();
     void socketReadyReadHandler();
-    void taskParseFeedback(QString taskInfo);
+    void taskParseFeedback(TaskInfo taskInfo);
 
 private:
       // taskInfo: margent, ftp, BT file, or other which can not be handle by the popup window
-    void taskParseHandle(QString taskInfo);
+    void taskParseHandle(QString url);
     QLocalServer * localServer;
-    QString XwareParseURLHander;
-
-    const QString ITEM_INFO_SPLIT_CHAR = "@:@";
+    QLocalSocket * tmp_socket;
+    QString tmp_url;
 };
 
 #endif // URLSERVER_H

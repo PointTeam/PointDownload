@@ -32,9 +32,8 @@ URLServer::URLServer(QObject *parent) :
 
     connect(localServer, SIGNAL(newConnection()), this, SLOT(serverNewConnectionHandler()));
 
-    connect(XwarePopulateObject::getInstance(), SIGNAL(sFeedbackURLParse(QString)), this, SLOT(taskParseFeedback(QString)));
-
-    XwareParseURLHander = "XwareParseURLOrBT:";
+    connect(XwarePopulateObject::getInstance(), SIGNAL(sFeedbackURLParse(TaskInfo)),
+            this, SLOT(taskParseFeedback(TaskInfo)));
 }
 
 URLServer::~URLServer()
@@ -46,6 +45,7 @@ URLServer::~URLServer()
 void URLServer::serverNewConnectionHandler()
 {
     QLocalSocket * socket = localServer->nextPendingConnection();
+    tmp_socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(socketReadyReadHandler()));
     connect(socket, SIGNAL(disconnected()), socket, SLOT(deleteLater()));
 }
@@ -57,13 +57,13 @@ void URLServer::socketReadyReadHandler()
 
     qDebug() << taskInfo;
 
-//    if (taskInfo.toolType == "XwareParseURLHander")
-//    {
-        // take URL from msg
-//        taskParseHandle(urlInfo.split(XwareParseURLHander).at(1));
-//        qDebug() << "XwareParseURLHander";
-//        return ;
-//    }
+    if (TOOL_XWARE_PARSE == taskInfo.toolType)
+    {
+         // take URL from msg
+        taskParseHandle(taskInfo.rawUrl);
+        qDebug() << "Xware is parsing the URL";
+        return ;
+    }
 
     //启动下载
     UnifiedInterface::getInstance()->startDownload(taskInfo);
@@ -71,16 +71,18 @@ void URLServer::socketReadyReadHandler()
     emit newTaskAdded(taskInfo);                //此信号连接到downloadingsender类
 }
 
-void URLServer::taskParseFeedback(QString taskInfo)
+void URLServer::taskParseFeedback(TaskInfo taskInfo)
 {
-    QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
-    socket->write(taskInfo.toStdString().c_str());
-    socket->flush();
+    taskInfo.rawUrl = tmp_url;
+    taskInfo.parseUrl = tmp_url;
+    qDebug()<<taskInfo;
+    tmp_socket->write(taskInfo.toQByteArray());
+    tmp_socket->flush();
 }
 
-void URLServer::taskParseHandle(QString taskInfo)
+void URLServer::taskParseHandle(QString url)
 {
-    if(taskInfo == "")
+    if(url.isEmpty())
     {
         return;
     }
@@ -88,21 +90,11 @@ void URLServer::taskParseHandle(QString taskInfo)
     // xware not start or not login
     if(XwareWebController::getInstance()->getLoginState() != LoginedAndBinded)
     {
-        QString msgType("XwareMsgType");
-        QString msgConten("XwareNotStart");
-        taskParseFeedback(msgType + XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA + msgConten);
+        qDebug()<<"Can not parsing URL, Thunder is not at the login state.";
         return;
     }
 
-    // BT
-    if(taskInfo.startsWith("file:"))
-    {
-        XwarePopulateObject::getInstance()->btParse(taskInfo);
-    }
-    else
-    {
-        // common  URL
-        XwarePopulateObject::getInstance()->urlParse(taskInfo);
-    }
+    tmp_url = url;
+     XwarePopulateObject::getInstance()->urlParse(url);
 }
 

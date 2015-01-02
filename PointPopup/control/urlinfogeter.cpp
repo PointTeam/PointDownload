@@ -1,6 +1,6 @@
 #include "urlinfogeter.h"
 
-URLInfoGeter::URLInfoGeter(QLocalSocket * socket, QString &url, QObject *parent) :
+URLInfoGeter::URLInfoGeter(QLocalSocket * socket, QString url, QObject *parent) :
     QThread(parent)
 {
     Q_UNUSED(socket);
@@ -25,55 +25,24 @@ void URLInfoGeter::run()
         return;
     }
 
-    mURL = xwareParseURLHander + mURL;
-    // send this url or bt file to main window, and let it is parsed by xware
-    mLocalSocket->write(mURL.toStdString().c_str());
+    TaskInfo taskInfo;
+    taskInfo.toolType = TOOL_XWARE_PARSE;
+//    taskInfo.rawUrl = QUrl(mURL);    // altered by choldrim
+    taskInfo.rawUrl = mURL;
+
+    mLocalSocket->write(taskInfo.toQByteArray());
     mLocalSocket->flush();
 
-    // restore URL
-    mURL = mURL.split(xwareParseURLHander).at(1);
     mLocalSocket->waitForReadyRead();
 }
 
 void URLInfoGeter::slotGetInfoFromServer()
 {
-    QTextStream stream(mLocalSocket);
-    QString msg = stream.readAll();
-    msg = msg.trimmed();
+    TaskInfo taskInfo(mLocalSocket);
+    qDebug()<<" task info "<<taskInfo;
 
-    if(msg.startsWith("XwareMsgType"))
-    {
-        if(msg.split(xwareSpliterBtwData).at(1) == "XwareNotStart")
-        {
-            qDebug()<<"[info]xware doesn't start now, you need to login thunder and try again later";
-            emit sGetInfoFaild(false);
-            return;
-        }
-    }
-
-    QStringList files = msg.split(xwareSpliterEnd);
-    QString allFileInfo = "";
-    foreach (QString file, files)
-    {
-        if(file.length() == 0)continue;
-
-        // format: fileName #..# fileSize
-        QStringList fileInfoList = file.split(xwareSpliterBtwData);
-
-        // get mine type by name
-        QString fileType = getFileTypeByName(fileInfoList.at(0));
-
-        QString fileSize = convertToByteUnit(fileInfoList.at(1));
-
-        // changed to type@:@size@:@name#:#
-        QString singleFileInfo = fileType + ITEM_INFO_SPLIT_CHAR
-                + fileSize + ITEM_INFO_SPLIT_CHAR
-                + fileInfoList.at(0) + "#:#";
-        allFileInfo += singleFileInfo;
-    }
-
-    emit sGetAllFileInfo(allFileInfo);
-
+    // @Match-Yang
+//    emit sGetAllFileInfo(allFileInfo);
 }
 
 
@@ -98,24 +67,24 @@ QString URLInfoGeter::getFileTypeByName(QString fileName)
 
 QString URLInfoGeter::convertToByteUnit(QString size)
 {
-    if(size.contains("G"))
+    if(size.contains("G", Qt::CaseInsensitive))
     {
-        double num = size.split("G").at(0).toDouble();
+        double num = size.split("G", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0).toDouble();
         return QString::number((long long)(num * 1024 * 1024 * 1024));
     }
 
-    if(size.contains("M"))
+    if(size.contains("M", Qt::CaseInsensitive))
     {
-        double num = size.split("M").at(0).toDouble();
+        double num = size.split("M", QString::SkipEmptyParts, Qt::CaseInsensitive ).at(0).toDouble();
         return QString::number((long long)(num * 1024 * 1024));
     }
 
-    if(size.contains("K"))
+    if(size.contains("K", Qt::CaseInsensitive))
     {
-        double num = size.split("K").at(0).toDouble();
+        double num = size.split("K", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0).toDouble();
         return QString::number((long long)(num * 1024));
     }
 
-    return size.split("B").at(0);
+    return size.split("B", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0);
 }
 

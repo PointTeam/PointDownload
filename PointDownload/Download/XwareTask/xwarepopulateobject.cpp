@@ -65,6 +65,29 @@ QString XwarePopulateObject::saveVertifyImg(QString link)
     return savePath;
 }
 
+QString XwarePopulateObject::convertToByteUnit(QString size)
+{
+    if(size.contains("G", Qt::CaseInsensitive))
+    {
+        double num = size.split("G", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0).toDouble();
+        return QString::number((long long)(num * 1024 * 1024 * 1024));
+    }
+
+    if(size.contains("M", Qt::CaseInsensitive))
+    {
+        double num = size.split("M", QString::SkipEmptyParts, Qt::CaseInsensitive ).at(0).toDouble();
+        return QString::number((long long)(num * 1024 * 1024));
+    }
+
+    if(size.contains("K", Qt::CaseInsensitive))
+    {
+        double num = size.split("K", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0).toDouble();
+        return QString::number((long long)(num * 1024));
+    }
+
+    return size.split("B", QString::SkipEmptyParts, Qt::CaseInsensitive).at(0);
+}
+
 XwarePopulateObject * XwarePopulateObject::xwarePopulateObject = NULL;
 XwarePopulateObject * XwarePopulateObject::getInstance()
 {
@@ -188,7 +211,24 @@ void XwarePopulateObject::feedbackDownloadList(QString tasksInfo)
 
 void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
 {
-    emit sFeedbackURLParse(taskInfoList);
+    QStringList list = taskInfoList.split(XWARE_CONSTANTS_STRUCT.SPLITER_END);
+    TaskInfo info;
+    info.toolType = TOOL_XWARE;
+    foreach (QString file, list)
+    {
+        if(file.length() == 0)
+        {
+            continue;
+        }
+        TaskFileItem item;
+        item.fileName = file.split(XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA).first();
+        QString fileSize = file.split(XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA).last();
+        item.fileSize = convertToByteUnit(fileSize).toInt();
+        info.fileList.append(item);
+    }
+
+
+    emit sFeedbackURLParse(info);
 }
 
 void XwarePopulateObject::loginError(short type, QString errorMsg)

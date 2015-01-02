@@ -43,7 +43,7 @@ void HttpTask::startDownload(const TaskInfo & taskInfo)
     connect(tmpManager, SIGNAL(sRealTimeData(DownloadingItemInfo)),
            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
     tmpManager->startDownload();
-    managerMap.insert(taskInfo.rawUrl.toString(), tmpManager);
+    managerMap.insert(taskInfo.rawUrl, tmpManager);
 }
 
 void HttpTask::stopDownload(QString URL)

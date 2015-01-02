@@ -34,6 +34,7 @@
 #include "xwarewebcontroller.h"
 #include "Download/DataType.h"
 #include "xwaretaskentity.h"
+#include "taskinfo.h"
 
 class XwarePopulateObject : public QObject
 {
@@ -66,7 +67,7 @@ public:
 
 signals:
     void sReturnAllBindedPeerIds(QStringList);
-    void sFeedbackURLParse(QString);  // QString: all URL parse result, include fileName and fileSize
+    void sFeedbackURLParse(TaskInfo);  // QString: all URL parse result, include fileName and fileSize
     void sFinishDownload(QString);  // QString: URL
     void sFeedbackDownloadList(QString);
 
@@ -140,6 +141,9 @@ private slots:
 private:
     explicit XwarePopulateObject(QObject *parent = 0);
     QString saveVertifyImg(QString link);
+
+    //  将大单位（如：GB）转换成小单元B，返回值是不带单位的纯数字字符串, eg: 2KB ==> 2048
+    QString convertToByteUnit(QString size);
 
 private:
     static XwarePopulateObject *xwarePopulateObject;

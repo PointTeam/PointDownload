@@ -18,6 +18,8 @@
 #define TOOL_XWARE  3   // 迅雷路由固件
 #define TOOL_YOUGET 4   // 在线视频下载工具，支持断点续传，下载完成后自动合并视频,支持大部分主流在线视频音乐网站
 
+#define TOOL_XWARE_PARSE 5 // added by Choldrim, used to parse magnet, ftp, ed2k, thunder URL, etc.
+
 // 任务状态
 #define DLSTATE_UNDEF       0
 #define DLSTATE_SUSPEND     1   // 暂停
@@ -87,8 +89,10 @@ public:
 public:
     // 需要序列化/反序列化的成员
     QList<TaskFileItem> fileList;
-    QUrl rawUrl;
-    QUrl parseUrl;
+//    QUrl rawUrl;
+//    QUrl parseUrl;
+    QString rawUrl;
+    QString parseUrl;
     QString taskIconPath;
     QString savePath;
     int toolType;

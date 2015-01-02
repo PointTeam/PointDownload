@@ -40,25 +40,25 @@ HttpThreadManager::HttpThreadManager(QString URL,QObject *parent):
 void HttpThreadManager::startDownload()
 {
     //不存在则先插入xml文件中
-    if (!xmlOpera.urlExit(taskInfo.rawUrl.toString(),"ing"))
+    if (!xmlOpera.urlExit(taskInfo.rawUrl,"ing"))
     {
         inserToXMLFile(taskInfo);
     }
     else
     {
         //必须要及时改变状态
-        changeStateToDownloading(taskInfo.rawUrl.toString());
+        changeStateToDownloading(taskInfo.rawUrl);
     }
 
     //开始下载，全新下载和断点续传操作相同
-    QList<SDownloadThread> tmpList = xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).threadList;
+    QList<SDownloadThread> tmpList = xmlOpera.getDownloadingNode(taskInfo.rawUrl).threadList;
     for( int i = 0; i < tmpList.count(); i ++)
     {
         qint64 completed = (qint64) tmpList.at(i).completedBlockCount.toLongLong(0);
         qint64 start = (qint64) tmpList.at(i).startBlockIndex.toLongLong(0);
         qint64 end = (qint64) tmpList.at(i).endBlockIndex.toLongLong(0);
 
-        HttpThread * tmpThread = new HttpThread( i, start , end, completed, taskInfo.parseUrl.toString());
+        HttpThread * tmpThread = new HttpThread( i, start , end, completed, taskInfo.parseUrl);
         threadList.append(tmpThread);
 
         connect(tmpThread,SIGNAL(progressChanged(qint64)),
@@ -91,7 +91,7 @@ void HttpThreadManager::stopDownload()
 void HttpThreadManager::slotSendDataToUI()
 {
     DownloadingItemInfo tmpInfo;
-    tmpInfo.downloadURL = taskInfo.rawUrl.toString();
+    tmpInfo.downloadURL = taskInfo.rawUrl;
     tmpInfo.downloadSpeed = getDownloadSpeed();
     tmpInfo.uploadSpeed = "0";
     tmpInfo.downloadState = dlstate_downloading;
@@ -115,12 +115,12 @@ void HttpThreadManager::slotUpdataXMLFile()
             readySize += threadList.at(i)->getCompleteBytes() + threadList.at(i)->getDoneByte();                        // 0518
         }
         SDownloading sd;
-        sd.URL = taskInfo.rawUrl.toString();
+        sd.URL = taskInfo.rawUrl;
         sd.readySize = QString::number( readySize /*getDownloadedSize() */);
         sd.state = DOWNLOADING_STATE;//如果没有达到间隔时间就被终止，会导致该项状态保持为suspend
 
         //平均下载速度
-        QString averageSpeed0 = xmlOpera.getDownloadingNode( taskInfo.rawUrl.toString() ).averageSpeed;
+        QString averageSpeed0 = xmlOpera.getDownloadingNode( taskInfo.rawUrl ).averageSpeed;
         QString speed = QString::number( ( averageSpeed0.toLongLong() + receiveBytesPerSecond) / 2 );
         sd.averageSpeed = speed;
 
@@ -155,7 +155,7 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
 
     slotUpdataXMLFile();
     finishThreadCount ++;
-    if (finishThreadCount == xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).threadList.count())
+    if (finishThreadCount == xmlOpera.getDownloadingNode(taskInfo.rawUrl).threadList.count())
     {
         updateDataTimer->stop();
         updateXMLTimer->stop();
@@ -165,10 +165,10 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
         slotSendDataToUI();
         //重命名文件
         QFile downloadFile;
-        QDir::setCurrent( xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).savePath);
+        QDir::setCurrent( xmlOpera.getDownloadingNode(taskInfo.rawUrl).savePath);
         downloadFile.rename(taskInfo.fileList.at(0).fileName + POINT_FILE_FLAG, taskInfo.fileList.at(0).fileName);
         //向上层发送已完成下载的信号
-        emit sDownloadFinish(taskInfo.rawUrl.toString());
+        emit sDownloadFinish(taskInfo.rawUrl);
     }
 }
 
@@ -178,7 +178,7 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
     updateDataTimer->stop();
 
     SDownloading tmpStruct;
-    tmpStruct.URL = taskInfo.rawUrl.toString();
+    tmpStruct.URL = taskInfo.rawUrl;
     tmpStruct.redirectURL = URL.toString();
 
     xmlOpera.writeDownloadingConfigFile(tmpStruct);
@@ -202,7 +202,7 @@ void HttpThreadManager::slotThreadsIsLimited()
 
     taskInfo.maxThreads = 1;
 
-    xmlOpera.removeDownloadingFileNode(taskInfo.rawUrl.toString());
+    xmlOpera.removeDownloadingFileNode(taskInfo.rawUrl);
 
     startDownload();
 }
@@ -235,7 +235,7 @@ void HttpThreadManager::initUpdateTimer()
 void HttpThreadManager::initData()
 {
     finishThreadCount = 0;
-    totalDoneSize = xmlOpera.getDownloadingNode(taskInfo.rawUrl.toString()).readySize.toLongLong();
+    totalDoneSize = xmlOpera.getDownloadingNode(taskInfo.rawUrl).readySize.toLongLong();
     receiveBytesPerSecond = 0;
 
     changeLimited = false;
@@ -289,8 +289,8 @@ void HttpThreadManager::inserToXMLFile(const TaskInfo &taskInfo)
     SDownloading sdownlaoding;
     sdownlaoding.dlToolsType = "Point";
     sdownlaoding.name = taskInfo.fileList.at(0).fileName;                               //文件名
-    sdownlaoding.URL = taskInfo.rawUrl.toString();                                 //url
-    sdownlaoding.redirectURL = taskInfo.parseUrl.toString();                 //
+    sdownlaoding.URL = taskInfo.rawUrl;                                 //url
+    sdownlaoding.redirectURL = taskInfo.parseUrl;                 //
     sdownlaoding.savePath = taskInfo.savePath;      //文件保存路径
     sdownlaoding.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);       //总大小
     sdownlaoding.readySize = "0";                           //已经下载字节数

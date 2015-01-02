@@ -10,7 +10,10 @@
 TaskInfo::TaskInfo() :
     QObject(0)
 {
-
+    // added by Choldrim, give them init state
+    toolType = TOOL_UNDEF;
+    maxThreads = 0;
+    maxSpeed = 0;
 }
 
 TaskInfo::TaskInfo(QIODevice *in) :
@@ -135,8 +138,8 @@ QDebug operator <<(QDebug out, const TaskInfo &what)
     out << endl << "TaskInfo:" << endl;
     out << "toolType = "    << what.toolType << endl;
     out << what.fileList    << endl;
-    out << "rawUrl = "      << what.rawUrl.toString() << endl;
-    out << "parseUrl = "    << what.parseUrl.toString() << endl;
+    out << "rawUrl = "      << what.rawUrl << endl;
+    out << "parseUrl = "    << what.parseUrl << endl;
     out << "taskIconPath = " << what.taskIconPath << endl;
     out << "savePath = "    << what.savePath << endl;
     out << "maxThreads = "  << what.maxThreads << endl;
@@ -229,8 +232,8 @@ QString TaskInfo::getInfoToString() const
     QString infoStr;
     infoStr += getToolTypeToString() + split;
     infoStr += taskName() + split;
-    infoStr += rawUrl.toString() + split;
-    infoStr += parseUrl.toString() + split;
+    infoStr += rawUrl + split;
+    infoStr += parseUrl + split;
     infoStr += taskIconPath + split;
     infoStr += QString::number(taskSize()) + split;
     infoStr += savePath + split;
@@ -250,7 +253,7 @@ QString TaskInfo::getDownloadedInfoToString() const
     QString infoStr;
     infoStr += getToolTypeToString() + split;
     infoStr += taskName() + split;
-    infoStr += rawUrl.toString() + split;
+    infoStr += rawUrl + split;
     infoStr += taskIconPath + split;
     infoStr += QString::number(taskSize()) + split;
     infoStr += completeDate;
@@ -264,7 +267,7 @@ QString TaskInfo::getDownloadingInfoToString() const
     QString infoStr;
     infoStr += getToolTypeToString() + split;
     infoStr += taskName() + split;
-    infoStr += rawUrl.toString() + split;
+    infoStr += rawUrl + split;
     infoStr += split;
     infoStr += savePath + split;
     infoStr += QString::number(taskSize()) + split;
@@ -297,12 +300,12 @@ TaskInfo &TaskInfo::operator =(const TaskInfo &what)
 
 QString TaskInfo::qml_getRawUrl()
 {
-    return rawUrl.toString();
+    return rawUrl;
 }
 
 QString TaskInfo::qml_getParseUrl()
 {
-    return parseUrl.toString();
+    return parseUrl;
 }
 
 QString TaskInfo::qml_getIconPath()

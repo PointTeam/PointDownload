@@ -4,11 +4,13 @@
 #include <QThread>
 #include <QLocalSocket>
 
+#include "taskinfo.h"
+
 class URLInfoGeter : public QThread
 {
     Q_OBJECT
 public:
-    explicit URLInfoGeter(QLocalSocket * socket, QString &url, QObject *parent = 0);
+    explicit URLInfoGeter(QLocalSocket * socket, QString url, QObject *parent = 0);
 
 protected:
     void run();
@@ -19,6 +21,7 @@ signals:
 
 public slots:
     void slotGetInfoFromServer();
+
 private:
     QString getFileTypeByName(QString fileName);   // get file mine type by file name
 

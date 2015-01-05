@@ -288,7 +288,7 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
         tmpIngStruct.redirectURL = taskInfo.parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
+        tmpIngStruct.totalSize = QString::number(taskInfo.taskSize());
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
@@ -770,7 +770,7 @@ void UnifiedInterface::initDownloadedList()
         taskInfo.taskIconPath = edList.at(i).iconPath;
         taskInfo.completeDate = edList.at(i).completeDate;
         fileItem.fileName = edList.at(i).name;
-        fileItem.fileSize = edList.at(i).Size.toInt();
+        fileItem.fileSize = edList.at(i).Size.toLongLong();
         taskInfo.fileList.append(fileItem);
 
         emit sAddDownloadedItem(taskInfo);
@@ -801,7 +801,7 @@ void UnifiedInterface::initdownloadingList()
         taskInfo.maxSpeed = ingList.at(i).jobMaxSpeed.toInt();
         taskInfo.percentage = percentage;
         fileItem.fileName = ingList.at(i).name;
-        fileItem.fileSize = ingList.at(i).totalSize.toInt();
+        fileItem.fileSize = ingList.at(i).totalSize.toLongLong();
         taskInfo.fileList.append(fileItem);
 
         emit sAddDownloadingItem(taskInfo);
@@ -825,7 +825,7 @@ void UnifiedInterface::initTrashList()
         taskInfo.taskIconPath = trashList.at(i).iconPath;
         taskInfo.rawUrl = trashList.at(i).URL;
         fileItem.fileName = trashList.at(i).name;
-        fileItem.fileSize = trashList.at(i).totalSize.toInt();
+        fileItem.fileSize = trashList.at(i).totalSize.toLongLong();
         taskInfo.fileList.append(fileItem);
 
         emit sAddDownloadTrashItem(taskInfo);
@@ -998,7 +998,7 @@ TaskInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruc
     taskInfo.maxThreads = infoStruct.threadList.count();
 
     fileItem.fileName = infoStruct.name;
-    fileItem.fileSize = infoStruct.totalSize.toInt();
+    fileItem.fileSize = infoStruct.totalSize.toLongLong();
     taskInfo.fileList.append(fileItem);
 
     return std::move(taskInfo);

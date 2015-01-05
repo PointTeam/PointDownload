@@ -271,17 +271,19 @@ QString TaskInfo::getDownloadedInfoToString() const
 
 QString TaskInfo::getDownloadingInfoToString() const
 {
+    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage?:?state
+
     const QString split("?:?");
     QString infoStr;
     infoStr += getToolTypeToString() + split;
     infoStr += taskName() + split;
     infoStr += rawUrl + split;
-    infoStr += split;
-    infoStr += savePath + split;
+    infoStr += parseUrl + split;
+    infoStr += taskIconPath + split;
     infoStr += QString::number(taskSize()) + split;
-    infoStr += split;
-    infoStr += split;
-    infoStr += split;
+    infoStr += savePath + split;
+    infoStr += maxThreads + split;
+    infoStr += maxSpeed + split;
     infoStr += QString::number(percentage, 'f', 2) + split;
     infoStr += getDownStateToString();
 

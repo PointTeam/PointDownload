@@ -106,7 +106,7 @@ function updatePercentage(url,newPercentage)
 
 function addNewItem(infoList)
 {
-    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage
+    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage?:?state
     var infoArry = infoList.split("?:?");
     if (infoArry.length > 5)
     {

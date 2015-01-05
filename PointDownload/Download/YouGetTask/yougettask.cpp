@@ -103,7 +103,7 @@ TaskInfo YouGetTask::getPrepareInfoFromXML(QString URL)
     taskInfo.toolType = TOOL_YOUGET;
 
     fileItem.fileName = ingNode.name;
-    fileItem.fileSize = ingNode.totalSize.toInt();
+    fileItem.fileSize = ingNode.totalSize.toLongLong();
     taskInfo.fileList.append(fileItem);
 
     return taskInfo;

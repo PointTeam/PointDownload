@@ -1,6 +1,6 @@
 /***********************************************************************
 *PointDownload
-*Copyright (C) 2014  PointTeam
+*Copyright (C) 2014~2015  PointTeam
 *
 * Author:     Choldrim <choldrim@foxmail.com>
 * Maintainer: Choldrim <choldrim@foxmail.com>

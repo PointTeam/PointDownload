@@ -1,6 +1,6 @@
 #/***********************************************************************
 #*PointDownload
-#*Copyright (C) 2014  PointTeam
+#*Copyright (C) 2014~2015  PointTeam
 #*
 #*
 #* This program is free software: you can redistribute it and/or modify

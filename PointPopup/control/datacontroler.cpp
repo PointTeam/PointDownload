@@ -166,7 +166,7 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
         TaskFileItem item;
         QStringList list = fileItem.split(ITEM_INFO_SPLIT_CHAR);
         item.fileType = list[0];
-        item.fileSize = list[1].toInt();
+        item.fileSize = list[1].toLongLong();
         item.fileName = list[2];
         fileItemList.append(item);
     }

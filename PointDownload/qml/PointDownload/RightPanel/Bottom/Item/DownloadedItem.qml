@@ -75,6 +75,7 @@ Rectangle {
             font.bold: true
             font.pixelSize: 13
             clip: true
+            elide: Text.ElideRight
             width: parent.width < 200 ? 100 : parent.width - 200
             anchors {left: edIcon.right; leftMargin: 13; top: parent.top; topMargin: 17}
         }

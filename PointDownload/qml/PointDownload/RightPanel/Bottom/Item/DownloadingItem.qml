@@ -79,6 +79,7 @@ Rectangle {
             font.bold: true
             font.pixelSize: 12
             clip: true
+            elide: Text.ElideRight
             width: parent.width < 200 ? 100 : parent.width - 200
             anchors {left: ingIcon.right; leftMargin: 13; top: parent.top; topMargin: 17}
         }

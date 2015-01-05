@@ -19,3 +19,8 @@ const QString Task::downloadBytesSpeedString()
 {
     return "0 B/s";
 }
+
+void Task::dumpErrorMessage(const QString &errorStr) const
+{
+    qDebug() << errorStr;
+}

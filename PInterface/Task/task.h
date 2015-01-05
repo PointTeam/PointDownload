@@ -12,6 +12,10 @@
 
 #include "taskinfo.h"
 
+// 定义下载任务可能出错的错误号
+#define TERROR_UNDEF        0
+#define TERROR_UGET_UDEF    1       // youget任务的未定义错误
+
 class Task : public QObject
 {
     Q_OBJECT
@@ -33,10 +37,12 @@ public:
     virtual int downloadBytesSpeed() const = 0;
     // 当前下载速度， xxB/s xxxKB/s xx.xxMB/s
     const QString downloadBytesSpeedString();
+    // 输出/显示错误信息
+    void dumpErrorMessage(const QString &errorStr) const;
 
 signals:
     void onTaskCompleted();
-    void onTaskError(const QString error);
+    void onTaskError(int taskErrorCode);
 
 protected:
     TaskInfo infomation;

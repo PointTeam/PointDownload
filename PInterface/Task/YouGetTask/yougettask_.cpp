@@ -61,11 +61,11 @@ void YouGetTask_::processFinished(int stat)
     }
     else
     {
-        qDebug() << "YouGet 任务异常结束，返回值为: " << stat;
-        qDebug() << "任务信息:";
-        qDebug() << infomation;
+        emit onTaskError(TERROR_UGET_UDEF);
 
-        emit onTaskError(tr("YouGet任务异常结束，返回值为: %1").arg(QString::number(stat)));
+        qDebug() << tr("YouGet任务异常结束，返回值为: %1").arg(QString::number(stat))
+                 << "任务信息:"
+                 << infomation;
     }
 }
 

@@ -97,10 +97,11 @@ QString TaskInfo::taskName() const
 
 /*!
     任务包含文件的大小总和作为任务的总大小
+    altered int to qint64 ( by Choldrim )
 */
-int TaskInfo::taskSize() const
+qint64 TaskInfo::taskSize() const
 {
-    int size(0);
+    qint64 size(0);
     for (TaskFileItem i : fileList)
         size += i.fileSize;
     return size;

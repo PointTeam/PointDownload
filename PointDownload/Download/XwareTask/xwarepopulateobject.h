@@ -63,8 +63,6 @@ public:
 
     void setDefaultDownloader(QString pid);
 
-
-
 signals:
     void sReturnAllBindedPeerIds(QStringList);
     void sFeedbackURLParse(TaskInfo);  // QString: all URL parse result, include fileName and fileSize

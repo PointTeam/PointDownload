@@ -918,7 +918,7 @@ void UnifiedInterface::startReady()
 
     QList<SDownloading> ingList = downloadHandler.getDownloadingNodes();
 
-    qWarning() << "state maybe error";
+//    qWarning() << "state maybe error";
     for (int i =0; i < ingList.count(); i ++)
     {
         if (ingList.at(i).state == "dlstate_ready")

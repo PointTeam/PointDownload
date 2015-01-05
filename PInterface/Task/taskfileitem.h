@@ -17,7 +17,7 @@ public:
 public:
     QString fileType;
     QString fileName;
-    int fileSize;
+    qint64 fileSize;  // altered int to qint64 (by Choldrim, 2015.1.5)
 };
 
 #endif // TASKFILEITEM_H

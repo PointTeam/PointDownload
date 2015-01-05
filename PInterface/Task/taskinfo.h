@@ -55,7 +55,7 @@ public:
     QByteArray toQByteArray() const;
     QString fileListString() const;
     QString taskName() const;
-    int taskSize() const;
+    qint64 taskSize() const;
 
     // 这些方法是为了代码重构时兼容所用，应该尽量不要使用
     void setToolTypeFromString(const QString &tool);
@@ -89,6 +89,10 @@ public:
 public:
     // 需要序列化/反序列化的成员
     QList<TaskFileItem> fileList;
+    /*
+     * because QUrl can not store ed2k, thunder.. protocol
+     *  altered QUrl to QString (by Choldrim, 2015.1.2)
+    */
 //    QUrl rawUrl;
 //    QUrl parseUrl;
     QString rawUrl;

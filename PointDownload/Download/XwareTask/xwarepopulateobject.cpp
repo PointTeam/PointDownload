@@ -223,7 +223,8 @@ void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
         TaskFileItem item;
         item.fileName = file.split(XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA).first();
         QString fileSize = file.split(XWARE_CONSTANTS_STRUCT.SPLITER_BTWN_DATA).last();
-        item.fileSize = convertToByteUnit(fileSize).toInt();
+        item.fileSize = (qint64)convertToByteUnit(fileSize).toDouble();
+
         info.fileList.append(item);
     }
 
@@ -233,17 +234,13 @@ void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
 
 void XwarePopulateObject::loginError(short type, QString errorMsg)
 {
+    // 1: login fail   2: vertify code fail
     switch (type)
     {
     // username & password
     case 1:
         emit sLoginError(tr("Login  failed"), errorMsg);
         break;
-
-    // password
-//    case 2:
-//        emit sError(tr("User password error"), errorMsg);
-//        break;
 
     // vertify code
     case 2:
@@ -253,18 +250,6 @@ void XwarePopulateObject::loginError(short type, QString errorMsg)
 
         errorMsg = errorMsg.split(this->spliterBtwData).at(0);
 
-        // emit hint
-//        if(errorMsg.startsWith("请"))
-//        {
-//            // let it do nothing!!
-//        }
-
-        // emit error
-//        else
-//        {
-//            emit sError(tr("Vertify code error"), errorMsg);
-//            qDebug()<<" login vertify code error =>"<<errorMsg;
-//        }
         break;
     }
 }

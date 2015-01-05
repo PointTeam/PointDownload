@@ -34,6 +34,7 @@ void YouGetProcess::startDownload()
 
     tmpProcess = new QProcess(0);
     connect(tmpProcess, SIGNAL(finished(int)), tmpProcess, SLOT(deleteLater()));
+    connect(tmpProcess, SIGNAL(finished(int)), updateTimer, SLOT(deleteLater()));
     connect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
     connect(tmpProcess, SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));

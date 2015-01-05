@@ -39,10 +39,18 @@ void URLInfoGeter::run()
 void URLInfoGeter::slotGetInfoFromServer()
 {
     TaskInfo taskInfo(mLocalSocket);
-    qDebug()<<" task info "<<taskInfo;
 
-    // @Match-Yang
-//    emit sGetAllFileInfo(allFileInfo);
+    QList<TaskFileItem> tmpList = taskInfo.fileList;
+    QString allFileInfos = "";
+    for (int i = 0; i < tmpList.length(); i ++)
+    {
+        allFileInfos += i > 0 ? "#:#" : "";
+        allFileInfos += getFileTypeByName(tmpList.at(i).fileName) + "@:@"
+                + QString::number(tmpList.at(i).fileSize) + "@:@"
+                + tmpList.at(i).fileName;
+    }
+
+    emit sGetAllFileInfo(allFileInfos);
 }
 
 

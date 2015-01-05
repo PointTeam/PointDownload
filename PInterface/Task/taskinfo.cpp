@@ -76,7 +76,7 @@ QString TaskInfo::fileListString() const
 }
 
 /*!
-    虽然一个任务中可能包含多个文件但代码中一直以第一个文件做为任务名称
+    文件名列表大于1的时候以文件大小为-1的项作为文件名
 */
 QString TaskInfo::taskName() const
 {
@@ -85,6 +85,13 @@ QString TaskInfo::taskName() const
         qWarning() << "task file list is empty !";
         return "Empty";
     }
+    for (int i = 0; i < fileList.length(); i ++)
+    {
+        if (fileList.at(i).fileSize == -1)
+            return fileList.at(i).fileName;
+    }
+
+    //if there is no item's size with -1,just return the first item
     return fileList.at(0).fileName;
 }
 

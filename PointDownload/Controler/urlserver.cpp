@@ -55,7 +55,7 @@ void URLServer::socketReadyReadHandler()
     QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
     TaskInfo taskInfo(socket);
 
-    qDebug() << taskInfo;
+//    qDebug() << taskInfo;
 
     if (TOOL_XWARE_PARSE == taskInfo.toolType)
     {

@@ -1,3 +1,7 @@
+#dpkg-buildpackage file
+PointDownload/debian/
+PointPopup/debian/
+debian/pointdownload/
 #backup file
 *~
 #just for Poin

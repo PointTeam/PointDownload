@@ -181,8 +181,6 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
     taskInfo.maxThreads = threads.toInt();
     taskInfo.maxSpeed = speed.toInt();
 
-    qDebug() << taskInfo;
-
     if (localSocket->write(taskInfo.toQByteArray()) == -1)
         qWarning() << "localSocket write error";
     localSocket->flush();

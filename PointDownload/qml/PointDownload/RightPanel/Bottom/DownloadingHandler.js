@@ -123,8 +123,8 @@ function addNewItem(infoList)
     }
 
     console.log(infoArry);
-    console.log(infoArry[9])
-    console.log(parseFloat(infoArry[9]))
+    //console.log(infoArry[9])
+    //console.log(parseFloat(infoArry[9]))
 
     //从已下载项和垃圾桶传过来的值中没有下载百分比(infoArry[7])的数据
     ingItemModel.append({"tmpDLToolsType":infoArry[0],

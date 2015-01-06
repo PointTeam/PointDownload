@@ -10,7 +10,7 @@ Window {
 
     color: "#00000000"
     width: 280
-    height: 80
+    height: 30 + messageText.height + noticeTitleText.height
     opacity: 1
 
     property string messageTitle: ""
@@ -45,7 +45,9 @@ Window {
         text:messageTitle
         color: titleColor
         font.pixelSize: 15
+        width:mainRec.width - 25
         font.bold: true
+        wrapMode: Text.Wrap
         anchors {top: mainRec.top; topMargin: 10; horizontalCenter: mainRec.horizontalCenter}
     }
 
@@ -56,38 +58,11 @@ Window {
         font.pixelSize: 13
         width:mainRec.width - 20
         wrapMode: Text.Wrap
-        horizontalAlignment: Text.AlignHCenter
+        anchors {top: noticeTitleText.bottom; topMargin: 10; horizontalCenter: mainRec.horizontalCenter}
     }
 
-    ScrollView {
-        id:csView
-        contentItem: messageText
-        width: mainRec.width - 20
-        height: mainRec.height - 50
-        style: ScrollViewStyle {
-            transientScrollBars: true
-            handle: Item {
-                implicitWidth: 14
-                implicitHeight: 18
-                Rectangle {
-                    color: "#114f64"
-                    radius: 3
-                    anchors.fill: parent
-                    anchors.topMargin: 6
-                    anchors.leftMargin: 4
-                    anchors.rightMargin: 4
-                    anchors.bottomMargin: 6
-                }
-            }
-            scrollBarBackground: Item {
-                implicitWidth: 14
-                implicitHeight: 26
-            }
-        }
-        anchors {top: noticeTitleText.bottom; topMargin: 5;bottomMargin: 10;right: mainRec.right; rightMargin: 8}
-    }
     MouseArea {
-        anchors.fill: csView
+        anchors.fill: messageText
         hoverEnabled: true
         onEntered: delayTimer.stop()
         onExited: delayTimer.start()

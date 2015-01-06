@@ -350,9 +350,10 @@ void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
         break;
     default:
         qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
+        qWarning() << "taskInfo.toolType is " << taskInfo.toolType;
     }
 
-    NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo.fileListString());
+    NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo.fileStringList().join('\n'));
     emit sDownloadItemChanged();
 }
 

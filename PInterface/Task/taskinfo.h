@@ -53,7 +53,7 @@ public:
 
 public:
     QByteArray toQByteArray() const;
-    QString fileListString() const;
+    QStringList fileStringList() const;
     QString taskName() const;
     qint64 taskSize() const;
 

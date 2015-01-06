@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
     if (socket.waitForConnected(100))
         return 0;
 
-
     QString local = QLocale::system().name();
     QTranslator translator;
     translator.load(QString(":/languages/:/languages/resources/LANG/PointDownload_") + local);
@@ -91,6 +90,8 @@ int main(int argc, char *argv[])
        WebCtrlViewTest::getInstance()->show();
    }
 
-    return app.exec();
+   //NormalNotice::getInstance()->showMessage("a444466666666666666666666666666666666666664444555sdf", "as4564564654564564646554644444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444dfasdfdfsaadfasdfasdfasdfasdfsadfasdfasdasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfasdfasdfasdf");
+
+   return app.exec();
 }
 

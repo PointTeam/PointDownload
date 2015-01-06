@@ -63,16 +63,13 @@ QByteArray TaskInfo::toQByteArray() const
 /*!
     获取当前任务的文件列表
 */
-QString TaskInfo::fileListString() const
+QStringList TaskInfo::fileStringList() const
 {
-    QString str;
+    QStringList list;
 
     for (TaskFileItem i : fileList)
-        str += i.fileName + "\n";
-
-    if (!str.isEmpty())
-        return str.left(str.size() - 1);
-    return str;
+        list << i.fileName;
+    return list;
 }
 
 /*!

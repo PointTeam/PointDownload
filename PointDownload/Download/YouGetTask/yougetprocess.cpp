@@ -26,6 +26,8 @@ YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(getTimerUpdate()));
 }
 
 void YouGetProcess::startDownload()
@@ -34,7 +36,6 @@ void YouGetProcess::startDownload()
 
     tmpProcess = new QProcess(0);
     connect(tmpProcess, SIGNAL(finished(int)), tmpProcess, SLOT(deleteLater()));
-    connect(tmpProcess, SIGNAL(finished(int)), updateTimer, SLOT(deleteLater()));
     connect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
     connect(tmpProcess, SIGNAL(readyReadStandardOutput()),this,SLOT(getFeedBack()));
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
@@ -60,15 +61,13 @@ void YouGetProcess::startDownload()
 void YouGetProcess::stopDownload()
 {
     disconnect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
-    tmpProcess->kill();
+    tmpProcess->terminate();
 }
 
 void YouGetProcess::yougetStarted()
 {
     //进程启动完成后再启动定时器
-    updateTimer = new QTimer();
-    connect(updateTimer, SIGNAL(timeout()), this, SLOT(getTimerUpdate()));
-    updateTimer->start(UPDATE_INTERVAL);
+    updateTimer.start(UPDATE_INTERVAL);
 }
 
 void YouGetProcess::getFeedBack()
@@ -127,7 +126,7 @@ void YouGetProcess::getError()
 
 void YouGetProcess::yougetProcessFinish(int ret)
 {
-    updateTimer->stop();
+    updateTimer.stop();
 
     if (!ret)
         emit sFinishYouGetDownload(taskInfo.rawUrl);

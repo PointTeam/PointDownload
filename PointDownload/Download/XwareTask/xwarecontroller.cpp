@@ -128,6 +128,8 @@ bool XwareController::startETM()
     ETMProcess->setProgram(XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH);
     ETMProcess->setArguments(args);
 
+    qDebug() << "ETMProcess" << XWARE_CONSTANTS_STRUCT.XWARE_START_UP_PATH << args;
+
     if(XWARE_CONSTANTS_STRUCT.DEBUG)
         qDebug()<< "start XwareStartUp to start ETM ==>"<<ETMProcess->program()
                    <<ETMProcess->arguments() ;

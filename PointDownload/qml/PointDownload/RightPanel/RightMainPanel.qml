@@ -30,21 +30,15 @@ History:
 *********************************************************************/
 
 import QtQuick 2.0
+import Singleton.PEventFilter 1.0
 import "Top"
 import "Middle"
 import "Bottom"
-import "../LeftPanel"
 
 Rectangle {
     id: rightMainPanel
-    width: 700
-    height: parent.height
 
     color: "#ecf2f6"
-
-    signal middlePanelPress(int middleX,int middleY)
-    signal middlePanelRelease()
-    signal middlePanelPositionChange()
 
     //顶部功能按钮
     TopPanel {
@@ -55,54 +49,35 @@ Rectangle {
     }
 
     //中部资源信面板
-    MiddlePanel {
+    MiddlePanel
+    {
         id: infoMenu
-        y: topMenu.height
-        anchors {left: parent.left;}
 
-        MouseArea{
-            id:middleMouse
-            enabled: parent.height <= 5?false:true
-            anchors.fill: parent
-            anchors.bottomMargin: 20
-            onPressed:  {
-                rightMainPanel.middlePanelPress(mouseX,mouseY)
-                middleMouse.cursorShape=Qt.DragMoveCursor
-            }
-            onReleased: {
-                rightMainPanel.middlePanelRelease()
-                middleMouse.cursorShape=Qt.ArrowCursor
-            }
-
-            onPositionChanged: {
-                rightMainPanel.middlePanelPositionChange()
-            }
-        }
+        anchors.left: parent.left;
+        anchors.top: topMenu.bottom;
+        anchors.topMargin: 10;
     }
 
-    //包括设置面板跟下载项listview的一个总listview
-    RightListView {
-        id: rightView
+    TaskListView
+    {
+        id: taskList;
+
+        height: parent.height - topMenu.height - infoMenu.height - anchors.topMargin
         width: parent.width
-        height: parent.height - topMenu.height - infoMenu.height
+
+        anchors.topMargin: 10;
         anchors.top: infoMenu.bottom
-        anchors.topMargin: 10
+        anchors.bottom: parent.bottom
     }
 
-    //在LeftPanel下的navigationBar中只能读取到其父组建中的id，即是main中定义的一些组建id
-    //即可读取到main中的rightPanel（此文件），所以可以再通过这个函数来传递动作
-    function setDownloadListPage(page)
+    function getDownloadListCount(type)
     {
-        rightView.setDownloadPage(page);
+        return taskList.getDownloadListCount(type);
     }
 
-    function getDownloadListCount(downloadType)
+    // 设置当前下载view显示的列表
+    function setCurrentPage(page)
     {
-        return rightView.getDownloadListCount(downloadType)
-    }
-
-    function refresh()
-    {
-        rightView.refresh()
+        taskList.currentIndex = page;
     }
 }

@@ -12,8 +12,8 @@ YouGetTask_::~YouGetTask_()
 
 void YouGetTask_::start()
 {
-    if (youget)
-        qDebug() << "YouGetTask: start() 方法被多次调用！";
+    // 防止多次启动进程造成的内存泄漏
+    Q_ASSERT(!youget);
 
     youget = new QProcess(this);
 

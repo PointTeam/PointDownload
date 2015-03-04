@@ -53,13 +53,15 @@ void YouGetProcess::startDownload()
     // 设置url参数，这里用解析后的url，以减少重定向开销
     arguments << taskInfo.parseUrl;
 
-    qDebug() << "YouGet command line arguments: " << arguments;
+    qDebug() << "YouGet start: " << arguments;
 
     tmpProcess->start("python3", arguments);
 }
 
 void YouGetProcess::stopDownload()
 {
+    Q_ASSERT(tmpProcess);
+
     disconnect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
     tmpProcess->terminate();
 }
@@ -132,4 +134,8 @@ void YouGetProcess::yougetProcessFinish(int ret)
         emit sFinishYouGetDownload(taskInfo.rawUrl);
     else
         emit yougetError(taskInfo.rawUrl, "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
+
+    // 这里有个问题，ProfessFinish 的信号并没有被界面响应，底层的任务异常结束后应该把下载状态改为暂停状态
+
+    tmpProcess = NULL;
 }

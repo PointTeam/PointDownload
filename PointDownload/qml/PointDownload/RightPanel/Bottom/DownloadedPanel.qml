@@ -28,7 +28,6 @@ Rectangle {
     id: downloadedPanel
     color: "#3da5ca"
 
-
     //连接单例的信号
     Connections {
         target: DLDataConverter

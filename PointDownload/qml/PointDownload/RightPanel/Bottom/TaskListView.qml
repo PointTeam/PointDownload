@@ -29,41 +29,31 @@ History:
 
 import QtQuick 2.0
 
+import "../Bottom"
+
 ListView {
-    id:bottomMainPanel
+    id: taskList
     model: itemModel
-    snapMode: ListView.SnapToItem
+    clip: true
+    highlightFollowsCurrentItem: true
+    flickDeceleration: 5000
+    highlightMoveDuration:500
+    highlightRangeMode: ListView.StrictlyEnforceRange
+    // ListView.SnapToItem 会导致下载列表初始显示不正确
+    //snapMode: ListView.SnapToItem
     orientation: ListView.Vertical
     boundsBehavior: Flickable.StopAtBounds
-    flickDeceleration: 5000
-    highlightFollowsCurrentItem: true
-    highlightMoveDuration:500
-//    highlightRangeMode: ListView.StrictlyEnforceRange
-
-    clip: true
 
     VisualItemModel
     {
         id: itemModel
 
-        //SearchPanel {id: searchPage; height: bottomMainPanel.height; width: bottomMainPanel.width;}
-        DownloadingPanel {id: downloadingPage; height: bottomMainPanel.height; width: bottomMainPanel.width;}
-        DownloadedPanel {id: downloadedPage; height: bottomMainPanel.height; width: bottomMainPanel.width;}
-        DownloadTrashPanel {id: downloadTrashPage; height: bottomMainPanel.height; width: bottomMainPanel.width;}
+        DownloadingPanel {id: downloadingPage; height: taskList.height; width: taskList.width;}
+        DownloadedPanel {id: downloadedPage; height: taskList.height; width: taskList.width;}
+        DownloadTrashPanel {id: downloadTrashPage; height: taskList.height; width: taskList.width;}
     }
 
-    // 设置当前需要显示的面板，被RightListView的setDownloadPage方法调用
-    function setCurrentPage(page)
-    {
-        bottomMainPanel.currentIndex = page;
-    }
-
-    function refresh()
-    {
-        currentItem.refresh();
-    }
-
-    function getListCountCount(downloadType)
+    function getDownloadListCount(downloadType)
     {
         if (downloadType === "Downloading")
             return downloadingPage.getListCount()

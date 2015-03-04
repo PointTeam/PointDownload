@@ -133,6 +133,11 @@ QString XwareWebController::setElemValueById(QString id, QString value)
 
 void XwareWebController::login(QString userName, QString pwd, QString vertifyCode)
 {
+    qDebug() << "Xware Login:"
+             << userName
+             << pwd
+             << vertifyCode;
+
     if(loginState == LoginNotReady)
     {
         NormalNotice::getInstance()->showMessage(tr("Login service not ready"), Notice_Color_Notice,

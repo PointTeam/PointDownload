@@ -154,3 +154,6 @@ BINDIR = $$PREFIX/PointDownload
 
 target.path = $$BINDIR
 INSTALLS += target
+
+DISTFILES += \
+    qml/PointDownload/RightPanel/Bottom/TaskListView.qml

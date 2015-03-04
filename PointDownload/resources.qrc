@@ -79,7 +79,6 @@
         <file>qml/PointDownload/main.qml</file>
         <file>qml/PointDownload/ToolTip/CloseTip.qml</file>
         <file>qml/PointDownload/ToolTip/CloseTipCreator.js</file>
-        <file>qml/PointDownload/RightPanel/RightListView.qml</file>
         <file>qml/PointDownload/RightPanel/RightMainPanel.qml</file>
         <file>qml/PointDownload/RightPanel/Top/BlueButton.qml</file>
         <file>qml/PointDownload/RightPanel/Top/FButton.qml</file>
@@ -93,7 +92,7 @@
         <file>qml/PointDownload/RightPanel/Middle/HistogramRectangle.qml</file>
         <file>qml/PointDownload/RightPanel/Middle/InfoCircle.qml</file>
         <file>qml/PointDownload/RightPanel/Middle/MiddlePanel.qml</file>
-        <file>qml/PointDownload/RightPanel/Bottom/BottomMainPanel.qml</file>
+        <file>qml/PointDownload/RightPanel/Bottom/TaskListView.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadedHandler.js</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadedPanel.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadingHandler.js</file>

@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
+    Q_UNUSED(engin);
 
    //添加全局事件过滤
    app.installEventFilter(PEventFilter::getInstance());
@@ -89,8 +90,6 @@ int main(int argc, char *argv[])
    {
        WebCtrlViewTest::getInstance()->show();
    }
-
-   //NormalNotice::getInstance()->showMessage("a444466666666666666666666666666666666666664444555sdf", "as4564564654564564646554644444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444dfasdfdfsaadfasdfasdfasdfasdfsadfasdfasdasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfasdfasdfasdf");
 
    return app.exec();
 }

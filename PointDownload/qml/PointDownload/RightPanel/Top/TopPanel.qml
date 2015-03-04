@@ -31,8 +31,8 @@ History:
 import QtQuick 2.0
 import QtQuick.Window 2.0
 import settingControler 1.0
-import Singleton.TopContrl 1.0
 import Singleton.PEventFilter 1.0
+import Singleton.TopContrl 1.0
 import Singleton.DLDataConverter 1.0
 import Singleton.MonitorClipBoard 1.0
 //import "../../ToolTip/CloseTipCreator.js" as CloseTip
@@ -45,29 +45,6 @@ Rectangle {
     width: parent.width
     height: 50
     color: "#ffffff"
-
-    //连接单例的信号
-    Connections {
-        target: TopContrl
-        onSignalShowMainWindow:{
-            mainWindow.show()
-            mainWindow.flags &= ~Qt.ToolTip
-            DropzonePage.destroyDropzone()
-        }
-
-        onSignalHideMainWindow:{
-            mainWindow.hide()
-            mainWindow.flags |= Qt.ToolTip
-            if (settingCtrl.enableDropzone)
-                DropzonePage.showDropzone(topPanel)
-        }
-
-        onSignalShowAboutPoint:AboutPage.showAbout(topPanel)
-    }
-    SettingControler {
-        id: settingCtrl
-
-    }
 
     Rectangle {
         id: spaceRec
@@ -89,18 +66,9 @@ Rectangle {
         id:middleMouse
         anchors.fill: topPanel
 
-        onPressed:  {
-            rightMainPanel.middlePanelPress(mouseX,mouseY - 45)
-            middleMouse.cursorShape=Qt.DragMoveCursor
-        }
-        onReleased: {
-            rightMainPanel.middlePanelRelease()
-            middleMouse.cursorShape=Qt.ArrowCursor
-        }
-
-        onPositionChanged: {
-            rightMainPanel.middlePanelPositionChange()
-        }
+        onPositionChanged: mainWindowDrag_changed(mouseX, mouseY);
+        onPressed: {mainWindowDrag_pressed(mouseX, mouseY); cursorShape = Qt.DragMoveCursor;}
+        onReleased: {mainWindowDrag_released(); cursorShape = Qt.ArrowCursor;}
     }
 
     BlueButton {
@@ -115,7 +83,6 @@ Rectangle {
                 SettingScript.destroySettingWin()
                 settingCtrl.setSettingWinShowed(false)
             }
-
             else
             {
                 SettingScript.showSettingWin(topPanel,PEventFilter.globalX + 30,PEventFilter.globalY)
@@ -142,11 +109,11 @@ Rectangle {
             settingCtrl.initData()
             if (settingCtrl.exitOnClose)
             {
-                TopContrl.destroyAll()
+                mainWindow_destroy();
             }
             else
             {
-                TopContrl.hideMainWindow()
+                mainWindow_hide();
             }
         }
     }

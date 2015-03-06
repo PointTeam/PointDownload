@@ -1,23 +1,9 @@
-/***********************************************************************
-*PointDownload
-*Copyright (C) 2014  PointTeam
-*
-* Author:     Match <2696627729@qq.com>
-* Maintainer: Match <2696627729@qq.com>
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
- ***********************************************************************/
+/**
+ *  Author: sbwtw <sbwtws@gmail.com>
+ *
+ *  下载任务界面管理的脚本，用于控制所有任务列表
+ * */
+
 
 function updateFileName(url,newName)
 {
@@ -76,6 +62,31 @@ function updateHightSpeed(url,speed)
     }
 }
 
+// 为了兼容新代码和旧代码而做转换, 新代码中不再以String类型表示任何不必要的属性
+// 这些常量的定义可以在 taskInfo.h 中找到
+function convertDLSTATE(dlstate)
+{
+    if (typeof dlstate === 'number')
+        return dlstate;
+
+    console.log('convertDLSTATE called');
+
+    dlstate = dlstate.toUpperCase();
+
+    if (dlstate === 'DLSTATE_SUSPEND')
+        return 1;
+    if (dlstate === 'DLSTATE_DOWNLOADING')
+        return 2;
+    if (dlstate === 'DLSTATE_READY')
+        return 3;
+    if (dlstate === 'DLSTATE_DOWNLOADED')
+        return 4;
+    if (dlstate === 'DLSTATE_CANCELD')
+        return 5;
+
+    return 0;
+}
+
 function updateFileState(url,state)
 {
     for (var i = 0; i < ingItemModel.count; i ++)
@@ -84,7 +95,7 @@ function updateFileState(url,state)
         tmpObj = ingItemModel.get(i);
         if (tmpObj.tmpURL === url)
         {
-            ingItemModel.setProperty(i,"tmpState",state);
+            ingItemModel.setProperty(i, "tmpState", convertDLSTATE(state));
             break;
         }
     }
@@ -104,43 +115,41 @@ function updatePercentage(url,newPercentage)
     }
 }
 
-function addNewItem(infoList)
+// 格式化文件大小
+function formatFileSize(size)
 {
-    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage?:?state
-    var infoArry = infoList.split("?:?");
-    if (infoArry.length > 5)
+    if (size < 10000)
+        return size.toFixed(1) + "B";
+
+    size /= 1024;
+
+    if (size < 1024)
+        return size.toFixed(2) + "KB";
+
+    size /= 1024;
+
+    if (size < 1024)
+        return size.toFixed(2) + "MB";
+
+    size /= 1024;
+
+    return size.toFixed(2) + "GB";
+}
+
+function addNewTask(taskInfo)
+{
+//    console.log(JSON.stringify(taskInfo));
+
+    // 1 暂停 2 正在下载 3 等待下载 4 下载完成 5 垃圾箱
+    switch (taskInfo.state)
     {
-        var sizeByte=0;
-
-        if (infoArry[5] > 1024 * 1024 * 1024)//GB
-            sizeByte = (infoArry[5] / (1024 * 1024 * 1024)).toFixed(1) + " GB"
-        else if (infoArry[5] > 1024 * 1024)//MB
-            sizeByte = (infoArry[5] / (1024 * 1024)).toFixed(1) + " MB"
-        else if (infoArry[5] > 1024)//KB
-            sizeByte = (infoArry[5] / 1024).toFixed(1) + " KB"
-        else
-            sizeByte = (infoArry[5] / 1).toFixed(1) + " B"
+        case 1:
+        case 2:
+        case 3:     downloadingModel.append(taskInfo);      break;
+        case 4:     downloadedModel.append(taskInfo);       break;
+        case 5:     trashModel.append(taskInfo);            break;
+        default:    console.log(qsTr('TaskState Wrong.'), JSON.stringify(taskInfo));
     }
-
-    console.log(infoArry);
-    //console.log(infoArry[9])
-    //console.log(parseFloat(infoArry[9]))
-
-    //从已下载项和垃圾桶传过来的值中没有下载百分比(infoArry[7])的数据
-    ingItemModel.append({"tmpDLToolsType":infoArry[0],
-                        "tmpName":infoArry[1],
-                        "tmpURL":infoArry[2],
-                        "tmpPath":infoArry[4],
-                        "tmpSize":sizeByte,
-                        "tmpPercentage":infoArry[9] === undefined ? 0 : parseFloat(infoArry[9]),
-                        "tmpState":infoArry[10] === undefined ? "dlstate_downloading" : infoArry[10],
-                        "tmpSpeed": "0KB/S",
-                        "tmpOfflineSpeed":"",
-                        "tmpHightSpeed":""});
-    //把已下载项中的数据删除，包括界面
-    downloadedPage.moveItem(infoArry[2]);
-    //删除垃圾箱里的数据，包括界面
-    downloadTrashPage.moveItem(infoArry[2]);
 }
 
 function removeItem(url)

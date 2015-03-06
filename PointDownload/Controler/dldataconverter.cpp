@@ -1,5 +1,8 @@
 #include "dldataconverter.h"
+#include "taskinfo.h"
+
 #include <QtQml>
+#include <QQuickView>
 
 DLDataConverter::DLDataConverter(QObject *parent) :
     QObject(parent)
@@ -63,7 +66,7 @@ void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QS
             UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_hightSpeedChannel,URL);
         else if (otype == "download_finishDownload")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_finishDownload, URL);
-        emit sDLStateChange(URL, otype);
+        emit sDLStateChange(URL, TaskInfo::convertDownStateToInt(otype));
     }
     else if (dtype == "dl_search")
     {
@@ -88,20 +91,9 @@ void DLDataConverter::resumeAllDownloading()
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
 
-void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
+void DLDataConverter::addTaskItem(TaskInfo *taskInfo)
 {
-    emit taskAdded(taskInfo.getDownloadingInfoToString());
-}
-
-void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)
-{
-    emit downloadedAdded(taskInfo.getDownloadedInfoToString());
-}
-
-void DLDataConverter::addDownloadTrashItem(const TaskInfo &taskInfo)
-{
-    // 由于trash的string结构和downloaded的string(?:?)结构一样，所以使用了dowbloaded的信息来代替，以后这种信息结构将废弃
-    emit trashAdded(taskInfo.getDownloadedInfoToString());
+    emit taskAdded(taskInfo);
 }
 
 void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
@@ -114,13 +106,13 @@ void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
     switch(infoList.downloadState)
     {
     case dlstate_downloading:
-        emit sDLStateChange(tmpURL, "dlstate_downloading");
+        emit sDLStateChange(tmpURL, DLSTATE_DOWNLOADING);
         break;
-    case dlstate_ready:;
-        emit sDLStateChange(tmpURL, "dlstate_ready");
+    case dlstate_ready:
+        emit sDLStateChange(tmpURL, DLSTATE_READY);
         break;
     case dlstate_suspend:
-        emit sDLStateChange(tmpURL, "dlstate_suspend");
+        emit sDLStateChange(tmpURL, DLSTATE_SUSPEND);
         break;
     default:
         break;
@@ -205,14 +197,12 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
 void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
-    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo)), this, SLOT(addDownloadingItem(TaskInfo)));
+    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo*)), this, SLOT(addTaskItem(TaskInfo*)));
 }
 
 void DLDataConverter::initConnection()
 {
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(TaskInfo)), this, SLOT(addDownloadedItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(taskAdded(TaskInfo*)), this, SLOT(addTaskItem(TaskInfo*)));
 
     connect(UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SLOT(slotGetDownloadingInfo(DownloadingItemInfo)));

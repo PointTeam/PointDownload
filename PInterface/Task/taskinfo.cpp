@@ -69,6 +69,7 @@ QStringList TaskInfo::fileStringList() const
 
     for (TaskFileItem i : fileList)
         list << i.fileName;
+
     return list;
 }
 
@@ -180,19 +181,7 @@ void TaskInfo::setToolTypeFromString(const QString &tool)
 */
 void TaskInfo::setDownStateFromString(const QString &state)
 {
-    if (!state.compare("dlstate_suspend", Qt::CaseInsensitive))
-        taskState = DLSTATE_SUSPEND;
-    else if (!state.compare("dlstate_downloading", Qt::CaseInsensitive))
-        taskState = DLSTATE_DOWNLOADING;
-    else if (!state.compare("dlstate_ready", Qt::CaseInsensitive))
-        taskState = DLSTATE_READY;
-    else if (!state.compare("dlstate_downloaded", Qt::CaseInsensitive))
-        taskState = DLSTATE_DOWNLOADED;
-    else
-    {
-        qWarning() << "download state not match any case At: void TaskInfo::setDownStateFromString(const QString &state)";
-        taskState = DLSTATE_UNDEF;
-    }
+    taskState = convertDownStateToInt(state);
 }
 
 /*!
@@ -285,6 +274,23 @@ QString TaskInfo::getDownloadingInfoToString() const
     infoStr += getDownStateToString();
 
     return std::move(infoStr);
+}
+
+int TaskInfo::convertDownStateToInt(const QString state)
+{
+    if (!state.compare("dlstate_suspend", Qt::CaseInsensitive))
+        return DLSTATE_SUSPEND;
+    else if (!state.compare("dlstate_downloading", Qt::CaseInsensitive))
+        return DLSTATE_DOWNLOADING;
+    else if (!state.compare("dlstate_ready", Qt::CaseInsensitive))
+        return DLSTATE_READY;
+    else if (!state.compare("dlstate_downloaded", Qt::CaseInsensitive))
+        return DLSTATE_DOWNLOADED;
+    else
+    {
+        qWarning() << "download state not match any case At: void TaskInfo::setDownStateFromString(const QString &state)";
+        return DLSTATE_UNDEF;
+    }
 }
 
 TaskInfo &TaskInfo::operator =(const TaskInfo &what)

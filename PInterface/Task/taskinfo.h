@@ -12,7 +12,6 @@
 #include <QIcon>
 #include <QDir>
 #include <QDebug>
-#include <QObject>
 
 #include "taskfileitem.h"
 
@@ -31,7 +30,7 @@
 #define DLSTATE_DOWNLOADING 2   // 正在下载
 #define DLSTATE_READY       3   // 就绪，当前任务允许下载但总下载任务数已经达到设定上限时，此任务就为就绪状态
 #define DLSTATE_DOWNLOADED  4   // 下载完成
-#define DLSTATE_CANCELD     5   // 取消下载，当前任务下载了一段时间，或还未开始，但用户点击了“取消下载”，此任务即为取消状态
+#define DLSTATE_TRASH       5   // 移动到垃圾箱的下载任务
 
 class TaskInfo : public QObject
 {
@@ -39,7 +38,7 @@ class TaskInfo : public QObject
 
     Q_PROPERTY(QString name READ taskName)
     Q_PROPERTY(QString rawUrl READ qml_getRawUrl)
-    Q_PROPERTY(QString parseUrl READ qml_getRawUrl)
+    Q_PROPERTY(QString parseUrl READ qml_getParseUrl)
     Q_PROPERTY(QString iconPath READ qml_getIconPath)
     Q_PROPERTY(QString savePath READ qml_getSavePath)
     Q_PROPERTY(QString completeDate READ qml_getCompleteDate)
@@ -47,7 +46,8 @@ class TaskInfo : public QObject
     Q_PROPERTY(int toolType READ qml_getToolType)
     Q_PROPERTY(int maxThreads READ qml_getMaxThreads)
     Q_PROPERTY(int maxSpeed READ qml_getMaxSpeed)
-    Q_PROPERTY(int taskState READ qml_getTaskState)
+    Q_PROPERTY(int state READ qml_getTaskState)
+    Q_PROPERTY(int size READ taskSize)
 
 public:
     TaskInfo();
@@ -70,6 +70,7 @@ public:
     QString getInfoToString() const;
     QString getDownloadedInfoToString() const;
     QString getDownloadingInfoToString() const;
+    Q_INVOKABLE static int convertDownStateToInt(const QString state);
 
 public:
     TaskInfo &operator =(const TaskInfo &what);

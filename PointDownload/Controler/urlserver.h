@@ -39,7 +39,7 @@ public:
     ~URLServer();
 
 signals:
-    void newTaskAdded(const TaskInfo & taskInfo);
+    void newTaskAdded(TaskInfo *taskInfo);
 
 private slots:
     void serverNewConnectionHandler();

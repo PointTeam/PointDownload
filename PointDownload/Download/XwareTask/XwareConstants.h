@@ -26,7 +26,6 @@
 #include <QString>
 #include <QStandardPaths>
 
-
 static struct XwareConstants
 {
     // is output the debug info
@@ -101,14 +100,8 @@ static struct XwareConstants
 
         // url
         URLSTR = "http://127.0.0.1:" + QString::number(ETM_PORT) + "/";
-
-        SPLITER_BTWN_DATA = "#..#";
-        SPLITER_END = "#.^_^.#";
-        SPLITER_DEFAULT_PARAM = "--";
     }
 
 }XWARE_CONSTANTS_STRUCT;
-
-
 
 #endif // XWARECONSTANTS_H

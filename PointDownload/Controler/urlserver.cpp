@@ -66,7 +66,7 @@ void URLServer::socketReadyReadHandler()
     //启动下载
     UnifiedInterface::getInstance()->startDownload(taskInfo);
 
-    emit newTaskAdded(taskInfo);                //此信号连接到downloadingsender类
+    emit newTaskAdded(&taskInfo);                //此信号连接到downloadingsender类
 }
 
 void URLServer::taskParseFeedback(TaskInfo taskInfo)

@@ -19,16 +19,16 @@ public:
     Q_INVOKABLE void resumeAllDownloading();
 
 signals:
-    void taskAdded(const QString& infoString);
-    void downloadedAdded(const QString& infoString);
-    void trashAdded(const QString& infoString);
+    void taskAdded(TaskInfo *taskInfo);         // 添加任务到列表
+    void taskInfoChange(TaskInfo *taskInfo);    // 任务信息改变
+    void taskStatusChange(TaskInfo *taskInfo);  // 任务状态改变
     void taskCompleted(const QString& infoString);
     void taskRemoved(const QString& infoString);
     //dlType：Downloading、Downloaded、DownloadTrash
     void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
     void sFileInfoChange(QString dlType, const TaskInfo &taskInfo);
     //dlState,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
-    void sDLStateChange(QString dlURL, QString dlState);
+    void sDLStateChange(QString dlURL, int dlState);
     void sDLSpeedChange(QString dlURL, QString dlSpeed);
     void sDLProgressChange(QString dlURL, double progress);
     void sThunderOfflineSpeedChange(QString dlURL, QString offlineSpeed);
@@ -43,9 +43,7 @@ signals:
 public slots:
     //用于接收统一接口类信号的接收
     //为列表面板添加项
-    void addDownloadingItem(const TaskInfo &taskInfo);
-    void addDownloadedItem(const TaskInfo &taskInfo);
-    void addDownloadTrashItem(const TaskInfo &taskInfo);
+    void addTaskItem(TaskInfo *taskInfo);
 
     void slotGetDownloadingInfo(DownloadingItemInfo infoList);
     //操作返回值

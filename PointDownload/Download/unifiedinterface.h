@@ -80,9 +80,7 @@ public:
     void resumeAllDownloading();
     int getJobCount();
 signals:
-    void sAddDownloadingItem(const TaskInfo &taskInfo);
-    void sAddDownloadedItem(const TaskInfo &taskInfo);
-    void sAddDownloadTrashItem(const TaskInfo &taskInfo);
+    void taskAdded(TaskInfo *taskInfo);
 
     //实时数据
     void sRealTimeData(DownloadingItemInfo info);

@@ -20,7 +20,6 @@
  ***********************************************************************/
 
 import QtQuick 2.0
-import "TrashHandler.js" as TrashScript
 import "Item"
 import Singleton.DLDataConverter 1.0
 
@@ -28,15 +27,12 @@ Rectangle {
     id: trashPanel
     color: "#3da5ca"
 
-    //连接单例的信号
-    Connections {
-        target: DLDataConverter
-        onTrashAdded: TrashScript.addNewItem(infoString);
-    }
+//    //连接单例的信号
+//    Connections {
+//        target: DLDataConverter
+//        onTaskAdded: TrashScript.addNewItem(taskInfo);
+//    }
 
-    ListModel {
-        id: trashItemModel
-    }
     Component {
         id: listDelegate
 
@@ -70,7 +66,7 @@ Rectangle {
     ListView {
         id: trashView
         anchors.fill: parent
-        model: trashItemModel
+        model: trashModel
         spacing: 4
         delegate: listDelegate
         clip: true

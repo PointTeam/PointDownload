@@ -31,7 +31,7 @@ import QtQuick 2.0
 Rectangle {
     id: trashItem
 
-    property string iconPath: "qrc:/images/right/filetype/unknow-file"
+    property string iconPath: "qrc:/images/right/filetype/noicon"
     property string checkIconPath: "qrc:/images/right/uncheck"
     property string fileName: ""
     property string fileURL: ""

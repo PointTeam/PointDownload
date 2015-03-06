@@ -770,11 +770,12 @@ void UnifiedInterface::initDownloadedList()
         taskInfo.rawUrl = edList.at(i).URL;
         taskInfo.taskIconPath = edList.at(i).iconPath;
         taskInfo.completeDate = edList.at(i).completeDate;
+        taskInfo.taskState = DLSTATE_DOWNLOADED;
         fileItem.fileName = edList.at(i).name;
         fileItem.fileSize = edList.at(i).Size.toLongLong();
         taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadedItem(taskInfo);
+        emit taskAdded(&taskInfo);
     }
 }
 
@@ -801,11 +802,12 @@ void UnifiedInterface::initdownloadingList()
         taskInfo.maxThreads = ingList.at(i).threadList.size();
         taskInfo.maxSpeed = ingList.at(i).jobMaxSpeed.toInt();
         taskInfo.percentage = percentage;
+        taskInfo.taskState = DLSTATE_DOWNLOADING;
         fileItem.fileName = ingList.at(i).name;
         fileItem.fileSize = ingList.at(i).totalSize.toLongLong();
         taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadingItem(taskInfo);
+        emit taskAdded(&taskInfo);
 
         if (ingList.at(i).state == "dlstate_downloading")
         {
@@ -825,11 +827,12 @@ void UnifiedInterface::initTrashList()
         taskInfo.setToolTypeFromString(trashList.at(i).dlToolsType);
         taskInfo.taskIconPath = trashList.at(i).iconPath;
         taskInfo.rawUrl = trashList.at(i).URL;
+        taskInfo.taskState = DLSTATE_TRASH;
         fileItem.fileName = trashList.at(i).name;
         fileItem.fileSize = trashList.at(i).totalSize.toLongLong();
         taskInfo.fileList.append(fileItem);
 
-        emit sAddDownloadTrashItem(taskInfo);
+        emit taskAdded(&taskInfo);
     }
 }
 

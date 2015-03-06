@@ -93,13 +93,11 @@
         <file>qml/PointDownload/RightPanel/Middle/InfoCircle.qml</file>
         <file>qml/PointDownload/RightPanel/Middle/MiddlePanel.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/TaskListView.qml</file>
-        <file>qml/PointDownload/RightPanel/Bottom/DownloadedHandler.js</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadedPanel.qml</file>
-        <file>qml/PointDownload/RightPanel/Bottom/DownloadingHandler.js</file>
+        <file>qml/PointDownload/RightPanel/Bottom/TaskListHandler.js</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadingPanel.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/DownloadTrashPanel.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/SearchPanel.qml</file>
-        <file>qml/PointDownload/RightPanel/Bottom/TrashHandler.js</file>
         <file>qml/PointDownload/RightPanel/Bottom/Item/DownloadedItem.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/Item/DownloadedMenu.qml</file>
         <file>qml/PointDownload/RightPanel/Bottom/Item/DownloadingItem.qml</file>
@@ -145,6 +143,7 @@
         <file>qml/PointDownload/ToolTip/MenuTooltipCreator.js</file>
         <file>qml/PointDownload/Message/NormalNoticePage.js</file>
         <file>qml/PointDownload/Message/NormalNoticePage.qml</file>
+        <file>qml/PointDownload/RightPanel/Bottom/DataFormatHelper.js</file>
     </qresource>
     <qresource prefix="/images/setting">
         <file alias="MDSpeed">resources/images/setting/MDSpeed.png</file>

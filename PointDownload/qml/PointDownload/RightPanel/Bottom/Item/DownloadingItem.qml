@@ -33,7 +33,7 @@ import QtQuick 2.0
 Rectangle {
     id: downloadingItem
 
-    property string iconPath: "qrc:/images/right/unknow-file"
+    property string iconPath: "qrc:/images/right/filetype/noicon"
     property string checkIconPath: "qrc:/images/right/uncheck"
     property real ingPercentage:0
     property string fileName: ""

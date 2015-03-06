@@ -1,0 +1,36 @@
+
+## arg 1:  the new package version
+pre_install() {
+    return 0
+}
+
+## arg 1:  the new package version
+post_install() {
+    setcap CAP_SYS_ADMIN=+ep /usr/bin/pointxware
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+pre_upgrade() {
+    rm /usr/bin/pointdownload
+    rm /usr/bin/pointpopup
+    rm /usr/bin/pointxware
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+post_upgrade() {
+    post_install
+}
+
+## arg 1:  the old package version
+pre_remove() {
+    pkill pointdownload
+    pkill pointpopup
+    pkill pointxware
+}
+
+## arg 1:  the old package version
+post_remove() {
+    pre_upgrade
+}

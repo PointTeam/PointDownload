@@ -12,8 +12,8 @@ YouGetTask_::~YouGetTask_()
 
 void YouGetTask_::start()
 {
-    if (youget)
-        qDebug() << "YouGetTask: start() 方法被多次调用！";
+    // 防止多次启动进程造成的内存泄漏
+    Q_ASSERT(!youget);
 
     youget = new QProcess(this);
 
@@ -61,11 +61,11 @@ void YouGetTask_::processFinished(int stat)
     }
     else
     {
-        qDebug() << "YouGet 任务异常结束，返回值为: " << stat;
-        qDebug() << "任务信息:";
-        qDebug() << infomation;
+        emit onTaskError(TERROR_UGET_UDEF);
 
-        emit onTaskError(tr("YouGet任务异常结束，返回值为: %1").arg(QString::number(stat)));
+        qDebug() << tr("YouGet任务异常结束，返回值为: %1").arg(QString::number(stat))
+                 << "任务信息:"
+                 << infomation;
     }
 }
 

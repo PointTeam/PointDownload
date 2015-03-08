@@ -39,7 +39,7 @@ URLServer::URLServer(QObject *parent) :
 URLServer::~URLServer()
 {
     localServer->close();
-    delete localServer;
+    localServer->deleteLater();
 }
 
 void URLServer::serverNewConnectionHandler()

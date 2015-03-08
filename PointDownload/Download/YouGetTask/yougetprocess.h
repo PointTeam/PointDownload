@@ -61,7 +61,7 @@ private:
     TaskInfo taskInfo;
     QProcess * tmpProcess;
     QString lastDataSize;
-    QTimer * updateTimer;
+    QTimer updateTimer;
     short xmlUpdateInterval;
 };
 

@@ -21,57 +21,45 @@
 /*******************************************************************
 Date:   2014.3.20~
 Description:
-    这是RightMainPanel的下部窗口，由下载项面板组成的BottomMainPanel跟设置面板
-    SettingMainPanel组成
+    所有下载项面板的主面板，被RightListView使用
 Others:
-Function list:
 
 History:
-*********************************************************************/
+**********************************************************************/
+
 import QtQuick 2.0
-import "Setting"
-import "Bottom"
+
+import "../Bottom"
 
 ListView {
-    id:rightListViewPanel
+    id: taskList
     model: itemModel
-    snapMode: ListView.SnapToItem
-    orientation: ListView.Horizontal
-    boundsBehavior: Flickable.StopAtBounds
-    flickDeceleration: 5000
+    clip: true
     highlightFollowsCurrentItem: true
+    flickDeceleration: 5000
     highlightMoveDuration:500
     highlightRangeMode: ListView.StrictlyEnforceRange
-    currentIndex: 1
-
-    clip: true
+    // ListView.SnapToItem 会导致下载列表初始显示不正确
+    //snapMode: ListView.SnapToItem
+    orientation: ListView.Vertical
+    boundsBehavior: Flickable.StopAtBounds
 
     VisualItemModel
     {
         id: itemModel
-//        SettingMainPanel {id: settingPanel; height: rightListViewPanel.height; width: rightListViewPanel.width;}
-        BottomMainPanel {id: downloadListPanel;width: rightListViewPanel.width;height: rightListViewPanel.height;}
-    }
 
-    //被Top中的Topanel中的settingButton按钮的onclick事件调用
-    function setCurrentPage(page)
-    {
-        rightListViewPanel.currentIndex = page;
-    }
-
-    //被RightMainanel中的setDownloadListPage函数调用
-    function setDownloadPage(page)
-    {
-       downloadListPanel.setCurrentPage(page)
-    }
-
-    function refresh()
-    {
-        currentItem.refresh();
+        DownloadingPanel {id: downloadingPage; height: taskList.height; width: taskList.width;}
+        DownloadedPanel {id: downloadedPage; height: taskList.height; width: taskList.width;}
+        DownloadTrashPanel {id: downloadTrashPage; height: taskList.height; width: taskList.width;}
     }
 
     function getDownloadListCount(downloadType)
     {
-        return downloadListPanel.getListCountCount(downloadType)
+        if (downloadType === "Downloading")
+            return downloadingPage.getListCount()
+        else if (downloadType === "Downloaded")
+            return downloadedPage.getListCount()
+        else
+            return downloadTrashPage.getListCount()
     }
 }

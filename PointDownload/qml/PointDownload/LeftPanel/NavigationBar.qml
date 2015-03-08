@@ -79,7 +79,7 @@ Rectangle {
             id: downloadingMouse
             anchors.fill: parent
             onClicked: {
-                rightPanel.setDownloadListPage(0)
+                rightPanel.setCurrentPage(0);
                 navigationBar.state = "downloadingGetMouse"
             }
         }
@@ -96,7 +96,7 @@ Rectangle {
             id: downloadedMouse
             anchors.fill: parent
             onClicked: {
-                rightPanel.setDownloadListPage(1)
+                rightPanel.setCurrentPage(1);
                 navigationBar.state = "downloadedGetMouse"
             }
         }
@@ -113,7 +113,7 @@ Rectangle {
             id: downloadTrashMouse
             anchors.fill: parent
             onClicked: {
-                rightPanel.setDownloadListPage(2)
+                rightPanel.setCurrentPage(2);
                 navigationBar.state = "downloadTrashGetMouse"
             }
         }

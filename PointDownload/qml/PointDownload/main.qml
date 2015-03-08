@@ -32,9 +32,14 @@ import QtQuick 2.0
 import QtQuick.Window 2.1
 import Singleton.PEventFilter 1.0
 import Singleton.NormalNotice 1.0
+import Singleton.TopContrl 1.0
 
+import settingControler 1.0
+
+import "AboutPoint/AboutPoint.js" as AboutPage
+import "Dropzone/Dropzone.js" as DropzonePage
 import "Message/NormalNoticePage.js" as NormalNoticePage
-//import "AboutPoint/AboutPoint.js" as AboutPage
+import "Dropzone/SettingWin/SettingWin.js" as SettingScript
 
 import "AboutPoint"
 import "LeftPanel"
@@ -55,33 +60,41 @@ Window {
     property int nexty;
     property int winx:(Screen.width - width) / 2
     property int winy:(Screen.height - height) / 2
-    property string dragIng: "false"
-    property int oldX: 0
-    property int oldY: 0
+
+    property bool dragIng: false
+    property int tmpX: 0
+    property int tmpY: 0
     x: winx
     y: winy
 
-    Connections{
-        target: NormalNotice
-
-        onSignalShowMessage:{
-            NormalNoticePage.showNormalNoticePage(undefined,title,noticeTitleColor,message)
-        }
+    //连接单例的信号
+    Connections {
+        target: TopContrl;
+        onSignalShowMainWindow: mainWindow_show();
+        onSignalHideMainWindow: mainWindow_hide();
+        onSignalShowAboutPoint: mainWindow_showAbout();
     }
+
+    Connections{
+        target: NormalNotice;
+        onSignalShowMessage: NormalNoticePage.showNormalNoticePage(undefined, title, noticeTitleColor, message);
+    }
+
+    SettingControler {id: settingCtrl}
 
     Rectangle {
         id:mainUI
 
-        width: parent.width
-        height: parent.height
-        color: "#00ffffff"
+        width: mainWindow.width;
+        height: mainWindow.height;
 
+        color: "#00ffffff"
 
         //左边面板，与父组建高度相同，宽度为固定值
         LeftMainPanel {
             id: leftPanel
             anchors {left: parent.left; top: parent.top;}
-            height: parent.height
+            height: mainWindow.height
             width: 120
         }
 
@@ -91,24 +104,13 @@ Window {
         //底部是下载项的集和跟设置面板
         RightMainPanel {
             id: rightPanel
-            anchors {left: leftPanel.right; top:parent.top}
-            height: parent.height
-            width: parent.width - leftPanel.width
-            onMiddlePanelPress: {
-                oldX = middleX;
-                oldY = middleY;
-                dragIng = "true"
-            }
-            onMiddlePanelRelease: {
-                dragIng = "false"
-            }
-            onMiddlePanelPositionChange: {
-                if (dragIng == "true")
-                {
-                    winx = PEventFilter.globalX- oldX - leftPanel.width
-                    winy = PEventFilter.globalY - oldY - 45; //45 = topMenu.height
-                }
-            }
+            anchors.left: leftPanel.right;
+            anchors.top: mainWindow.top;
+            anchors.right: mainWindow.right;
+            anchors.bottom: mainWindow.bottom;
+
+            height: mainWindow.height;
+            width: mainWindow.width - 120;
         }
 
         MouseArea{
@@ -118,25 +120,9 @@ Window {
             height: leftPanel.width / 3
             hoverEnabled: true
 
-            onPressed:  {
-                oldX = mouseX;
-                oldY = mouseY;
-                dragIng = "true"
-                mArea.cursorShape=Qt.DragMoveCursor
-
-            }
-            onReleased: {
-                dragIng = "false"
-                mArea.cursorShape=Qt.ArrowCursor
-            }
-
-            onPositionChanged: {
-                if (dragIng == "true")
-                {
-                    winx = PEventFilter.globalX- oldX
-                    winy = PEventFilter.globalY - oldY;
-                }
-            }
+            onPositionChanged: mainWindowDrag_changed(mouseX, mouseY);
+            onPressed: {mainWindowDrag_pressed(mouseX, mouseY); cursorShape = Qt.DragMoveCursor;}
+            onReleased: {mainWindowDrag_released(); cursorShape = Qt.ArrowCursor;}
         }
 
         MouseArea {
@@ -146,24 +132,58 @@ Window {
             height: leftPanel.height - leftPanel.width / 3 - 280//2014.5.18 add
             hoverEnabled: true
 
-            onPressed:  {
-                oldX = mouseX;
-                oldY = mouseY + leftPanel.width / 3 + 280;
-                dragIng = "true"
-                mArea2.cursorShape=Qt.DragMoveCursor
-            }
-            onReleased: {
-                dragIng = "false"
-                mArea2.cursorShape=Qt.ArrowCursor
-            }
-
-            onPositionChanged: {
-                if (dragIng == "true")
-                {
-                    winx = PEventFilter.globalX- oldX
-                    winy = PEventFilter.globalY - oldY;
-                }
-            }
+            onPositionChanged: mainWindowDrag_changed(mouseX, mouseY);
+            onPressed: {mainWindowDrag_pressed(mouseX, mouseY); cursorShape = Qt.DragMoveCursor;}
+            onReleased: {mainWindowDrag_released(); cursorShape = Qt.ArrowCursor;}
         }
+    }
+
+    function mainWindow_destroy()
+    {
+        TopContrl.destroyAll();
+    }
+
+    function mainWindow_showAbout()
+    {
+        AboutPage.showAbout(this);
+    }
+
+    function mainWindow_hide()
+    {
+        mainWindow.hide();
+        mainWindow.flags |= Qt.ToolTip;
+
+        if (settingCtrl.enableDropzone)
+            DropzonePage.showDropzone(this);
+    }
+
+    function mainWindow_show()
+    {
+        mainWindow.show();
+        mainWindow.flags &= ~Qt.ToolTip;
+
+        DropzonePage.destroyDropzone();
+    }
+
+    function mainWindowDrag_changed(mouseX, mouseY)
+    {
+        if (dragIng !== true)
+            return;
+
+        x += mouseX - tmpX;
+        y += mouseY - tmpY;
+    }
+
+    function mainWindowDrag_released()
+    {
+        dragIng = false;
+    }
+
+    function mainWindowDrag_pressed(mouseX, mouseY)
+    {
+        tmpX = mouseX;
+        tmpY = mouseY;
+
+        dragIng = true
     }
 }

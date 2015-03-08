@@ -1,3 +1,8 @@
+/**
+  Author: sbwtw <sbwtws@gmail.com>
+  下载任务的信息结构，用于PointPopup到PointDownload之间的数据传输
+*/
+
 #ifndef TASKINFO_H
 #define TASKINFO_H
 
@@ -53,7 +58,7 @@ public:
 
 public:
     QByteArray toQByteArray() const;
-    QString fileListString() const;
+    QStringList fileStringList() const;
     QString taskName() const;
     qint64 taskSize() const;
 
@@ -93,8 +98,6 @@ public:
      * because QUrl can not store ed2k, thunder.. protocol
      *  altered QUrl to QString (by Choldrim, 2015.1.2)
     */
-//    QUrl rawUrl;
-//    QUrl parseUrl;
     QString rawUrl;
     QString parseUrl;
     QString taskIconPath;

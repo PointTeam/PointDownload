@@ -33,7 +33,6 @@
 #include <sched.h> // unshare
 #include <sys/mount.h> // mount
 #include <unistd.h> // execvp, getuid
-#include <stdio.h> // stderr
 #include <stdlib.h> // getenv, EXIT_FAILURE
 #include <limits.h> // PATH_MAX
 #include <pwd.h> // getpwuid
@@ -41,7 +40,6 @@
 #include <errno.h> // errno
 
 #include <iostream>
-using namespace std;
 
 char** cmd = NULL;
 char* home = NULL;
@@ -58,8 +56,7 @@ void prepare()
     struct passwd* pw = getpwuid(getuid());
     if (pw == NULL)
     {
-        // error
-        perror("err: getpwuid");
+        std::cout << "err: getpwuid" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -70,15 +67,17 @@ void prepare()
 
     // Separate the mount namespace
     ret = unshare(CLONE_NEWNS);
-    if (ret < 0) {
-        perror("err: unshare");
+    if (ret)
+    {
+        std::cout << "err: unshare, ret code is: " << errno << std::endl;
         exit(EXIT_FAILURE);
     }
 
     // mount independent mount namespace
     ret = mount("", "/", "Doesntmatter", MS_PRIVATE|MS_REC|MS_NODEV, NULL);
-    if (ret < 0) {
-        perror("err: mount (making sure subtree '/' is private)");
+    if (ret)
+    {
+        std::cout << "err: mount (making sure subtree '/' is private)" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -92,16 +91,19 @@ void mountDirs()
     strcpy(tmpDir, profileDir);
     strcat(tmpDir, "/tmp");
 
+    std::cout << "mount: " << tmpDir << std::endl;
+
     // mount the /tmp independently for xware configure profile
     ret = mount(tmpDir, "/tmp", "Doesntmatter", MS_BIND|MS_NOEXEC, NULL);
-    if (ret < 0) {
-        perror("err: mount (bind:/tmp)");
+    if (ret) {
+        std::cout << "err: mount (bind:/tmp)" << std::endl;
+        std::cout << "errno: " << errno << std::endl;
         exit(EXIT_FAILURE);
     }
 
     ret = chdir(tmpDir);
-    if (ret < 0) {
-        perror("err: chdir");
+    if (ret) {
+        std::cout << "err: chdir" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -111,12 +113,12 @@ void mountDownloadDir()
     int ret;
 
     // mount default download directory
-    cout<<"defaultDownloadDir: "<<defaultDownloadDir<<endl;
-    cout<<"pointMntHome: "<<pointMntHome<<endl;
+    std::cout << "defaultDownloadDir: " << defaultDownloadDir << std::endl;
+    std::cout << "pointMntHome: " << pointMntHome << std::endl;
     ret = mount(defaultDownloadDir, pointMntHome, "Doesntmatter", MS_BIND|MS_NOEXEC, NULL);
     if (ret < 0)
     {
-        perror("err: mount Download Dirs: ");
+        std::cout << "err: mount Download Dirs: " << std::endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -129,7 +131,7 @@ void run()
     ret = setenv("LD_PRELOAD", getenv("POINT-SO-PATH"), 1);
     if (ret < 0)
     {
-        perror("err: set env (PRE_LOAD)");
+        std::cout << "err: set env (PRE_LOAD)" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -138,7 +140,7 @@ void run()
 
     if (ret < 0)
     {
-        perror("err: execvp");
+        std::cout << "err: execvp" << std::endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -147,12 +149,15 @@ void run()
 int main(int argc, char** argv)
 {
     (void)argc;
+
     // move the pointer of agrc
     ++argv;
+
     int ret = setenv("POINT-SO-PATH", argv[0], 1);
+
     if (ret < 0)
     {
-        perror("err: setenv(POINT-SO-PATH) ");
+        std::cout << "err: setenv(POINT-SO-PATH)" << std::endl;
         exit(EXIT_FAILURE);
     }
 

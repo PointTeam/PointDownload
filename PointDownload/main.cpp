@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
     if (socket.waitForConnected(100))
         return 0;
 
-
     QString local = QLocale::system().name();
     QTranslator translator;
     translator.load(QString(":/languages/:/languages/resources/LANG/PointDownload_") + local);
@@ -81,6 +80,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<YouGetSettingControler>("youGetSettingControler", 1, 0, "YouGetSettingControler");
 
     QQmlApplicationEngine engin(QUrl("qrc:/qml/qml/PointDownload/main.qml"));
+    Q_UNUSED(engin);
 
    //添加全局事件过滤
    app.installEventFilter(PEventFilter::getInstance());
@@ -91,6 +91,6 @@ int main(int argc, char *argv[])
        WebCtrlViewTest::getInstance()->show();
    }
 
-    return app.exec();
+   return app.exec();
 }
 

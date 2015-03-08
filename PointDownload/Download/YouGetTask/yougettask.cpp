@@ -29,7 +29,6 @@ YouGetTask::YouGetTask(QObject *parent) :
     initConnection();
 }
 
-
 YouGetTask * YouGetTask::youGetTask = NULL;
 YouGetTask * YouGetTask::getInstance()
 {

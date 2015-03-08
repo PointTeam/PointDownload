@@ -35,8 +35,8 @@ Item{
             hoverEnabled: true
             anchors {horizontalCenter: parent.horizontalCenter}
             onClicked: {
-                TopContrl.showMainWindow()
-                TopContrl.updateShowState(true)
+                TopContrl.showMainWindow();
+                TopContrl.updateShowState(true);
             }
             onEntered: outerViewItem.menuButtonHover(qsTr("Main"))
             onExited:outerViewItem.menuButtonHover("")

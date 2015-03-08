@@ -61,8 +61,8 @@ History:
 #ifdef QT_DEBUG
 const QString POPUP_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
 #else
-//const QString POPUP_PROGRAM_EXEC = "pointpopup";
-const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
+const QString POPUP_PROGRAM_EXEC = "pointpopup";
+//const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
 #endif
 
 class UnifiedInterface : public QObject

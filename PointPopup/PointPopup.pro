@@ -69,3 +69,13 @@ include(../PInterface/PEventFilter/PEventFilter.pri)
 include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS = PointPopup_zh_CN.ts
+
+
+isEmpty(PREFIX){
+    PREFIX = /opt/Point
+}
+
+BINDIR = $$PREFIX/PopupWindow
+
+target.path = $$BINDIR
+INSTALLS += target

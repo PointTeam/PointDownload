@@ -8,6 +8,7 @@ debian/pointdownload/
 *.bug
 *.new
 build-*
+*/build
 #chrome extension
 #*.crx
 # C++ objects and libs

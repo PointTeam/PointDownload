@@ -145,3 +145,12 @@ include(../PInterface/Task/Task.pri)
 
 TRANSLATIONS += PointDownload_zh_CN.ts
 TRANSLATIONS += PointDownload_ja_JP.ts
+
+isEmpty(PREFIX){
+    PREFIX = /opt/Point
+}
+
+BINDIR = $$PREFIX/PointDownload
+
+target.path = $$BINDIR
+INSTALLS += target

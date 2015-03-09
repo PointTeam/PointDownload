@@ -181,6 +181,11 @@ void DataControler::sendToMainServer(QString threads, QString speed, QString sav
     taskInfo.maxThreads = threads.toInt();
     taskInfo.maxSpeed = speed.toInt();
 
+    if (!localSocket->isValid())
+    {
+        qWarning() << "Socket is not available,try to connect to PointURLServer again...";
+        connectToMainProgram();
+    }
     if (localSocket->write(taskInfo.toQByteArray()) == -1)
         qWarning() << "localSocket write error";
     localSocket->flush();
@@ -635,20 +640,20 @@ void DataControler::startMainProgram()
     connect(myProcess, SIGNAL(finished(int)), myProcess, SLOT(deleteLater()));
 
     myProcess->start(MAIN_PROGRAM_EXEC, arguments);
+
     connectToMainProgram();
 }
 
 void DataControler::connectToMainProgram()
 {
-    while (true)
+    localSocket->connectToServer("PointURLServer");
+    if (localSocket->waitForConnected(1000))
     {
-        localSocket->connectToServer("PointURLServer");
-        if (localSocket->waitForConnected(100))
-            break;
-        qWarning() << "localSocket connect to localServer Error: " << localSocket->errorString();
+        qWarning() << "Connected to PointURLServer!";
+        return;
     }
-
-    qDebug() << "connect to main program success";
+    else
+        qWarning() << "localSocket connect to localServer Error: " << localSocket->errorString();
 }
 
 bool DataControler::checkIsInDownloading(QString URL)

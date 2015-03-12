@@ -15,6 +15,8 @@ Rectangle {
     color: "#0d0e0f"
     opacity: 0.8
 
+	signal menuClicked(string menuItemId)
+
     Rectangle {
         id: iconTitleRec
         width: 120
@@ -40,6 +42,9 @@ Rectangle {
         width: 210
         height: parent.height
         anchors.centerIn: parent
+		onMenuClicked: {
+			topBar.menuClicked(menuItemId)
+		}
     }
 
     Rectangle {
@@ -57,5 +62,8 @@ Rectangle {
         height: parent.height
         width: 180
         anchors.right: parent.right
+		onMenuClicked: {
+			topBar.menuClicked(menuItemId)
+		}
     }
 }

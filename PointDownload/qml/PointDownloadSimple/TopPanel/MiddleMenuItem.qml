@@ -31,6 +31,9 @@ Item {
         width: contentWidth
         verticalAlignment: Text.AlignVCenter
         anchors.left: parent.left
+        Behavior on color {
+            PropertyAnimation { duration: 200; easing.type: Easing.OutQuad }
+        }
     }
 
     Rectangle {

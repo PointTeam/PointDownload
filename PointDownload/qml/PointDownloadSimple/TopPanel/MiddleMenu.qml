@@ -16,6 +16,8 @@ Item {
     property int dtrashTaskCount: 5
 	property int activeIndex: 0
 
+	signal menuClicked(string menuItemId)
+
 	Row {
         id: middleMenuRow
         spacing: 30
@@ -33,6 +35,7 @@ Item {
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
 				activeIndex = 0
+				middleMenu.menuClicked(menuItemId)
             }
         }
 
@@ -46,6 +49,7 @@ Item {
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
 				activeIndex = 1
+				middleMenu.menuClicked(menuItemId)
             }
         }
 
@@ -59,6 +63,7 @@ Item {
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
 				activeIndex = 2
+				middleMenu.menuClicked(menuItemId)
             }
         }
 

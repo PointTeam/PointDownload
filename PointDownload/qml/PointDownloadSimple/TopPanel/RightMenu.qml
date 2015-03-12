@@ -11,6 +11,8 @@ import QtQuick 2.1
 Item {
     id: rightMenu
 
+	signal menuClicked(string menuItemId)
+
     Row {
         id: middleMenuRow
         spacing: 10
@@ -25,6 +27,7 @@ Item {
             menuItemName: qsTr("Setting")
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
+				rightMenu.menuClicked(menuItemId)
             }
         }
 
@@ -35,6 +38,7 @@ Item {
             menuItemName: qsTr("Storage")
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
+				rightMenu.menuClicked(menuItemId)
             }
         }
 
@@ -45,6 +49,7 @@ Item {
             menuItemName: qsTr("New")
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
+				rightMenu.menuClicked(menuItemId)
             }
         }
 
@@ -55,6 +60,7 @@ Item {
             menuItemName: qsTr("Quick")
             onClicked: {
                 print ("==>[Info] Menu clicked:",menuItemId)
+				rightMenu.menuClicked(menuItemId)
 				Qt.quit()
             }
         }

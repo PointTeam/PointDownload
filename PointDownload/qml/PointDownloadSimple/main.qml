@@ -24,29 +24,48 @@ Window {
 	property var backbroundRecColor: "#116666"
 	property alias backbroundRecOpacity: backgroundRec.opacity
 
-        MouseArea {
-		        anchors.fill: parent
-		        property int startX
+    MouseArea {
+				anchors.fill: parent
+				property int startX
 				property int startY
-		        property bool holdFlag
-		        onPressed: {
+				property bool holdFlag
+				onPressed: {
 				startX = mouse.x;
 				startY = mouse.y;
 				holdFlag = true;
-		     }
-		     onReleased: holdFlag = false;
-			 onPositionChanged: {
-		     if (holdFlag) {
-	            mainWindow.setX(mainWindow.x + mouse.x - startX)
+			}
+			onReleased: holdFlag = false;
+			onPositionChanged: {
+			if (holdFlag) {
+				mainWindow.setX(mainWindow.x + mouse.x - startX)
 				mainWindow.setY(mainWindow.y + mouse.y - startY)
 			}
 		}
 	}
 
 	TopBar {
+		id: topBar
 		width: parent.width
 		height: 40
 		z: 1
+		onMenuClicked: {
+			if (menuItemId == "Task")
+				contentPanel.gotoTaskPage()
+			else if (menuItemId == "Done")
+				contentPanel.gotoDonePage()
+			else if (menuItemId == "Trash")
+				contentPanel.gotoTaskPage()
+			else if (menuItemId == "Setting")
+				contentPanel.gotoSettingPage()
+		}
+	}
+
+	ContentPanel {
+		id: contentPanel
+		width: parent.width
+		height: parent.height - topBar.height
+		z: 1
+		anchors.top: topBar.bottom
 	}
 
 	Item {

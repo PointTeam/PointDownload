@@ -17,5 +17,40 @@ Item {
 	property var pTaskState
 	property var pTaskSpeed
 	property var pTaskProgress
+
+	width: parent.width
+	height: 40
+
+	RotatingRectangle {
+		id: headRec
+		width: 70
+		height: parent.height
+		fileSize: pFileSize
+		taskSpeed: 34543//pTaskSpeed
+		taskProgress: pTaskProgress
+		shouldShowSpeed: true
+	}
+
+	Rectangle {
+		id: nameBackRec
+		width: parent.width - headRec.width
+		height: parent.height
+		color: "#3b4f67"
+		opacity: 0.3
+		anchors.verticalCenter: parent.verticalCenter
+		anchors.left: headRec.right
+	}
+
+	Text {
+		id: fileText
+		width: parent.width - headRec.width
+		text: pFileName
+		color: "#ffffff"
+		font.pixelSize: 20
+		anchors.left: headRec.right
+		anchors.leftMargin: 15
+		anchors.verticalCenter : parent.verticalCenter
+		verticalAlignment: Text.AlignVCenter
+	}
 }
 

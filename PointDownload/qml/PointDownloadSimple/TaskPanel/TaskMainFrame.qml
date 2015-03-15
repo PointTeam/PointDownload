@@ -18,6 +18,12 @@ Item {
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
 
+
+	Component.onCompleted: {
+		addToModel("1","Test1",1024000)
+		addToModel("2","Test222",45006432)
+	}
+
 	function addToModel(fileId, fileName, fileSize){
 		if (indexOfModel(fileId) == -1){//not in nodel, add it
 			dataModel.append({
@@ -67,11 +73,17 @@ Item {
 	ListView {
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width
+		width: parent.width - 20 * 2
 		height: parent.height
+		topMargin: 25
+		bottomMargin: 25
+		leftMargin: 20
+		rightMargin: 20
+		spacing: 25
 
 		model: dataModel
 		delegate: FileItem {
+			width: parent.width - 20 * 2
 			pFileId: fileId
 			pFileName: fileName
 			pFileSize: fileSize
@@ -81,10 +93,4 @@ Item {
 		}
 	}
 
-	Rectangle {
-		color: "#444444"
-		width: parent.width
-		height: parent.height / 2
-		anchors.centerIn: parent
-	}
 }

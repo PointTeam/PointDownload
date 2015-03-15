@@ -76,7 +76,7 @@ Window {
 		Image {
 			id: backgroundImage
 			anchors.fill: parent
-			opacity: 0.9
+			opacity: 1
 			source: backbroundImagePath
 		}
 	}

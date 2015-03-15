@@ -7,7 +7,6 @@
 *
 *************************************************************/
 import QtQuick 2.1
-import "../Widgets"
 
 Item {
 	id: taskPanel
@@ -82,7 +81,7 @@ Item {
 		spacing: 25
 
 		model: dataModel
-		delegate: FileItem {
+		delegate: TaskFileItem {
 			width: parent.width - 20 * 2
 			pFileId: fileId
 			pFileName: fileName

@@ -54,7 +54,7 @@ Window {
 			else if (menuItemId == "Done")
 				contentPanel.gotoDonePage()
 			else if (menuItemId == "Trash")
-				contentPanel.gotoTaskPage()
+				contentPanel.gotoTrashPage()
 			else if (menuItemId == "Setting")
 				contentPanel.gotoSettingPage()
 		}

@@ -27,7 +27,7 @@ Item {
 	property real taskSpeed: 0	//Byte/Second
 	property bool shouldShowSpeed: false
 
-	property int rotaInterval: 600
+	property int rotaInterval: 700
 
 	function getSizeUnit(){
 		if (fileSize > 1024 * 1024 * 1024)

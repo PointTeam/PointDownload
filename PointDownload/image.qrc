@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/FileItem">
+        <file>images/button-delete-normal.png</file>
+        <file>images/button-download-disable.png</file>
+        <file>images/button-download-hover.png</file>
+        <file>images/button-download-normal.png</file>
+        <file>images/button-download-press.png</file>
+        <file>images/button-raise-normal.png</file>
+        <file>images/button-suspend-disable.png</file>
+        <file>images/button-suspend-hover.png</file>
+        <file>images/button-suspend-normal.png</file>
+        <file>images/button-suspend-press.png</file>
+        <file>images/button-trash-hover.png</file>
+        <file>images/button-trash-normal.png</file>
+        <file>images/button-trash-press.png</file>
+        <file>images/backimg.jpg</file>
+    </qresource>
+</RCC>

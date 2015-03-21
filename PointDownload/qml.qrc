@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/PointDownload/ContentPanel.qml</file>
+        <file>qml/PointDownload/main.qml</file>
+        <file>qml/PointDownload/DonePanel/DoneFileItem.qml</file>
+        <file>qml/PointDownload/DonePanel/DoneMainFrame.qml</file>
+        <file>qml/PointDownload/SettingPanel/SettingFrame.qml</file>
+        <file>qml/PointDownload/TaskPanel/TaskFileItem.qml</file>
+        <file>qml/PointDownload/TaskPanel/TaskMainFrame.qml</file>
+        <file>qml/PointDownload/TopPanel/MiddleMenu.qml</file>
+        <file>qml/PointDownload/TopPanel/MiddleMenuItem.qml</file>
+        <file>qml/PointDownload/TopPanel/RightMenu.qml</file>
+        <file>qml/PointDownload/TopPanel/RightMenuItem.qml</file>
+        <file>qml/PointDownload/TopPanel/TopBar.qml</file>
+        <file>qml/PointDownload/TrashPanel/TrashFileItem.qml</file>
+        <file>qml/PointDownload/TrashPanel/TrashMainFrame.qml</file>
+        <file>qml/PointDownload/Widgets/ControlButtonLine.qml</file>
+        <file>qml/PointDownload/Widgets/FileControlButton.qml</file>
+        <file>qml/PointDownload/Widgets/FileListPanel.qml</file>
+        <file>qml/PointDownload/Widgets/HeadInfoItem.qml</file>
+        <file>qml/PointDownload/Widgets/ImageButton.qml</file>
+        <file>qml/PointDownload/Widgets/RotatingRectangle.qml</file>
+    </qresource>
+</RCC>

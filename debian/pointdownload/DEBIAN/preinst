@@ -1,8 +1,0 @@
-#!/bin/bash
-
-#destroy the process
-pkill Embed
-pkill Point
-
-
-exit 0

@@ -1,6 +1,7 @@
 #dpkg-buildpackage file
 PointDownload/debian/
 PointPopup/debian/
+XwareStartUp/debian/
 debian/pointdownload/
 #backup file
 *~

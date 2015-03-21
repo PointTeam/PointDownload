@@ -1,25 +1,21 @@
 /*************************************************************
-*File Name: TrashMainFrame.qml
+*File Name: FileListPanel.qml
 *Author: Match
 *Email: Match.YangWanQing@gmail.com
-*Created Time: 2015年03月12日 星期四 23时04分23秒
+*Created Time: 2015年03月21日 星期六 13时59分12秒
 *Description:
 *
 *************************************************************/
 import QtQuick 2.1
 
 Item {
-	id: trashPanel
+	id: taskPanel
+	//DataType::TaskStateDownloading == 0
+	//DataType::TaskStateSuspend == 1
+	//DataType::TaskStateBlock == 2
+	//DataType::TaskStateError == 3
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
-
-
-	Component.onCompleted: {
-		addToModel("1","TrashFile1",510924000)
-		addToModel("2","TrashFIle2",9050906432)
-		addToModel("3","TrashFIle3",7050906432)
-		addToModel("4","TrashFIle4",950906432)
-	}
 
 	function addToModel(fileId, fileName, fileSize){
 		if (indexOfModel(fileId) == -1){//not in nodel, add it
@@ -27,6 +23,9 @@ Item {
 				"fileId": fileId,
 				"fileName": fileName,
 				"fileSize": fileSize,
+				"taskState": 1,
+				"taskSpeed": 1024, //Byte/S
+				"taskProgress": 0 //100%
 			})
 		}
 	}
@@ -39,6 +38,20 @@ Item {
 		}
 		else
 			print ("==>[Warning] Delete data,id not exist in model!")
+	}
+
+	function updateDataModel(fileId, taskState, taskSpeed, taskProgress){
+		var tmpIndex = indexOfModel(fileId)
+		if (tmpIndex != -1){
+			dataModel.set(tmpIndex,{
+				"taskState": taskState,
+				"taskSpeed": taskSpeed,
+				"taskProgress": taskProgress
+			})
+		}
+		else
+			print ("==>[Warning] Update data,id not exist in model!")
+
 	}
 
 	function indexOfModel(fileId) {
@@ -62,11 +75,14 @@ Item {
 		spacing: 25
 
 		model: dataModel
-		delegate: TrashFileItem {
+		delegate: TaskFileItem {
 			width: parent.width - 20 * 2
 			pFileId: fileId
 			pFileName: fileName
 			pFileSize: fileSize
+			pTaskState: taskState
+			pTaskSpeed: taskSpeed
+			pTaskProgress: taskProgress
 		}
 	}
 

@@ -25,10 +25,6 @@ public slots:
     virtual void remove(bool removeFile) = 0;   // 删除任务 removeFile 是否删除文件
 
 public:
-    // 完成百分比
-    float completePercent() const;
-    // 完成百分比，返回 [xx.xx%] 这样的字串
-    const QString completePercentString() const;
     // 当前下载速度，以字节数计
     virtual int downloadBytesSpeed() const = 0;
     // 当前下载速度， xxB/s xxxKB/s xx.xxMB/s

@@ -1,18 +1,28 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick widgets gui dbus xml
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    Control/maincontroller.cpp
 
 RESOURCES += qml.qrc \
     image.qrc \
     qml.qrc
+
+# QMAKE FLAGS
+QMAKE_CXXFLAGS += -std=c++11
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
+
+include(../PInterface/XmlHandler/XmlHandler.pri)
+include(../PInterface/Message/Message.pri)
+include(../PInterface/PEventFilter/PEventFilter.pri)
+include(../PInterface/Task/Task.pri)
+include(../PInterface/PDataType/PDataType.pri)
 
 DISTFILES += \
     qml/PointDownload/Widgets/ControlButtonLine.qml \
@@ -35,3 +45,6 @@ DISTFILES += \
     qml/PointDownload/SettingPanel/SettingFrame.qml \
     qml/PointDownload/DonePanel/DoneFileItem.qml \
     qml/PointDownload/DonePanel/DoneMainFrame.qml
+
+HEADERS += \
+    Control/maincontroller.h

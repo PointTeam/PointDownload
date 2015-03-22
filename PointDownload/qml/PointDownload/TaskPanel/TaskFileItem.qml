@@ -8,6 +8,7 @@
 *************************************************************/
 import QtQuick 2.1
 import "../Widgets"
+import PDataType 1.0
 
 Item {
 	id: taskItem
@@ -71,9 +72,8 @@ Item {
 		}
 	}
 
-	onPTaskStateChanged: {
-		//DataType::TaskStateDownloading == 0
-		if (pTaskState == 0){
+    onPTaskStateChanged: {
+        if (pTaskState == PDataType.PTaskStateDownloading){
 			controlButtonModel.changeDownloadButtonState(false)
 			controlButtonModel.changeSuspendButtonState(true)
 		}

@@ -7,13 +7,10 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import PDataType 1.0
 
 Item {
-	id: taskPanel
-	//DataType::TaskStateDownloading == 0
-	//DataType::TaskStateSuspend == 1
-	//DataType::TaskStateBlock == 2
-	//DataType::TaskStateError == 3
+    id: taskPanel
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
 
@@ -23,7 +20,7 @@ Item {
 				"fileId": fileId,
 				"fileName": fileName,
 				"fileSize": fileSize,
-				"taskState": 1,
+                "taskState": PDataType.PTaskStateSuspend,
 				"taskSpeed": 1024, //Byte/S
 				"taskProgress": 0 //100%
 			})
@@ -85,5 +82,4 @@ Item {
 			pTaskProgress: taskProgress
 		}
 	}
-
 }

@@ -45,6 +45,7 @@ History:
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QQmlEngine>
 #include <QDebug>
 #include "pdatatype.h"
 #include "taskinfo.h"
@@ -55,22 +56,24 @@ class MainController : public QObject
 
 public:
     static MainController * getInstance();            //获取此类的单例对象
+    static QObject * dataObj(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     // 唯一的公共下载接口
-    void pStartDownload(const TaskInfo &taskInfo);
-    void pChangeMaxJobCount(int newCount);
-    int pGetJobCount();
-    void pSuspendAllTask();
-    void pResumeAllTask();
+    Q_INVOKABLE void pStartDownload(const TaskInfo &taskInfo);
+    Q_INVOKABLE void pChangeMaxJobCount(int newCount);
+    Q_INVOKABLE int pGetJobCount();
+    Q_INVOKABLE void pSuspendAllTask();
+    Q_INVOKABLE void pResumeAllTask();
 
 public slots:
     void slotControlFileItem(QString &fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
     void slotGetError(QString &fileID,QString &errorMessage, PDataType::ToolType toolType);
 
-signals:
-    void signalAddDownloadingItem(const TaskInfo &taskInfo);
-    void signalAddDownloadedItem(const TaskInfo &taskInfo);
-    void signalAddDownloadTrashItem(const TaskInfo &taskInfo);
+Q_SIGNALS:
+//signals:
+    void signalAddDownloadingItem(QObject * taskInfo);
+    void signalAddDownloadedItem(QObject * taskInfo);
+    void signalAddDownloadTrashItem(QObject * taskInfo);
     void signalTaskItemInfoUpdate(QString &fileId, PDataType::TaskState taskState, double taskSpeed, double taskProgress); //实时数据更新
     void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
 
@@ -134,6 +137,7 @@ private:
     static MainController * mainController;        //全局唯一对象
     //Map:fileID,Otype
     QMap<QString, int>  taskListMap;
+
 };
 
 #endif // MAINCONTROLLER_H

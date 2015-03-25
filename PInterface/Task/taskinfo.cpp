@@ -25,12 +25,13 @@ TaskInfo::TaskInfo(QIODevice *in) :
 
 TaskInfo::TaskInfo(TaskInfo &&taskInfo)
 {
-    fileList = std::move(taskInfo.fileList);
+    fileID = std::move(taskInfo.fileID);
     rawUrl = std::move(taskInfo.rawUrl);
     parseUrl = std::move(taskInfo.parseUrl);
     taskIconPath = std::move(taskInfo.taskIconPath);
     savePath = std::move(taskInfo.savePath);
     toolType = std::move(taskInfo.toolType);
+    fileList = std::move(taskInfo.fileList);
     maxThreads = taskInfo.maxThreads;
     maxSpeed = taskInfo.maxSpeed;
 }
@@ -46,7 +47,7 @@ TaskInfo::~TaskInfo()
 
 }
 
-QByteArray TaskInfo::toQByteArray() const
+QByteArray TaskInfo::pToQByteArray() const
 {
     QByteArray data;
     QDataStream out(&data, QIODevice::WriteOnly);
@@ -59,7 +60,7 @@ QByteArray TaskInfo::toQByteArray() const
 /*!
     获取当前任务的文件列表
 */
-QString TaskInfo::fileListString() const
+QString TaskInfo::pFileListString() const
 {
     QString str;
 
@@ -74,7 +75,7 @@ QString TaskInfo::fileListString() const
 /*!
     文件名列表大于1的时候以文件大小为-1的项作为文件名
 */
-QString TaskInfo::taskName() const
+QString TaskInfo::pTaskName() const
 {
     if (fileList.empty())
     {
@@ -95,7 +96,7 @@ QString TaskInfo::taskName() const
     任务包含文件的大小总和作为任务的总大小
     altered int to qint64 ( by Choldrim )
 */
-qint64 TaskInfo::taskSize() const
+qint64 TaskInfo::pTaskSize() const
 {
     qint64 size(0);
     for (TaskFileItem i : fileList)
@@ -126,12 +127,13 @@ QDataStream & operator << (QDataStream& out,  PDataType::ToolType& tooltype)
 */
 QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 {
-    in >> what.toolType;
-    in >> what.fileList;
+    in >> what.fileID;
     in >> what.rawUrl;
     in >> what.parseUrl;
     in >> what.taskIconPath;
     in >> what.savePath;
+    in >> what.toolType;
+    in >> what.fileList;
     in >> what.maxThreads;
     in >> what.maxSpeed;
 
@@ -143,12 +145,13 @@ QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 */
 QDataStream &operator <<(QDataStream &out, const TaskInfo &what)
 {
-    out << what.toolType;
-    out << what.fileList;
+    out << what.fileID;
     out << what.rawUrl;
     out << what.parseUrl;
     out << what.taskIconPath;
     out << what.savePath;
+    out << what.toolType;
+    out << what.fileList;
     out << what.maxThreads;
     out << what.maxSpeed;
 
@@ -172,49 +175,55 @@ QDebug operator <<(QDebug out, const TaskInfo &what)
 
 TaskInfo &TaskInfo::operator =(const TaskInfo &what)
 {
-    fileList = what.fileList;
+    fileID = what.fileID;
     rawUrl = what.rawUrl;
     parseUrl = what.parseUrl;
     taskIconPath = what.taskIconPath;
     savePath = what.savePath;
     toolType = what.toolType;
+    fileList = what.fileList;
     maxThreads = what.maxThreads;
     maxSpeed = what.maxSpeed;
 
     return *this;
 }
 
-QString TaskInfo::qml_getRawUrl()
+QString TaskInfo::pGetFileID()
+{
+    return fileID;
+}
+
+QString TaskInfo::pGetRawUrl()
 {
     return rawUrl;
 }
 
-QString TaskInfo::qml_getParseUrl()
+QString TaskInfo::pGetParseUrl()
 {
     return parseUrl;
 }
 
-QString TaskInfo::qml_getIconPath()
+QString TaskInfo::pGetTaskIconPath()
 {
     return taskIconPath;
 }
 
-QString TaskInfo::qml_getSavePath()
+QString TaskInfo::pGetSavePath()
 {
     return savePath;
 }
 
-PDataType::ToolType TaskInfo::qml_getToolType()
+PDataType::ToolType TaskInfo::pGetToolType()
 {
     return toolType;
 }
 
-int TaskInfo::qml_getMaxThreads()
+int TaskInfo::pGetMaxThreads()
 {
     return maxThreads;
 }
 
-int TaskInfo::qml_getMaxSpeed()
+int TaskInfo::pGetMaxSpeed()
 {
     return maxSpeed;
 }

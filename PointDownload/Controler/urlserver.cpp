@@ -55,6 +55,8 @@ void URLServer::socketReadyReadHandler()
     QLocalSocket *socket = static_cast<QLocalSocket*>(sender());
     TaskInfo *taskInfo = new TaskInfo(socket);
 
+    taskInfo->taskState = DLSTATE_DOWNLOADING;
+
     if (TOOL_XWARE_PARSE == taskInfo->toolType)
     {
          // take URL from msg

@@ -11,7 +11,6 @@ var DLSTATE_DOWNLOADING = 2;
 var DLSTATE_READY       = 3;
 var DLSTATE_DOWNLOADED  = 4;
 var DLSTATE_TRASH       = 5;
-var DLSTATE_REMOVE      = 6;
 
 // 更新任务信息，只有下载中任务需要更新信息
 function updateTaskInfo(taskInfo)

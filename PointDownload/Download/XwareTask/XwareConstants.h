@@ -83,9 +83,9 @@ static struct XwareConstants
         XWARE_WORK_DIR = XWARE_HOME + "Xware/";
         XWARE_ETM_PATH = XWARE_WORK_DIR + "EmbedThunderManager";
 
-        // by sbwtw <sbwtws@gmail.com>:
+        // by sbwtw <sbw@sbw.so>:
         // 为了兼容发行版和各个平台，应该不要使用硬编码的文件位置，
-        // 这里可以由打包者统一做一个环境变量或者软链接来访问
+        // 这里可以由打包者统一做一个环境变量或者软链接来访问,
         XWARE_START_UP_PATH = "pointxware";
 //        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
 

@@ -1,7 +1,7 @@
-# Maintainer: sbwtw <sbwtws@gmail.com>
+# Maintainer: sbw <sbw@sbw.so>
 pkgname=pointdownload
-pkgver=r164.a8402c3
-pkgrel=0
+pkgver=r167.b50dc91
+pkgrel=1
 pkgdesc="A downloader supporting http, ftp, bt, magnet and thunder protocol"
 arch=('x86_64' 'i686')
 url="https://github.com/sbwtw/PointDownload"

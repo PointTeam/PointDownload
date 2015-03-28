@@ -101,15 +101,12 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
-                console.log(index);
-
                 if (edMenu.height == 0)
                     showMenuAnima.start()
                 else
                     hideMenuAnima.start()
             }
         }
-
     }
 
     // 正在下载的项的菜单

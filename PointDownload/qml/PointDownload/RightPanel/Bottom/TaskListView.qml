@@ -42,7 +42,7 @@ ListView {
     highlightMoveDuration:500
     highlightRangeMode: ListView.StrictlyEnforceRange
     // ListView.SnapToItem 会导致下载列表初始显示不正确
-    //snapMode: ListView.SnapToItem
+//    snapMode: ListView.SnapToItem
     orientation: ListView.Vertical
     boundsBehavior: Flickable.StopAtBounds
 

@@ -16,7 +16,7 @@ public:
     static Aria2Task * getInstance();
 
     //对正在下载的处理
-    void startDownload(const TaskInfo &taskInfo);
+    void startDownload(TaskInfo *taskInfo);
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
@@ -31,7 +31,7 @@ public slots:
 private:
     explicit Aria2Task(QObject *parent = 0);
 
-    TaskInfo getPrepareInfoFromXML(QString URL);
+    TaskInfo *getPrepareInfoFromXML(QString URL);
     void initConnection();
 private:
     static Aria2Task * aria2Task;

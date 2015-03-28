@@ -63,7 +63,7 @@ Rectangle {
                 parent.opacity = 1;
             }
             onClicked: {
-                console.log(status);
+                console.log("status = ", status);
                 if (status === 2)
                 {
                     DLDataConverter.stopTask(downloadingModel.get(index).rawUrl);
@@ -119,7 +119,7 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DLDataConverter.controlItem("dl_downloading","download_openFolder",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloading","download_openFolder",rawUrl)
         }
     }
     MenuButton {
@@ -140,7 +140,10 @@ Rectangle {
             }
             onDoubleClicked:
             {
+                var task = downloadingModel.get(index);
+                trashModel.append(task);
                 DLDataConverter.moveToTrashTask(rawUrl);
+                downloadingModel.remove(index);
             }
         }
     }
@@ -162,10 +165,8 @@ Rectangle {
             }
             onDoubleClicked:
             {
-                //处理qml显示界面
-                downloadingPage.moveItem(downloadURL)
-                //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_downloading","download_delete",downloadURL)
+                DLDataConverter.removeTask(rawUrl);
+                downloadingModel.remove(index);
             }
         }
     }

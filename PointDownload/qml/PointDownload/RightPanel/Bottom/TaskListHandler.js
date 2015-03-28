@@ -13,32 +13,6 @@ var DLSTATE_DOWNLOADED  = 4;
 var DLSTATE_TRASH       = 5;
 var DLSTATE_REMOVE      = 6;
 
-function restartDownload(taskInfo)
-{
-    downloadedModel.remove(taskInfo);
-    trashModel.remove(taskInfo);
-    downloadingModel.append(taskInfo);
-}
-
-function completeDownload(taskInfo)
-{
-    downloadingModel.remove(taskInfo);
-    downloadedModel.append(taskInfo);
-}
-
-function moveToTrashDownload(taskInfo)
-{
-    downloadingModel.remove(taskInfo);
-    trashModel.append(taskInfo);
-}
-
-function deleteDownload(taskInfo)
-{
-    downloadingModel.remove(taskInfo);
-    downloadedModel.remove(taskInfo);
-    trashModel.remove(taskInfo);
-}
-
 // 更新任务信息，只有下载中任务需要更新信息
 function updateTaskInfo(taskInfo)
 {
@@ -56,7 +30,7 @@ function updateTaskInfo(taskInfo)
 
 function addNewTask(taskInfo)
 {
-//    console.log(JSON.stringify(taskInfo));
+    console.log(JSON.stringify(taskInfo));
 
     switch (taskInfo.status)
     {

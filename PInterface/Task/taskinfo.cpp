@@ -210,9 +210,9 @@ int TaskInfo::convertDownStateToInt(const QString state)
 */
 int TaskInfo::convertDownloadSpeedToInt(const QString speed)
 {
-    QRegExp reg("^(\\d+) KB/S$");
+    QRegExp reg("^(\\d+(?:.\\d+)?) KB/S$");
     if (reg.indexIn(speed) != -1)
-        return reg.cap(1).toInt() * 1024;
+        return (int)(reg.cap(1).toFloat() * 1024);
 
     qDebug() << "Not match speed string: " << speed;
     return 0;

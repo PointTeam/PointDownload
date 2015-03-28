@@ -44,10 +44,6 @@ Rectangle {
 
     anchors.horizontalCenter: parent.horizontalCenter
 
-    TaskInfo {
-        id: task
-    }
-
     Rectangle {
         id: infoRec
         width: parent.width

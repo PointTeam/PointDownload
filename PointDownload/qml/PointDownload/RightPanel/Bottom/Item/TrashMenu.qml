@@ -60,9 +60,12 @@ Rectangle {
             }
             onClicked:
             {
+                var task = trashModel.get(index);
+                DLDataConverter.restartTask(downloadURL);
+                trashModel.remove(index);
                 //在新增下载项时再做处理qml显示界面
                 //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_trash","download_redownload",downloadURL);
+//                DLDataConverter.controlItem("dl_trash","download_redownload",downloadURL);
             }
         }
     }
@@ -85,6 +88,7 @@ Rectangle {
             onDoubleClicked:
             {
                 DLDataConverter.removeTask(rawUrl);
+                trashModel.remove(index);
             }
         }
     }

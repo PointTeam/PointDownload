@@ -34,7 +34,7 @@ public:
     static HttpTask * getInstance();
 
     //对正在下载的处理
-    void startDownload(const TaskInfo &taskInfo);
+    void startDownload(TaskInfo *taskInfo);
     void stopDownload(QString URL);
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);

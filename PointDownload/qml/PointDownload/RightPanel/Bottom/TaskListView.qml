@@ -78,9 +78,6 @@ ListView {
 
         onTaskAdded: TaskListScript.addNewTask(taskInfo);
         onTaskInfoChange: TaskListScript.updateTaskInfo(taskInfo);
-        onTaskComplete: TaskListScript.completeDownload(taskInfo);
-        onTaskMoveToTrash: TaskListScript.moveToTrashDownload(taskInfo);
-        onTaskDelete: TaskListScript.deleteDownload(taskInfo);
     }
 
     function getDownloadListCount(downloadType)

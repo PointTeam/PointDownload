@@ -17,7 +17,7 @@ Aria2Task * Aria2Task::getInstance()
 }
 
 
-void Aria2Task::startDownload(const TaskInfo &taskInfo)
+void Aria2Task::startDownload(TaskInfo *taskInfo)
 {
     Aria2Process * aria2Process = new Aria2Process(taskInfo);
     connect(aria2Process, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
@@ -29,7 +29,7 @@ void Aria2Task::startDownload(const TaskInfo &taskInfo)
     aria2Process->startDownload();
 
     //保存下载列表
-    gProcessMap.insert(taskInfo.rawUrl, aria2Process);
+    gProcessMap.insert(taskInfo->rawUrl, aria2Process);
 }
 
 void Aria2Task::stopDownload(QString URL)
@@ -64,25 +64,25 @@ void Aria2Task::slotFinishDownload(QString URL)
 }
 
 
-TaskInfo Aria2Task::getPrepareInfoFromXML(QString URL)
+TaskInfo *Aria2Task::getPrepareInfoFromXML(QString URL)
 {
     DownloadXMLHandler xmlOpera;
     SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
 
-    TaskInfo taskInfo;
+    TaskInfo *taskInfo = new TaskInfo;
     TaskFileItem fileItem;
 
-    taskInfo.rawUrl = ingNode.URL;
-    taskInfo.taskIconPath = ingNode.iconPath;
-    taskInfo.maxSpeed = 0;
-    taskInfo.parseUrl = ingNode.redirectURL;
-    taskInfo.savePath = ingNode.savePath;
-    taskInfo.maxThreads = ingNode.threadList.size();
-    taskInfo.toolType = TOOL_ARIA2;
+    taskInfo->rawUrl = ingNode.URL;
+    taskInfo->taskIconPath = ingNode.iconPath;
+    taskInfo->maxSpeed = 0;
+    taskInfo->parseUrl = ingNode.redirectURL;
+    taskInfo->savePath = ingNode.savePath;
+    taskInfo->maxThreads = ingNode.threadList.size();
+    taskInfo->toolType = TOOL_ARIA2;
 
     fileItem.fileName = ingNode.name;
     fileItem.fileSize = ingNode.totalSize.toLongLong();
-    taskInfo.fileList.append(fileItem);
+    taskInfo->fileList.append(fileItem);
 
     return taskInfo;
 }

@@ -32,7 +32,7 @@ Rectangle {
 
     id: menuButton
 
-    property string iconPath: ""
+    property string iconSource: ""
 
     width: 30
     height: 30
@@ -40,7 +40,7 @@ Rectangle {
     color: "#32738e"
 
     Image {
-        source: iconPath
+        source: iconSource
         height: parent.width -10
         width: parent.height - 10
         anchors {verticalCenter: parent.verticalCenter; horizontalCenter: parent.horizontalCenter}

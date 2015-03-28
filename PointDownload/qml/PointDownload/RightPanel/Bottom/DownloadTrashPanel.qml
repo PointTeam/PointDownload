@@ -22,6 +22,7 @@
 import QtQuick 2.0
 import "Item"
 import Singleton.DLDataConverter 1.0
+import "DataFormatHelper.js" as DataFormat
 
 Rectangle {
     id: trashPanel
@@ -40,13 +41,6 @@ Rectangle {
             id:delegateItem
             width: trashView.width - 30
             //height: 60
-
-            fileName: tmpName
-            iconPath: tmpPath
-            fileURL: tmpURL
-            fileSize: tmpSize
-            dlToolsType:tmpDLToolsType
-            // Animate adding and removing of items:
 
             ListView.onAdd: SequentialAnimation {
                 PropertyAction { target: delegateItem; property: "width"; value: 0 }
@@ -70,27 +64,5 @@ Rectangle {
         spacing: 4
         delegate: listDelegate
         clip: true
-    }
-
-    function moveItem(url)
-    {
-        TrashScript.removeItem(url)
-        //调用C++类做文件处理
-//        dCtrl.controlItem("Delete",url,"Trash")
-    }
-
-    function addItem(infoList)
-    {
-        TrashScript.addNewItem(infoList)
-    }
-
-
-    function getFileInfo(url)
-    {
-        return TrashScript.getFileInfo(url)
-    }
-    function getListCount()
-    {
-        return trashItemModel.count
     }
 }

@@ -93,6 +93,7 @@ void DLDataConverter::resumeAllDownloading()
 
 void DLDataConverter::addTaskItem(TaskInfo *taskInfo)
 {
+    taskList.append(taskInfo);
     emit taskAdded(taskInfo);
 }
 
@@ -100,8 +101,35 @@ void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
 {
     QString tmpURL = infoList.downloadURL;
 
-    emit sDLSpeedChange(tmpURL, infoList.downloadSpeed);
-    emit sDLProgressChange(tmpURL, infoList.downloadPercent);
+    for (TaskInfo *i : taskList)
+    {
+        if (i->rawUrl.compare(infoList.downloadURL))
+            continue;
+
+        // 旧数据到新数据的转换(QString -> int)
+        int speed = TaskInfo::convertDownloadSpeedToInt(infoList.downloadSpeed);
+
+        // 速度或百分比之一有改变则发送 taskInfoChange 信号
+        bool speedChange(false), percentChange(false);
+
+        // 任务的下载速度改变
+        if (i->downloadSpeedNow != speed)
+        {
+            i->downloadSpeedNow = speed;
+            speedChange = true;
+
+            i->downloadSpeedChanged();
+        }
+
+        if (i->percentage != (float)infoList.downloadPercent)
+        {
+            i->percentage = infoList.downloadPercent;
+            percentChange = true;
+        }
+
+        if (speedChange || percentChange)
+            emit taskInfoChange(i);
+    }
 
     switch(infoList.downloadState)
     {
@@ -198,6 +226,70 @@ void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
     connect(urlServer, SIGNAL(newTaskAdded(TaskInfo*)), this, SLOT(addTaskItem(TaskInfo*)));
+}
+
+// 临时使用，从列表中找到任务
+TaskInfo *DLDataConverter::tmp_searchTaskByUrl(const QString &url)
+{
+    for (TaskInfo *i : taskList)
+        if (!i->rawUrl.compare(url))
+            return i;
+
+    return NULL;
+}
+
+void DLDataConverter::stopTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->suspendDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_SUSPEND;
+
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::startTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->resumeDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_DOWNLOADING;
+
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::moveToTrashTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->trashDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_TRASH;
+
+    emit taskMoveToTrash(task);
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::removeTask(const QString &url)
+{
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_REMOVE;
+
+    emit taskDelete(task);
+    emit taskInfoChange(task);
+
+    taskList.removeOne(task);
+    task->deleteLater();
+}
+
+void DLDataConverter::restartTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->redownloadTrash(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_DOWNLOADING;
+
+    emit taskRestart(task);
+    emit taskInfoChange(task);
 }
 
 void DLDataConverter::initConnection()

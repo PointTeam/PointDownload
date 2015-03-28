@@ -21,13 +21,13 @@ public:
 signals:
     void taskAdded(TaskInfo *taskInfo);                 // 添加任务到列表
     void taskInfoChange(TaskInfo *taskInfo);            // 任务信息改变，下载速度等
-    void taskComplete(TaskInfo *taskInfo);              // 任务完成
-    void taskMoveToTrash(TaskInfo *taskInfo);           // 移动到垃圾箱
-    void taskDelete(TaskInfo *taskInfo);                // 删除任务
-    void taskRestart(TaskInfo *taskInfo);
+//    void taskComplete(TaskInfo *taskInfo);              // 任务完成
+//    void taskMoveToTrash(TaskInfo *taskInfo);           // 移动到垃圾箱
+//    void taskDelete(TaskInfo *taskInfo);                // 删除任务
+//    void taskRestart(TaskInfo *taskInfo);
 
-    void taskCompleted(const QString& infoString);
-    void taskRemoved(const QString& infoString);
+//    void taskCompleted(const QString& infoString);
+//    void taskRemoved(const QString& infoString);
     //dlState,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
     void sDLStateChange(QString dlURL, int dlState);
     void sThunderOfflineSpeedChange(QString dlURL, QString offlineSpeed);

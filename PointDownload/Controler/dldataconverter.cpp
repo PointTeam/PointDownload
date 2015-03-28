@@ -32,6 +32,7 @@ QObject *DLDataConverter::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
 
 void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
+    qDebug() << dtype << otype << URL;
     // remove witespace character at start and end
     URL = URL.trimmed();
 
@@ -250,6 +251,7 @@ void DLDataConverter::stopTask(const QString &url)
 
 void DLDataConverter::startTask(const QString &url)
 {
+//    handleDownloadSearchControl(URL);
     UnifiedInterface::getInstance()->resumeDownloading(url);
 
     TaskInfo *task = tmp_searchTaskByUrl(url);
@@ -265,31 +267,39 @@ void DLDataConverter::moveToTrashTask(const QString &url)
     TaskInfo *task = tmp_searchTaskByUrl(url);
     task->taskState = DLSTATE_TRASH;
 
-    emit taskMoveToTrash(task);
     emit taskInfoChange(task);
 }
 
 void DLDataConverter::removeTask(const QString &url)
 {
+    qDebug() << url;
+
     TaskInfo *task = tmp_searchTaskByUrl(url);
-    task->taskState = DLSTATE_REMOVE;
 
-    emit taskDelete(task);
-    emit taskInfoChange(task);
+    switch (task->taskState)
+    {
+    case DLSTATE_DOWNLOADING:   UnifiedInterface::getInstance()->deleteDownloading(url);    break;
+    case DLSTATE_DOWNLOADED:    UnifiedInterface::getInstance()->deleteDownloaded(url);     break;
+    case DLSTATE_TRASH:         UnifiedInterface::getInstance()->deleteTrash(url);          break;
+#ifdef QT_DEBUG
+    default:                    Q_ASSERT(false);
+#endif
+    }
 
-    taskList.removeOne(task);
-    task->deleteLater();
+//    taskList.removeOne(task);
+//    task->deleteLater();
 }
 
 void DLDataConverter::restartTask(const QString &url)
 {
     UnifiedInterface::getInstance()->redownloadTrash(url);
 
-    TaskInfo *task = tmp_searchTaskByUrl(url);
-    task->taskState = DLSTATE_DOWNLOADING;
+    removeTask(url);
 
-    emit taskRestart(task);
-    emit taskInfoChange(task);
+//    TaskInfo *task = tmp_searchTaskByUrl(url);
+//    task->taskState = DLSTATE_DOWNLOADING;
+
+//    emit taskAdded(task);
 }
 
 void DLDataConverter::initConnection()

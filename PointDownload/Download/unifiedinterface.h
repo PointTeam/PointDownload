@@ -57,13 +57,9 @@ History:
 
 #include "taskinfo.h"
 
-// linux 下命令一般全小写, 新建窗口的命令名字
-#ifdef QT_DEBUG
-const QString POPUP_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
-#else
+// 新建窗口的命令名字
+//const QString POPUP_PROGRAM_EXEC = "/tmp/build-pointdownload-Desktop-Debug/PointPopup/PointPopup";
 const QString POPUP_PROGRAM_EXEC = "pointpopup";
-//const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
-#endif
 
 class UnifiedInterface : public QObject
 {
@@ -104,13 +100,13 @@ private:
     //构造函数
     explicit UnifiedInterface(QObject *parent = 0);
 
-    void startPointDownload(const TaskInfo &taskInfo);
-    void startAria2Download(const TaskInfo &taskInfo);
-    void startYougetDownload(const TaskInfo &taskInfo);
-    void startXwareDownload(const TaskInfo &taskInfo);
+    void startPointDownload(TaskInfo *taskInfo);
+    void startAria2Download(TaskInfo *taskInfo);
+    void startYougetDownload(TaskInfo *taskInfo);
+    void startXwareDownload(TaskInfo *taskInfo);
 public:
     // 唯一的公共下载接口
-    void startDownload(const TaskInfo &taskInfo);
+    void startDownload(TaskInfo *taskInfo);
 
 public:
     void trashDownloading(QString URL);
@@ -118,6 +114,9 @@ public:
     void suspendDownloading(QString URL);
     void resumeDownloading(QString URL);
     void redownloadTrash(QString URL);
+    void deleteDownloading(QString URL);
+    void deleteTrash(QString URL);
+    void deleteDownloaded(QString URL);
 
 private:
     //分类处理
@@ -129,7 +128,6 @@ private:
     //对正在下载的处理
     void priorityDownloading(QString URL);
     void openFolderDownloading(QString URL);
-    void deleteDownloading(QString URL);
     void offlineDownloadDownloading(QString URL);
     void hightSpeedChannelDownloading(QString URL);
     void finishDownloading(QString URL);
@@ -138,10 +136,6 @@ private:
     void redownloadDownloaded(QString URL);
     void openFolderDownloaded(QString URL);
     void trashDownloaded(QString URL);
-    void deleteDownloaded(QString URL);
-
-    //对垃圾桶的处理
-    void deleteTrash(QString URL);
 
     //获取初始化信息，显示到界面
     void initDownloadedList();
@@ -155,7 +149,7 @@ private:
     //把就绪队列中的一个提到下载队列
     void startReady();
     void refreshDownloadingItem();
-    TaskInfo getPrepareInfoFromSDownloading(SDownloading infoStruct);
+    TaskInfo *getPrepareInfoFromSDownloading(SDownloading infoStruct);
 
 private:
     static UnifiedInterface * unifiedInterface;        //全局唯一对象

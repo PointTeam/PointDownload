@@ -344,5 +344,5 @@ double HttpThreadManager::getDownloadPercent()
     if (!taskInfo.fileList.at(0).fileSize)
         return 0;
 
-    return (double)100 * totalDoneSize / taskInfo.taskSize();
+    return (double)100 * totalDoneSize / taskInfo.size();
 }

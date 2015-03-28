@@ -35,20 +35,8 @@ Rectangle {
         DownloadingItem {
             id:delegateItem
             width: ingItemView.width - 30
-            //height: 60
 
-            fileName: name
-            ingPercentage: percentage.toFixed(2);
-            iconPath: iconPath
-            fileState: state
-            fileURL: rawUrl
-            netSpeed: "0"
-            thunderOfflineSpeed: ""
-            thunderHightSpeed: ""
-            fileSize: DataFormat.formatFileSize(size);
-            dlToolsType: toolType
             // Animate adding and removing of items:
-
             ListView.onAdd: SequentialAnimation {
                 PropertyAction { target: delegateItem; property: "width"; value: 0 }
                 NumberAnimation { target: delegateItem; property: "width"; to: ingItemView.width - 30; duration: 250; easing.type: Easing.InOutQuad }
@@ -82,29 +70,5 @@ Rectangle {
         onTriggered:{
             moveItemToTop()
         }
-    }
-    function moveItem(url)
-    {
-        DownloadingScript.removeItem(url)
-    }
-
-    function moveItemToTop() //在优先下载时，应该把优先项移动到最前面
-    {
-        DownloadingScript.moveItemToTop()
-    }
-
-    function addItem(infoList)
-    {
-        DownloadingScript.addNewItem(infoList)
-    }
-
-    function getFileInfo(url)
-    {
-        return DownloadingScript.getFileInfo(url)
-    }
-
-    function getListCount()
-    {
-        return ingItemModel.count
     }
 }

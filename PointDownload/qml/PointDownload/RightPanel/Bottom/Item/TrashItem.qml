@@ -27,17 +27,10 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
+import "../DataFormatHelper.js" as DataFormat
 
 Rectangle {
     id: trashItem
-
-    property string iconPath: "qrc:/images/right/filetype/noicon"
-    property string checkIconPath: "qrc:/images/right/uncheck"
-    property string fileName: ""
-    property string fileURL: ""
-    property string fileSize: ""
-    property string dlToolsType: ""
-
 
     width: parent.width
     height: 60 + trMenu.height
@@ -67,7 +60,7 @@ Rectangle {
         }
 
         Text {
-            text: fileName
+            text: name
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 13
@@ -84,7 +77,7 @@ Rectangle {
             color: "#00ffffff"
             anchors {left: trIcon.right; leftMargin: 13; bottom: parent.bottom; bottomMargin: 5}
             Text {
-                text: fileURL
+                text: rawUrl
                 color: "#ffffff"
                 font.bold: true
                 font.pixelSize: 12
@@ -95,7 +88,7 @@ Rectangle {
         }
 
         Text {
-            text: fileSize
+            text: DataFormat.formatFileSize(size);
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 15
@@ -124,7 +117,7 @@ Rectangle {
     TrashMenu {
         id: trMenu
         height: 0
-        downloadURL: fileURL//for control button
+        downloadURL: rawUrl
         anchors {bottom: parent.bottom; left: parent.left}
 
         SequentialAnimation {

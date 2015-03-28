@@ -8,7 +8,7 @@
 function formatFileSize(size)
 {
     if (size < 10000)
-        return size.toFixed(1) + "B";
+        return size.toFixed(0) + "B";
 
     size /= 1024;
 
@@ -23,4 +23,20 @@ function formatFileSize(size)
     size /= 1024;
 
     return size.toFixed(2) + "GB";
+}
+
+// 格式化下载速度
+function formatDownloadSpeed(size)
+{
+    if (size < 10000)
+        return size.toFixed(0) + " B/s";
+
+    size /= 1024;
+
+    if (size < 1024)
+        return size.toFixed(0) + " KB/s";
+
+    size /= 1024;
+
+    return size.toFixed(2) + " MB/s";
 }

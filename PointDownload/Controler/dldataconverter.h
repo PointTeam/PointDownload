@@ -19,18 +19,17 @@ public:
     Q_INVOKABLE void resumeAllDownloading();
 
 signals:
-    void taskAdded(TaskInfo *taskInfo);         // 添加任务到列表
-    void taskInfoChange(TaskInfo *taskInfo);    // 任务信息改变
-    void taskStatusChange(TaskInfo *taskInfo);  // 任务状态改变
+    void taskAdded(TaskInfo *taskInfo);                 // 添加任务到列表
+    void taskInfoChange(TaskInfo *taskInfo);            // 任务信息改变，下载速度等
+    void taskComplete(TaskInfo *taskInfo);              // 任务完成
+    void taskMoveToTrash(TaskInfo *taskInfo);           // 移动到垃圾箱
+    void taskDelete(TaskInfo *taskInfo);                // 删除任务
+    void taskRestart(TaskInfo *taskInfo);
+
     void taskCompleted(const QString& infoString);
     void taskRemoved(const QString& infoString);
-    //dlType：Downloading、Downloaded、DownloadTrash
-    void sFileNameChange(QString dlType, QString dlURL,  QString fileName);
-    void sFileInfoChange(QString dlType, const TaskInfo &taskInfo);
     //dlState,文件状态 , "dlstate_downloading" 或者是 "dlstate_suspend",经常更新
     void sDLStateChange(QString dlURL, int dlState);
-    void sDLSpeedChange(QString dlURL, QString dlSpeed);
-    void sDLProgressChange(QString dlURL, double progress);
     void sThunderOfflineSpeedChange(QString dlURL, QString offlineSpeed);
     void sThunderHightSpeedChange(QString dlURL, QString hightSpeed);
 
@@ -51,11 +50,22 @@ public slots:
 
     void initURLServer();
 
+    TaskInfo *tmp_searchTaskByUrl(const QString &url);
+
+    void stopTask(const QString &url);
+    void startTask(const QString &url);
+    void moveToTrashTask(const QString &url);
+    void removeTask(const QString &url);
+    void restartTask(const QString &url);
+
 private:
     explicit DLDataConverter(QObject *parent = 0);
 
     void initConnection();
 private:
     static DLDataConverter * dlDataConverter;
+
+private:
+    QList<TaskInfo*> taskList;      // 当前下载任务列表
 };
 #endif // DLDATACONVERTER_H

@@ -52,21 +52,21 @@ void URLServer::serverNewConnectionHandler()
 
 void URLServer::socketReadyReadHandler()
 {
-    QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
-    TaskInfo taskInfo(socket);
+    QLocalSocket *socket = static_cast<QLocalSocket*>(sender());
+    TaskInfo *taskInfo = new TaskInfo(socket);
 
-    if (TOOL_XWARE_PARSE == taskInfo.toolType)
+    if (TOOL_XWARE_PARSE == taskInfo->toolType)
     {
          // take URL from msg
-        taskParseHandle(taskInfo.rawUrl);
+        taskParseHandle(taskInfo->rawUrl);
         qDebug() << "Xware is parsing the URL";
         return ;
     }
 
     //启动下载
-    UnifiedInterface::getInstance()->startDownload(taskInfo);
+    UnifiedInterface::getInstance()->startDownload(*taskInfo);
 
-    emit newTaskAdded(&taskInfo);                //此信号连接到downloadingsender类
+    emit newTaskAdded(taskInfo);                //此信号连接到downloadingsender类
 }
 
 void URLServer::taskParseFeedback(TaskInfo taskInfo)

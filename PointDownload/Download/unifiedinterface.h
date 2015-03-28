@@ -112,6 +112,13 @@ public:
     // 唯一的公共下载接口
     void startDownload(const TaskInfo &taskInfo);
 
+public:
+    void trashDownloading(QString URL);
+    void stopDownloading(QString URL);
+    void suspendDownloading(QString URL);
+    void resumeDownloading(QString URL);
+    void redownloadTrash(QString URL);
+
 private:
     //分类处理
     void handleDownloadingControl(OperationType otype, QString URL);
@@ -120,12 +127,8 @@ private:
     void handleDownloadSearchControl(QString URL);
 
     //对正在下载的处理
-    void stopDownloading(QString URL);
-    void suspendDownloading(QString URL);
-    void resumeDownloading(QString URL);
     void priorityDownloading(QString URL);
     void openFolderDownloading(QString URL);
-    void trashDownloading(QString URL);
     void deleteDownloading(QString URL);
     void offlineDownloadDownloading(QString URL);
     void hightSpeedChannelDownloading(QString URL);
@@ -138,7 +141,6 @@ private:
     void deleteDownloaded(QString URL);
 
     //对垃圾桶的处理
-    void redownloadTrash(QString URL);
     void deleteTrash(QString URL);
 
     //获取初始化信息，显示到界面

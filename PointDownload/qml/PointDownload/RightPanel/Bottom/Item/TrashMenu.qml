@@ -45,7 +45,7 @@ Rectangle {
     MenuButton {
         id: menuReDownload
         height: parent.height - 10
-        iconPath: "qrc:/images/right/resume"
+        iconSource: "qrc:/images/right/resume"
         anchors {left: parent.left; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -62,14 +62,14 @@ Rectangle {
             {
                 //在新增下载项时再做处理qml显示界面
                 //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_trash","download_redownload",downloadURL)
+                DLDataConverter.controlItem("dl_trash","download_redownload",downloadURL);
             }
         }
     }
     MenuButton {
         id: menuDelete
         height: parent.height - 10
-        iconPath: "qrc:/images/right/delete"
+        iconSource: "qrc:/images/right/delete"
         anchors {left: menuReDownload.right; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -84,9 +84,7 @@ Rectangle {
             }
             onDoubleClicked:
             {
-                //处理qml显示界面
-                downloadTrashPage.moveItem(downloadURL)
-                DLDataConverter.controlItem("dl_trash","download_delete",downloadURL)
+                DLDataConverter.removeTask(rawUrl);
             }
         }
     }

@@ -22,7 +22,6 @@
 import QtQuick 2.0
 import Singleton.DLDataConverter 1.0
 import "Item"
-import "DataFormatHelper.js" as DataFormat
 
 Rectangle {
     id: downloadedPanel
@@ -34,14 +33,6 @@ Rectangle {
         DownloadedItem {
             id:delegateItem
             width: ingItemView.width - 30
-
-            fileName: name
-            iconPath: iconPath
-            fileURL: rawUrl
-            fileSize: DataFormat.formatFileSize(size);
-            dlToolsType: toolType
-            completeDate: completeDate
-            // Animate adding and removing of items:
 
             ListView.onAdd: SequentialAnimation {
                 PropertyAction { target: delegateItem; property: "width"; value: 0 }
@@ -65,25 +56,5 @@ Rectangle {
         spacing: 4
         delegate: listDelegate
         clip: true
-    }
-
-    function moveItem(url)
-    {
-        DownloadedScript.removeItem(url)
-    }
-
-    function addItem(infoList)
-    {
-        DownloadedScript.addNewItem(infoList)
-    }
-
-    function getFileInfo(url)
-    {
-        return DownloadedScript.getFileInfo(url)
-    }
-
-    function getListCount()
-    {
-        return edItemModel.count
     }
 }

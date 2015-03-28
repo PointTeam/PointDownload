@@ -29,18 +29,10 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
+import "../DataFormatHelper.js" as DataFormat
 
 Rectangle {
     id: downloadedItem
-
-    property string iconPath: "qrc:/images/right/filetype/noicon"
-    property string checkIconPath: "qrc:/images/right/uncheck"
-    property string fileName: ""
-    property string fileURL: ""
-    property string fileSize: ""
-    property string dlToolsType: ""
-    property string completeDate: ""
-
 
     width: parent.width
     height: 60 + edMenu.height
@@ -70,7 +62,7 @@ Rectangle {
         }
 
         Text {
-            text: fileName
+            text: name
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 13
@@ -88,7 +80,7 @@ Rectangle {
             anchors {left: edIcon.right; leftMargin:13; bottom: parent.bottom; bottomMargin: 5}
             Text {
                 id: dateText
-                text: completeDate
+                text: Qt.formatDateTime(completeDate, qsTr('yyyy-MM-dd HH:mm:ss'));
                 color: "#ffffff"
                 font.bold: true
                 font.pixelSize: 12
@@ -96,7 +88,7 @@ Rectangle {
             }
         }
         Text {
-            text: fileSize
+            text: DataFormat.formatFileSize(size)
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 15
@@ -109,8 +101,7 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
-                //console.log(parent.height)
-//                edMenu.height = edMenu.height === 0 ? 40:0
+                console.log(index);
 
                 if (edMenu.height == 0)
                     showMenuAnima.start()
@@ -126,7 +117,7 @@ Rectangle {
         id: edMenu
         width: infoRec.width
         height: 0
-        downloadURL: fileURL//for control button
+        downloadURL: rawUrl
         anchors {bottom: parent.bottom; left: parent.left}
 
         SequentialAnimation {

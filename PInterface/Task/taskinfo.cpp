@@ -6,6 +6,7 @@
 #include "task.h"
 
 #include <QDebug>
+#include <QRegExp>
 
 TaskInfo::TaskInfo() :
     QObject(0)
@@ -14,6 +15,7 @@ TaskInfo::TaskInfo() :
     toolType = TOOL_UNDEF;
     maxThreads = 0;
     maxSpeed = 0;
+    downloadSpeedNow = 0;
 }
 
 TaskInfo::TaskInfo(QIODevice *in) :
@@ -76,7 +78,7 @@ QStringList TaskInfo::fileStringList() const
 /*!
     文件名列表大于1的时候以文件大小为-1的项作为文件名
 */
-QString TaskInfo::taskName() const
+QString TaskInfo::name() const
 {
     if (fileList.empty())
     {
@@ -97,7 +99,7 @@ QString TaskInfo::taskName() const
     任务包含文件的大小总和作为任务的总大小
     altered int to qint64 ( by Choldrim )
 */
-qint64 TaskInfo::taskSize() const
+qint64 TaskInfo::size() const
 {
     qint64 size(0);
     for (TaskFileItem i : fileList)
@@ -184,98 +186,6 @@ void TaskInfo::setDownStateFromString(const QString &state)
     taskState = convertDownStateToInt(state);
 }
 
-/*!
-    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
-*/
-QString TaskInfo::getToolTypeToString() const
-{
-    switch (toolType)
-    {
-    case TOOL_POINT:    return "Point";
-    case TOOL_ARIA2:    return "Aria2";
-    case TOOL_XWARE:    return "Xware";
-    case TOOL_YOUGET:   return "YouGet";
-    default:
-        qWarning() << "ToolType Undefined!";
-        return "Undefined";
-    }
-}
-
-/*!
-    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
-*/
-QString TaskInfo::getDownStateToString() const
-{
-    switch (taskState)
-    {
-    case DLSTATE_SUSPEND:       return "dlstate_suspend";
-    case DLSTATE_DOWNLOADING:   return "dlstate_downloading";
-    case DLSTATE_READY:         return "dlstate_ready";
-    default:
-        qWarning() << "DownState Undefined!";
-        return "undefined";
-    }
-}
-
-/*!
-    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
-*/
-QString TaskInfo::getInfoToString() const
-{
-    const QString split("?:?");
-    QString infoStr;
-    infoStr += getToolTypeToString() + split;
-    infoStr += taskName() + split;
-    infoStr += rawUrl + split;
-    infoStr += parseUrl + split;
-    infoStr += taskIconPath + split;
-    infoStr += QString::number(taskSize()) + split;
-    infoStr += savePath + split;
-    infoStr += QString::number(maxThreads) + split;
-    infoStr += QString::number(percentage, 'f', 2);
-
-    return std::move(infoStr);
-}
-
-/*!
-    请注意！ 此函数用于代码重构时的兼容，以后应尽少使用
-*/
-QString TaskInfo::getDownloadedInfoToString() const
-{
-    //info: dlToolsType?:?fileName?:?URL?:?iconName?:?fileSize?:?completeDate
-    const QString split("?:?");
-    QString infoStr;
-    infoStr += getToolTypeToString() + split;
-    infoStr += taskName() + split;
-    infoStr += rawUrl + split;
-    infoStr += taskIconPath + split;
-    infoStr += QString::number(taskSize()) + split;
-    infoStr += completeDate;
-
-    return std::move(infoStr);
-}
-
-QString TaskInfo::getDownloadingInfoToString() const
-{
-    //info: dlToolsType?:?fileName?:?URL?:?RedirectURL?:?iconName?:?fileSize?:?savePath?:?threadCount?:?maxSpeed?:?readyPercentage?:?state
-
-    const QString split("?:?");
-    QString infoStr;
-    infoStr += getToolTypeToString() + split;
-    infoStr += taskName() + split;
-    infoStr += rawUrl + split;
-    infoStr += parseUrl + split;
-    infoStr += taskIconPath + split;
-    infoStr += QString::number(taskSize()) + split;
-    infoStr += savePath + split;
-    infoStr += maxThreads + split;
-    infoStr += maxSpeed + split;
-    infoStr += QString::number(percentage, 'f', 2) + split;
-    infoStr += getDownStateToString();
-
-    return std::move(infoStr);
-}
-
 int TaskInfo::convertDownStateToInt(const QString state)
 {
     if (!state.compare("dlstate_suspend", Qt::CaseInsensitive))
@@ -288,9 +198,24 @@ int TaskInfo::convertDownStateToInt(const QString state)
         return DLSTATE_DOWNLOADED;
     else
     {
+        qWarning() << "download state: " << state;
         qWarning() << "download state not match any case At: void TaskInfo::setDownStateFromString(const QString &state)";
         return DLSTATE_UNDEF;
     }
+}
+
+/*!
+    旧C++代码中的速度直接以 xx KB/S 这样的格式保存，
+    新代码统一转换成 int 型以 byte 为单位
+*/
+int TaskInfo::convertDownloadSpeedToInt(const QString speed)
+{
+    QRegExp reg("^(\\d+) KB/S$");
+    if (reg.indexIn(speed) != -1)
+        return reg.cap(1).toInt() * 1024;
+
+    qDebug() << "Not match speed string: " << speed;
+    return 0;
 }
 
 TaskInfo &TaskInfo::operator =(const TaskInfo &what)
@@ -331,7 +256,7 @@ QString TaskInfo::qml_getSavePath()
     return savePath;
 }
 
-QString TaskInfo::qml_getCompleteDate()
+QDateTime TaskInfo::qml_getCompleteDate()
 {
     return completeDate;
 }
@@ -359,4 +284,9 @@ int TaskInfo::qml_getMaxSpeed()
 int TaskInfo::qml_getTaskState()
 {
     return taskState;
+}
+
+int TaskInfo::qml_getDownloadSpeedNow()
+{
+    return downloadSpeedNow;
 }

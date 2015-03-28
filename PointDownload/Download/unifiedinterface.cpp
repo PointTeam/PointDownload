@@ -331,8 +331,6 @@ void UnifiedInterface::startDownload(TaskInfo *taskInfo)
         dropSlowest();
     }
 
-    taskInfo->taskState = DLSTATE_DOWNLOADING;
-
     //将下载项插入全局map中
     downloadingListMap.insert(taskInfo->rawUrl, taskInfo->toolType);
 
@@ -350,9 +348,12 @@ void UnifiedInterface::startDownload(TaskInfo *taskInfo)
     case TOOL_YOUGET:
         startYougetDownload(taskInfo);
         break;
+#ifdef QT_DEBUG
     default:
         qWarning() << "taskInfo->toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
         qWarning() << "taskInfo->toolType is " << taskInfo->toolType;
+        Q_ASSERT(false);
+#endif
     }
 
     NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo->fileStringList().join('\n'));
@@ -637,6 +638,8 @@ void UnifiedInterface::trashDownloading(QString URL)
 
 void UnifiedInterface::deleteDownloading(QString URL)
 {
+    UnifiedInterface::suspendDownloading(URL);
+
     DownloadXMLHandler tmpOpera;
     stopDownloading(URL);
     deleteFileFromDisk(tmpOpera.getDownloadingNode(URL).savePath,tmpOpera.getDownloadingNode(URL).name);

@@ -190,7 +190,8 @@ int TaskInfo::convertDownStateToInt(const QString state)
 {
     if (!state.compare("dlstate_suspend", Qt::CaseInsensitive))
         return DLSTATE_SUSPEND;
-    else if (!state.compare("dlstate_downloading", Qt::CaseInsensitive))
+    else if (!state.compare("dlstate_downloading", Qt::CaseInsensitive) ||
+             !state.compare("download_priority", Qt::CaseInsensitive))
         return DLSTATE_DOWNLOADING;
     else if (!state.compare("dlstate_ready", Qt::CaseInsensitive))
         return DLSTATE_READY;
@@ -210,7 +211,7 @@ int TaskInfo::convertDownStateToInt(const QString state)
 */
 int TaskInfo::convertDownloadSpeedToInt(const QString speed)
 {
-    QRegExp reg("^(\\d+(?:.\\d+)?) KB/S$");
+    QRegExp reg("^-?(\\d+(?:.\\d+)?) KB/S$");
     if (reg.indexIn(speed) != -1)
         return (int)(reg.cap(1).toFloat() * 1024);
 

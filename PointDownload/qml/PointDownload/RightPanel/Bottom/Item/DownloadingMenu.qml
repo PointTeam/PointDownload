@@ -97,9 +97,8 @@ Rectangle {
                 parent.opacity = 1;
             }
             onClicked: {
-                downloadingPage.moveItemToTop(downloadURL);// 在优先下载时，应该把优先项移动到最前面
-                DLDataConverter.controlItem("dl_downloading","download_priority",downloadURL)
-                sortTimer.start();
+                downloadingModel.move(index, 0, 1);
+                DLDataConverter.controlItem("dl_downloading", "download_priority", rawUrl);
             }
         }
     }

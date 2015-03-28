@@ -32,7 +32,6 @@
 #define DLSTATE_READY       3   // 就绪，当前任务允许下载但总下载任务数已经达到设定上限时，此任务就为就绪状态
 #define DLSTATE_DOWNLOADED  4   // 下载完成
 #define DLSTATE_TRASH       5   // 移动到垃圾箱的下载任务
-#define DLSTATE_REMOVE      6   // 删除的任务,不再被保存到文件
 
 class TaskInfo : public QObject
 {

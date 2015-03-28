@@ -60,15 +60,4 @@ Rectangle {
         delegate: listDelegate
         clip: true
     }
-
-    //启动排序的计时器
-    Timer {
-        id:sortTimer
-        interval: 1500;
-        running: false;
-        repeat: false
-        onTriggered:{
-            moveItemToTop()
-        }
-    }
 }

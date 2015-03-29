@@ -7,7 +7,7 @@ DownloadXMLHandler::DownloadXMLHandler(QObject *parent) :
 }
 
 
-bool DownloadXMLHandler::writeDownloadingConfigFile(SDownloading downloading)
+bool DownloadXMLHandler::updateDLingNode(const SDownloading & tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
@@ -16,34 +16,32 @@ bool DownloadXMLHandler::writeDownloadingConfigFile(SDownloading downloading)
         // 此处需做错误判断
         if (!domDocument.setContent(&downloadingFile))
         {
-            qDebug() << "setContent err...";
+            qDebug() << "==>[Error] SetContent err...";
             return false;
         }
     }
     else
     {
-        qDebug() << "opening xml file err";
+        qDebug() << "==>[Error] Opening xml file err";
         return false;
     }
 
     downloadingFile.close();
 
     //传递的值与原来相同或者为空则不写入,只有以下的值能修改
-    setDownloadingNodeValue(domDocument, downloading.URL,"Name", downloading.name);
-    setDownloadingNodeValue(domDocument, downloading.URL,"JobMaxSpeed", downloading.jobMaxSpeed);
-    setDownloadingNodeValue(domDocument, downloading.URL,"EnableUpload", downloading.enableUpload);
-    setDownloadingNodeValue(domDocument, downloading.URL, "ReadySize", downloading.readySize);
-    setDownloadingNodeValue(domDocument, downloading.URL, "State", downloading.state);//2014.4.7add
-    setDownloadingNodeValue(domDocument, downloading.URL, "AverageSpeed", downloading.averageSpeed);//2014.5.2add
-    setDownloadingNodeValue(domDocument, downloading.URL, "LastModifyTime", downloading.lastModifyTime);//2014.5.2add
-    setDownloadingNodeValue(domDocument, downloading.URL,"AutoOpenFolder", downloading.autoOpenFolder);
-    setDownloadingThreadNodeValue(domDocument, downloading.URL, downloading.threadList);//only set CompleteBlockCount
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID,"FileName", tmpStruct.fileName);
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID,"Url", tmpStruct.url);
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID,"TaskMaxSpeed", QString::number(tmpStruct.taskMaxSpeed));
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID,"EnableUpload", tmpStruct.enableUpload ? "True" : "False");
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID, "FileReadySize", QString::number(tmpStruct.fileReadySize));
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID, "TaskState", QString::number(tmpStruct.taskState));
+    setDownloadingNodeValue(domDocument, tmpStruct.fileID, "AverageSpeed", QString::number(tmpStruct.averageSpeed));
+    setDownloadingThreadNodeValue(domDocument, tmpStruct.fileID, tmpStruct.threadList);//only set CompleteBlockCount
 
-    setDownloadingNodeValue(domDocument, downloading.URL,"RedirectURL", downloading.redirectURL);  //20140521 zwy
     //写xml文件
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
-        qDebug() << "open file to write err";
+        qDebug() << "==>[Error] Open file to write err";
         return false;
     }
     QTextStream textStream(&downloadingFile);
@@ -55,7 +53,7 @@ bool DownloadXMLHandler::writeDownloadingConfigFile(SDownloading downloading)
     return true;
 }
 
-bool DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
+bool DownloadXMLHandler::insertDLedNode(const SDownloaded & tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadedFile(DOWNLOADEDFILE_PATH);
@@ -66,27 +64,34 @@ bool DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
             return false;
     }
     else
+    {
+        qDebug() << "==>[Error] Opening xml file err";
         return false;
+    }
 
     downloadedFile.close();
 
     QDomElement fileElement = domDocument.createElement("File");
 
-    fileElement.appendChild(createChildElement("Name", tmpStruct.name));
-    fileElement.appendChild(createChildElement("URL", tmpStruct.URL));
-    fileElement.appendChild(createChildElement("DLToolsType", tmpStruct.dlToolsType));
+    fileElement.appendChild(createChildElement("FileID", tmpStruct.fileID));
+    fileElement.appendChild(createChildElement("FileName", tmpStruct.fileName));
+    fileElement.appendChild(createChildElement("Url", tmpStruct.url));
+    fileElement.appendChild(createChildElement("ToolType", QString::number(tmpStruct.toolType)));
     fileElement.appendChild(createChildElement("CompleteDate", tmpStruct.completeDate));
-    fileElement.appendChild(createChildElement("Size", tmpStruct.Size));
-    fileElement.appendChild(createChildElement("Path", tmpStruct.savePath));
-    fileElement.appendChild(createChildElement("Exist", tmpStruct.exist));
-    fileElement.appendChild(createChildElement("IconPath",tmpStruct.iconPath));
+    fileElement.appendChild(createChildElement("FileTotalSize", QString::number(tmpStruct.fileTotalSize)));
+    fileElement.appendChild(createChildElement("FileSavePath", tmpStruct.fileSavePath));
+    fileElement.appendChild(createChildElement("FileExist", tmpStruct.fileExist ? "True" : "False"));
 
     QDomElement rootElement = domDocument.documentElement();
     rootElement.appendChild(fileElement);
 
     //写xml文件
     if (!downloadedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qDebug() << "==>[Error] Open file to write err";
         return false;
+    }
+
     QTextStream textStream(&downloadedFile);
 
     domDocument.save(textStream,4);
@@ -96,7 +101,7 @@ bool DownloadXMLHandler::insertDownloadedNode(SDownloaded tmpStruct)
     return true;
 }
 
-bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
+bool DownloadXMLHandler::insertDLingNode(const SDownloading & tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
@@ -109,28 +114,28 @@ bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
         }
     }
     else
+    {
+        qDebug() << "==>[Error] Opening xml file err";
         return false;
+    }
 
     downloadingFile.close();
 
     QDomElement fileElement = domDocument.createElement("File");
 
-    fileElement.appendChild(createChildElement("Name", tmpStruct.name));
-    fileElement.appendChild(createChildElement("JobMaxSpeed", tmpStruct.jobMaxSpeed));
-    fileElement.appendChild(createChildElement("SavePath", tmpStruct.savePath));
-    fileElement.appendChild(createChildElement("EnableUpload", tmpStruct.enableUpload));
-    fileElement.appendChild(createChildElement("URL", tmpStruct.URL));
-    fileElement.appendChild(createChildElement("RedirectURL", tmpStruct.redirectURL));
-    fileElement.appendChild(createChildElement("DLToolsType", tmpStruct.dlToolsType));
-    fileElement.appendChild(createChildElement("BlockCount", tmpStruct.blockCount));
-    fileElement.appendChild(createChildElement("BlockSize", tmpStruct.blockSize));
-    fileElement.appendChild(createChildElement("TotalSize", tmpStruct.totalSize));
-    fileElement.appendChild(createChildElement("ReadySize", tmpStruct.readySize));
-    fileElement.appendChild(createChildElement("State", tmpStruct.state));//2014.4.7add
-    fileElement.appendChild(createChildElement("AverageSpeed", tmpStruct.averageSpeed));//2014.4.7add
-    fileElement.appendChild(createChildElement("LastModifyTime", tmpStruct.lastModifyTime));//2014.4.7add
-    fileElement.appendChild(createChildElement("AutoOpenFolder", tmpStruct.autoOpenFolder));
-    fileElement.appendChild(createChildElement("IconPath",tmpStruct.iconPath));
+    fileElement.appendChild(createChildElement("FileID", tmpStruct.fileID));
+    fileElement.appendChild(createChildElement("FileName", tmpStruct.fileName));
+    fileElement.appendChild(createChildElement("TaskMaxSpeed", QString::number(tmpStruct.taskMaxSpeed)));
+    fileElement.appendChild(createChildElement("FileSavePath", tmpStruct.fileSavePath));
+    fileElement.appendChild(createChildElement("EnableUpload", tmpStruct.enableUpload ? "True" : "False"));
+    fileElement.appendChild(createChildElement("Url", tmpStruct.url));
+    fileElement.appendChild(createChildElement("ToolType", QString::number(tmpStruct.toolType)));
+    fileElement.appendChild(createChildElement("BlockCount", QString::number(tmpStruct.blockCount)));
+    fileElement.appendChild(createChildElement("BlockSize", QString::number(tmpStruct.blockSize)));
+    fileElement.appendChild(createChildElement("FileTotalSize", QString::number(tmpStruct.fileTotalSize)));
+    fileElement.appendChild(createChildElement("FileReadySize", QString::number(tmpStruct.fileReadySize)));
+    fileElement.appendChild(createChildElement("TaskState", QString::number(tmpStruct.taskState)));//2014.4.7add
+    fileElement.appendChild(createChildElement("AverageSpeed", QString(tmpStruct.averageSpeed)));//2014.4.7add
     fileElement.appendChild(createThreadElement(tmpStruct.threadList));
 
     QDomElement rootElement = domDocument.documentElement();
@@ -138,7 +143,10 @@ bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
 
     //写xml文件
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qDebug() << "==>[Error] Open file to write err";
         return false;
+    }
     QTextStream textStream(&downloadingFile);
 
     domDocument.save(textStream,4);
@@ -148,7 +156,7 @@ bool DownloadXMLHandler::insertDownloadingNode(SDownloading tmpStruct)
     return true;
 }
 
-bool DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
+bool DownloadXMLHandler::insertDLtrashNode(const SDownloadTrash & tmpStruct)
 {
     QDomDocument domDocument;
     QFile downloadTrashFile(DOWNLOADTRASHFILE_PATH);
@@ -159,24 +167,30 @@ bool DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
             return false;
     }
     else
+    {
+        qDebug() << "==>[Error] Opening xml file err";
         return false;
+    }
 
     downloadTrashFile.close();
 
     QDomElement fileElement = domDocument.createElement("File");
 
-    fileElement.appendChild(createChildElement("Name", tmpStruct.name));
-    fileElement.appendChild(createChildElement("URL", tmpStruct.URL));
-    fileElement.appendChild(createChildElement("DLToolsType", tmpStruct.dlToolsType));
-    fileElement.appendChild(createChildElement("TotalSize", tmpStruct.totalSize));
-    fileElement.appendChild(createChildElement("IconPath",tmpStruct.iconPath));
+    fileElement.appendChild(createChildElement("FileID", tmpStruct.fileID));
+    fileElement.appendChild(createChildElement("FileName", tmpStruct.fileName));
+    fileElement.appendChild(createChildElement("Url", tmpStruct.url));
+    fileElement.appendChild(createChildElement("ToolType", QString::number(tmpStruct.toolType)));
+    fileElement.appendChild(createChildElement("FileTotalSize", QString::number(tmpStruct.fileTotalSize)));
 
     QDomElement rootElement = domDocument.documentElement();
     rootElement.appendChild(fileElement);
 
     //写xml文件
     if (!downloadTrashFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        qDebug() << "==>[Error] Open file to write err";
         return false;
+    }
     QTextStream textStream(&downloadTrashFile);
 
     domDocument.save(textStream,4);
@@ -186,37 +200,13 @@ bool DownloadXMLHandler::insertDownloadTrash(SDownloadTrash tmpStruct)
     return true;
 }
 
-bool DownloadXMLHandler::removeDownloadedFileNode(QString URL)
+bool DownloadXMLHandler::removeDLingFileNode(const QString & fileID)
 {
-    QDomDocument domDocument;
-    QFile downloadedFile(DOWNLOADEDFILE_PATH);
-    if (downloadedFile.open(QIODevice::ReadOnly))
+    if (!fileIDExist(fileID, PDataType::PDLTypeDownloading))
     {
-        // 此处需做错误判断
-        if (!domDocument.setContent(&downloadedFile))
-            return false;
+        qDebug() << "==>[Error] File node not exist!";
+        return false;
     }
-    else
-        return false;
-
-    downloadedFile.close();
-
-    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,URL));
-
-    //写xml文件
-    if (!downloadedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return false;
-    QTextStream textStream(&downloadedFile);
-    domDocument.save(textStream,4);
-    downloadedFile.close();
-
-    return true;
-}
-
-bool DownloadXMLHandler::removeDownloadingFileNode(QString URL)
-{
-    if (!urlExit(URL,"ing"))
-        return false;
 
     QDomDocument domDocument;
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
@@ -237,7 +227,7 @@ bool DownloadXMLHandler::removeDownloadingFileNode(QString URL)
 
     downloadingFile.close();
 
-    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,URL));
+    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,fileID));
 
     //写xml文件
     if (!downloadingFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -252,7 +242,40 @@ bool DownloadXMLHandler::removeDownloadingFileNode(QString URL)
     return true;
 }
 
-bool DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
+bool DownloadXMLHandler::removeDLedFileNode(const QString & fileID)
+{
+    if (!fileIDExist(fileID, PDataType::PDLTypeDownloaded))
+    {
+        qDebug() << "==>[Error] File node not exist!";
+        return false;
+    }
+
+    QDomDocument domDocument;
+    QFile downloadedFile(DOWNLOADEDFILE_PATH);
+    if (downloadedFile.open(QIODevice::ReadOnly))
+    {
+        // 此处需做错误判断
+        if (!domDocument.setContent(&downloadedFile))
+            return false;
+    }
+    else
+        return false;
+
+    downloadedFile.close();
+
+    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,fileID));
+
+    //写xml文件
+    if (!downloadedFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return false;
+    QTextStream textStream(&downloadedFile);
+    domDocument.save(textStream,4);
+    downloadedFile.close();
+
+    return true;
+}
+
+bool DownloadXMLHandler::removeDLtrashFileNode(const QString & fileID)
 {
     QDomDocument domDocument;
     QFile downloadTrashFile(DOWNLOADTRASHFILE_PATH);
@@ -266,7 +289,7 @@ bool DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
         return false;
 
     downloadTrashFile.close();
-    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,URL));
+    domDocument.documentElement().removeChild(getMatchFileNode(domDocument,fileID));
 
     //写xml文件
     if (!downloadTrashFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -278,91 +301,46 @@ bool DownloadXMLHandler::removeDownloadTrashFileNode(QString URL)
     return true;
 }
 
-bool DownloadXMLHandler::urlExit(QString URL, QString type)
+bool DownloadXMLHandler::fileIDExist(const QString & fileID, PDataType::DownloadType dlType)
 {
     QDomNodeList tmpList;
 
-    if (type == "ing")
+    switch (dlType)
+    {
+    case PDataType::PDLTypeDownloading:
         tmpList = getDocument(DOWNLOADINGFILE_PATH).elementsByTagName("File");
-    else
+        break;
+    case PDataType::PDLTypeDownloaded:
         tmpList = getDocument(DOWNLOADEDFILE_PATH).elementsByTagName("File");
+        break;
+    default:
+        qDebug() << "==>[Error] Download type unknown!";
+        return false;
+    }
 
     for (int i = 0; i < tmpList.count(); i ++)
     {
-
         //contentNode:子节点File下面包含的内容节点列表
         QDomNodeList contentNode = tmpList.item(i).toElement().childNodes();
-        QDomNode tmpURLNode;
+        QDomNode tmpFileIDNode;
         for (int j = 0; j < contentNode.count(); j ++)
         {
             QString tmpTagName = contentNode.item(j).nodeName();
-            if (tmpTagName == "URL")
+            if (tmpTagName == "FileID")
             {
-                tmpURLNode = contentNode.item(j);
+                tmpFileIDNode = contentNode.item(j);
                 break;
             }
         }
 
-        if (tmpURLNode.toElement().text() == URL)
+        if (tmpFileIDNode.toElement().text() == fileID)
             return true;
     }
 
     return false;
 }
 
-QList<SDownloaded> DownloadXMLHandler::getDownloadedNodes()
-{
-    QList<SDownloaded> tmpNodeList;
-
-    QDomDocument domDocument;
-    QFile * downloadedFile = new QFile(DOWNLOADEDFILE_PATH);
-    if (downloadedFile->open(QIODevice::ReadOnly))
-    {
-        domDocument.setContent(downloadedFile); // 此处需做错误判断
-    }
-    downloadedFile->close();
-
-    // 以下代码为解析XML文件中的内容
-    QDomNodeList fileNodeList = domDocument.elementsByTagName("File");
-    //循环读取所有的File节点
-    for (int i = 0; i < fileNodeList.count(); i++)
-    {
-        SDownloaded tmpNodeStruct;
-        //contentNode:子节点File下面包含的内容节点列表
-        QDomNodeList contentNode = fileNodeList.item(i).toElement().childNodes();
-        //循环读取一个File节点下的所有信息并保存
-        for (int j = 0; j < contentNode.count(); j ++)
-        {
-            QString tagName = contentNode.item(j).nodeName();
-            QString nodeValue = contentNode.item(j).toElement().text();
-
-            if (tagName == "Name")
-                tmpNodeStruct.name = nodeValue;
-            else if (tagName == "CompleteDate")
-                tmpNodeStruct.completeDate = nodeValue;
-            else if (tagName == "Size")
-                tmpNodeStruct.Size = nodeValue;
-            else if (tagName == "Path")
-                tmpNodeStruct.savePath = nodeValue;
-            else if (tagName == "URL")
-                tmpNodeStruct.URL = nodeValue;
-            else if (tagName == "DLToolsType")
-                tmpNodeStruct.dlToolsType = nodeValue;
-            else if (tagName == "Exist")
-                tmpNodeStruct.exist = nodeValue;
-            else if (tagName == "IconPath")
-                tmpNodeStruct.iconPath = nodeValue;
-            else
-                continue;
-        }
-
-        tmpNodeList.append(tmpNodeStruct);
-    }
-
-    return tmpNodeList;
-}
-
-QList<SDownloading> DownloadXMLHandler::getDownloadingNodes()
+QList<SDownloading> DownloadXMLHandler::getDLingNodes()
 {
     QList<SDownloading> tmpNodeList;
 
@@ -388,38 +366,32 @@ QList<SDownloading> DownloadXMLHandler::getDownloadingNodes()
             QString tagName = contentNode.item(j).nodeName();
             QString nodeValue = contentNode.item(j).toElement().text();
 
-            if (tagName == "Name")
-                tmpNodeStruct.name = nodeValue;
-            else if (tagName == "JobMaxSpeed")
-                tmpNodeStruct.jobMaxSpeed = nodeValue;
-            else if (tagName == "SavePath")
-                tmpNodeStruct.savePath = nodeValue;
+            if (tagName == "FileID")
+                tmpNodeStruct.fileID = nodeValue;
+            else if (tagName == "FileName")
+                tmpNodeStruct.fileName = nodeValue;
+            else if (tagName == "TaskMaxSpeed")
+                tmpNodeStruct.taskMaxSpeed = nodeValue.toInt();
+            else if (tagName == "FileSavePath")
+                tmpNodeStruct.fileSavePath = nodeValue;
             else if (tagName == "EnableUpload")
-                tmpNodeStruct.enableUpload = nodeValue;
-            else if (tagName == "URL")
-                tmpNodeStruct.URL = nodeValue;
-            else if (tagName == "RedirectURL")
-                tmpNodeStruct.redirectURL = nodeValue;
-            else if (tagName == "DLToolsType")
-                tmpNodeStruct.dlToolsType = nodeValue;
+                tmpNodeStruct.enableUpload = nodeValue == "True" ? true: false;
+            else if (tagName == "Url")
+                tmpNodeStruct.url = nodeValue;
+            else if (tagName == "ToolType")
+                tmpNodeStruct.toolType = PDataType::ToolType(nodeValue.toInt());
             else if (tagName == "BlockCount")
-                tmpNodeStruct.blockCount = nodeValue;
+                tmpNodeStruct.blockCount = nodeValue.toLongLong();
             else if (tagName == "BlockSize")
-                tmpNodeStruct.blockSize = nodeValue;
-            else if (tagName == "TotalSize")
-                tmpNodeStruct.totalSize = nodeValue;
-            else if (tagName == "ReadySize")
-                tmpNodeStruct.readySize = nodeValue;
-            else if (tagName == "State")
-                tmpNodeStruct.state = nodeValue;    //2014.4.07
+                tmpNodeStruct.blockSize = nodeValue.toLongLong();
+            else if (tagName == "FileTotalSize")
+                tmpNodeStruct.fileTotalSize = nodeValue.toLongLong();
+            else if (tagName == "FileReadySize")
+                tmpNodeStruct.fileReadySize = nodeValue.toLongLong();
+            else if (tagName == "TaskState")
+                tmpNodeStruct.taskState = PDataType::TaskState(nodeValue.toInt());    //2014.4.07
             else if (tagName == "AverageSpeed")
-                tmpNodeStruct.averageSpeed = nodeValue;
-            else if (tagName == "LastModifyTime")
-                tmpNodeStruct.lastModifyTime = nodeValue;
-            else if (tagName == "AutoOpenFolder")
-                tmpNodeStruct.autoOpenFolder = nodeValue;
-            else if (tagName == "IconPath")
-                tmpNodeStruct.iconPath = nodeValue;
+                tmpNodeStruct.averageSpeed = nodeValue.toInt();
             else if (tagName == "Threads")
             {
                 QList<SDownloadThread> threadList;
@@ -435,11 +407,11 @@ QList<SDownloading> DownloadXMLHandler::getDownloadingNodes()
                         QString nodeValue = targetNodeList.item(y).toElement().text();
 
                         if (tagName == "CompleteBlockCount")
-                            tmpThreadStruct.completedBlockCount = nodeValue;
+                            tmpThreadStruct.completedBlockCount = nodeValue.toLongLong();
                         else if (tagName == "StartBlockIndex")
-                            tmpThreadStruct.startBlockIndex = nodeValue;
+                            tmpThreadStruct.startBlockIndex = nodeValue.toLongLong();
                         else if (tagName == "EndBlockIndex")
-                            tmpThreadStruct.endBlockIndex = nodeValue;
+                            tmpThreadStruct.endBlockIndex = nodeValue.toLongLong();
                     }
 
                     threadList.append(tmpThreadStruct);
@@ -456,7 +428,59 @@ QList<SDownloading> DownloadXMLHandler::getDownloadingNodes()
     return tmpNodeList;
 }
 
-QList<SDownloadTrash> DownloadXMLHandler::getDownloadTrashNodes()
+QList<SDownloaded> DownloadXMLHandler::getDLedNodes()
+{
+    QList<SDownloaded> tmpNodeList;
+
+    QDomDocument domDocument;
+    QFile * downloadedFile = new QFile(DOWNLOADEDFILE_PATH);
+    if (downloadedFile->open(QIODevice::ReadOnly))
+    {
+        domDocument.setContent(downloadedFile); // 此处需做错误判断
+    }
+    downloadedFile->close();
+
+    // 以下代码为解析XML文件中的内容
+    QDomNodeList fileNodeList = domDocument.elementsByTagName("File");
+    //循环读取所有的File节点
+    for (int i = 0; i < fileNodeList.count(); i++)
+    {
+        SDownloaded tmpNodeStruct;
+        //contentNode:子节点File下面包含的内容节点列表
+        QDomNodeList contentNode = fileNodeList.item(i).toElement().childNodes();
+        //循环读取一个File节点下的所有信息并保存
+        for (int j = 0; j < contentNode.count(); j ++)
+        {
+            QString tagName = contentNode.item(j).nodeName();
+            QString nodeValue = contentNode.item(j).toElement().text();
+
+            if (tagName == "FileID")
+                tmpNodeStruct.fileID = nodeValue;
+            else if (tagName == "FileName")
+                tmpNodeStruct.fileName = nodeValue;
+            else if (tagName == "CompleteDate")
+                tmpNodeStruct.completeDate = nodeValue;
+            else if (tagName == "FileTotalSize")
+                tmpNodeStruct.fileTotalSize = nodeValue.toLongLong();
+            else if (tagName == "FileSavePath")
+                tmpNodeStruct.fileSavePath = nodeValue;
+            else if (tagName == "Url")
+                tmpNodeStruct.url = nodeValue;
+            else if (tagName == "ToolType")
+                tmpNodeStruct.toolType = PDataType::ToolType(nodeValue.toInt());
+            else if (tagName == "FileExist")
+                tmpNodeStruct.fileExist = nodeValue == "True" ? true: false;
+            else
+                continue;
+        }
+
+        tmpNodeList.append(tmpNodeStruct);
+    }
+
+    return tmpNodeList;
+}
+
+QList<SDownloadTrash> DownloadXMLHandler::getDLtrashNodes()
 {
     QList<SDownloadTrash> tmpNodeList;
 
@@ -482,16 +506,16 @@ QList<SDownloadTrash> DownloadXMLHandler::getDownloadTrashNodes()
             QString tagName = contentNode.item(j).nodeName();
             QString nodeValue = contentNode.item(j).toElement().text();
 
-            if (tagName == "Name")
-                tmpNodeStruct.name = nodeValue;
-            else if (tagName == "TotalSize")
-                tmpNodeStruct.totalSize = nodeValue;
-            else if (tagName == "URL")
-                tmpNodeStruct.URL = nodeValue;
-            else if (tagName == "DLToolsType")
-                tmpNodeStruct.dlToolsType = nodeValue;
-            else if (tagName == "IconPath")
-                tmpNodeStruct.iconPath = nodeValue;
+            if (tagName == "FileID")
+                tmpNodeStruct.fileID = nodeValue;
+            if (tagName == "FileName")
+                tmpNodeStruct.fileName = nodeValue;
+            else if (tagName == "FileTotalSize")
+                tmpNodeStruct.fileTotalSize = nodeValue.toLongLong();
+            else if (tagName == "Url")
+                tmpNodeStruct.url = nodeValue;
+            else if (tagName == "ToolType")
+                tmpNodeStruct.toolType = PDataType::ToolType(nodeValue.toInt());
             else
                 continue;
         }
@@ -502,29 +526,13 @@ QList<SDownloadTrash> DownloadXMLHandler::getDownloadTrashNodes()
     return tmpNodeList;
 }
 
-SDownloaded DownloadXMLHandler::getDownloadedNode(QString URL)
-{
-    SDownloaded tmpNode;
-    QList<SDownloaded> tmpList = getDownloadedNodes();
-    for (int i = 0; i < tmpList.count(); i ++)
-    {
-        if (tmpList.at(i).URL == URL)
-        {
-            tmpNode = tmpList.at(i);
-            break;
-        }
-    }
-
-    return tmpNode;
-}
-
-SDownloading DownloadXMLHandler::getDownloadingNode(QString URL)
+SDownloading DownloadXMLHandler::getDLingNode(const QString & fileID)
 {
     SDownloading tmpNode;
-    QList<SDownloading> tmpList = getDownloadingNodes();
+    QList<SDownloading> tmpList = getDLingNodes();
     for (int i = 0; i < tmpList.count(); i ++)
     {
-        if (tmpList.at(i).URL == URL || tmpList.at(i).redirectURL == URL)
+        if (tmpList.at(i).fileID == fileID)
         {
             tmpNode = tmpList.at(i);
             break;
@@ -533,13 +541,29 @@ SDownloading DownloadXMLHandler::getDownloadingNode(QString URL)
     return tmpNode;
 }
 
-SDownloadTrash DownloadXMLHandler::getDownloadTrashNode(QString URL)
+SDownloaded DownloadXMLHandler::getDLedNode(const QString & fileID)
 {
-    SDownloadTrash tmpNode;
-    QList<SDownloadTrash> tmpList = getDownloadTrashNodes();
+    SDownloaded tmpNode;
+    QList<SDownloaded> tmpList = getDLedNodes();
     for (int i = 0; i < tmpList.count(); i ++)
     {
-        if (tmpList.at(i).URL == URL)
+        if (tmpList.at(i).fileID == fileID)
+        {
+            tmpNode = tmpList.at(i);
+            break;
+        }
+    }
+
+    return tmpNode;
+}
+
+SDownloadTrash DownloadXMLHandler::getDLtrashNode(const QString & fileID)
+{
+    SDownloadTrash tmpNode;
+    QList<SDownloadTrash> tmpList = getDLtrashNodes();
+    for (int i = 0; i < tmpList.count(); i ++)
+    {
+        if (tmpList.at(i).fileID == fileID)
         {
             tmpNode = tmpList.at(i);
             break;
@@ -554,9 +578,9 @@ void DownloadXMLHandler::touchAll()
 {
     touchConfigDir();
     touchDownloadDir();
-    touchDownloadedConfigFile();
-    touchDownloadingConfigFile();
-    touchDownloadTrashConfigFile();
+    touchDLedConfigFile();
+    touchDLingConfigFile();
+    touchDLtrashConfigFile();
 }
 
 void DownloadXMLHandler::touchConfigDir()
@@ -581,7 +605,7 @@ void DownloadXMLHandler::touchDownloadDir()
     }
 }
 
-void DownloadXMLHandler::touchDownloadedConfigFile()
+void DownloadXMLHandler::touchDLedConfigFile()
 {
     QFile downloadedFile(DOWNLOADEDFILE_PATH);
     if (!downloadedFile.exists())
@@ -613,7 +637,7 @@ void DownloadXMLHandler::touchDownloadedConfigFile()
     }
 }
 
-void DownloadXMLHandler::touchDownloadingConfigFile()
+void DownloadXMLHandler::touchDLingConfigFile()
 {
     QFile downloadingFile(DOWNLOADINGFILE_PATH);
     if (!downloadingFile.exists())
@@ -645,7 +669,7 @@ void DownloadXMLHandler::touchDownloadingConfigFile()
     }
 }
 
-void DownloadXMLHandler::touchDownloadTrashConfigFile()
+void DownloadXMLHandler::touchDLtrashConfigFile()
 {
     QFile downloadTrashFile(DOWNLOADTRASHFILE_PATH);
     if (!downloadTrashFile.exists())
@@ -677,8 +701,7 @@ void DownloadXMLHandler::touchDownloadTrashConfigFile()
     }
 }
 
-
-QDomDocument DownloadXMLHandler::getDocument(QString path)
+QDomDocument DownloadXMLHandler::getDocument(const QString & path)
 {
     QDomDocument domDocument;
     QFile domFile(path);
@@ -694,7 +717,7 @@ QDomDocument DownloadXMLHandler::getDocument(QString path)
     return domDocument;
 }
 
-QDomNode DownloadXMLHandler::getMatchFileNode(QDomDocument &domDoc,QString URL)
+QDomNode DownloadXMLHandler::getMatchFileNode(const QDomDocument &domDoc,const QString & fileID)
 {
     QDomNodeList tmpList = domDoc.elementsByTagName("File");
     for (int i = 0; i < tmpList.count(); i ++)
@@ -704,7 +727,7 @@ QDomNode DownloadXMLHandler::getMatchFileNode(QDomDocument &domDoc,QString URL)
         {
             QString tmpNodeName = contentList.item(j).nodeName();
             QString tmpNodeText = contentList.item(j).toElement().text();
-            if (tmpNodeName == "URL" && tmpNodeText == URL)
+            if (tmpNodeName == "FileID" && tmpNodeText == fileID)
             {
                 return tmpList.item(i);
             }
@@ -732,9 +755,9 @@ QDomElement DownloadXMLHandler::createThreadElement(QList<SDownloadThread> threa
     for (int i = 0; i < threadList.count(); i ++)
     {
         QDomElement threadNode = domDoc.createElement("Thread");
-        threadNode.appendChild(createChildElement("StartBlockIndex", threadList.at(i).startBlockIndex));
-        threadNode.appendChild(createChildElement("EndBlockIndex", threadList.at(i).endBlockIndex));
-        threadNode.appendChild(createChildElement("CompleteBlockCount", threadList.at(i).completedBlockCount));
+        threadNode.appendChild(createChildElement("StartBlockIndex", QString::number(threadList.at(i).startBlockIndex)));
+        threadNode.appendChild(createChildElement("EndBlockIndex", QString::number(threadList.at(i).endBlockIndex)));
+        threadNode.appendChild(createChildElement("CompleteBlockCount", QString::number(threadList.at(i).completedBlockCount)));
 
         threadsNode.appendChild(threadNode);
     }
@@ -743,52 +766,58 @@ QDomElement DownloadXMLHandler::createThreadElement(QList<SDownloadThread> threa
 }
 
 
-void DownloadXMLHandler::setDownloadingNodeValue(QDomDocument &domDoc, QString URL, QString tagName, QString nodeValue)
+void DownloadXMLHandler::setDownloadingNodeValue(QDomDocument &domDoc, const QString & fileID, QString tagName, QString nodeValue)
 {
     QDomNodeList tmpList = domDoc.elementsByTagName("File");
     for (int i = 0; i < tmpList.count(); i ++)
     {
         //contentNode:子节点File下面包含的内容节点列表
         QDomNodeList contentNode = tmpList.item(i).toElement().childNodes();
-        QDomNode tmpURLNode;
+        QDomNode tmpFileIDNode;
         QDomNode tmpTargeNode;
         for (int j = 0; j < contentNode.count(); j ++)
         {
             QString tmpTagName = contentNode.item(j).nodeName();
-            if (tmpTagName == "URL")
-                tmpURLNode = contentNode.item(j);
+            if (tmpTagName == "FileID")
+                tmpFileIDNode = contentNode.item(j);
             else if (tmpTagName == tagName)
+            {
                 tmpTargeNode = contentNode.item(j);
+                break;
+            }
             else
                 continue;
         }
-        if (tmpURLNode.toElement().text() == URL && nodeValue != "")
+        if (tmpFileIDNode.toElement().text() == fileID && nodeValue != "")
         {
             tmpTargeNode.toElement().firstChild().setNodeValue(nodeValue);
         }
     }
 }
 
-void DownloadXMLHandler::setDownloadingThreadNodeValue(QDomDocument &domDoc, QString URL, QList<SDownloadThread> nodeValue)
+void DownloadXMLHandler::setDownloadingThreadNodeValue(QDomDocument &domDoc, const QString & fileID, QList<SDownloadThread> nodeValue)
 {
     QDomNodeList tmpList = domDoc.elementsByTagName("File");
     for (int i = 0; i < tmpList.count(); i ++)
     {
         //contentNode:子节点File下面包含的内容节点列表
         QDomNodeList contentNode = tmpList.item(i).toElement().childNodes();
-        QDomNode tmpURLNode;
+        QDomNode tmpFileIDNode;
         QDomNode tmpTargeNode;
         for (int j = 0; j < contentNode.count(); j ++)
         {
             QString tmpTagName = contentNode.item(j).nodeName();
-            if (tmpTagName == "URL")
-                tmpURLNode = contentNode.item(j);
+            if (tmpTagName == "FileID")
+                tmpFileIDNode = contentNode.item(j);
             else if (tmpTagName == "Threads")
+            {
                 tmpTargeNode = contentNode.item(j);
+                break;
+            }
             else
                 continue;
         }
-        if (tmpURLNode.toElement().text() == URL)
+        if (tmpFileIDNode.toElement().text() == fileID)
         {
             //Thread list
             QDomNodeList threadNodeList = tmpTargeNode.toElement().childNodes();
@@ -800,8 +829,8 @@ void DownloadXMLHandler::setDownloadingThreadNodeValue(QDomDocument &domDoc, QSt
                 for (int y = 0; y < targetNodeList.count(); y ++)
                 {
                     if (targetNodeList.item(y).toElement().nodeName() == "CompleteBlockCount"
-                            && nodeValue.at(x).completedBlockCount != "")
-                        targetNodeList.item(y).toElement().firstChild().setNodeValue(nodeValue.at(x).completedBlockCount);
+                            && nodeValue.at(x).completedBlockCount != 0)
+                        targetNodeList.item(y).toElement().firstChild().setNodeValue(QString::number(nodeValue.at(x).completedBlockCount));
                 }
             }
             break;

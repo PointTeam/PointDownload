@@ -5,3 +5,5 @@ HEADERS		+= $$PWD/downloadxmlhandler.h\
 
 SOURCES		+= $$PWD/downloadxmlhandler.cpp\
 		$$PWD/settingxmlhandler.cpp
+
+include(../PDataType/PDataType.pri)

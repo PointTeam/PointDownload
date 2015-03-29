@@ -25,7 +25,7 @@ QObject * MainController::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
 void MainController::pStartDownload(const TaskInfo &taskInfo)
 {
     //确保将要下载的文件不会重复
-    deleteFileFromDisk(taskInfo.savePath, taskInfo.fileList.at(0).fileName);
+    deleteFileFromDisk(taskInfo.fileSavePath, taskInfo.fileList.at(0).fileName);
 
 //    //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
 //    SettingXMLHandler tmphandler;
@@ -72,17 +72,30 @@ int MainController::pGetJobCount()
 
 void MainController::pSuspendAllTask()
 {
-    qDebug() << "All job spspened!";
+    qDebug() << "Suspend all task...";
 }
 
 void MainController::pResumeAllTask()
 {
-
+    qDebug() << "Resume all task...";
 }
 
 void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadType dtype, PDataType::OperationType otype)
 {
-
+    switch (dtype)
+    {
+    case PDataType::PDLTypeDownloading:
+        handleDownloadingControl(fileID,otype);
+        break;
+    case PDataType::PDLTypeDownloaded:
+        handleDownloadedControl(fileID,otype);
+        break;
+    case PDataType::PDLTypeDownloadTrash:
+        handleDownloadTrashControl(fileID,otype);
+        break;
+    default:
+        break;
+    }
 }
 
 void MainController::slotGetError(QString &fileID, QString &errorMessage, PDataType::ToolType toolType)
@@ -132,17 +145,77 @@ void MainController::startXwareDownload(const TaskInfo &taskInfo)
 
 void MainController::handleDownloadingControl(const QString &fileID, PDataType::OperationType otype)
 {
-
+    switch (otype)
+    {
+    case PDataType::PCtrlTypeDelete:
+        dlingDelete(fileID);
+        break;
+    case PDataType::PCtrlTypeFinishDownload:
+        dlingFinish(fileID);
+        break;
+    case PDataType::PCtrlTypeHightSpeedChannel:
+        dlingHightSpeedChannel(fileID);
+        break;
+    case PDataType::PCtrlTypeOpenFolder:
+        dlingOpenFolder(fileID);
+        break;
+    case PDataType::PCtrlTypeSuspend:
+        dlingSuspend(fileID);
+        break;
+    case PDataType::PCtrlTypeResume:
+        dlingResume(fileID);
+        break;
+    case PDataType::PCtrlTypeRaise:
+        dlingRaise(fileID);
+        break;
+    case PDataType::PCtrlTypeTrash:
+        dlingTrash(fileID);
+        break;
+    case PDataType::PCtrlTypeOfflineDownload:
+        dlingOfflineDownload(fileID);
+        break;
+    default:
+        qDebug() << "==>[Error] Operation type unknown!";
+        break;
+    }
 }
 
 void MainController::handleDownloadedControl(const QString &fileID, PDataType::OperationType otype)
 {
-
+    switch (otype)
+    {
+    case PDataType::PCtrlTypeDelete:
+        dledDelete(fileID);
+        break;
+    case PDataType::PCtrlTypeOpenFolder:
+        dledOpenFolder(fileID);
+        break;
+    case PDataType::PCtrlTypeReDownload:
+        dledRedownload(fileID);
+        break;
+    case PDataType::PCtrlTypeTrash:
+        dledTrash(fileID);
+        break;
+    default:
+        qDebug() << "==>[Error] Operation type unknown!";
+        break;
+    }
 }
 
 void MainController::handleDownloadTrashControl(const QString &fileID, PDataType::OperationType otype)
 {
-
+    switch (otype)
+    {
+    case PDataType::PCtrlTypeDelete:
+        dltrashDelete(fileID);
+        break;
+    case PDataType::PCtrlTypeReDownload:
+        dltrashRedownload(fileID);
+        break;
+    default:
+        qDebug() << "==>[Error] Operation type unknown!";
+        break;
+    }
 }
 
 void MainController::dlingDelete(const QString &fileID)
@@ -176,11 +249,6 @@ void MainController::dlingRaise(const QString &fileID)
 }
 
 void MainController::dlingResume(const QString &fileID)
-{
-
-}
-
-void MainController::dlingStop(const QString &fileID)
 {
 
 }

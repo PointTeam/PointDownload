@@ -66,15 +66,15 @@ public:
     Q_INVOKABLE void pResumeAllTask();
 
 public slots:
-    void slotControlFileItem(QString &fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
-    void slotGetError(QString &fileID,QString &errorMessage, PDataType::ToolType toolType);
+    void slotControlFileItem(QString & fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
+    void slotGetError(QString & fileID,QString & errorMessage, PDataType::ToolType toolType);
 
 Q_SIGNALS:
 //signals:
     void signalAddDownloadingItem(QObject * taskInfo);
     void signalAddDownloadedItem(QObject * taskInfo);
     void signalAddDownloadTrashItem(QObject * taskInfo);
-    void signalTaskItemInfoUpdate(QString &fileId, PDataType::TaskState taskState, double taskSpeed, double taskProgress); //实时数据更新
+    void signalTaskItemInfoUpdate(TaskItemInfo); //实时数据更新
     void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
 
 private slots:
@@ -100,7 +100,6 @@ private:
     //对正在下载的处理
     void dlingDelete(const QString &fileID);
     void dlingFinish(const QString &fileID);
-    void dlingStop(const QString &fileID);
     void dlingSuspend(const QString &fileID);
     void dlingResume(const QString &fileID);
     void dlingRaise(const QString &fileID);

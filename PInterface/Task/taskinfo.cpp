@@ -26,10 +26,9 @@ TaskInfo::TaskInfo(QIODevice *in) :
 TaskInfo::TaskInfo(TaskInfo &&taskInfo)
 {
     fileID = std::move(taskInfo.fileID);
-    rawUrl = std::move(taskInfo.rawUrl);
-    parseUrl = std::move(taskInfo.parseUrl);
+    url = std::move(taskInfo.url);
     taskIconPath = std::move(taskInfo.taskIconPath);
-    savePath = std::move(taskInfo.savePath);
+    fileSavePath = std::move(taskInfo.fileSavePath);
     toolType = std::move(taskInfo.toolType);
     fileList = std::move(taskInfo.fileList);
     maxThreads = taskInfo.maxThreads;
@@ -128,10 +127,9 @@ QDataStream & operator << (QDataStream& out,  PDataType::ToolType& tooltype)
 QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 {
     in >> what.fileID;
-    in >> what.rawUrl;
-    in >> what.parseUrl;
+    in >> what.url;
     in >> what.taskIconPath;
-    in >> what.savePath;
+    in >> what.fileSavePath;
     in >> what.toolType;
     in >> what.fileList;
     in >> what.maxThreads;
@@ -146,10 +144,9 @@ QDataStream &operator >>(QDataStream &in, TaskInfo &what)
 QDataStream &operator <<(QDataStream &out, const TaskInfo &what)
 {
     out << what.fileID;
-    out << what.rawUrl;
-    out << what.parseUrl;
+    out << what.url;
     out << what.taskIconPath;
-    out << what.savePath;
+    out << what.fileSavePath;
     out << what.toolType;
     out << what.fileList;
     out << what.maxThreads;
@@ -163,10 +160,9 @@ QDebug operator <<(QDebug out, const TaskInfo &what)
     out << endl << "TaskInfo:" << endl;
     out << "toolType = "    << what.toolType << endl;
     out << what.fileList    << endl;
-    out << "rawUrl = "      << what.rawUrl << endl;
-    out << "parseUrl = "    << what.parseUrl << endl;
+    out << "url = "      << what.url << endl;
     out << "taskIconPath = " << what.taskIconPath << endl;
-    out << "savePath = "    << what.savePath << endl;
+    out << "fileSavePath = "    << what.fileSavePath << endl;
     out << "maxThreads = "  << what.maxThreads << endl;
     out << "maxSpeed = "    << what.maxSpeed << endl;
 
@@ -176,10 +172,9 @@ QDebug operator <<(QDebug out, const TaskInfo &what)
 TaskInfo &TaskInfo::operator =(const TaskInfo &what)
 {
     fileID = what.fileID;
-    rawUrl = what.rawUrl;
-    parseUrl = what.parseUrl;
+    url = what.url;
     taskIconPath = what.taskIconPath;
-    savePath = what.savePath;
+    fileSavePath = what.fileSavePath;
     toolType = what.toolType;
     fileList = what.fileList;
     maxThreads = what.maxThreads;
@@ -193,14 +188,9 @@ QString TaskInfo::pGetFileID()
     return fileID;
 }
 
-QString TaskInfo::pGetRawUrl()
+QString TaskInfo::pGetUrl()
 {
-    return rawUrl;
-}
-
-QString TaskInfo::pGetParseUrl()
-{
-    return parseUrl;
+    return url;
 }
 
 QString TaskInfo::pGetTaskIconPath()
@@ -208,9 +198,9 @@ QString TaskInfo::pGetTaskIconPath()
     return taskIconPath;
 }
 
-QString TaskInfo::pGetSavePath()
+QString TaskInfo::pGetFileSavePath()
 {
-    return savePath;
+    return fileSavePath;
 }
 
 PDataType::ToolType TaskInfo::pGetToolType()

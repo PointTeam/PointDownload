@@ -61,7 +61,7 @@ public:
     {
         PDLTypeDownloading,
         PDLTypeDownloaded,
-        PDLTypeTrash
+        PDLTypeDownloadTrash
     };
 
     enum TaskState
@@ -82,7 +82,7 @@ public:
         PCtrlTypeTrash,
         PCtrlTypeDelete,
         PCtrlTypeOpenFolder,
-        PCtrlTypePfflineDownload,
+        PCtrlTypeOfflineDownload,
         PCtrlTypeHightSpeedChannel
     };
 
@@ -100,12 +100,12 @@ public:
 struct TaskItemInfo
 {
     QString fileID;
-    QString taskDLSpeed;
-    QString taskULSpeed;
-    QString thunderOfflineSpeed;
-    QString thunderHightSpeed;
+    int taskDLSpeed;
+    int taskULSpeed;
+    int thunderOfflineSpeed;
+    int thunderHightSpeed;
     PDataType::TaskState taskState;
-    double taskProgress;
+    double taskProgress;    //0~1
 };
 
 #endif // DATATYPE_H

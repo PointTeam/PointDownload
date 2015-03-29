@@ -9,7 +9,7 @@
 */
 
 #include <QObject>
-
+#include "pdatatype.h"
 #include "taskinfo.h"
 
 class Task : public QObject
@@ -20,19 +20,17 @@ public:
 
 public slots:
     // 各个任务自己实现的任务控制函数
-    virtual void start() = 0;                   // 开始下载
-    virtual void stop() = 0;                    // 停止下载
-    virtual void remove(bool removeFile) = 0;   // 删除任务 removeFile 是否删除文件
-
-public:
-    // 当前下载速度，以字节数计
-    virtual int downloadBytesSpeed() const = 0;
-    // 当前下载速度， xxB/s xxxKB/s xx.xxMB/s
-    const QString downloadBytesSpeedString();
+    virtual void start(const TaskInfo & taskInfo) = 0;  // 开始下载
+    virtual void stop(const QString & fileID) = 0;      // 停止下载
+    virtual void suspend(const QString & fileID) = 0;
+    virtual void resume(const QString & fileID) = 0;
+    virtual void finishDownload(const QString & fileID) = 0;
+    virtual void deleteTask(const QString & fileID, const bool removeFile) = 0;
+    virtual void trashTask(const QString & fileID, const bool removeFile) = 0;
 
 signals:
-    void onTaskCompleted();
-    void onTaskError(const QString error);
+    void taskItemInfoUpdate(const TaskItemInfo & info);
+    void getError(const QString & fileID, const QString & error, PDataType::ToolType toolType);
 
 protected:
     TaskInfo infomation;

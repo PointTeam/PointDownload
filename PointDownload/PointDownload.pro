@@ -3,7 +3,9 @@ TEMPLATE = app
 QT += qml quick widgets gui dbus xml
 
 SOURCES += main.cpp \
-    Control/maincontroller.cpp
+    Control/maincontroller.cpp \
+    Download/YouGetTask/yougetprocess.cpp \
+    Download/YouGetTask/yougettask.cpp
 
 RESOURCES += qml.qrc \
     image.qrc \
@@ -20,7 +22,6 @@ include(deployment.pri)
 
 include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
-include(../PInterface/PEventFilter/PEventFilter.pri)
 include(../PInterface/Task/Task.pri)
 include(../PInterface/PDataType/PDataType.pri)
 
@@ -47,4 +48,6 @@ DISTFILES += \
     qml/PointDownload/DonePanel/DoneMainFrame.qml
 
 HEADERS += \
-    Control/maincontroller.h
+    Control/maincontroller.h \
+    Download/YouGetTask/yougetprocess.h \
+    Download/YouGetTask/yougettask.h

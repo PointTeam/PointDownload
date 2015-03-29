@@ -17,10 +17,9 @@ class TaskInfo : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString fileID READ pGetFileID)
-    Q_PROPERTY(QString rawUrl READ pGetRawUrl)
-    Q_PROPERTY(QString parseUrl READ pGetRawUrl)
+    Q_PROPERTY(QString url READ pGetUrl)
     Q_PROPERTY(QString taskIconPath READ pGetTaskIconPath)
-    Q_PROPERTY(QString savePath READ pGetSavePath)
+    Q_PROPERTY(QString fileSavePath READ pGetFileSavePath)
     Q_PROPERTY(PDataType::ToolType toolType READ pGetToolType)
     Q_PROPERTY(int maxThreads READ pGetMaxThreads)
     Q_PROPERTY(int maxSpeed READ pGetMaxSpeed)
@@ -48,10 +47,9 @@ private:
 public:
     // for qml
     QString pGetFileID();
-    QString pGetRawUrl();
-    QString pGetParseUrl();
+    QString pGetUrl();
     QString pGetTaskIconPath();
-    QString pGetSavePath();
+    QString pGetFileSavePath();
     PDataType::ToolType pGetToolType();
     int pGetMaxThreads();
     int pGetMaxSpeed();
@@ -59,10 +57,9 @@ public:
 public:
     // 需要序列化/反序列化的成员
     QString fileID;
-    QString rawUrl;
-    QString parseUrl;
+    QString url;
     QString taskIconPath;
-    QString savePath;
+    QString fileSavePath;
     PDataType::ToolType toolType;
     QList<TaskFileItem> fileList;
     int maxThreads;

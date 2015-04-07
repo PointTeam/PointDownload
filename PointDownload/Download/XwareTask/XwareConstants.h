@@ -26,7 +26,6 @@
 #include <QString>
 #include <QStandardPaths>
 
-
 static struct XwareConstants
 {
     // is output the debug info
@@ -83,7 +82,12 @@ static struct XwareConstants
         XWARE_TMP_DIR = XWARE_HOME + "tmp/";
         XWARE_WORK_DIR = XWARE_HOME + "Xware/";
         XWARE_ETM_PATH = XWARE_WORK_DIR + "EmbedThunderManager";
-        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
+
+        // by sbwtw <sbw@sbw.so>:
+        // 为了兼容发行版和各个平台，应该不要使用硬编码的文件位置，
+        // 这里可以由打包者统一做一个环境变量或者软链接来访问,
+        XWARE_START_UP_PATH = "pointxware";
+//        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
 
         // file
         XWARE_MOUNTS_FILE = XWARE_MOUNTS_DIR + "mounts";
@@ -96,14 +100,8 @@ static struct XwareConstants
 
         // url
         URLSTR = "http://127.0.0.1:" + QString::number(ETM_PORT) + "/";
-
-        SPLITER_BTWN_DATA = "#..#";
-        SPLITER_END = "#.^_^.#";
-        SPLITER_DEFAULT_PARAM = "--";
     }
 
 }XWARE_CONSTANTS_STRUCT;
-
-
 
 #endif // XWARECONSTANTS_H

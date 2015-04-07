@@ -36,14 +36,14 @@ HttpTask * HttpTask::getInstance()
     return httpTask;
 }
 
-void HttpTask::startDownload(const TaskInfo & taskInfo)
+void HttpTask::startDownload(TaskInfo *taskInfo)
 {
     HttpThreadManager * tmpManager = new HttpThreadManager(taskInfo);
     connect(tmpManager, SIGNAL(sDownloadFinish(QString)), this, SLOT(slotDownloadFinish(QString)));
     connect(tmpManager, SIGNAL(sRealTimeData(DownloadingItemInfo)),
            this, SIGNAL(sRealTimeData(DownloadingItemInfo)));
     tmpManager->startDownload();
-    managerMap.insert(taskInfo.rawUrl, tmpManager);
+    managerMap.insert(taskInfo->rawUrl, tmpManager);
 }
 
 void HttpTask::stopDownload(QString URL)

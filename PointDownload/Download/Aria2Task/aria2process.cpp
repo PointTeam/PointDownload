@@ -1,6 +1,6 @@
 #include "aria2process.h"
 
-Aria2Process::Aria2Process(const TaskInfo &taskInfo, QObject *parent) :
+Aria2Process::Aria2Process(TaskInfo *taskInfo, QObject *parent) :
     QObject(parent),taskInfo(taskInfo)
 {
     lastDataSize = "0";
@@ -18,9 +18,9 @@ void Aria2Process::startDownload()
 
     arguments << QString("--auto-save-interval=10");
     arguments << QString("--summary-interval=1");
-    arguments << QString("-x ") + QString::number(taskInfo.maxThreads);
-    arguments << taskInfo.rawUrl;
-    tmpProcess->setWorkingDirectory(taskInfo.savePath);
+    arguments << QString("-x ") + QString::number(taskInfo->maxThreads);
+    arguments << taskInfo->rawUrl;
+    tmpProcess->setWorkingDirectory(taskInfo->savePath);
     tmpProcess->start(tmpHandler.getChildElement(Aria2Setting,"ExecutePath"),arguments);
 }
 
@@ -56,7 +56,7 @@ void Aria2Process::getTimerUpdate()
             tmpInfo.downloadSpeed =  "0 KB/S";
             tmpInfo.downloadPercent = 100;//下载百分比
             tmpInfo.downloadState = dlstate_downloading;
-            tmpInfo.downloadURL = taskInfo.rawUrl;
+            tmpInfo.downloadURL = taskInfo->rawUrl;
             //send to aria2task,last update
             emit updateData(tmpInfo);
 
@@ -64,11 +64,11 @@ void Aria2Process::getTimerUpdate()
             tmpProcess->terminate();
             this->deleteLater();
 
-            emit sFinishAria2Download(taskInfo.rawUrl);
+            emit sFinishAria2Download(taskInfo->rawUrl);
         }
         else
         {
-            emit aria2Error(taskInfo.rawUrl,gFeedBackInfo, TOOL_ARIA2);
+            emit aria2Error(taskInfo->rawUrl,gFeedBackInfo, TOOL_ARIA2);
         }
     }
     else
@@ -85,7 +85,7 @@ void Aria2Process::getTimerUpdate()
                 = gFeedBackInfo.mid(tmpInfoString.indexOf("(") + 1
                                     ,tmpInfoString.indexOf("%)") - tmpInfoString.indexOf("(") - 1).toDouble();//下载百分比
         tmpInfo.downloadState = dlstate_downloading;
-        tmpInfo.downloadURL = taskInfo.rawUrl;
+        tmpInfo.downloadURL = taskInfo->rawUrl;
 
         //send to aria2task
         emit updateData(tmpInfo);
@@ -116,7 +116,7 @@ void Aria2Process::updateXMLFile(DownloadingItemInfo info)
 void Aria2Process::getError()
 {
     qDebug() << tmpProcess->readAllStandardError();
-    emit aria2Error(taskInfo.rawUrl, QString(tmpProcess->readAllStandardError()), TOOL_ARIA2);
+    emit aria2Error(taskInfo->rawUrl, QString(tmpProcess->readAllStandardError()), TOOL_ARIA2);
 }
 
 QString Aria2Process::analysisFeedBackSpeed(QString data)

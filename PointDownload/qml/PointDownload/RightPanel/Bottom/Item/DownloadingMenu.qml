@@ -32,52 +32,30 @@ import Singleton.DLDataConverter 1.0
 import "../../../ToolTip/MenuTooltipCreator.js" as MenuToolTip
 
 Rectangle {
-    id: menuItem
+    id: downloadingMenu
 
     property int menuLeftMargin: 25
-    property string downloadURL: ""
-    property string downloadState: ""
-    property string offlineSpeed:""
-    property string hightSpeed:""
+
+    property string offlineSpeed: ""
+    property string hightSpeed: ""
 
     width: parent.width
     height: 40
     radius: 4
     opacity: 0.8
     color: "#ffffff"
-    //连接单例的信号
-    Connections {
-        target: DLDataConverter
-        //当c++中的DLDataConverter类触发以下信号时，更改相应属性
-        onSDLStateChange: {
-            if (dlURL == downloadURL && (dlState === "download_suspend" ||
-                                         dlState === "download_resume"))
-            {
-                menuSuspend.setDownloadIcon(dlState);
-            }
-        }
-    }
-
 
     MenuButton {
         id: menuSuspend
         height: parent.height - 10
-        iconPath: downloadState === "dlstate_downloading" ? "qrc:/images/right/suspend"
-                                                          : "qrc:/images/right/resume";
+        iconSource: status === 2 ? "qrc:/images/right/suspend" : "qrc:/images/right/resume";
         anchors {left: parent.left;leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
-
-        function setDownloadIcon(stat) {
-            if (stat === "download_suspend")
-                menuSuspend.iconPath = "qrc:/images/right/resume"
-            else if (stat === "download_resume")
-                menuSuspend.iconPath = "qrc:/images/right/suspend"
-        }
 
         MouseArea {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
-                MenuToolTip.showMenuToolTip(menuSuspend,menuSuspend.iconPath =="qrc:/images/right/suspend"?qsTr("Pause"):qsTr("Resume"))
+                MenuToolTip.showMenuToolTip(menuSuspend, state === 1 ? qsTr("Pause") : qsTr("Resume"));
                 parent.opacity = 0.8;
             }
             onExited: {
@@ -85,11 +63,19 @@ Rectangle {
                 parent.opacity = 1;
             }
             onClicked: {
-                console.log(menuSuspend.iconPath);
-                if (menuSuspend.iconPath === "qrc:/images/right/resume")
-                    DLDataConverter.controlItem("dl_downloading","download_resume",downloadURL)
-                else if (menuSuspend.iconPath === "qrc:/images/right/suspend")
-                    DLDataConverter.controlItem("dl_downloading","download_suspend",downloadURL)
+                console.log("status = ", status);
+                if (status === 2)
+                {
+                    DLDataConverter.stopTask(downloadingModel.get(index).rawUrl);
+//                    menuSuspend.iconSource = "qrc:/images/right/resume"
+                }
+                else if (status === 1)
+                {
+                    DLDataConverter.startTask(downloadingModel.get(index).rawUrl);
+//                    menuSuspend.iconSource = "qrc:/images/right/suspend"
+                }
+                else
+                    console.log("taskStatus Error: ", taskStatus);
             }
         }
     }
@@ -97,7 +83,7 @@ Rectangle {
     MenuButton {
         id: menuPriority
         height: parent.height - 10
-        iconPath: "qrc:/images/right/priority"
+        iconSource: "qrc:/images/right/priority"
         anchors {left: menuSuspend.right; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -111,16 +97,15 @@ Rectangle {
                 parent.opacity = 1;
             }
             onClicked: {
-                downloadingPage.moveItemToTop(downloadURL);// 在优先下载时，应该把优先项移动到最前面
-                DLDataConverter.controlItem("dl_downloading","download_priority",downloadURL)
-                sortTimer.start();
+                downloadingModel.move(index, 0, 1);
+                DLDataConverter.controlItem("dl_downloading", "download_priority", rawUrl);
             }
         }
     }
     MenuButton {
         id: menuFolder
         height: parent.height - 10
-        iconPath: "qrc:/images/right/folder"
+        iconSource: "qrc:/images/right/folder"
         anchors {left: menuPriority.right; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -133,13 +118,13 @@ Rectangle {
                MenuToolTip.close();
                 parent.opacity = 1;
             }
-            onClicked: DLDataConverter.controlItem("dl_downloading","download_openFolder",downloadURL)
+            onClicked: DLDataConverter.controlItem("dl_downloading","download_openFolder",rawUrl)
         }
     }
     MenuButton {
         id: menuTrash
         height: parent.height - 10
-        iconPath: "qrc:/images/right/trash"
+        iconSource: "qrc:/images/right/trash"
         anchors {left: menuFolder.right; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -154,18 +139,17 @@ Rectangle {
             }
             onDoubleClicked:
             {
-                //处理qml显示界面
-                downloadTrashPage.addItem(downloadingPage.getFileInfo(downloadURL))
-                downloadingPage.moveItem(downloadURL)
-                //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_downloading","download_trash",downloadURL)
+                var task = downloadingModel.get(index);
+                trashModel.append(task);
+                DLDataConverter.moveToTrashTask(rawUrl);
+                downloadingModel.remove(index);
             }
         }
     }
     MenuButton {
         id: menuDelete
         height: parent.height - 10
-        iconPath: "qrc:/images/right/delete"
+        iconSource: "qrc:/images/right/delete"
         anchors {left: menuTrash.right; leftMargin: menuLeftMargin; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -180,10 +164,8 @@ Rectangle {
             }
             onDoubleClicked:
             {
-                //处理qml显示界面
-                downloadingPage.moveItem(downloadURL)
-                //调用C++类做文件处理
-                DLDataConverter.controlItem("dl_downloading","download_delete",downloadURL)
+                DLDataConverter.removeTask(rawUrl);
+                downloadingModel.remove(index);
             }
         }
     }
@@ -192,7 +174,7 @@ Rectangle {
         id:menuOfflineDownload
         visible: (downloadingItem.dlToolsType == "Xware" || downloadingItem.dlToolsType == "xware")?true:false
         height: parent.height - 10
-        iconPath: "qrc:/images/right/offlinedownload"
+        iconSource: "qrc:/images/right/offlinedownload"
         anchors {right:offlineDownloadText.left; rightMargin: 6; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent
@@ -222,7 +204,7 @@ Rectangle {
         id:menuHightSpeed
         visible: (downloadingItem.dlToolsType == "Xware" || downloadingItem.dlToolsType == "xware")?true:false
         height: parent.height - 10
-        iconPath: "qrc:/images/right/hightspeed"
+        iconSource: "qrc:/images/right/hightspeed"
         anchors {right: hightSpeedText.left;rightMargin: 6; verticalCenter: parent.verticalCenter}
         MouseArea {
             anchors.fill: parent

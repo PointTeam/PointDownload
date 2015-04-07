@@ -153,17 +153,17 @@ void UnifiedInterface::downloadGetError(QString URL,QString err, int toolType)
     NormalNotice::getInstance()->showMessage(tr("Download Error"), Notice_Color_Error, QString(URL + ":\n" + err));
 }
 
-void UnifiedInterface::startPointDownload(const TaskInfo &taskInfo)
+void UnifiedInterface::startPointDownload(TaskInfo *taskInfo)
 {
     //启动下载
     PointTask::getInstance()->startDownload(taskInfo);
 }
 
-void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
+void UnifiedInterface::startAria2Download(TaskInfo *taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
+    if (!tmpOpera.urlExit(taskInfo->rawUrl,"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -171,27 +171,27 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
         threadStruct.completedBlockCount = "1";
         QList<SDownloadThread> tmpList;
 
-        for (int i = 0; i != taskInfo.maxThreads; i ++)
+        for (int i = 0; i != taskInfo->maxThreads; i ++)
             tmpList.append(threadStruct);
 
         //插入xml文件
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "aria2";
-        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
-        tmpIngStruct.jobMaxSpeed = taskInfo.maxSpeed;
-        tmpIngStruct.savePath = taskInfo.savePath;
+        tmpIngStruct.name = taskInfo->fileList.at(0).fileName;
+        tmpIngStruct.jobMaxSpeed = taskInfo->maxSpeed;
+        tmpIngStruct.savePath = taskInfo->savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl;
-        tmpIngStruct.redirectURL = taskInfo.parseUrl;
+        tmpIngStruct.URL = taskInfo->rawUrl;
+        tmpIngStruct.redirectURL = taskInfo->parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
+        tmpIngStruct.totalSize = QString::number(taskInfo->fileList.at(0).fileSize);
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = taskInfo.taskIconPath;
+        tmpIngStruct.iconPath = taskInfo->taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -201,7 +201,7 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl;
+        tmpStruct.URL = taskInfo->rawUrl;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -213,11 +213,11 @@ void UnifiedInterface::startAria2Download(const TaskInfo &taskInfo)
 
 }
 
-void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
+void UnifiedInterface::startYougetDownload(TaskInfo *taskInfo)
 {
     DownloadXMLHandler tmpOpera;
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
+    if (!tmpOpera.urlExit(taskInfo->rawUrl,"ing"))
     {
         SDownloadThread threadStruct;
         threadStruct.startBlockIndex = "1";
@@ -230,20 +230,20 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "youget";
-        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
+        tmpIngStruct.name = taskInfo->fileList.at(0).fileName;
         tmpIngStruct.jobMaxSpeed = "0";   //you-get无法控制网速
-        tmpIngStruct.savePath = taskInfo.savePath;
+        tmpIngStruct.savePath = taskInfo->savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl;
-        tmpIngStruct.redirectURL = taskInfo.parseUrl;
+        tmpIngStruct.URL = taskInfo->rawUrl;
+        tmpIngStruct.redirectURL = taskInfo->parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = QString::number(taskInfo.fileList.at(0).fileSize);
+        tmpIngStruct.totalSize = QString::number(taskInfo->fileList.at(0).fileSize);
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = taskInfo.taskIconPath;
+        tmpIngStruct.iconPath = taskInfo->taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -253,7 +253,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl;
+        tmpStruct.URL = taskInfo->rawUrl;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -264,7 +264,7 @@ void UnifiedInterface::startYougetDownload(const TaskInfo &taskInfo)
     YouGetTask::getInstance()->startDownload(taskInfo);
 }
 
-void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
+void UnifiedInterface::startXwareDownload(TaskInfo *taskInfo)
 {
     DownloadXMLHandler tmpOpera;
     SDownloadThread threadStruct;
@@ -274,26 +274,26 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
     QList<SDownloadThread> tmpList;
     tmpList.append(threadStruct);
 
-    if (!tmpOpera.urlExit(taskInfo.rawUrl,"ing"))
+    if (!tmpOpera.urlExit(taskInfo->rawUrl,"ing"))
     {
         //插入xml文件
         SDownloading tmpIngStruct;
 
         tmpIngStruct.dlToolsType = "xware";
-        tmpIngStruct.name = taskInfo.fileList.at(0).fileName;
+        tmpIngStruct.name = taskInfo->fileList.at(0).fileName;
         tmpIngStruct.jobMaxSpeed = "0";   // xware 暂时不作网速控制
-        tmpIngStruct.savePath = taskInfo.savePath;
+        tmpIngStruct.savePath = taskInfo->savePath;
         tmpIngStruct.enableUpload = "false";
-        tmpIngStruct.URL = taskInfo.rawUrl;
-        tmpIngStruct.redirectURL = taskInfo.parseUrl;
+        tmpIngStruct.URL = taskInfo->rawUrl;
+        tmpIngStruct.redirectURL = taskInfo->parseUrl;
         tmpIngStruct.blockCount = "1";
         tmpIngStruct.blockSize = "1";
-        tmpIngStruct.totalSize = QString::number(taskInfo.taskSize());
+        tmpIngStruct.totalSize = QString::number(taskInfo->size());
         tmpIngStruct.readySize = "0";
         tmpIngStruct.autoOpenFolder = "false";
         tmpIngStruct.state = "dlstate_downloading";
         tmpIngStruct.averageSpeed = "0";
-        tmpIngStruct.iconPath = taskInfo.taskIconPath;
+        tmpIngStruct.iconPath = taskInfo->taskIconPath;
         tmpIngStruct.threadList = tmpList;
 
         tmpOpera.insertDownloadingNode(tmpIngStruct);
@@ -303,7 +303,7 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
         //必须要及时改变状态
         DownloadXMLHandler tmpOpera;
         SDownloading tmpStruct;
-        tmpStruct.URL = taskInfo.rawUrl;
+        tmpStruct.URL = taskInfo->rawUrl;
         tmpStruct.state = "dlstate_downloading";
 
         tmpOpera.writeDownloadingConfigFile(tmpStruct);
@@ -318,10 +318,10 @@ void UnifiedInterface::startXwareDownload(const TaskInfo &taskInfo)
 }
 
 // 开始下载
-void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
+void UnifiedInterface::startDownload(TaskInfo *taskInfo)
 {
     //确保将要下载的文件不会重复
-    deleteFileFromDisk(taskInfo.savePath, taskInfo.fileList.at(0).fileName);
+    deleteFileFromDisk(taskInfo->savePath, taskInfo->fileList.at(0).fileName);
 
     //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
     SettingXMLHandler tmphandler;
@@ -332,9 +332,9 @@ void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
     }
 
     //将下载项插入全局map中
-    downloadingListMap.insert(taskInfo.rawUrl, taskInfo.toolType);
+    downloadingListMap.insert(taskInfo->rawUrl, taskInfo->toolType);
 
-    switch (taskInfo.toolType)
+    switch (taskInfo->toolType)
     {
     case TOOL_POINT:
         startPointDownload(taskInfo);
@@ -348,12 +348,17 @@ void UnifiedInterface::startDownload(const TaskInfo &taskInfo)
     case TOOL_YOUGET:
         startYougetDownload(taskInfo);
         break;
+#ifdef QT_DEBUG
     default:
-        qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
+        qWarning() << "taskInfo->toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
+        qWarning() << "taskInfo->toolType is " << taskInfo->toolType;
+        Q_ASSERT(false);
+#endif
     }
 
-    NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo.fileListString());
-    emit sDownloadItemChanged();
+    NormalNotice::getInstance()->showMessage(tr("New Task"), taskInfo->fileStringList().join('\n'));
+//    emit sDownloadItemChanged();
+//    emit taskAdded(taskInfo);
 }
 
 
@@ -633,6 +638,8 @@ void UnifiedInterface::trashDownloading(QString URL)
 
 void UnifiedInterface::deleteDownloading(QString URL)
 {
+    UnifiedInterface::suspendDownloading(URL);
+
     DownloadXMLHandler tmpOpera;
     stopDownloading(URL);
     deleteFileFromDisk(tmpOpera.getDownloadingNode(URL).savePath,tmpOpera.getDownloadingNode(URL).name);
@@ -761,20 +768,33 @@ void UnifiedInterface::initDownloadedList()
 {
     DownloadXMLHandler tmpOpera;
     QList<SDownloaded> edList = tmpOpera.getDownloadedNodes();
+
+    QList<TaskInfo*> taskInfoList;
+
     for (int i = 0;i < edList.count(); i++)
     {
-        TaskInfo taskInfo;
+        TaskInfo *taskInfo = new TaskInfo;
         TaskFileItem fileItem;
-        taskInfo.setToolTypeFromString(edList.at(i).dlToolsType);
-        taskInfo.rawUrl = edList.at(i).URL;
-        taskInfo.taskIconPath = edList.at(i).iconPath;
-        taskInfo.completeDate = edList.at(i).completeDate;
+        taskInfo->setToolTypeFromString(edList.at(i).dlToolsType);
+        taskInfo->rawUrl = edList.at(i).URL;
+        taskInfo->taskIconPath = edList.at(i).iconPath;
+        taskInfo->completeDate = QDateTime::fromString(edList.at(i).completeDate, "yyyy:MM:dd:HH:mm");
+        taskInfo->taskState = DLSTATE_DOWNLOADED;
         fileItem.fileName = edList.at(i).name;
         fileItem.fileSize = edList.at(i).Size.toLongLong();
-        taskInfo.fileList.append(fileItem);
+        taskInfo->fileList.append(fileItem);
 
-        emit sAddDownloadedItem(taskInfo);
+        taskInfoList.append(taskInfo);
     }
+
+    // 倒序排，这样最新下载的文件立即能看到，久远的文件才使用滚动向下找
+    std::sort(taskInfoList.begin(), taskInfoList.end(),
+              [] (const TaskInfo *a, const TaskInfo *b) -> bool {
+                    return a->completeDate > b->completeDate;
+              });
+
+    for (auto i : taskInfoList)
+        emit taskAdded(i);
 }
 
 void UnifiedInterface::initdownloadingList()
@@ -790,21 +810,27 @@ void UnifiedInterface::initdownloadingList()
         if (totalSize != 0)
             percentage =100 *  readySize / (double)totalSize;
 
-        TaskInfo taskInfo;
+        TaskInfo *taskInfo = new TaskInfo;
         TaskFileItem fileItem;
-        taskInfo.setToolTypeFromString(ingList.at(i).dlToolsType);
-        taskInfo.setDownStateFromString(ingList.at(i).state);
-        taskInfo.rawUrl = ingList.at(i).URL;
-        taskInfo.taskIconPath = ingList.at(i).iconPath;
-        taskInfo.parseUrl = ingList.at(i).redirectURL;
-        taskInfo.maxThreads = ingList.at(i).threadList.size();
-        taskInfo.maxSpeed = ingList.at(i).jobMaxSpeed.toInt();
-        taskInfo.percentage = percentage;
+        taskInfo->setToolTypeFromString(ingList.at(i).dlToolsType);
+        taskInfo->setDownStateFromString(ingList.at(i).state);
+        taskInfo->rawUrl = ingList.at(i).URL;
+        taskInfo->taskIconPath = ingList.at(i).iconPath;
+        taskInfo->parseUrl = ingList.at(i).redirectURL;
+        taskInfo->maxThreads = ingList.at(i).threadList.size();
+        taskInfo->maxSpeed = ingList.at(i).jobMaxSpeed.toInt();
+        taskInfo->percentage = percentage;
+
+        if (ingList.at(i).state == "dlstate_suspend")
+            taskInfo->taskState = DLSTATE_SUSPEND;
+        else
+            taskInfo->taskState = DLSTATE_DOWNLOADING;
+
         fileItem.fileName = ingList.at(i).name;
         fileItem.fileSize = ingList.at(i).totalSize.toLongLong();
-        taskInfo.fileList.append(fileItem);
+        taskInfo->fileList.append(fileItem);
 
-        emit sAddDownloadingItem(taskInfo);
+        emit taskAdded(taskInfo);
 
         if (ingList.at(i).state == "dlstate_downloading")
         {
@@ -819,16 +845,17 @@ void UnifiedInterface::initTrashList()
     QList<SDownloadTrash> trashList = tmpOpera.getDownloadTrashNodes();
     for (int i = 0;i < trashList.count(); i++)
     {
-        TaskInfo taskInfo;
+        TaskInfo *taskInfo = new TaskInfo;
         TaskFileItem fileItem;
-        taskInfo.setToolTypeFromString(trashList.at(i).dlToolsType);
-        taskInfo.taskIconPath = trashList.at(i).iconPath;
-        taskInfo.rawUrl = trashList.at(i).URL;
+        taskInfo->setToolTypeFromString(trashList.at(i).dlToolsType);
+        taskInfo->taskIconPath = trashList.at(i).iconPath;
+        taskInfo->rawUrl = trashList.at(i).URL;
+        taskInfo->taskState = DLSTATE_TRASH;
         fileItem.fileName = trashList.at(i).name;
         fileItem.fileSize = trashList.at(i).totalSize.toLongLong();
-        taskInfo.fileList.append(fileItem);
+        taskInfo->fileList.append(fileItem);
 
-        emit sAddDownloadTrashItem(taskInfo);
+        emit taskAdded(taskInfo);
     }
 }
 
@@ -984,24 +1011,28 @@ void UnifiedInterface::startReady()
 
 }
 
-TaskInfo UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruct)
+TaskInfo *UnifiedInterface::getPrepareInfoFromSDownloading(SDownloading infoStruct)
 {
-    TaskInfo taskInfo;
+    /*!
+     *  这里可能会有内存问题
+     */
+
+    TaskInfo *taskInfo = new TaskInfo;
     TaskFileItem fileItem;
 
-    taskInfo.setToolTypeFromString(infoStruct.dlToolsType);
-    taskInfo.rawUrl = infoStruct.URL;
-    taskInfo.taskIconPath = infoStruct.iconPath;
-    taskInfo.maxSpeed = infoStruct.jobMaxSpeed.toInt();
-    taskInfo.parseUrl = infoStruct.redirectURL;
-    taskInfo.savePath = infoStruct.savePath;
-    taskInfo.maxThreads = infoStruct.threadList.count();
+    taskInfo->setToolTypeFromString(infoStruct.dlToolsType);
+    taskInfo->rawUrl = infoStruct.URL;
+    taskInfo->taskIconPath = infoStruct.iconPath;
+    taskInfo->maxSpeed = infoStruct.jobMaxSpeed.toInt();
+    taskInfo->parseUrl = infoStruct.redirectURL;
+    taskInfo->savePath = infoStruct.savePath;
+    taskInfo->maxThreads = infoStruct.threadList.count();
 
     fileItem.fileName = infoStruct.name;
     fileItem.fileSize = infoStruct.totalSize.toLongLong();
-    taskInfo.fileList.append(fileItem);
+    taskInfo->fileList.append(fileItem);
 
-    return std::move(taskInfo);
+    return taskInfo;
 }
 
 

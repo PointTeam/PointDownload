@@ -27,9 +27,8 @@ TopContrl * TopContrl::topControl = NULL;
 TopContrl * TopContrl::getInstance()
 {
     if (topControl == NULL)
-    {
         topControl = new TopContrl();
-    }
+
     return topControl;
 }
 

@@ -1,3 +1,8 @@
+/**
+  Author: sbwtw <sbwtws@gmail.com>
+  下载任务的信息结构，用于PointPopup到PointDownload之间的数据传输
+*/
+
 #ifndef TASKINFO_H
 #define TASKINFO_H
 
@@ -7,7 +12,7 @@
 #include <QIcon>
 #include <QDir>
 #include <QDebug>
-#include <QObject>
+#include <QDateTime>
 
 #include "taskfileitem.h"
 
@@ -26,23 +31,25 @@
 #define DLSTATE_DOWNLOADING 2   // 正在下载
 #define DLSTATE_READY       3   // 就绪，当前任务允许下载但总下载任务数已经达到设定上限时，此任务就为就绪状态
 #define DLSTATE_DOWNLOADED  4   // 下载完成
-#define DLSTATE_CANCELD     5   // 取消下载，当前任务下载了一段时间，或还未开始，但用户点击了“取消下载”，此任务即为取消状态
+#define DLSTATE_TRASH       5   // 移动到垃圾箱的下载任务
 
 class TaskInfo : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ taskName)
+    Q_PROPERTY(QString name READ name)
     Q_PROPERTY(QString rawUrl READ qml_getRawUrl)
-    Q_PROPERTY(QString parseUrl READ qml_getRawUrl)
+    Q_PROPERTY(QString parseUrl READ qml_getParseUrl)
     Q_PROPERTY(QString iconPath READ qml_getIconPath)
     Q_PROPERTY(QString savePath READ qml_getSavePath)
-    Q_PROPERTY(QString completeDate READ qml_getCompleteDate)
+    Q_PROPERTY(QDateTime completeDate READ qml_getCompleteDate)
     Q_PROPERTY(float percentage READ qml_getPercentage)
     Q_PROPERTY(int toolType READ qml_getToolType)
     Q_PROPERTY(int maxThreads READ qml_getMaxThreads)
     Q_PROPERTY(int maxSpeed READ qml_getMaxSpeed)
-    Q_PROPERTY(int taskState READ qml_getTaskState)
+    Q_PROPERTY(int status READ qml_getTaskState)
+    Q_PROPERTY(int size READ size)
+    Q_PROPERTY(int speed READ qml_getDownloadSpeedNow NOTIFY downloadSpeedChanged)
 
 public:
     TaskInfo();
@@ -53,18 +60,15 @@ public:
 
 public:
     QByteArray toQByteArray() const;
-    QString fileListString() const;
-    QString taskName() const;
-    qint64 taskSize() const;
+    QStringList fileStringList() const;
+    QString name() const;
+    qint64 size() const;
 
     // 这些方法是为了代码重构时兼容所用，应该尽量不要使用
     void setToolTypeFromString(const QString &tool);
     void setDownStateFromString(const QString &state);
-    QString getToolTypeToString() const;
-    QString getDownStateToString() const;
-    QString getInfoToString() const;
-    QString getDownloadedInfoToString() const;
-    QString getDownloadingInfoToString() const;
+    Q_INVOKABLE static int convertDownStateToInt(const QString state);
+    Q_INVOKABLE static int convertDownloadSpeedToInt(const QString speed);
 
 public:
     TaskInfo &operator =(const TaskInfo &what);
@@ -79,12 +83,16 @@ public:
     QString qml_getParseUrl();
     QString qml_getIconPath();
     QString qml_getSavePath();
-    QString qml_getCompleteDate();
+    QDateTime qml_getCompleteDate();
     float qml_getPercentage();
     int qml_getToolType();
     int qml_getMaxThreads();
     int qml_getMaxSpeed();
     int qml_getTaskState();
+    int qml_getDownloadSpeedNow();
+
+signals:
+    void downloadSpeedChanged();
 
 public:
     // 需要序列化/反序列化的成员
@@ -93,8 +101,6 @@ public:
      * because QUrl can not store ed2k, thunder.. protocol
      *  altered QUrl to QString (by Choldrim, 2015.1.2)
     */
-//    QUrl rawUrl;
-//    QUrl parseUrl;
     QString rawUrl;
     QString parseUrl;
     QString taskIconPath;
@@ -105,9 +111,10 @@ public:
 
 public:
     // 这些属性应该是属于“下载任务”类的，为了兼容旧代码先写在这里
-    QString completeDate;
+    QDateTime completeDate;
     float percentage; // ready percentage
     int taskState;
+    int downloadSpeedNow;
 
 private:
 };

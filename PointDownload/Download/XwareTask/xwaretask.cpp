@@ -43,7 +43,7 @@ XwareTask * XwareTask::getInstance()
     return xwareTask;
 }
 
-void XwareTask::addNewDownload(const TaskInfo &taskInfo)
+void XwareTask::addNewDownload(TaskInfo *taskInfo)
 {
     // clear the completed task
     CompletedListWebView::getInstance()->clearAllCompletedTask(false);
@@ -51,7 +51,7 @@ void XwareTask::addNewDownload(const TaskInfo &taskInfo)
     QString mappingDir = "";
     // mappingDir = XwareDloadFolderController::getInstance()->getMappingFolder(info.storageDir);
 
-    XwarePopulateObject::getInstance()->addNewDownloadTask(taskInfo.rawUrl, mappingDir, QStringList()<<taskInfo.fileList.at(0).fileName);
+    XwarePopulateObject::getInstance()->addNewDownloadTask(taskInfo->rawUrl, mappingDir, QStringList()<<taskInfo->fileList.at(0).fileName);
 }
 
 void XwareTask::stopDownload(QString URL)

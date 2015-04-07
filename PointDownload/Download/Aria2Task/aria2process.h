@@ -17,7 +17,7 @@ class Aria2Process : public QObject
 public:
     const int UPDATE_XML_INTERVAL = 3;//second
     const int UPDATE_INTERVAL = 1000;
-    explicit Aria2Process(const TaskInfo &taskInfo, QObject *parent = 0);
+    explicit Aria2Process(TaskInfo *taskInfo, QObject *parent = 0);
 
     void startDownload();
     void stopDownload();
@@ -37,7 +37,7 @@ private:
     QString analysisFeedBackSpeed(QString data);
 private:
     QString gFeedBackInfo;
-    TaskInfo taskInfo;
+    TaskInfo *taskInfo;
     QProcess * tmpProcess;
     QString lastDataSize;
     QTimer * updateTimer;

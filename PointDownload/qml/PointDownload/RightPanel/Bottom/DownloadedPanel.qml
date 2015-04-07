@@ -21,43 +21,18 @@
 
 import QtQuick 2.0
 import Singleton.DLDataConverter 1.0
-import "DownloadedHandler.js" as DownloadedScript
 import "Item"
 
 Rectangle {
     id: downloadedPanel
     color: "#3da5ca"
 
-
-    //连接单例的信号
-    Connections {
-        target: DLDataConverter
-        onDownloadedAdded: DownloadedScript.addNewItem(infoString);
-    }
-
-    ListModel {
-        id: edItemModel
-//        ListElement {
-//            tmpName:"test"
-//            tmpPath:""
-//            tmpURL:"test11111"
-//            tmpSize:"4G"
-//        }
-    }
     Component {
         id: listDelegate
 
         DownloadedItem {
             id:delegateItem
             width: ingItemView.width - 30
-
-            fileName: tmpName
-            iconPath: tmpPath
-            fileURL: tmpURL
-            fileSize: tmpSize
-            dlToolsType:tmpDLToolsType
-            completeDate: tmpDate
-            // Animate adding and removing of items:
 
             ListView.onAdd: SequentialAnimation {
                 PropertyAction { target: delegateItem; property: "width"; value: 0 }
@@ -77,29 +52,9 @@ Rectangle {
     ListView {
         id: ingItemView
         anchors.fill: parent
-        model: edItemModel
+        model: downloadedModel
         spacing: 4
         delegate: listDelegate
         clip: true
-    }
-
-    function moveItem(url)
-    {
-        DownloadedScript.removeItem(url)
-    }
-
-    function addItem(infoList)
-    {
-        DownloadedScript.addNewItem(infoList)
-    }
-
-    function getFileInfo(url)
-    {
-        return DownloadedScript.getFileInfo(url)
-    }
-
-    function getListCount()
-    {
-        return edItemModel.count
     }
 }

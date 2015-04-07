@@ -1,3 +1,8 @@
+/**
+  Author: sbwtw <sbwtws@gmail.com>
+  用于表示一个下载任务中的各个文件列表（大多数下载任务只有一个文件，但BT等任务含有多个文件）
+*/
+
 #ifndef TASKFILEITEM_H
 #define TASKFILEITEM_H
 

@@ -29,7 +29,6 @@ YouGetTask::YouGetTask(QObject *parent) :
     initConnection();
 }
 
-
 YouGetTask * YouGetTask::youGetTask = NULL;
 YouGetTask * YouGetTask::getInstance()
 {
@@ -40,7 +39,7 @@ YouGetTask * YouGetTask::getInstance()
     return youGetTask;
 }
 
-void YouGetTask::startDownload(const TaskInfo &taskInfo)
+void YouGetTask::startDownload(TaskInfo *taskInfo)
 {
     YouGetProcess * yougetProcess = new YouGetProcess(taskInfo);
     connect(yougetProcess, SIGNAL(updateData(DownloadingItemInfo)), this ,SIGNAL(sRealTimeData(DownloadingItemInfo)));
@@ -52,7 +51,7 @@ void YouGetTask::startDownload(const TaskInfo &taskInfo)
     yougetProcess->startDownload();
 
     //保存下载列表
-    gProcessMap.insert(taskInfo.rawUrl, yougetProcess);
+    gProcessMap.insert(taskInfo->rawUrl, yougetProcess);
 }
 
 void YouGetTask::stopDownload(QString URL)
@@ -86,25 +85,25 @@ void YouGetTask::slotFinishDownload(QString URL)
     UnifiedInterface::getInstance()->cleanDownloadFinishItem(URL);
 }
 
-TaskInfo YouGetTask::getPrepareInfoFromXML(QString URL)
+TaskInfo *YouGetTask::getPrepareInfoFromXML(QString URL)
 {
     DownloadXMLHandler xmlOpera;
     SDownloading ingNode = xmlOpera.getDownloadingNode(URL);
 
-    TaskInfo taskInfo;
+    TaskInfo *taskInfo = new TaskInfo;
     TaskFileItem fileItem;
 
-    taskInfo.rawUrl = ingNode.URL;
-    taskInfo.taskIconPath = ingNode.iconPath;
-    taskInfo.maxSpeed = 0;
-    taskInfo.parseUrl = ingNode.redirectURL;
-    taskInfo.savePath = ingNode.savePath;
-    taskInfo.maxThreads = ingNode.threadList.size();
-    taskInfo.toolType = TOOL_YOUGET;
+    taskInfo->rawUrl = ingNode.URL;
+    taskInfo->taskIconPath = ingNode.iconPath;
+    taskInfo->maxSpeed = 0;
+    taskInfo->parseUrl = ingNode.redirectURL;
+    taskInfo->savePath = ingNode.savePath;
+    taskInfo->maxThreads = ingNode.threadList.size();
+    taskInfo->toolType = TOOL_YOUGET;
 
     fileItem.fileName = ingNode.name;
     fileItem.fileSize = ingNode.totalSize.toLongLong();
-    taskInfo.fileList.append(fileItem);
+    taskInfo->fileList.append(fileItem);
 
     return taskInfo;
 }

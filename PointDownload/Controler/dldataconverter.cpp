@@ -1,5 +1,8 @@
 #include "dldataconverter.h"
+#include "taskinfo.h"
+
 #include <QtQml>
+#include <QQuickView>
 
 DLDataConverter::DLDataConverter(QObject *parent) :
     QObject(parent)
@@ -29,6 +32,7 @@ QObject *DLDataConverter::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
 
 void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QString URL)
 {
+    qDebug() << dtype << otype << URL;
     // remove witespace character at start and end
     URL = URL.trimmed();
 
@@ -63,7 +67,7 @@ void DLDataConverter::controlItem(const QString &dtype, const QString &otype, QS
             UnifiedInterface::getInstance()->controlDownload(dl_downloading,download_hightSpeedChannel,URL);
         else if (otype == "download_finishDownload")
             UnifiedInterface::getInstance()->controlDownload(dl_downloading, download_finishDownload, URL);
-        emit sDLStateChange(URL, otype);
+        emit sDLStateChange(URL, TaskInfo::convertDownStateToInt(otype));
     }
     else if (dtype == "dl_search")
     {
@@ -88,39 +92,56 @@ void DLDataConverter::resumeAllDownloading()
     UnifiedInterface::getInstance()->resumeAllDownloading();
 }
 
-void DLDataConverter::addDownloadingItem(const TaskInfo &taskInfo)
+void DLDataConverter::addTaskItem(TaskInfo *taskInfo)
 {
-    emit taskAdded(taskInfo.getDownloadingInfoToString());
-}
-
-void DLDataConverter::addDownloadedItem(const TaskInfo &taskInfo)
-{
-    emit downloadedAdded(taskInfo.getDownloadedInfoToString());
-}
-
-void DLDataConverter::addDownloadTrashItem(const TaskInfo &taskInfo)
-{
-    // 由于trash的string结构和downloaded的string(?:?)结构一样，所以使用了dowbloaded的信息来代替，以后这种信息结构将废弃
-    emit trashAdded(taskInfo.getDownloadedInfoToString());
+    taskList.append(taskInfo);
+    emit taskAdded(taskInfo);
 }
 
 void DLDataConverter::slotGetDownloadingInfo(DownloadingItemInfo infoList)
 {
     QString tmpURL = infoList.downloadURL;
 
-    emit sDLSpeedChange(tmpURL, infoList.downloadSpeed);
-    emit sDLProgressChange(tmpURL, infoList.downloadPercent);
+    for (TaskInfo *i : taskList)
+    {
+        if (i->rawUrl.compare(infoList.downloadURL))
+            continue;
+
+        // 旧数据到新数据的转换(QString -> int)
+        int speed = TaskInfo::convertDownloadSpeedToInt(infoList.downloadSpeed);
+
+        // 速度或百分比之一有改变则发送 taskInfoChange 信号
+        bool speedChange(false), percentChange(false);
+
+        // 任务的下载速度改变
+        if (i->downloadSpeedNow != speed)
+        {
+            i->downloadSpeedNow = speed;
+            speedChange = true;
+
+            i->downloadSpeedChanged();
+        }
+
+        if (i->percentage != (float)infoList.downloadPercent)
+        {
+            i->percentage = infoList.downloadPercent;
+            percentChange = true;
+        }
+
+        if (speedChange || percentChange)
+            emit taskInfoChange(i);
+    }
 
     switch(infoList.downloadState)
     {
     case dlstate_downloading:
-        emit sDLStateChange(tmpURL, "dlstate_downloading");
+        emit sDLStateChange(tmpURL, DLSTATE_DOWNLOADING);
         break;
-    case dlstate_ready:;
-        emit sDLStateChange(tmpURL, "dlstate_ready");
+    case dlstate_ready:
+        emit sDLStateChange(tmpURL, DLSTATE_READY);
         break;
     case dlstate_suspend:
-        emit sDLStateChange(tmpURL, "dlstate_suspend");
+        emit sDLStateChange(tmpURL, DLSTATE_SUSPEND);
         break;
     default:
         break;
@@ -205,14 +226,85 @@ void DLDataConverter::slotGetContrlFeedback(DownloadType dtype, OperationType ot
 void DLDataConverter::initURLServer()
 {
     URLServer * urlServer = new URLServer();
-    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo)), this, SLOT(addDownloadingItem(TaskInfo)));
+    connect(urlServer, SIGNAL(newTaskAdded(TaskInfo*)), this, SLOT(addTaskItem(TaskInfo*)));
+}
+
+// 临时使用，从列表中找到任务
+TaskInfo *DLDataConverter::tmp_searchTaskByUrl(const QString &url)
+{
+    for (TaskInfo *i : taskList)
+        if (!i->rawUrl.compare(url))
+            return i;
+
+    return NULL;
+}
+
+void DLDataConverter::stopTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->suspendDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_SUSPEND;
+
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::startTask(const QString &url)
+{
+//    handleDownloadSearchControl(URL);
+    UnifiedInterface::getInstance()->resumeDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_DOWNLOADING;
+
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::moveToTrashTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->trashDownloading(url);
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+    task->taskState = DLSTATE_TRASH;
+
+    emit taskInfoChange(task);
+}
+
+void DLDataConverter::removeTask(const QString &url)
+{
+    qDebug() << url;
+
+    TaskInfo *task = tmp_searchTaskByUrl(url);
+
+    switch (task->taskState)
+    {
+    case DLSTATE_DOWNLOADING:   UnifiedInterface::getInstance()->deleteDownloading(url);    break;
+    case DLSTATE_DOWNLOADED:    UnifiedInterface::getInstance()->deleteDownloaded(url);     break;
+    case DLSTATE_TRASH:         UnifiedInterface::getInstance()->deleteTrash(url);          break;
+#ifdef QT_DEBUG
+    default:                    Q_ASSERT(false);
+#endif
+    }
+
+//    taskList.removeOne(task);
+//    task->deleteLater();
+}
+
+void DLDataConverter::restartTask(const QString &url)
+{
+    UnifiedInterface::getInstance()->redownloadTrash(url);
+
+    removeTask(url);
+
+//    TaskInfo *task = tmp_searchTaskByUrl(url);
+//    task->taskState = DLSTATE_DOWNLOADING;
+
+//    emit taskAdded(task);
 }
 
 void DLDataConverter::initConnection()
 {
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadedItem(TaskInfo)), this, SLOT(addDownloadedItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadingItem(TaskInfo)), this,SLOT(addDownloadingItem(TaskInfo)));
-    connect(UnifiedInterface::getInstance(), SIGNAL(sAddDownloadTrashItem(TaskInfo)),this, SLOT(addDownloadTrashItem(TaskInfo)));
+    connect(UnifiedInterface::getInstance(), SIGNAL(taskAdded(TaskInfo*)), this, SLOT(addTaskItem(TaskInfo*)));
 
     connect(UnifiedInterface::getInstance(), SIGNAL(sRealTimeData(DownloadingItemInfo)),
             this, SLOT(slotGetDownloadingInfo(DownloadingItemInfo)));

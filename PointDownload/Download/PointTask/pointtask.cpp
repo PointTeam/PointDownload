@@ -37,10 +37,10 @@ PointTask * PointTask::getInstance()
     return pointTask;
 }
 
-void PointTask::startDownload(const TaskInfo & taskInfo)
+void PointTask::startDownload(TaskInfo *taskInfo)
 {
-    pointTaskMap.insert(taskInfo.rawUrl ,getProtocalTypeFromURL(taskInfo.rawUrl));
-    switch (getProtocalTypeFromURL(taskInfo.rawUrl))
+    pointTaskMap.insert(taskInfo->rawUrl ,getProtocalTypeFromURL(taskInfo->rawUrl));
+    switch (getProtocalTypeFromURL(taskInfo->rawUrl))
     {
     case point_http:
         startHttpDownload(taskInfo);
@@ -160,7 +160,7 @@ ProtocalType PointTask::getProtocalTypeFromURL(QString URL)
     return point_http;
 }
 
-void PointTask::startHttpDownload(const TaskInfo & taskInfo)
+void PointTask::startHttpDownload(TaskInfo *taskInfo)
 {
     HttpTask::getInstance()->startDownload(taskInfo);
 }
@@ -180,7 +180,7 @@ void PointTask::resumeHttpDownload(QString URL)
     HttpTask::getInstance()->resumeDownloading(URL);
 }
 
-void PointTask::startFtpDownload(const TaskInfo & taskInfo)
+void PointTask::startFtpDownload(TaskInfo *taskInfo)
 {
     Q_UNUSED(taskInfo);
 }
@@ -200,7 +200,7 @@ void PointTask::resumeFtpDownload(QString URL)
     Q_UNUSED(URL);
 }
 
-void PointTask::startEd2kDownload(const TaskInfo &taskInfo)
+void PointTask::startEd2kDownload(TaskInfo *taskInfo)
 {
     Q_UNUSED(taskInfo);
 }
@@ -220,7 +220,7 @@ void PointTask::resumeEd2kDownload(QString URL)
     Q_UNUSED(URL);
 }
 
-void PointTask::startBTDownload(const TaskInfo &taskInfo)
+void PointTask::startBTDownload(TaskInfo *taskInfo)
 {
     Q_UNUSED(taskInfo);
 }

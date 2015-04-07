@@ -21,11 +21,13 @@
 
 #include "yougetprocess.h"
 
-YouGetProcess::YouGetProcess(const TaskInfo &taskInfo, QObject *parent) :
+YouGetProcess::YouGetProcess(TaskInfo *taskInfo, QObject *parent) :
     QObject(parent), taskInfo(taskInfo)
 {
     lastDataSize = "0";
     xmlUpdateInterval = 1;
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(getTimerUpdate()));
 }
 
 void YouGetProcess::startDownload()
@@ -47,26 +49,27 @@ void YouGetProcess::startDownload()
     // 覆盖已有文件 - 因为主程序当前没有对此的判断
 //    arguments << "-f";
     // 输出目录
-    arguments << "-o" << taskInfo.savePath;
+    arguments << "-o" << taskInfo->savePath;
     // 设置url参数，这里用解析后的url，以减少重定向开销
-    arguments << taskInfo.parseUrl;
+    arguments << taskInfo->parseUrl;
 
-    qDebug() << "YouGet command line arguments: " << arguments;
+    qDebug() << "YouGet start: " << arguments;
 
     tmpProcess->start("python3", arguments);
 }
 
 void YouGetProcess::stopDownload()
 {
-    tmpProcess->kill();
+    Q_ASSERT(tmpProcess);
+
+    disconnect(tmpProcess, SIGNAL(finished(int)), this, SLOT(yougetProcessFinish(int)));
+    tmpProcess->terminate();
 }
 
 void YouGetProcess::yougetStarted()
 {
     //进程启动完成后再启动定时器
-    updateTimer = new QTimer();
-    connect(updateTimer, SIGNAL(timeout()), this, SLOT(getTimerUpdate()));
-    updateTimer->start(UPDATE_INTERVAL);
+    updateTimer.start(UPDATE_INTERVAL);
 }
 
 void YouGetProcess::getFeedBack()
@@ -91,7 +94,7 @@ void YouGetProcess::getTimerUpdate()
     tmpInfo.downloadSpeed = QString::number((downloadSize * 1024) / (UPDATE_INTERVAL / 1000),'f',1) + " KB/S";
     tmpInfo.downloadPercent = gFeedBackInfo.mid(0,perIndex).toDouble();                        //下载百分比
     tmpInfo.downloadState = dlstate_downloading;
-    tmpInfo.downloadURL = taskInfo.rawUrl;
+    tmpInfo.downloadURL = taskInfo->rawUrl;
 
     //send to yougettask
     emit updateData(tmpInfo);
@@ -125,15 +128,14 @@ void YouGetProcess::getError()
 
 void YouGetProcess::yougetProcessFinish(int ret)
 {
-    // 由于 you-get 暂停使用的是强制结束进程，所以这里要区分进程的退出是主动退出还是被kill
-    int perIndex = gFeedBackInfo.indexOf("%");
-    if (gFeedBackInfo.mid(0,perIndex).toDouble() <= 99.9)
-        return;
-
-    updateTimer->stop();
+    updateTimer.stop();
 
     if (!ret)
-        emit sFinishYouGetDownload(taskInfo.rawUrl);
+        emit sFinishYouGetDownload(taskInfo->rawUrl);
     else
-        emit yougetError(taskInfo.rawUrl, "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
+        emit yougetError(taskInfo->rawUrl, "YouGet Error: return " + QString::number(ret), TOOL_YOUGET);
+
+    // 这里有个问题，ProfessFinish 的信号并没有被界面响应，底层的任务异常结束后应该把下载状态改为暂停状态
+
+    tmpProcess = NULL;
 }

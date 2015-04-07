@@ -29,25 +29,14 @@ History:
 **********************************************************************/
 
 import QtQuick 2.0
+import "../DataFormatHelper.js" as DataFormat
+import taskInfo 1.0
 
 Rectangle {
     id: downloadingItem
 
-    property string iconPath: "qrc:/images/right/unknow-file"
-    property string checkIconPath: "qrc:/images/right/uncheck"
-    property real ingPercentage:0
-    property string fileName: ""
-    property string fileURL: ""
-    property string fileState: "dlstate_suspend"  // "Downloading" or "Ready"
-    property string thunderOfflineSpeed:""
-    property string thunderHightSpeed:""
-    property string netSpeed: ""
-    property string fileSize: ""
-    property string dlToolsType: ""
-    property real percentageOldWidth:0
-
     width: parent.width
-    height: 60 + ingMenu.height
+    height: 60 + downloadingMenu.height
 
     color: "#32738e"
     opacity: 0.7
@@ -74,7 +63,7 @@ Rectangle {
         }
 
         Text {
-            text: fileName
+            text: name
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 12
@@ -85,7 +74,7 @@ Rectangle {
         }
 
         Text {
-            text: fileSize
+            text: DataFormat.formatFileSize(size);
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 12
@@ -93,7 +82,7 @@ Rectangle {
         }
 
         Text {
-            text: netSpeed
+            text: DataFormat.formatDownloadSpeed(speed);
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 12
@@ -101,7 +90,7 @@ Rectangle {
         }
 
         Text {
-            text: ingPercentage + " %"
+            text: percentage.toFixed(2) + " %";
             color: "#ffffff"
             font.bold: true
             font.pixelSize: 9
@@ -112,11 +101,14 @@ Rectangle {
             id: percentageRec
             color: "#e03d48"
             height: 4
-            width: parent.width * ingPercentage / 100
+            width: parent.width * percentage / 100
             anchors {bottom: parent.bottom; left:parent.left}
+
+            property int percentageOld: 0;
+
             onWidthChanged: {
                 percentageChangeAnima.start()
-                percentageOldWidth = width;
+                percentageOld = width;
             }
         }
 
@@ -128,7 +120,7 @@ Rectangle {
 
             onClicked: {
                 //ingMenu.height = ingMenu.height == 0 ? 40:0
-                if (ingMenu.height == 0)
+                if (downloadingMenu.height == 0)
                     showMenuAnima.start()
                 else
                     hideMenuAnima.start()
@@ -139,28 +131,27 @@ Rectangle {
 
     // 正在下载的项的菜单
     DownloadingMenu {
-        id: ingMenu
+        id: downloadingMenu
         height: 0
-        downloadURL: fileURL//for control button
-        downloadState: fileState
-        offlineSpeed: thunderOfflineSpeed
-        hightSpeed: thunderHightSpeed
+
+        offlineSpeed: ""
+        hightSpeed: ""
 
         anchors {bottom: parent.bottom; left: parent.left}
 
         SequentialAnimation {
             id: showMenuAnima
-            NumberAnimation { target: ingMenu; property: "height"; to: 40; duration: 250; easing.type: Easing.InOutQuad }
+            NumberAnimation { target: downloadingMenu; property: "height"; to: 40; duration: 250; easing.type: Easing.InOutQuad }
         }
         SequentialAnimation {
             id: hideMenuAnima
-            NumberAnimation { target: ingMenu; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+            NumberAnimation { target: downloadingMenu; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
         }
     }
     SequentialAnimation {
         id: percentageChangeAnima
         NumberAnimation { target: percentageRec; property: "width";
-            from:percentageOldWidth; to: parent.width * ingPercentage / 100; duration: 600; easing.type: Easing.InOutQuad }
+            from:percentageRec.percentageOld; to: parent.width * percentage / 100; duration: 600; easing.type: Easing.InOutQuad }
     }
 
 }

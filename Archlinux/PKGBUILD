@@ -1,0 +1,34 @@
+# Maintainer: sbw <sbw@sbw.so>
+pkgname=pointdownload
+pkgver=r167.b50dc91
+pkgrel=1
+pkgdesc="A downloader supporting http, ftp, bt, magnet and thunder protocol"
+arch=('x86_64' 'i686')
+url="https://github.com/sbwtw/PointDownload"
+license=('GPL3')
+depends=('gcc-libs' 'qt5-base' 'qt5-webkit' 'qt5-declarative' 'qt5-multimedia' 'qt5-graphicaleffects')
+makedepends=('git')
+conflicts=('pointdownload')
+provides=('pointdownload')
+install=pointdownload.install
+source=('git://github.com/sbwtw/PointDownload#branch=develop')
+md5sums=('SKIP')
+
+pkgver() {
+	cd $srcdir/PointDownload
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd $srcdir/PointDownload
+	qmake-qt5
+	make
+}
+
+package() {
+	cd $srcdir/PointDownload
+
+    install -Dm755 PointDownload/PointDownload  $pkgdir/usr/bin/pointdownload
+    install -Dm755 PointPopup/PointPopup        $pkgdir/usr/bin/pointpopup
+    install -Dm755 XwareStartUp/XwareStartUp    $pkgdir/usr/bin/pointxware
+}

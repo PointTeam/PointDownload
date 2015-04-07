@@ -39,7 +39,7 @@ URLServer::URLServer(QObject *parent) :
 URLServer::~URLServer()
 {
     localServer->close();
-    delete localServer;
+    localServer->deleteLater();
 }
 
 void URLServer::serverNewConnectionHandler()
@@ -52,13 +52,15 @@ void URLServer::serverNewConnectionHandler()
 
 void URLServer::socketReadyReadHandler()
 {
-    QLocalSocket * socket = static_cast<QLocalSocket*>(sender());
-    TaskInfo taskInfo(socket);
+    QLocalSocket *socket = static_cast<QLocalSocket*>(sender());
+    TaskInfo *taskInfo = new TaskInfo(socket);
 
-    if (TOOL_XWARE_PARSE == taskInfo.toolType)
+    taskInfo->taskState = DLSTATE_DOWNLOADING;
+
+    if (TOOL_XWARE_PARSE == taskInfo->toolType)
     {
          // take URL from msg
-        taskParseHandle(taskInfo.rawUrl);
+        taskParseHandle(taskInfo->rawUrl);
         qDebug() << "Xware is parsing the URL";
         return ;
     }

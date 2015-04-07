@@ -39,7 +39,7 @@ class YouGetProcess : public QObject
     Q_OBJECT
 public:
     const int UPDATE_XML_INTERVAL = 3;//second
-    explicit YouGetProcess(const TaskInfo & taskInfo, QObject *parent = 0);
+    explicit YouGetProcess(TaskInfo *taskInfo, QObject *parent = 0);
 
     void startDownload();
     void stopDownload();
@@ -58,10 +58,10 @@ private slots:
 
 private:
     QString gFeedBackInfo;
-    TaskInfo taskInfo;
+    TaskInfo *taskInfo;
     QProcess * tmpProcess;
     QString lastDataSize;
-    QTimer * updateTimer;
+    QTimer updateTimer;
     short xmlUpdateInterval;
 };
 

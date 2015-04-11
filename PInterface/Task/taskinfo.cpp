@@ -63,7 +63,7 @@ QString TaskInfo::pFileListString() const
 {
     QString str;
 
-    for (TaskFileItem i : fileList)
+    for (TaskFileInfo i : fileList)
         str += i.fileName + "\n";
 
     if (!str.isEmpty())
@@ -98,7 +98,7 @@ QString TaskInfo::pTaskName() const
 qint64 TaskInfo::pTaskSize() const
 {
     qint64 size(0);
-    for (TaskFileItem i : fileList)
+    for (TaskFileInfo i : fileList)
         size += i.fileSize;
     return size;
 }

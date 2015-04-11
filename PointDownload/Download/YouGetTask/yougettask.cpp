@@ -102,7 +102,7 @@ TaskInfo YouGetTask::getPrepareInfoFromXML(const QString & fileID)
     SDownloading ingNode = xmlOpera.getDLingNode(fileID);
 
     TaskInfo taskInfo;
-    TaskFileItem fileItem;
+    TaskFileInfo fileItem;
 
     taskInfo.fileID = ingNode.fileID;
     taskInfo.url = ingNode.url;

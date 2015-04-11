@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QObject>
 
-#include "taskfileitem.h"
+#include "taskfileinfo.h"
 #include "pdatatype.h"
 
 class TaskInfo : public QObject
@@ -61,7 +61,7 @@ public:
     QString taskIconPath;
     QString fileSavePath;
     PDataType::ToolType toolType;
-    QList<TaskFileItem> fileList;
+    QList<TaskFileInfo> fileList;
     int maxThreads;
     int maxSpeed;
 

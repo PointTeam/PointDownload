@@ -2,12 +2,12 @@ INCLUDEPATH += $$PWD
 DEPENDPATH  += $$PWD
 HEADERS+= \
     $$PWD/taskinfo.h \
-    $$PWD/taskfileitem.h \
-    $$PWD/task.h
+    $$PWD/task.h \
+    $$PWD/taskfileinfo.h
 		
 SOURCES+= \
     $$PWD/taskinfo.cpp \
-    $$PWD/taskfileitem.cpp \
-    $$PWD/task.cpp
+    $$PWD/task.cpp \
+    $$PWD/taskfileinfo.cpp
 
 include(../PDataType/PDataType.pri)

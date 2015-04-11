@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/PointPopup/main.qml</file>
+        <file>qml/PointPopup/SearchBar/AnalyzeButton.qml</file>
+        <file>qml/PointPopup/SearchBar/SearchBar.qml</file>
+        <file>qml/PointPopup/SearchBar/SearchInput.qml</file>
+        <file>qml/PointPopup/SearchBar/ToolsComboBox.qml</file>
+        <file>qml/PointPopup/FilePanel/CheckButton.qml</file>
+        <file>qml/PointPopup/FilePanel/FileInfoItem.qml</file>
+        <file>qml/PointPopup/FilePanel/FileListPage.qml</file>
+        <file>qml/PointPopup/ContentPanel.qml</file>
+    </qresource>
+</RCC>

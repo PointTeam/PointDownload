@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/loading.gif</file>
+        <file>images/arrow-down.png</file>
+        <file>images/quit-hover.png</file>
+        <file>images/quit-normal.png</file>
+        <file>images/checkbox-check-hover.png</file>
+        <file>images/checkbox-check-normal.png</file>
+        <file>images/checkbox-uncheck-hover.png</file>
+        <file>images/checkbox-uncheck-normal.png</file>
+    </qresource>
+</RCC>

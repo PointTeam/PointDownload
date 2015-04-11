@@ -46,22 +46,28 @@ Item {
 		append({
 				"buttonId": "suspend",
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-suspend-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-suspend-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-suspend-press.png",
-                "buttonIconDisablePath": "qrc:/FileItem/images/button-suspend-disable.png",
-				"buttonDisable": true
-				})
-		append({
-				"buttonId": "raise",
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-suspend-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-suspend-normal.png",
+                "buttonIconDisablePath": "qrc:/FileItem/images/button-suspend-normal.png",
+                "buttonDisable": false
+                })
+        append({
+                "buttonId": "raise",
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-raise-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-raise-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-raise-normal.png"
-				})
+                })
+        append({
+                "buttonId": "folder",
+                "buttonIconNormalPath": "qrc:/FileItem/images/button-folder-normal.png",
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-folder-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-folder-normal.png"
+                })
 		append({
 				"buttonId": "trash",
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-trash-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-trash-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-trash-press.png"
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-trash-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-trash-normal.png"
 				})
 		append({
 				"buttonId": "delete",

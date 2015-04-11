@@ -39,14 +39,14 @@ Rectangle {
 		anchors.left: parent.left
 		anchors.leftMargin: 20
 		anchors.verticalCenter: parent.verticalCenter
-		spacing: 20
+        spacing: 20
 
 		Repeater {
 			model: buttonModel
 			delegate: ImageButton {
 				visible: controlRota.angle < 90
-				width: 16
-				height: 16
+                width: 24
+                height: 24
 				anchors.verticalCenter: parent.verticalCenter
 				pButtonId: buttonId
 				pButtonIconNormalPath: buttonIconNormalPath

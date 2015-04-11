@@ -1,15 +1,15 @@
 
-#include "taskfileitem.h"
+#include "taskfileinfo.h"
 
 #include <QDebug>
 
-TaskFileItem::TaskFileItem()
+TaskFileInfo::TaskFileInfo()
 {
 }
 
-QDebug &operator <<(QDebug &out, const TaskFileItem &what)
+QDebug &operator <<(QDebug &out, const TaskFileInfo &what)
 {
-    out << endl << "TaskFileItem:" << endl;
+    out << endl << "TaskFileInfo:" << endl;
     out << "fileType = " << what.fileType << endl;
     out << "fileName = " << what.fileName << endl;
     out << "fileSize = " << what.fileSize << endl;
@@ -17,7 +17,7 @@ QDebug &operator <<(QDebug &out, const TaskFileItem &what)
     return out;
 }
 
-QDataStream &operator >>(QDataStream &in, TaskFileItem &what)
+QDataStream &operator >>(QDataStream &in, TaskFileInfo &what)
 {
     in >> what.fileType;
     in >> what.fileName;
@@ -26,7 +26,7 @@ QDataStream &operator >>(QDataStream &in, TaskFileItem &what)
     return in;
 }
 
-QDataStream &operator <<(QDataStream &out, const TaskFileItem &what)
+QDataStream &operator <<(QDataStream &out, const TaskFileInfo &what)
 {
     out << what.fileType;
     out << what.fileName;

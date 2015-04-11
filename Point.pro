@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 SUBDIRS = \
         PointDownload/PointDownload.pro\
-       # PointPopup/PointPopup.pro\
+        PointPopup/PointPopup.pro\
         #XwareStartUp/XwareStartUp.pro
 
 isEmpty(PREFIX){

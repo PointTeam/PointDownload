@@ -15,6 +15,18 @@ Item {
 
     property var fileNameList: []
 
+    function getSelectedFileList(){
+        var infoList = new Array()
+
+        for (var i in fileNameList){
+            var tmpName = fileNameList[i]
+            infoList.push({"fileName": tmpName,
+                           "fileType":getValueFromModel(tmpName, "fileType"),
+                           "fileSize":getValueFromModel(tmpName, "fileSize")})
+        }
+        return infoList
+    }
+
     function addInfoItem(fileName, fileType, fileSize){
         fileListView.model.append({"fileName": fileName,
                                   "fileType": fileType,
@@ -22,6 +34,19 @@ Item {
                                   })
         fileNameList.push(fileName)
         allCheckButton.updateCheckState()
+    }
+
+    function getValueFromModel(fileName, valueType){
+        for (var i = 0; i < fileListView.model.count; i ++){
+            if (fileListView.model.get(i).fileName == fileName){
+                if (valueType == "fileSize")
+                    return fileListView.model.get(i).fileSize
+                else if (valueType == "fileType")
+                    return fileListView.model.get(i).fileType
+            }
+        }
+
+        return ""
     }
 
     function cleanList(){
@@ -39,7 +64,8 @@ Item {
     }
 
     function addToList(fileName){
-        fileNameList.push(fileName)
+        if (fileNameList.indexOf(fileName) == -1)
+            fileNameList.push(fileName)
         allCheckButton.updateCheckState()
     }
 
@@ -100,9 +126,10 @@ Item {
     ListView {
         id: fileListView
         width: parent.width
-        height: (model.count + 2) * 30
+        height: parent.height
         anchors {top: topLine.bottom; horizontalCenter: parent.horizontalCenter}
         model: ListModel {}
+        clip: true
         delegate: FileInfoItem{
             onSelected: {
                 if (select){

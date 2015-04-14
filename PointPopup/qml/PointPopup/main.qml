@@ -31,7 +31,7 @@ Window {
     Rectangle {
         id: mainRec
         anchors.centerIn: parent
-        color: "#e5e8ee"
+        color: "#3A4246"
         radius: frameRadius
         border.width: 1
         border.color: Qt.rgba(1, 1, 1, 0.15)
@@ -46,6 +46,7 @@ Window {
         }
 
         ContentPanel {
+            id: contentPanel
             width: parent.width
             height: readyForDownload ? 400 : 0
             anchors {top: searchBar.bottom; topMargin: 10; horizontalCenter: mainRec.horizontalCenter}

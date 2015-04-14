@@ -9,5 +9,7 @@
         <file>qml/PointPopup/FilePanel/FileInfoItem.qml</file>
         <file>qml/PointPopup/FilePanel/FileListPage.qml</file>
         <file>qml/PointPopup/ContentPanel.qml</file>
+        <file>qml/PointPopup/ControlPanel/ControlPage.qml</file>
+        <file>qml/PointPopup/ControlPanel/ValueInput.qml</file>
     </qresource>
 </RCC>

@@ -8,5 +8,6 @@
         <file>images/checkbox-check-normal.png</file>
         <file>images/checkbox-uncheck-hover.png</file>
         <file>images/checkbox-uncheck-normal.png</file>
+        <file>images/button-folder-normal.png</file>
     </qresource>
 </RCC>

@@ -34,4 +34,6 @@ DISTFILES += \
     qml/PointPopup/FilePanel/FileListPage.qml \
     qml/PointPopup/FilePanel/FileInfoItem.qml \
     qml/PointPopup/FilePanel/CheckButton.qml \
-    qml/PointPopup/ContentPanel.qml
+    qml/PointPopup/ContentPanel.qml \
+    qml/PointPopup/ControlPanel/ControlPage.qml \
+    qml/PointPopup/ControlPanel/ValueInput.qml

@@ -51,6 +51,7 @@ Item {
         onClicked: {
             fileInfoItem.selected(check, file_name)
         }
+        onCheckedChanged: fileInfoItem.selected(checked, file_name)
     }
 
 

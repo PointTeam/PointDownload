@@ -10,6 +10,7 @@ import QtQuick 2.1
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.1
 import Singleton.PEventFilter 1.0
+import SettingXMLHandler 1.0
 import "./SearchBar"
 
 Window {
@@ -27,6 +28,10 @@ Window {
 
     Component.onCompleted: {
         mainWindow.show()
+    }
+
+    SettingXMLHandler {
+        id: settingXMLHandler
     }
 
     Rectangle {

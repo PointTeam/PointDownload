@@ -7,6 +7,7 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import SettingXMLHandler 1.0
 
 Rectangle{
     width: parent.width
@@ -25,7 +26,7 @@ Rectangle{
         textInput.horizontalAlignment: TextInput.AlignLeft
         textInput.validator: null
         textInput.color: "#b4b4b4"
-        textInput.text: "/home/wanqing/Downloads/PointDownload"
+        textInput.text: settingXMLHandler.getChildElement(SettingXMLHandler.GeneralSettings,"SavePath")
     }
 
     ValueInput {
@@ -37,7 +38,7 @@ Rectangle{
         maxValue: 10
         minValue: 1
         step: 1
-        textInput.text: "5"
+        textInput.text: settingXMLHandler.getChildElement(SettingXMLHandler.GeneralSettings,"DefaultThreadCount")
     }
 
     ValueInput {
@@ -49,7 +50,7 @@ Rectangle{
         maxValue: 100 * 1024
         minValue: 1
         step: 100
-        textInput.text: "500"
+        textInput.text: settingXMLHandler.getChildElement(SettingXMLHandler.GeneralSettings,"MaxDownloadSpeed")
     }
 
     Rectangle {

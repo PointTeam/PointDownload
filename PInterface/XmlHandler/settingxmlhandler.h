@@ -10,23 +10,25 @@
 #include <QSysInfo>
 #include <QDebug>
 
-enum RootTagName
-{
-    GeneralSettings,
-    DropzoneSetting,
-    Aria2Setting,
-    XwareSetting,
-    YouGetSetting
-};
 
 class SettingXMLHandler : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(RootTagName)
 public:
+    enum RootTagName
+    {
+        GeneralSettings,
+        DropzoneSetting,
+        Aria2Setting,
+        XwareSetting,
+        YouGetSetting
+    };
+
     explicit SettingXMLHandler(QObject *parent = 0);
 
-    QString getChildElement(RootTagName rootTagName, QString childTagName);
-    void setChildElement(RootTagName rootTagName, QString childTagName, QString value);
+    Q_INVOKABLE QString getChildElement(RootTagName rootTagName, QString childTagName);
+    Q_INVOKABLE void setChildElement(RootTagName rootTagName, QString childTagName, QString value);
 
 private:
     void touchAll();                                 //从调用下面的探测函年数，被构造函数调用

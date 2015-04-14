@@ -5,6 +5,7 @@
 #include "pdatatype.h"
 #include "taskinfo.h"
 #include "peventfilter.h"
+#include "settingxmlhandler.h"
 
 QString getChromeURL()
 {
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PDataType>("PDataType", 1, 0, "PDataType");
     qmlRegisterType<TaskInfo>("TaskInfo", 1, 0, "TaskInfo");
+    qmlRegisterType<SettingXMLHandler>("SettingXMLHandler", 1, 0, "SettingXMLHandler");
     PEventFilter::getInstance();
 
     QQmlApplicationEngine engine;

@@ -126,8 +126,6 @@ void SettingXMLHandler::touchPointSettingFile()
         //将各个子节点添加到Setting节点上
         //GeneralSettings node
         QDomElement generalSettingsNode = domDocument.createElement("GeneralSettings");
-        generalSettingsNode.appendChild(createChildElement("OperatingSystem","Linux"));
-        generalSettingsNode.appendChild(createChildElement("PointVersion","1.2.0"));
         generalSettingsNode.appendChild(createChildElement("SavePath",DOWNLOAD_SAVE_PATH));
         generalSettingsNode.appendChild(createChildElement("MaxDownloadSpeed","2000"));
         generalSettingsNode.appendChild(createChildElement("MaxUploadSpeed","500"));
@@ -135,8 +133,6 @@ void SettingXMLHandler::touchPointSettingFile()
         generalSettingsNode.appendChild(createChildElement("DefaultThreadCount","5"));
         generalSettingsNode.appendChild(createChildElement("MaxJobCount","10"));
         generalSettingsNode.appendChild(createChildElement("AlertTone","True"));
-        generalSettingsNode.appendChild(createChildElement("ShowSysData","False"));
-        generalSettingsNode.appendChild(createChildElement("SettingWinShowed","False"));
         generalSettingsNode.appendChild(createChildElement("ExitOnClose","False"));
         generalSettingsNode.appendChild(createChildElement("PriorityTool","Point"));
 
@@ -153,13 +149,11 @@ void SettingXMLHandler::touchPointSettingFile()
         //Aria2 node
         QDomElement aria2SettingsNode = domDocument.createElement("Aria2Setting");
         aria2SettingsNode.appendChild(createChildElement("State","Disable"));
-        aria2SettingsNode.appendChild(createChildElement("Version","1.18.5"));
         aria2SettingsNode.appendChild(createChildElement("ExecutePath","aria2c"));
 
         //Xware node
         QDomElement xwareSettingsNode = domDocument.createElement("XwareSetting");
         xwareSettingsNode.appendChild(createChildElement("State","Disable"));
-        xwareSettingsNode.appendChild(createChildElement("Version","1.0.31"));
         xwareSettingsNode.appendChild(createChildElement("Logged","False"));
         xwareSettingsNode.appendChild(createChildElement("UserName","Thunder User Name"));
         xwareSettingsNode.appendChild(createChildElement("UserPasswd","UGFzc3dvcmQ="));
@@ -168,7 +162,6 @@ void SettingXMLHandler::touchPointSettingFile()
         //you-get node
         QDomElement youGetSettingsNode = domDocument.createElement("YouGetSetting");
         youGetSettingsNode.appendChild(createChildElement("State","Disable"));
-        youGetSettingsNode.appendChild(createChildElement("Version","1.0.0"));
         youGetSettingsNode.appendChild(createChildElement("ExecutePath","you-get"));
         youGetSettingsNode.appendChild(createChildElement("VideoFormat","mp4"));
 

@@ -27,11 +27,6 @@ Item {
             width: parent.width - 20 * 2
             height: parent.height
             anchors.centerIn: parent
-            Component.onCompleted: {
-                addInfoItem("第七子：降魔之战","Media",123321)
-                addInfoItem("TestName2","Media",12332199876)
-                addInfoItem("TestName3cccccccccccccccccccccccc","Media",833219987)
-            }
         }
     }
 
@@ -41,6 +36,5 @@ Item {
         height: 190
         anchors {top: fileNameListRec.bottom; topMargin: 12; horizontalCenter: parent.horizontalCenter}
     }
-
 
 }

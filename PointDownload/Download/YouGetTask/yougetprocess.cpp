@@ -39,7 +39,7 @@ void YouGetProcess::startDownload()
     connect(tmpProcess, SIGNAL(readyReadStandardError()), this, SLOT(getError()));
     connect(tmpProcess, SIGNAL(started()), this, SLOT(yougetStarted()));
 
-    const QString yougetPath = tmpHandler.getChildElement(YouGetSetting, "ExecutePath");
+    const QString yougetPath = tmpHandler.getChildElement(SettingXMLHandler::YouGetSetting, "ExecutePath");
     QStringList arguments;
 
     // you-get 路径

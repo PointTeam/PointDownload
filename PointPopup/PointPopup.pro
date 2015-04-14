@@ -21,6 +21,7 @@ include(../PInterface/XmlHandler/XmlHandler.pri)
 include(../PInterface/Message/Message.pri)
 include(../PInterface/Task/Task.pri)
 include(../PInterface/PDataType/PDataType.pri)
+include(../PInterface/PEventFilter/PEventFilter.pri)
 
 HEADERS += 
 

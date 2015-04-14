@@ -9,6 +9,7 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.1
+import Singleton.PEventFilter 1.0
 import "./SearchBar"
 
 Window {
@@ -64,22 +65,30 @@ Window {
         visible: true
     }
 
-    MouseArea {
-        anchors.fill: parent
+    MouseArea{
+        id:mArea
         z: -6
-        property int startX
-        property int startY
-        property bool holdFlag
+        anchors.fill: parent
+
+        property int oldX: 0
+        property int oldY: 0
+        property bool dragIng: false
+
         onPressed: {
-            startX = mouse.x;
-            startY = mouse.y;
-            holdFlag = true;
+            oldX = mouseX
+            oldY = mouseY
+            dragIng = true
+            mArea.cursorShape=Qt.DragMoveCursor
         }
-        onReleased: holdFlag = false;
+        onReleased: {
+            dragIng = false
+            mArea.cursorShape=Qt.ArrowCursor
+        }
+
         onPositionChanged: {
-            if (holdFlag) {
-                mainWindow.setX(mainWindow.x + mouse.x - startX)
-                mainWindow.setY(mainWindow.y + mouse.y - startY)
+            if (dragIng){
+                mainWindow.x = PEventFilter.globalX- oldX
+                mainWindow.y = PEventFilter.globalY - oldY;
             }
         }
     }

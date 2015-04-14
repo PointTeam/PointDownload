@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "pdatatype.h"
 #include "taskinfo.h"
+#include "peventfilter.h"
 
 QString getChromeURL()
 {
@@ -89,9 +90,13 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PDataType>("PDataType", 1, 0, "PDataType");
     qmlRegisterType<TaskInfo>("TaskInfo", 1, 0, "TaskInfo");
+    PEventFilter::getInstance();
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/qml/PointPopup/main.qml")));
+
+    // 添加全局事件过滤
+    app.installEventFilter(PEventFilter::getInstance());
 
     return app.exec();
 }

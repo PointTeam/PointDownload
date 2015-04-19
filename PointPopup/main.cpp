@@ -6,10 +6,12 @@
 #include "taskinfo.h"
 #include "peventfilter.h"
 #include "settingxmlhandler.h"
+#include "datacontroller.h"
 
 QString getChromeURL()
 {
     int length = 0;
+    //前四个字符表明URL的总长度
     //read the first four bytes (=> Length)
     //getwchar: receive char from stdin
     //putwchar: write char to stdout
@@ -43,14 +45,12 @@ QString getChromeURL()
             fileURL += getwchar();
         }
 
-        QString::number(length);
         //浏览器端传来的数据会有一个双引号引在两端
         fileURL = fileURL.mid(1,fileURL.length()-2);
     }
 
     return fileURL;
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     {
         if(tmpURL.contains(".torrent"))//BT or other file
         {
-//            fileURL = DataControler::getInstance()->getMagnetFromBT(tmpURL);
+//            fileURL = DataController::getInstance()->getMagnetFromBT(tmpURL);
         }
         else//magnet/ed2k...
         {
@@ -93,9 +93,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<TaskInfo>("TaskInfo", 1, 0, "TaskInfo");
     qmlRegisterType<SettingXMLHandler>("SettingXMLHandler", 1, 0, "SettingXMLHandler");
     PEventFilter::getInstance();
+    DataController::getInstance();
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/qml/PointPopup/main.qml")));
+
+    DataController::getInstance()->receiveURL(fileURL);
 
     // 添加全局事件过滤
     app.installEventFilter(PEventFilter::getInstance());

@@ -18,6 +18,7 @@ FocusScope {
     property alias textInput: input
     property alias text: input.text
 
+    signal urlChanged(string url);
 //    onFocusChanged: {
 //        if (focus){
 //            mainScope.state = "focus"
@@ -49,6 +50,7 @@ FocusScope {
         selectionColor: "#66afd6"
         verticalAlignment: TextInput.AlignVCenter
         font.pixelSize: 18
+        onTextChanged: mainScope.urlChanged(text)
     }
 
     Text {

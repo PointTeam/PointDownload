@@ -2,7 +2,9 @@ TEMPLATE = app
 
 QT += qml quick widgets gui xml
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    urlhandler.cpp \
+    datacontroller.cpp
 
 RESOURCES += qml.qrc \
 #    image.qrc \
@@ -23,7 +25,9 @@ include(../PInterface/Task/Task.pri)
 include(../PInterface/PDataType/PDataType.pri)
 include(../PInterface/PEventFilter/PEventFilter.pri)
 
-HEADERS += 
+HEADERS += \ 
+    urlhandler.h \
+    datacontroller.h
 
 DISTFILES += \
     qml/PointPopup/main.qml \
@@ -38,3 +42,12 @@ DISTFILES += \
     qml/PointPopup/ContentPanel.qml \
     qml/PointPopup/ControlPanel/ControlPage.qml \
     qml/PointPopup/ControlPanel/ValueInput.qml
+
+isEmpty(PREFIX){
+    PREFIX = /opt/Point
+}
+
+BINDIR = $$PREFIX/PopupWindow
+
+target.path = $$BINDIR
+INSTALLS += target

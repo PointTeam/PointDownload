@@ -107,5 +107,6 @@ struct TaskItemInfo
     PDataType::TaskState taskState;
     double taskProgress;    //0~1
 };
+Q_DECLARE_METATYPE(TaskItemInfo)
 
 #endif // DATATYPE_H

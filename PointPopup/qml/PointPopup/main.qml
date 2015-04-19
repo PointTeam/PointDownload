@@ -24,7 +24,7 @@ Window {
 
     property int frameRadius: 3
     property int shadowRadius: 10
-    property bool readyForDownload: true
+    property bool readyForDownload: false
 
     Component.onCompleted: {
         mainWindow.show()

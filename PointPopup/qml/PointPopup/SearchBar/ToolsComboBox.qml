@@ -9,16 +9,80 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
+import PDataType 1.0
 
 Item {
-//    color: "#f5f5f5"
+    id: comboboxItem
+    property var toolsList: []
+    property var toolsLabels: []
 
-    property var labels: ["Point","You-Get","Aria2","Xware"]
+    signal menuSelected(int toolType)
+
+    function getLabelsFromList(list){
+        var tmpLabels = new Array()
+        for (var i in list){
+            switch (list[i]){
+            case PDataType.PToolTypeAria2:
+                tmpLabels.push("Aria2")
+                break
+            case PDataType.PToolTypePoint:
+                tmpLabels.push("Point")
+                break
+            case PDataType.PToolTypeXware:
+                tmpLabels.push("Xware")
+                break
+            case PDataType.PToolTypeYouGet:
+                tmpLabels.push("YouGet")
+                break
+            default:
+                tmpLabels.push("UnSupported")
+                break
+            }
+        }
+
+        toolsLabels = tmpLabels
+        return tmpLabels
+    }
+
+    function getSelectedTool(){
+        if (toolsList.length == 0)
+            return PDataType.PToolTypeUndefined
+        else{
+            var toolType
+            if (toolsLabels[currentIndex] == "Aria2")
+                toolType = PDataType.PToolTypeAria2
+            else if (toolsLabels[currentIndex] == "Point")
+                toolType = PDataType.PToolTypePoint
+            else if(toolsLabels[currentIndex] == "Xware")
+                toolType = PDataType.PToolTypeXware
+            else if(toolsLabels[currentIndex] == "YouGet")
+                toolType = PDataType.PToolTypeYouGet
+            else
+                toolType = PDataType.PToolTypeUndefined
+
+            return toolType
+        }
+    }
 
     ComboBox {
         id: mainBox
         anchors.fill: parent
-        model: labels
+        model: getLabelsFromList(toolsList)
+        onCurrentIndexChanged: {
+            var toolType
+            if (toolsLabels[currentIndex] == "Aria2")
+                toolType = PDataType.PToolTypeAria2
+            else if (toolsLabels[currentIndex] == "Point")
+                toolType = PDataType.PToolTypePoint
+            else if(toolsLabels[currentIndex] == "Xware")
+                toolType = PDataType.PToolTypeXware
+            else if(toolsLabels[currentIndex] == "YouGet")
+                toolType = PDataType.PToolTypeYouGet
+            else
+                toolType = PDataType.PToolTypeUndefined
+
+            comboboxItem.menuSelected(toolType)
+        }
 
         style: ComboBoxStyle {
             background: Rectangle {

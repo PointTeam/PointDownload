@@ -7,11 +7,30 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import Singleton.DataController 1.0
+import PDataType 1.0
 
 Item {
     id: searchItem
     width: parent.width
     height: parent.height
+
+
+    Connections{
+        target: DataController
+        onSignalReceiveNewURL:{
+            searchInput.text = url
+        }
+        onSignalSupportToolsListChanged: {
+            toolsComboBox.toolsList = toolsList
+        }
+        onSignalFileInfoListChanged: {
+            for (var i in infoList){
+                for (var j in infoList[i])
+                    print (i,infoList[i][j])
+            }
+        }
+    }
 
     SearchInput {
         id: searchInput
@@ -19,6 +38,9 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width - toolsComboBox.width - analyzeButton.width
         height: parent.height
+        onUrlChanged: {
+            DataController.getSupportToolsList(url.trim())
+        }
     }
 
     ToolsComboBox {

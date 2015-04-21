@@ -148,28 +148,91 @@ void URLHandler::getYouGetProcessFeedback()
     if (outPut == "")
         return;
 
-    qDebug() << outPut << "===";
-//    QStringList tmpList;
-//    if (outPut.contains("streams"))
-//        tmpList = getMovieYouGetFeedBackInfo(outPut);
-//    else
-//        tmpList = getNormalYouGetFeedBackInfo(outPut);
+    QList<TaskFileInfo> tmpList;
+    if (outPut.contains("streams"))
+        tmpList = getMultiFileInfo(outPut);
+    else
+        tmpList = getYouGetSingleFileInfo(outPut);
 
-//    if (tmpList.count() != 3)
-//        return;
-
-//     setFileNameList(tmpList.at(0) + ITEM_INFO_SPLIT_CHAR + tmpList.at(1) + ITEM_INFO_SPLIT_CHAR + tmpList.at(2));
-//     emit sFnishGetAllInfo();
+    emit getFileInfoListDone(tmpList);
 }
 
-void URLHandler::getFileInfoList(const QString &url)
+QList<TaskFileInfo> URLHandler::getYouGetSingleFileInfo(const QString &data)
 {
+    int siteIndex = data.indexOf("Video Site:");
+    int titleIndex = data.indexOf("Title:");
+    int typeIndex = data.indexOf("Type:");
+    int sizeIndex = data.indexOf("Size:");
 
+    QString tmpSite = data.mid(siteIndex + 11, titleIndex - siteIndex - 11);
+    QString tmpTitle = data.mid(titleIndex + 12,typeIndex - titleIndex - 13);
+    QString tmpSize = data.mid(sizeIndex + 12,data.lastIndexOf("(") - sizeIndex - 17);
+
+    TaskFileInfo tmpinfo;
+    tmpinfo.fileName = tmpTitle;
+    tmpinfo.fileType = "Videos";
+    tmpinfo.fileSize = qint64(tmpSize.toDouble() * 1024 * 1024);//youget返回大小都以MiB计算,要转换成B
+
+    QList<TaskFileInfo> infoList;
+    infoList.append(tmpinfo);
+
+    return infoList;
+}
+
+QList<TaskFileInfo> URLHandler::getMultiFileInfo(const QString &data)
+{
+    QString tmpSite = data.mid(data.indexOf("site:") + 20, data.indexOf("title:") - data.indexOf("site") - 21);
+    QString tmpTitle = data.mid(data.indexOf("title:") + 20,data.indexOf("streams:") - data.indexOf("title:") - 21);
+    QString tmpSize = data.mid(data.indexOf("size:") + 15,data.indexOf("MiB") - data.indexOf("size:") - 16);
+
+    TaskFileInfo tmpinfo;
+    tmpinfo.fileName = tmpTitle;
+    tmpinfo.fileType = "Videos";
+    tmpinfo.fileSize = qint64(tmpSize.toDouble() * 1024 * 1024);//youget返回大小都以MiB计算,要转换成B
+
+    QList<TaskFileInfo> infoList;
+    infoList.append(tmpinfo);
+
+    return infoList;
+}
+
+void URLHandler::analyzeURL(const QString &url)
+{
+    URLHandler::ProtocolType tmpType = getProtocolType(url);
+    switch(tmpType)
+    {
+    case URLHandler::YouGet:
+        getYouGetFileList(url);
+        break;
+    case URLHandler::HTTP:
+        getHTTPFileList(url);
+        break;
+    case URLHandler::HTTPS:
+        getHTTPSFileList(url);
+        break;
+    case URLHandler::FTP:
+        getFTPFileList(url);
+        break;
+    case URLHandler::BitTorrent:
+        getBTFileList(url);
+        break;
+    case URLHandler::Metalink:
+        getMetaLinkFileList(url);
+        break;
+    case URLHandler::Magnet:
+        getMagnetFileList(url);
+        break;
+    case URLHandler::Ed2k:
+        getEd2kFileList(url);
+        break;
+    default:
+        break;
+    }
 }
 
 void URLHandler::getYouGetProcessError()
 {
-
+    qDebug() << "error..."<<yougetProcess->readAllStandardError();
 }
 
 URLHandler::~URLHandler()

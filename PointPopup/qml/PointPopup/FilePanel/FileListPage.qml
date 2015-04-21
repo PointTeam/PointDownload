@@ -7,6 +7,7 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import Singleton.DataController 1.0
 
 Item {
     id: fileListPage
@@ -67,6 +68,19 @@ Item {
         if (fileNameList.indexOf(fileName) == -1)
             fileNameList.push(fileName)
         allCheckButton.updateCheckState()
+    }
+
+    Connections{
+        target: DataController
+        onSignalFileInfoListChanged: {
+            cleanList()
+            for (var i in infoList){
+                var fileName = infoList[i][0];
+                var fileType = infoList[i][1];
+                var fileSize = infoList[i][2];
+                addInfoItem(fileName,fileType,fileSize)
+            }
+        }
     }
 
     Item {

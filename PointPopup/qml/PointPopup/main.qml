@@ -10,6 +10,7 @@ import QtQuick 2.1
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.1
 import Singleton.PEventFilter 1.0
+import Singleton.DataController 1.0
 import SettingXMLHandler 1.0
 import "./SearchBar"
 
@@ -28,6 +29,13 @@ Window {
 
     Component.onCompleted: {
         mainWindow.show()
+    }
+
+    Connections{
+        target: DataController
+        onSignalFileInfoListChanged: {
+            readyForDownload = true
+        }
     }
 
     SettingXMLHandler {

@@ -55,9 +55,13 @@ void DataController::getSupportToolsList(const QString &url)
 
 void DataController::analyzeURL(const QString &url)
 {
+    if (url.isEmpty())
+        return;
+
     URLHandler * tmpHandler = new URLHandler();
-    connect(tmpHandler, SIGNAL(getFileInfoListDone(QList<TaskFileInfo>)), this, SLOT(analyzeURLDone()));
+    connect(tmpHandler, SIGNAL(getFileInfoListDone(QList<TaskFileInfo>)), this, SLOT(analyzeURLDone(QList<TaskFileInfo>)));
     connect(tmpHandler, SIGNAL(getFileInfoListDone(QList<TaskFileInfo>)), tmpHandler, SLOT(deleteLater()));
+    tmpHandler->analyzeURL(url);
 }
 
 void DataController::analyzeURLDone(QList<TaskFileInfo> infoList)

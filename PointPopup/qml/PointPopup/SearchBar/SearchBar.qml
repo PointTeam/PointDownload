@@ -25,10 +25,7 @@ Item {
             toolsComboBox.toolsList = toolsList
         }
         onSignalFileInfoListChanged: {
-            for (var i in infoList){
-                for (var j in infoList[i])
-                    print (i,infoList[i][j])
-            }
+            analyzeButton.changeToNormalState()
         }
     }
 
@@ -40,6 +37,8 @@ Item {
         height: parent.height
         onUrlChanged: {
             DataController.getSupportToolsList(url.trim())
+            readyForDownload = false
+            analyzeButton.changeToNormalState()
         }
     }
 
@@ -59,6 +58,9 @@ Item {
         height: parent.height
         onEntered: quitImg.opacity = 1
         onExited: delayHideTimer.start()
+        onDoAnalyze: {
+            DataController.analyzeURL(searchInput.text.trim())
+        }
     }
 
     Image {

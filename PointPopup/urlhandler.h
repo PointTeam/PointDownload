@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QProcess>
+#include <QList>
 #include "pdatatype.h"
 #include "settingxmlhandler.h"
 #include "taskfileinfo.h"
@@ -45,7 +46,7 @@ public:
     void getEd2kFileList(const QString &url);
     void getYouGetFileList(const QString &url);
 
-    void getFileInfoList(const QString &url);
+    void analyzeURL(const QString &url);
 signals:
     void finish();
     void getFileInfoListDone(QList<TaskFileInfo> infoList);
@@ -58,6 +59,8 @@ private slots:
 
 private:
     bool isYouGetSupportSite(const QString &url);
+    QList<TaskFileInfo> getYouGetSingleFileInfo(const QString &data);
+    QList<TaskFileInfo> getMultiFileInfo(const QString &data);
 
 private:
     QProcess * yougetProcess;

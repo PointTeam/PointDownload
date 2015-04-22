@@ -12,6 +12,8 @@ DataController::DataController(QObject *parent) : QObject(parent)
 {
     //import时使用Singleton.DataController，在获取内容或调用函数时使用PEventFilter
     qmlRegisterSingletonType<DataController>("Singleton.DataController", 1, 0, "DataController", pDataCtrlObj);
+
+    sender = new DataSender(this);
 }
 
 void DataController::receiveURL(const QString &url)
@@ -96,8 +98,7 @@ void DataController::startDownload(int threads, int speed, QString savePath, int
     taskInfo.maxThreads = threads;
     taskInfo.maxSpeed = speed;
 
-    DataSender * sender = new DataSender(taskInfo,this);
-    sender->startDownload();
+    sender->startDownload(taskInfo);
 }
 
 void DataController::analyzeURLDone(QList<TaskFileInfo> infoList)

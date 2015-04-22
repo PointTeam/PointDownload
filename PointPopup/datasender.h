@@ -8,29 +8,28 @@
 #include <QDBusConnection>
 #include <QApplication>
 #include <QDebug>
+#include <QTimer>
 #include "taskinfo.h"
 
 class DataSender : public QObject
 {
     Q_OBJECT
 public:
-    explicit DataSender(TaskInfo taskInfo, QObject *parent = 0);
+    explicit DataSender(QObject *parent = 0);
     ~DataSender();
 
-    void startDownload();
 signals:
 
 public slots:
+    void startDownload(TaskInfo taskInfo);
 
 private slots:
     void startMainProgramError(QProcess::ProcessError error);
-    void connectToMainProgram();
 
 private:
     void startMainProgram();                    //尝试启动主程序
 
 private:
-    TaskInfo gTaskInfo;
     QLocalSocket * localSocket;
 
     const QString MAIN_PROGRAM_EXEC = "/opt/Point/PointDownload/PointDownload";

@@ -47,6 +47,7 @@ private:
 private:
     static DataController * dataControler;
 
+    DataSender * sender;
     DownloadXMLHandler gDownloadHandler;
 
     QList<TaskFileInfo> currentFileList;

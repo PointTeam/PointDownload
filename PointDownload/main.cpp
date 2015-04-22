@@ -19,15 +19,15 @@ int main(int argc, char *argv[])
     }
 
     MainController::getInstance();
+    TaskReceiverServer * receiverServer = new TaskReceiverServer();
+    receiverServer->startServer();
+
 
     qmlRegisterType<PDataType>("PDataType", 1, 0, "PDataType");
     qmlRegisterType<TaskInfo>("TaskInfo", 1, 0, "TaskInfo");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/qml/PointDownload/main.qml")));
-
-    TaskReceiverServer * receiverServer = new TaskReceiverServer();
-    receiverServer->startServer();
 
     return app.exec();
 }

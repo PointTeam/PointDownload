@@ -6,6 +6,7 @@
 #include "pdatatype.h"
 #include "taskinfo.h"
 #include "Control/maincontroller.h"
+#include "Control/taskreceiverserver.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +25,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/qml/PointDownload/main.qml")));
+
+    TaskReceiverServer * receiverServer = new TaskReceiverServer();
+    receiverServer->startServer();
 
     return app.exec();
 }

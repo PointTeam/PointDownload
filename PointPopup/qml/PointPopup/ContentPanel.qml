@@ -14,6 +14,10 @@ Item {
     width: parent.width
     height: parent.height
 
+    function getFileList(){
+        return fileListPage.getSelectedFileList()
+    }
+
     Rectangle {
         id: fileNameListRec
         color: "#ffffff"

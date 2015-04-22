@@ -5,7 +5,8 @@ QT += qml quick widgets gui dbus xml
 SOURCES += main.cpp \
     Control/maincontroller.cpp \
     Download/YouGetTask/yougetprocess.cpp \
-    Download/YouGetTask/yougettask.cpp
+    Download/YouGetTask/yougettask.cpp \
+    Control/taskreceiverserver.cpp
 
 RESOURCES += qml.qrc \
     image.qrc \
@@ -50,4 +51,14 @@ DISTFILES += \
 HEADERS += \
     Control/maincontroller.h \
     Download/YouGetTask/yougetprocess.h \
-    Download/YouGetTask/yougettask.h
+    Download/YouGetTask/yougettask.h \
+    Control/taskreceiverserver.h
+
+isEmpty(PREFIX){
+    PREFIX = /opt/Point
+}
+
+BINDIR = $$PREFIX/PointDownload/
+
+target.path = $$BINDIR
+INSTALLS += target

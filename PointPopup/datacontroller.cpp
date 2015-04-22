@@ -58,14 +58,52 @@ void DataController::analyzeURL(const QString &url)
     if (url.isEmpty())
         return;
 
+    currentUrl = url;
+
     URLHandler * tmpHandler = new URLHandler();
     connect(tmpHandler, SIGNAL(getFileInfoListDone(QList<TaskFileInfo>)), this, SLOT(analyzeURLDone(QList<TaskFileInfo>)));
     connect(tmpHandler, SIGNAL(getFileInfoListDone(QList<TaskFileInfo>)), tmpHandler, SLOT(deleteLater()));
     tmpHandler->analyzeURL(url);
 }
 
+void DataController::startDownload(int threads, int speed, QString savePath, int toolType)
+{
+    QString fileID = getFileIdFromUrl();
+
+    if (isDownloading(fileID))
+    {
+        return;//no need to do anything
+    }
+    else if (isDownloaded(fileID))
+    {
+        //delete xml item
+        QFile::remove(gDownloadHandler.getDLedNode(fileID).fileSavePath + "/"
+                      + gDownloadHandler.getDLedNode(fileID).fileName);
+        gDownloadHandler.removeDLedFileNode(fileID);
+    }
+    else if (isTrash(fileID))
+    {
+        gDownloadHandler.removeDLtrashFileNode(fileID);
+    }
+
+    TaskInfo taskInfo;
+    taskInfo.fileID = fileID;
+    taskInfo.toolType = PDataType::ToolType(toolType);
+    taskInfo.fileList = currentFileList;
+    taskInfo.url = currentUrl;
+    taskInfo.taskIconPath = "";
+    taskInfo.fileSavePath = savePath;
+    taskInfo.maxThreads = threads;
+    taskInfo.maxSpeed = speed;
+
+    DataSender * sender = new DataSender(taskInfo,this);
+    sender->startDownload();
+}
+
 void DataController::analyzeURLDone(QList<TaskFileInfo> infoList)
 {
+    currentFileList = infoList;
+
     QVariantMap infoMap;
     for (int i = 0; i < infoList.length(); i ++)
     {
@@ -76,6 +114,57 @@ void DataController::analyzeURLDone(QList<TaskFileInfo> infoList)
         infoMap.insert(QString::number(i),tmpList);
     }
     emit signalFileInfoListChanged(infoMap);
+}
+
+QString DataController::getFileIdFromUrl()
+{
+    return QString(currentUrl.toUtf8().toBase64());
+}
+
+bool DataController::isDownloading(const QString &fileID)
+{
+    QList<SDownloading> tmpList = gDownloadHandler.getDLingNodes();
+
+    for (int i = 0; i < tmpList.count(); i ++)
+    {
+        //if exit,when user click ok button ,this window will just close and do nothing
+        if (tmpList.at(i).fileID == fileID)
+        {
+            return true;
+        }
+    }
+
+    return false;//at the end got nothing will return false
+}
+
+bool DataController::isDownloaded(const QString &fileID)
+{
+    QList<SDownloaded> tmpList = gDownloadHandler.getDLedNodes();
+
+    for (int i = 0; i < tmpList.count(); i ++)
+    {
+        if (tmpList.at(i).fileID == fileID)
+        {
+            return true;
+        }
+    }
+
+    return false;//at the end got nothing will return false
+}
+
+bool DataController::isTrash(const QString &fileID)
+{
+    QList<SDownloadTrash> tmpList = gDownloadHandler.getDLtrashNodes();
+
+    for (int i = 0; i < tmpList.count(); i ++)
+    {
+        if (tmpList.at(i).fileID == fileID)
+        {
+            return true;
+        }
+    }
+
+    return false;//at the end got nothing will return false
 }
 
 QObject *DataController::pDataCtrlObj(QQmlEngine *engine, QJSEngine *scriptEngine)

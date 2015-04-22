@@ -56,6 +56,7 @@ void MainController::pStartDownload(const TaskInfo &taskInfo)
         qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
     }
 
+    qWarning() << "Startting download:" << taskInfo;
     TaskInfo tmpInfo = taskInfo;
     emit signalAddDownloadingItem(&tmpInfo);
 }

@@ -15,6 +15,9 @@ Item {
     width: parent.width
     height: parent.height
 
+    function getSelectedToolType(){
+        return toolsComboBox.getSelectedTool()
+    }
 
     Connections{
         target: DataController

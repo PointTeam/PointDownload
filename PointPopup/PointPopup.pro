@@ -1,10 +1,11 @@
 TEMPLATE = app
 
-QT += qml quick widgets gui xml
+QT += qml quick widgets gui xml dbus
 
 SOURCES += main.cpp \
     urlhandler.cpp \
-    datacontroller.cpp
+    datacontroller.cpp \
+    datasender.cpp
 
 RESOURCES += qml.qrc \
 #    image.qrc \
@@ -27,7 +28,8 @@ include(../PInterface/PEventFilter/PEventFilter.pri)
 
 HEADERS += \ 
     urlhandler.h \
-    datacontroller.h
+    datacontroller.h \
+    datasender.h
 
 DISTFILES += \
     qml/PointPopup/main.qml \

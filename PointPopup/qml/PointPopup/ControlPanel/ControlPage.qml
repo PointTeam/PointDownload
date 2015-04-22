@@ -8,6 +8,8 @@
 *************************************************************/
 import QtQuick 2.1
 import SettingXMLHandler 1.0
+import Singleton.DataController 1.0
+import PDataType 1.0
 
 Rectangle{
     width: parent.width
@@ -84,6 +86,12 @@ Rectangle{
             }
             onClicked: {
                 //Sent info to server
+                //threads,speed,savePath,toolType
+                var toolType = getSelectedToolType()
+                DataController.startDownload(dlThreadInput.text.trim(),
+                                             dlSpeadInput.text.trim(),
+                                             storageInput.text.trim(),
+                                             toolType)
             }
         }
     }

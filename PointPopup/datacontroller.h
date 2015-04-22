@@ -9,7 +9,9 @@
 #include <QJSEngine>
 #include "pdatatype.h"
 #include "urlhandler.h"
-#include  <QDate>
+#include "taskinfo.h"
+#include "downloadxmlhandler.h"
+#include "datasender.h"
 
 class DataController : public QObject
 {
@@ -22,6 +24,7 @@ public:
     void receiveURL(const QString &url);
     Q_INVOKABLE void getSupportToolsList(const QString &url);
     Q_INVOKABLE void analyzeURL(const QString &url);
+    Q_INVOKABLE void startDownload(int threads, int speed, QString savePath,int toolType);
 
 signals:
     void signalReceiveNewURL(QString url);
@@ -36,8 +39,19 @@ private slots:
 private:
     explicit DataController(QObject *parent = 0);
 
+    QString getFileIdFromUrl();
+    bool isDownloading(const QString &fileID);
+    bool isDownloaded(const QString &fileID);
+    bool isTrash(const QString &fileID);
+
 private:
     static DataController * dataControler;
+
+    DownloadXMLHandler gDownloadHandler;
+
+    QList<TaskFileInfo> currentFileList;
+    QString currentUrl;
+
 
 };
 

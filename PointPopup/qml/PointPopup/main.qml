@@ -27,6 +27,10 @@ Window {
     property int shadowRadius: 10
     property bool readyForDownload: false
 
+    function getSelectedToolType(){
+        return searchBar.getSelectedToolType()
+    }
+
     Component.onCompleted: {
         mainWindow.show()
     }

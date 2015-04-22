@@ -18,6 +18,7 @@ FocusScope {
     property int minValue: 0
     property int step: 1
     property alias textInput: input
+    property alias text: input.text
     property alias title: titleText.text
     property alias imageButton: imgButton
     property bool showImageButton: false

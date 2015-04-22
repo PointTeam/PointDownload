@@ -49,13 +49,13 @@ Item {
             return PDataType.PToolTypeUndefined
         else{
             var toolType
-            if (toolsLabels[currentIndex] == "Aria2")
+            if (toolsLabels[mainBox.currentIndex] == "Aria2")
                 toolType = PDataType.PToolTypeAria2
-            else if (toolsLabels[currentIndex] == "Point")
+            else if (toolsLabels[mainBox.currentIndex] == "Point")
                 toolType = PDataType.PToolTypePoint
-            else if(toolsLabels[currentIndex] == "Xware")
+            else if(toolsLabels[mainBox.currentIndex] == "Xware")
                 toolType = PDataType.PToolTypeXware
-            else if(toolsLabels[currentIndex] == "YouGet")
+            else if(toolsLabels[mainBox.currentIndex] == "YouGet")
                 toolType = PDataType.PToolTypeYouGet
             else
                 toolType = PDataType.PToolTypeUndefined

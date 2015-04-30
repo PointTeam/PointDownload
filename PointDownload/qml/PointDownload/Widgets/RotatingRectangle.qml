@@ -9,7 +9,7 @@
 import QtQuick 2.1
 
 Item {
-
+    id: rotationRec
 	property real fileSize: 0		//Byte
 	property int fileSizeOnShow: {
 		if (fileSize > 1024 * 1024 * 1024)
@@ -28,6 +28,8 @@ Item {
 	property bool shouldShowSpeed: false
 
 	property int rotaInterval: 700
+
+    state: "showSize"
 
 	function getSizeUnit(){
 		if (fileSize > 1024 * 1024 * 1024)
@@ -91,32 +93,45 @@ Item {
 		sizeUnitText.text = getSizeUnit()
 		sizeText.text = getSizeText()
 		if (shouldShowSpeed)
-			speedTimer.start()
+            sizeTimer.start()
 	}
 
-	Timer {
-		id: sizeTimer
-		interval: showIntervalOfSize + rotaInterval
-		onTriggered: {
-			sizeRec.visible = false
-			sizeRota.angle = 180
-			speedRota.angle = 0
-			speedRec.visible = true
-			speedTimer.start()
-		}
-	}
+    Timer {
+        id: sizeTimer
+        interval: showIntervalOfSize + rotaInterval
+        onTriggered: {
+            rotationRec.state = "showSpeed"
 
-	Timer {
-		id: speedTimer
-		interval: showIntervalOfSpeed + rotaInterval
-		onTriggered: {
-			speedRec.visible = false
-			speedRota.angle = 180
-			sizeRota.angle = 0
-			sizeRec.visible = true
-			sizeTimer.start()
-		}
-	}
+            speedTimer.start()
+        }
+    }
+
+    Timer {
+        id: speedTimer
+        interval: showIntervalOfSpeed + rotaInterval
+        onTriggered: {
+            rotationRec.state = "showSize"
+
+            sizeTimer.start()
+        }
+    }
+
+    states: [
+        State {
+            name: "showSpeed"
+            PropertyChanges {target: speedRec; visible: true}
+            PropertyChanges {target: speedRota; angle: 0}
+            PropertyChanges {target: sizeRec; visible: false}
+            PropertyChanges {target: sizeRota; angle: 180}
+        },
+        State {
+            name: "showSize"
+            PropertyChanges {target: speedRec; visible: false}
+            PropertyChanges {target: speedRota; angle: 180}
+            PropertyChanges {target: sizeRec; visible: true}
+            PropertyChanges {target: sizeRota; angle: 0}
+        }
+    ]
 
 	Rectangle {
 		id: sizeRec
@@ -190,4 +205,32 @@ Item {
 			}
 		}
 	}
+
+
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: {
+            if (shouldShowSpeed){
+                if (rotationRec.state == "showSpeed"){
+                    speedTimer.stop()
+                    rotationRec.state = "showSize"
+                }
+                else{
+                    sizeTimer.stop()
+                    rotationRec.state = "showSpeed"
+                }
+            }
+        }
+        onExited: {
+            if (shouldShowSpeed){
+                if (rotationRec.state == "showSpeed"){
+                    speedTimer.start()
+                }
+                else{
+                    sizeTimer.start()
+                }
+            }
+        }
+    }
 }

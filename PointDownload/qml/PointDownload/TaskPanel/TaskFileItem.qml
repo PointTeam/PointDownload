@@ -91,7 +91,7 @@ Item {
 
 	RotatingRectangle {
 		id: headRec
-		width: 70
+        width: 80
 		height: parent.height
 		fileSize: pFileSize
         taskSpeed: pTaskSpeed

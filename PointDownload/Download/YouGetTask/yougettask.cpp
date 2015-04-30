@@ -83,7 +83,7 @@ void YouGetTask::finishDownload(const QString & fileID)
 {
     gProcessMap.remove(fileID);
 
-//    MainController::getInstance()->cleanDownloadFinishItem(fileID);
+    emit taskFinished(fileID);
 }
 
 void YouGetTask::deleteTask(const QString &fileID, const bool removeFile)
@@ -121,7 +121,9 @@ TaskInfo YouGetTask::getPrepareInfoFromXML(const QString & fileID)
 void YouGetTask::initConnection()
 {
     connect(this, SIGNAL(taskItemInfoUpdate(TaskItemInfo)),
-            MainController::getInstance(), SIGNAL(signalTaskItemInfoUpdate(TaskItemInfo)));
+            MainController::getInstance(), SLOT(slotTaskItemInfoUpdate(TaskItemInfo)));
+    connect(this, SIGNAL(taskFinished(QString)),
+            MainController::getInstance(), SLOT(slotTaskFinished(QString)));
     connect(this, SIGNAL(getError(QString,QString,PDataType::ToolType)),
-            MainController::getInstance(), SLOT(slotGetError(QString&,QString&,PDataType::ToolType)));
+            MainController::getInstance(), SLOT(slotGetError(QString,QString,PDataType::ToolType)));
 }

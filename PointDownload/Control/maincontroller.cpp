@@ -56,7 +56,6 @@ void MainController::pStartDownload(const TaskInfo &taskInfo)
         qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
     }
 
-    qWarning() << "Startting download:" << taskInfo;
     TaskInfo tmpInfo = taskInfo;
     emit signalAddDownloadingItem(&tmpInfo);
 }
@@ -81,6 +80,25 @@ void MainController::pResumeAllTask()
     qDebug() << "Resume all task...";
 }
 
+void MainController::slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo)
+{
+    QJsonObject infoObj;
+    infoObj.insert("fileID",itemInfo.fileID);
+    infoObj.insert("taskDLSpeed",itemInfo.taskDLSpeed);
+    infoObj.insert("taskULSpeed",itemInfo.taskULSpeed);
+    infoObj.insert("thunderOfflineSpeed",itemInfo.thunderOfflineSpeed);
+    infoObj.insert("thunderHightSpeed",itemInfo.thunderHightSpeed);
+    infoObj.insert("taskState",itemInfo.taskState);
+    infoObj.insert("taskProgress",itemInfo.taskProgress);
+
+    emit signalTaskItemInfoUpdate(infoObj);
+}
+
+void MainController::slotTaskFinished(const QString &taskID)
+{
+    emit signalTaskFinished(taskID);
+}
+
 void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadType dtype, PDataType::OperationType otype)
 {
     switch (dtype)
@@ -99,7 +117,7 @@ void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadTyp
     }
 }
 
-void MainController::slotGetError(QString &fileID, QString &errorMessage, PDataType::ToolType toolType)
+void MainController::slotGetError(const QString &fileID, const QString &errorMessage, PDataType::ToolType toolType)
 {
 
 }

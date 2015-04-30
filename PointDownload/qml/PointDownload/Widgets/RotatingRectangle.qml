@@ -43,9 +43,9 @@ Item {
 	function getSizeText(){
 		var tmpStr = ""
 		if (taskProgress != 1)
-			tmpStr = (fileSizeOnShow * taskProgress).toString() + "/" + fileSizeOnShow.toString()
+            tmpStr = (fileSizeOnShow * taskProgress).toFixed(1).toString() + "/" + fileSizeOnShow.toFixed(1).toString()
 		else
-			tmpStr = fileSizeOnShow.toString()
+            tmpStr = fileSizeOnShow.toFixed(1).toString()
 		return tmpStr
 	}
 

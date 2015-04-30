@@ -46,6 +46,7 @@ History:
 #include <QDesktopServices>
 #include <QUrl>
 #include <QQmlEngine>
+#include <QJsonObject>
 #include <QDebug>
 #include "pdatatype.h"
 #include "taskinfo.h"
@@ -67,15 +68,18 @@ public:
     Q_INVOKABLE void pResumeAllTask();
 
 public slots:
+    void slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo);
+    void slotTaskFinished(const QString & taskID);
     void slotControlFileItem(QString & fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
-    void slotGetError(QString & fileID,QString & errorMessage, PDataType::ToolType toolType);
+    void slotGetError(const QString & fileID,const QString & errorMessage, PDataType::ToolType toolType);
 
 Q_SIGNALS:
 //signals:
     void signalAddDownloadingItem(QObject * taskInfo);
     void signalAddDownloadedItem(QObject * taskInfo);
     void signalAddDownloadTrashItem(QObject * taskInfo);
-    void signalTaskItemInfoUpdate(TaskItemInfo); //实时数据更新
+    void signalTaskItemInfoUpdate(QJsonObject itemInfo); //实时数据更新
+    void signalTaskFinished(const QString & taskID);
     void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
 
 private slots:

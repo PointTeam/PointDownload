@@ -16,13 +16,16 @@ class TaskInfo : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString fileID READ pGetFileID)
-    Q_PROPERTY(QString url READ pGetUrl)
-    Q_PROPERTY(QString taskIconPath READ pGetTaskIconPath)
-    Q_PROPERTY(QString fileSavePath READ pGetFileSavePath)
-    Q_PROPERTY(PDataType::ToolType toolType READ pGetToolType)
-    Q_PROPERTY(int maxThreads READ pGetMaxThreads)
-    Q_PROPERTY(int maxSpeed READ pGetMaxSpeed)
+    Q_PROPERTY(QString fileID READ getFileID)
+    Q_PROPERTY(QString url READ getUrl)
+    Q_PROPERTY(QString taskIconPath READ getTaskIconPath)
+    Q_PROPERTY(QString fileSavePath READ getFileSavePath)
+    Q_PROPERTY(PDataType::ToolType toolType READ getToolType)
+    Q_PROPERTY(int maxThreads READ getMaxThreads)
+    Q_PROPERTY(int maxSpeed READ getMaxSpeed)
+    Q_PROPERTY(QStringList fileNameList READ getFileNameList)
+    Q_PROPERTY(QString taskName READ getTaskName)
+    Q_PROPERTY(qint64 taskSize READ getTaskSize)
 
 public:
     TaskInfo();
@@ -32,13 +35,8 @@ public:
     virtual ~TaskInfo();
 
 public:
-    QByteArray pToQByteArray() const;
-    QString pFileListString() const;
-    QString pTaskName() const;
-    qint64 pTaskSize() const;
-
-public:
     TaskInfo &operator =(const TaskInfo &what);
+    QByteArray toQByteArray() const;
     friend QDebug operator <<(QDebug out, const TaskInfo &what);
 private:
     friend QDataStream & operator >>(QDataStream &in, TaskInfo &what);
@@ -46,13 +44,16 @@ private:
 
 public:
     // for qml
-    QString pGetFileID();
-    QString pGetUrl();
-    QString pGetTaskIconPath();
-    QString pGetFileSavePath();
-    PDataType::ToolType pGetToolType();
-    int pGetMaxThreads();
-    int pGetMaxSpeed();
+    QString getFileID();
+    QString getUrl();
+    QString getTaskIconPath();
+    QString getFileSavePath();
+    PDataType::ToolType getToolType();
+    int getMaxThreads();
+    int getMaxSpeed();
+    QStringList getFileNameList() const;
+    QString getTaskName() const;
+    qint64 getTaskSize() const;
 
 public:
     // 需要序列化/反序列化的成员
@@ -64,7 +65,6 @@ public:
     QList<TaskFileInfo> fileList;
     int maxThreads;
     int maxSpeed;
-
 };
 
 

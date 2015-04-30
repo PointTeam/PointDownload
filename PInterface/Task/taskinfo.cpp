@@ -46,7 +46,7 @@ TaskInfo::~TaskInfo()
 
 }
 
-QByteArray TaskInfo::pToQByteArray() const
+QByteArray TaskInfo::toQByteArray() const
 {
     QByteArray data;
     QDataStream out(&data, QIODevice::WriteOnly);
@@ -59,22 +59,19 @@ QByteArray TaskInfo::pToQByteArray() const
 /*!
     获取当前任务的文件列表
 */
-QString TaskInfo::pFileListString() const
+QStringList TaskInfo::getFileNameList() const
 {
-    QString str;
+    QStringList nameList;
+    for (TaskFileInfo info : fileList)
+        nameList.append(info.fileName);
 
-    for (TaskFileInfo i : fileList)
-        str += i.fileName + "\n";
-
-    if (!str.isEmpty())
-        return str.left(str.size() - 1);
-    return str;
+    return nameList;
 }
 
 /*!
     文件名列表大于1的时候以文件大小为-1的项作为文件名
 */
-QString TaskInfo::pTaskName() const
+QString TaskInfo::getTaskName() const
 {
     if (fileList.empty())
     {
@@ -95,7 +92,7 @@ QString TaskInfo::pTaskName() const
     任务包含文件的大小总和作为任务的总大小
     altered int to qint64 ( by Choldrim )
 */
-qint64 TaskInfo::pTaskSize() const
+qint64 TaskInfo::getTaskSize() const
 {
     qint64 size(0);
     for (TaskFileInfo i : fileList)
@@ -183,37 +180,37 @@ TaskInfo &TaskInfo::operator =(const TaskInfo &what)
     return *this;
 }
 
-QString TaskInfo::pGetFileID()
+QString TaskInfo::getFileID()
 {
     return fileID;
 }
 
-QString TaskInfo::pGetUrl()
+QString TaskInfo::getUrl()
 {
     return url;
 }
 
-QString TaskInfo::pGetTaskIconPath()
+QString TaskInfo::getTaskIconPath()
 {
     return taskIconPath;
 }
 
-QString TaskInfo::pGetFileSavePath()
+QString TaskInfo::getFileSavePath()
 {
     return fileSavePath;
 }
 
-PDataType::ToolType TaskInfo::pGetToolType()
+PDataType::ToolType TaskInfo::getToolType()
 {
     return toolType;
 }
 
-int TaskInfo::pGetMaxThreads()
+int TaskInfo::getMaxThreads()
 {
     return maxThreads;
 }
 
-int TaskInfo::pGetMaxSpeed()
+int TaskInfo::getMaxSpeed()
 {
     return maxSpeed;
 }

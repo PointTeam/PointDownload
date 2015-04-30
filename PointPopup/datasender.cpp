@@ -16,7 +16,7 @@ void DataSender::startDownload(TaskInfo taskInfo)
         if (localSocket->waitForConnected())
         {
             qDebug() << "[Info]: connect to main program success...";
-            if (localSocket->write(taskInfo.pToQByteArray()) == -1)
+            if (localSocket->write(taskInfo.toQByteArray()) == -1)
                 qWarning() << "[Error]: localSocket write error";
             localSocket->flush();
             localSocket->waitForBytesWritten();

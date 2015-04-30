@@ -94,7 +94,7 @@ Item {
 		width: 70
 		height: parent.height
 		fileSize: pFileSize
-		taskSpeed: 34543//pTaskSpeed
+        taskSpeed: pTaskSpeed
 		taskProgress: pTaskProgress
 		shouldShowSpeed: true
 	}

@@ -29,6 +29,7 @@ public slots:
     virtual void trashTask(const QString & fileID, const bool removeFile) = 0;
 
 signals:
+    void taskFinished(const QString & taskID);
     void taskItemInfoUpdate(const TaskItemInfo & info);
     void getError(const QString & fileID, const QString & error, PDataType::ToolType toolType);
 

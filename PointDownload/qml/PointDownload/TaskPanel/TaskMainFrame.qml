@@ -8,17 +8,27 @@
 *************************************************************/
 import QtQuick 2.1
 import PDataType 1.0
+import Singleton.MainController 1.0
 
 Item {
     id: taskPanel
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
 
-
-	Component.onCompleted: {
-		addToModel("1","Test1",1024000)
-		addToModel("2","Test222",45006432)
-	}
+    Connections {
+        target: MainController
+        onSignalAddDownloadingItem: {
+            print ("Add new task:",taskInfo.fileID,taskInfo.taskName, taskInfo.taskSize)
+            addToModel(taskInfo.fileID,taskInfo.taskName, taskInfo.taskSize)
+        }
+        onSignalTaskItemInfoUpdate: {
+            updateDataModel(itemInfo.fileID,itemInfo.taskState,itemInfo.taskDLSpeed,itemInfo.taskProgress / 100)
+        }
+        onSignalTaskFinished: {
+            print ("Task finishied:",taskID)
+            deleteFromModel(taskID)
+        }
+    }
 
 	function addToModel(fileId, fileName, fileSize){
 		if (indexOfModel(fileId) == -1){//not in nodel, add it

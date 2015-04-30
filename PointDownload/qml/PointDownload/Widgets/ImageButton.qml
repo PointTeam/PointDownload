@@ -9,6 +9,9 @@
 import QtQuick 2.1
 
 Item {
+    id: imageButton
+
+    state: "hideInBottom"
 
 	property string pButtonId: ""
 	property bool pButtonDisable: false
@@ -18,10 +21,33 @@ Item {
 	property string pButtonIconDisablePath: ""
 
 	signal buttonClicked(string buttonId)
+    signal showed
+    signal hided
+
+    function showInCenter(){
+        delaySenderTimer.restart()
+        imageButton.state = "showInCenter"
+    }
+
+    function hideInBottom(){
+        delaySenderTimer.restart()
+        imageButton.state = "hideInBottom"
+    }
 
 	onPButtonDisableChanged: {
 		buttonImg.source = pButtonIconDisablePath
 	}
+
+    Timer {
+        id: delaySenderTimer
+        interval: 70
+        onTriggered: {
+            if (imageButton.state == "showInCenter")
+                imageButton.showed()
+            else
+                imageButton.hided()
+        }
+    }
 
 	Image {
 		id: buttonImg
@@ -42,4 +68,19 @@ Item {
 			parent.buttonClicked(pButtonId)
 		}
 	}
+
+    states: [
+        State {
+            name: "showInCenter"
+            AnchorChanges { target: imageButton; anchors.verticalCenter: parent.verticalCenter; anchors.top: undefined}
+        },
+        State {
+            name: "hideInBottom"
+            AnchorChanges { target: imageButton; anchors.verticalCenter: undefined; anchors.top: parent.bottom}
+        }
+    ]
+
+    transitions: Transition {
+        AnchorAnimation { duration: 200; easing.type: Easing.OutCirc }
+    }
 }

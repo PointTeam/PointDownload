@@ -125,29 +125,22 @@ Item {
 			anchors.leftMargin: 15
 			anchors.verticalCenter : parent.verticalCenter
 			verticalAlignment: Text.AlignVCenter
+            Behavior on opacity {
+                NumberAnimation {duration: 200}
+            }
 		}
 
 		ControlButtonLine {
-			id: controlButtonLine
-			color: "#4497dd"
+            id: controlButtonLine
 			width: parent.width
 			height: parent.height
 			anchors.left: parent.left
 			anchors.leftMargin: 0
 			anchors.verticalCenter: parent.verticalCenter
 			buttonModel: controlButtonModel
+            onButtonAllHided: fileText.opacity = 1
 			onButtonClicked: {
 				//TODO
-			}
-		}
-
-
-		Timer {
-			id: delayShowTimer
-			interval: 300
-			onTriggered: {
-				fileText.visible = false
-				controlButtonLine.show()
 			}
 		}
 
@@ -155,14 +148,19 @@ Item {
 			anchors.fill: parent
 			hoverEnabled: true
 			propagateComposedEvents: true
-			onEntered: {
-				delayShowTimer.start()
-			}
-			onExited: {
-				delayShowTimer.stop()
-				controlButtonLine.hide()
-				fileText.visible = true
-			}
+
+            property bool buttonShowed: false
+            onClicked: {
+                if (!buttonShowed){
+                    fileText.opacity = 0
+                    controlButtonLine.show()
+                    buttonShowed = true
+                }
+                else{
+                    controlButtonLine.hide()
+                    buttonShowed = false
+                }
+            }
 		}
 	}
 }

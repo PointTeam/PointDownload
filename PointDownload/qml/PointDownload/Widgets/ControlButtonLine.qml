@@ -8,28 +8,26 @@
 *************************************************************/
 import QtQuick 2.1
 
-Rectangle {
+Item {
 	id: buttonLine
 	width: parent.width
 	height: parent.height
 
-	property var buttonModel
-	property int rotaInterval: 600
+    property int buttonShowedIndex: -1
+    property bool showing: false
+    property var buttonModel
 
 	signal buttonClicked(string buttonId)
+    signal buttonAllHided
 
-	function show(){
-		buttonLine.visible = true
-		controlRota.angle = 0
+    function show(){
+        showing = true
+        buttonShowedIndex = 0
 	}
 
-	function hide(){
-		controlRota.angle = 180
-	}
-
-	Component.onCompleted: {
-		buttonLine.visible = false
-		controlRota.angle = 180
+    function hide(){
+        showing = false
+        buttonShowedIndex = contrlRepeater.count - 1
 	}
 
 	Row {
@@ -40,14 +38,14 @@ Rectangle {
 		anchors.leftMargin: 20
 		anchors.verticalCenter: parent.verticalCenter
         spacing: 20
+        clip: true
 
 		Repeater {
+            id: contrlRepeater
 			model: buttonModel
-			delegate: ImageButton {
-				visible: controlRota.angle < 90
+            delegate: ImageButton {
                 width: 24
                 height: 24
-				anchors.verticalCenter: parent.verticalCenter
 				pButtonId: buttonId
 				pButtonIconNormalPath: buttonIconNormalPath
 				pButtonIconHoverPath: buttonIconHoverPath
@@ -55,25 +53,29 @@ Rectangle {
 				pButtonIconDisablePath: typeof(buttonIconDisablePat) == "undefined" ? "" : buttonIconDisablePath
 				pButtonDisable: typeof(buttonDisable) == "undefined" ? false : buttonDisable
 
+                Connections {
+                    target: buttonLine
+                    onButtonShowedIndexChanged: {
+                        if(showing && buttonShowedIndex == index){
+                            showInCenter()
+                        }
+                        else if (!showing && buttonShowedIndex == index){
+                            hideInBottom()
+                        }
+                    }
+                }
+
 				onButtonClicked: {
 					print ("==>[Info] %1 button has been clicked!".arg(buttonId))
 					buttonLine.buttonClicked(buttonId)
 				}
+                onShowed: buttonShowedIndex = index + 1
+                onHided: {
+                    buttonShowedIndex = index - 1
+                    if (buttonShowedIndex < 0)
+                        buttonLine.buttonAllHided()
+                }
 			}
-		}
-	}
-
-	transform: Rotation {
-		id:controlRota
-		origin.x: buttonLine.width / 2;
-		origin.y: buttonLine.height / 2;
-		axis { x: 1; y: 0; z: 0 }
-		Behavior on angle {  // for animation
-			NumberAnimation { duration: rotaInterval;easing.type : Easing.InOutBack }
-		}
-		onAngleChanged: {
-			if (angle == 180)
-				buttonLine.visible = false
 		}
 	}
 }

@@ -18,15 +18,15 @@ Item {
     Connections {
         target: MainController
         onSignalAddDownloadingItem: {
-            print ("Add new task:",taskInfo.fileID,taskInfo.taskName, taskInfo.taskSize)
-            addToModel(taskInfo.fileID,taskInfo.taskName, taskInfo.taskSize)
+            print ("Add new task:",itemInfo.fileName, itemInfo.fileTotalSize,"Byte")
+            addToModel(itemInfo)
         }
         onSignalTaskItemInfoUpdate: {
             updateDataModel(itemInfo.fileID,itemInfo.taskState,itemInfo.taskDLSpeed,itemInfo.taskProgress / 100)
         }
         onSignalTaskFinished: {
-            print ("Task finishied:",itemInfo.fileName)
-            deleteFromModel(itemInfo.fileID)
+            print ("Task finishied:",fileID)
+            deleteFromModel(fileID)
         }
     }
 
@@ -34,15 +34,18 @@ Item {
         return dataModel.count
     }
 
-	function addToModel(fileId, fileName, fileSize){
-		if (indexOfModel(fileId) == -1){//not in nodel, add it
+    function addToModel(dataObj){
+        if (indexOfModel(dataObj.fileID) == -1){//not in nodel, add it
 			dataModel.append({
-				"fileId": fileId,
-				"fileName": fileName,
-				"fileSize": fileSize,
-                "taskState": PDataType.PTaskStateDownloading,
-				"taskSpeed": 1024, //Byte/S
-				"taskProgress": 0 //100%
+                "fileId": dataObj.fileID,
+                "fileName": dataObj.fileName,
+                "fileSize": dataObj.fileTotalSize,
+                "fileSavePath": dataObj.fileSavePath,
+                "url": dataObj.url,
+                "toolType": dataObj.toolType,
+                "taskState": dataObj.taskState,
+                "taskSpeed": 0, //Byte/S
+                "taskProgress": dataObj.fileTotalSize != undefined ? dataObj.fileReadySize / dataObj.fileTotalSize : 0 //0~1
 			})
 		}
 	}

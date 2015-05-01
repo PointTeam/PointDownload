@@ -24,7 +24,7 @@ Item {
 	property real showIntervalOfSpeed: 9000
 	property real showIntervalOfSize: 3000
 	property double taskProgress: 0		//0~1
-	property real taskSpeed: 0	//Byte/Second
+    property real taskSpeed: -1	//Byte/Second
 	property bool shouldShowSpeed: false
 
 	property int rotaInterval: 700
@@ -51,7 +51,7 @@ Item {
 		return tmpStr
 	}
 
-	function getSpeedUnit(){
+    function getSpeedUnit(){
 		if (taskSpeed > 1024 * 1024)
 			return "MB/S"
 		else if (taskSpeed > 1024)

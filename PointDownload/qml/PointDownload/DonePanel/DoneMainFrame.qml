@@ -16,7 +16,7 @@ Item {
 
     Connections {
         target: MainController
-        onSignalTaskFinished: {
+        onSignalAddDownloadedItem: {
             addToModel(itemInfo)
         }
     }
@@ -26,7 +26,7 @@ Item {
     }
 
     function addToModel(dataObj){
-        if (indexOfModel(dataObj.fileId) == -1){//not in nodel, add it
+        if (indexOfModel(dataObj.fileID) == -1){//not in nodel, add it
 			dataModel.append({
                 "fileId": dataObj.fileID,
                 "fileName": dataObj.fileName,

@@ -56,8 +56,18 @@ void MainController::pStartDownload(const TaskInfo &taskInfo)
         qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
     }
 
-    TaskInfo tmpInfo = taskInfo;
-    emit signalAddDownloadingItem(&tmpInfo);
+    DownloadXMLHandler tmpOpera;
+    SDownloading taskStruct;
+    taskStruct.fileID = taskInfo.fileID;
+    taskStruct.fileName = taskInfo.getTaskName();
+    taskStruct.fileTotalSize = taskInfo.getTaskSize();
+    taskStruct.fileReadySize = 0;
+    taskStruct.fileSavePath = taskInfo.fileSavePath;
+    taskStruct.url = taskInfo.url;
+    taskStruct.toolType = taskInfo.toolType;
+    taskStruct.taskState = PDataType::PTaskStateDownloading;
+
+    emit signalAddDownloadingItem(tmpOpera.getJsonObjFromSDownloading(taskStruct));
 }
 
 void MainController::pChangeMaxJobCount(int newCount)
@@ -116,7 +126,8 @@ void MainController::slotTaskFinished(const QString &taskID)
     tmpHandler.removeDLingFileNode(taskID);
 
     //update ui
-    emit signalTaskFinished(tmpHandler.getJsonObjFromSDownloaded(doneStruct));
+    emit signalAddDownloadedItem(tmpHandler.getJsonObjFromSDownloaded(doneStruct));
+    emit signalTaskFinished(taskID);
 }
 
 void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadType dtype, PDataType::OperationType otype)
@@ -144,18 +155,41 @@ void MainController::slotGetError(const QString &fileID, const QString &errorMes
 
 void MainController::initDownloadList()
 {
-
+    initDLedList();
+    initDLingList();
+    initDLtrashList();
 }
 
 void MainController::initDownloadingStart()
 {
+    SettingXMLHandler settingHandler;
+    DownloadXMLHandler downloadHandler;
 
+    QStringList keys = taskListMap.keys();
+    int jobs = 0;
+    for (int i = 0; i < keys.count(); i++)
+    {
+        if (settingHandler.getChildElement(SettingXMLHandler::GeneralSettings,"MaxJobCount").toInt() < jobs)
+            break;
+        SDownloading taskStruct = downloadHandler.getDLingNode(keys.at(i));
+
+        if (taskStruct.taskState == PDataType::PTaskStateDownloading)
+        {
+            jobs ++;
+            taskStruct.taskState = PDataType::PTaskStateSuspend;
+            //伪造成暂停状态以使用resume方式恢复下载,与直接新建下载不同
+            downloadHandler.updateDLingNode(taskStruct);
+
+            dlingResume(keys.at(i));
+        }
+    }
 }
 
 MainController::MainController(QObject *parent) :
     QObject(parent)
 {
-
+    QTimer::singleShot(500, this, SLOT(initDownloadList()));
+    QTimer::singleShot(501, this, SLOT(initDownloadingStart()));
 }
 
 MainController::~MainController()
@@ -357,7 +391,6 @@ void MainController::dlingResume(const QString &fileID)
         //TODO
         break;
     case PDataType::PToolTypeYouGet:
-        //TODO
         YouGetTask::getInstance()->resume(fileID);
         break;
     case PDataType::PToolTypeXware:
@@ -367,6 +400,12 @@ void MainController::dlingResume(const QString &fileID)
         //TODO
         break;
     }
+
+    DownloadXMLHandler downloadXMLHandler;
+    SDownloading taskStruct = downloadXMLHandler.getDLingNode(fileID);
+    taskStruct.taskState = PDataType::PTaskStateDownloading;
+    //恢复成正在下载状态
+    downloadXMLHandler.updateDLingNode(taskStruct);
 }
 
 void MainController::dlingSuspend(const QString &fileID)
@@ -390,6 +429,12 @@ void MainController::dlingSuspend(const QString &fileID)
         //TODO
         break;
     }
+
+    DownloadXMLHandler downloadXMLHandler;
+    SDownloading taskStruct = downloadXMLHandler.getDLingNode(fileID);
+    taskStruct.taskState = PDataType::PTaskStateSuspend;
+    //更新状态为暂停
+    downloadXMLHandler.updateDLingNode(taskStruct);
 }
 
 void MainController::dlingTrash(const QString &fileID)
@@ -447,17 +492,38 @@ void MainController::dltrashRedownload(const QString &fileID)
 
 void MainController::initDLedList()
 {
-
+    DownloadXMLHandler tmpOpera;
+    QList<SDownloaded> doneList = tmpOpera.getDLedNodes();
+    for (int i = 0;i < doneList.count(); i++)
+    {
+        emit signalAddDownloadedItem(tmpOpera.getJsonObjFromSDownloaded(doneList.at(i)));
+    }
 }
 
 void MainController::initDLingList()
 {
+    DownloadXMLHandler tmpOpera;
+    QList<SDownloading> taskList = tmpOpera.getDLingNodes();
 
+    for (int i = 0;i < taskList.count(); i++)
+    {
+        emit signalAddDownloadingItem(tmpOpera.getJsonObjFromSDownloading(taskList.at(i)));
+
+        if (taskList.at(i).taskState == PDataType::PTaskStateDownloading)
+        {
+            taskListMap.insert(taskList.at(i).fileID, taskList.at(i).toolType); //只添加到下载列表，暂时不下载
+        }
+    }
 }
 
 void MainController::initDLtrashList()
 {
-
+    DownloadXMLHandler tmpOpera;
+    QList<SDownloadTrash> trashList = tmpOpera.getDLtrashNodes();
+    for (int i = 0; i < trashList.count(); i ++)
+    {
+        emit signalAddDownloadTrashItem(tmpOpera.getJsonObjFromSDownloadTrash(trashList.at(i)));
+    }
 }
 
 void MainController::deleteFileFromDisk(QString path, QString fileName)

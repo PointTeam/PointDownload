@@ -93,6 +93,7 @@ Item {
 		}
 
         MouseArea {
+            z: -1
             anchors.fill: parent
             hoverEnabled: true
             propagateComposedEvents: true

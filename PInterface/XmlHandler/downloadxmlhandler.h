@@ -83,6 +83,7 @@ public:
     bool fileIDExist(const QString & fileID, PDataType::DownloadType dlType);
 
     QJsonObject getJsonObjFromSDownloaded(const SDownloaded & data);
+    QJsonObject getJsonObjFromSDownloading(const SDownloading & data);
     QJsonObject getJsonObjFromSDownloadTrash(const SDownloadTrash & data);
 
     QList<SDownloading> getDLingNodes();                  //返回所有正在下载的项组成的结构体列表

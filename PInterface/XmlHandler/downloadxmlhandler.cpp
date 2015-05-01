@@ -355,6 +355,22 @@ QJsonObject DownloadXMLHandler::getJsonObjFromSDownloaded(const SDownloaded &dat
     return tmpObj;
 }
 
+QJsonObject DownloadXMLHandler::getJsonObjFromSDownloading(const SDownloading &data)
+{
+    //use in UI,no all property need
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",data.fileID);
+    tmpObj.insert("fileName",data.fileName);
+    tmpObj.insert("fileTotalSize",data.fileTotalSize);
+    tmpObj.insert("fileReadySize",data.fileReadySize);
+    tmpObj.insert("fileSavePath",data.fileSavePath);
+    tmpObj.insert("url",data.url);
+    tmpObj.insert("toolType",data.toolType);
+    tmpObj.insert("taskState",data.taskState);
+
+    return tmpObj;
+}
+
 QJsonObject DownloadXMLHandler::getJsonObjFromSDownloadTrash(const SDownloadTrash &data)
 {
     QJsonObject tmpObj;

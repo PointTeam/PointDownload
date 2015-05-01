@@ -8,8 +8,6 @@
 *************************************************************/
 import QtQuick 2.1
 import QtQuick.Window 2.1
-import Singleton.MainController 1.0
-//import TaskInfo 1.0
 import "./TopPanel"
 
 Window {
@@ -28,14 +26,6 @@ Window {
 
     Component.onCompleted: {
         mainWindow.show()
-        MainController.pSuspendAllTask()
-    }
-
-    Connections {
-        target: MainController
-        onSignalAddDownloadingItem: {
-            print ("====================------------------",taskInfo.maxThreads,taskInfo.fileID,taskInfo.rawUrl)
-        }
     }
 
     MouseArea {

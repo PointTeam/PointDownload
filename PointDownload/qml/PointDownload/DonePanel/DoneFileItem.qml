@@ -22,33 +22,31 @@ Item {
 
 	Component.onCompleted: {
 		append({
-				"buttonId": "redownload",
-                "buttonIconNormalPath": "qrc:/FileItem/images/button-download-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-download-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-download-press.png",
-                "buttonIconDisablePath": "qrc:/FileItem/images/button-download-disable.png",
+                "buttonId": "redownload",
+                   "buttonIconNormalPath": "qrc:/FileItem/images/button-download-normal.png",
+                   "buttonIconHoverPath": "qrc:/FileItem/images/button-download-hover.png",
+                   "buttonIconPressPath": "qrc:/FileItem/images/button-download-press.png",
+                   "buttonIconDisablePath": "qrc:/FileItem/images/button-download-disable.png",
 				"buttonDisable": false
-				})
-		append({
-				"buttonId": "folder",
-                "buttonIconNormalPath": "qrc:/FileItem/images/button-suspend-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-suspend-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-suspend-press.png",
-                "buttonIconDisablePath": "qrc:/FileItem/images/button-suspend-disable.png",
-				"buttonDisable": true
-				})
-		append({
-				"buttonId": "trash",
+                })
+        append({
+                "buttonId": "folder",
+                "buttonIconNormalPath": "qrc:/FileItem/images/button-folder-normal.png",
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-folder-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-folder-normal.png"
+                })
+        append({
+                "buttonId": "trash",
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-trash-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-trash-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-trash-press.png"
-				})
-		append({
-				"buttonId": "delete",
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-trash-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-trash-normal.png"
+                })
+        append({
+                "buttonId": "delete",
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-delete-normal.png"
-				})
+                })
 		}
 	}
 
@@ -107,6 +105,7 @@ Item {
 		}
 
         MouseArea {
+            z: -1
             anchors.fill: parent
             hoverEnabled: true
             propagateComposedEvents: true

@@ -75,11 +75,11 @@ public slots:
 
 Q_SIGNALS:
 //signals:
-    void signalAddDownloadingItem(QObject * taskInfo);
-    void signalAddDownloadedItem(QObject * taskInfo);
-    void signalAddDownloadTrashItem(QObject * taskInfo);
+    void signalAddDownloadingItem(QJsonObject itemInfo);
+    void signalAddDownloadedItem(QJsonObject itemInfo);
+    void signalAddDownloadTrashItem(QJsonObject itemInfo);
     void signalTaskItemInfoUpdate(QJsonObject itemInfo); //实时数据更新
-    void signalTaskFinished(QJsonObject itemInfo);
+    void signalTaskFinished(const QString &fileID);
     void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
 
 private slots:

@@ -7,30 +7,32 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import Singleton.MainController 1.0
 
 Item {
 	id: trashPanel
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
 
-
-	Component.onCompleted: {
-		addToModel("1","TrashFile1",510924000)
-		addToModel("2","TrashFIle2",9050906432)
-		addToModel("3","TrashFIle3",7050906432)
-		addToModel("4","TrashFIle4",950906432)
-	}
+    Connections {
+        target: MainController
+        onSignalAddDownloadTrashItem: {
+            addToModel(itemInfo)
+        }
+    }
 
     function getItemCount(){
         return dataModel.count
     }
 
-	function addToModel(fileId, fileName, fileSize){
-		if (indexOfModel(fileId) == -1){//not in nodel, add it
+    function addToModel(dataObj){
+        if (indexOfModel(dataObj.fileID) == -1){//not in nodel, add it
 			dataModel.append({
-				"fileId": fileId,
-				"fileName": fileName,
-				"fileSize": fileSize,
+                "fileId": dataObj.fileID,
+                "fileName": dataObj.fileName,
+                "fileSize": dataObj.fileTotalSize,
+                "url": dataObj.url,
+                "toolType": dataObj.toolType
 			})
 		}
 	}

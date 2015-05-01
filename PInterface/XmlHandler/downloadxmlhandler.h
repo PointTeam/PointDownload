@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QStandardPaths>
 #include <QSysInfo>
+#include <QJsonObject>
 #include <QDebug>
 #include "pdatatype.h"
 
@@ -80,6 +81,9 @@ public:
     bool removeDLtrashFileNode(const QString & fileID);              //移除id为fileID的回首站项
 
     bool fileIDExist(const QString & fileID, PDataType::DownloadType dlType);
+
+    QJsonObject getJsonObjFromSDownloaded(const SDownloaded & data);
+    QJsonObject getJsonObjFromSDownloadTrash(const SDownloadTrash & data);
 
     QList<SDownloading> getDLingNodes();                  //返回所有正在下载的项组成的结构体列表
     QList<SDownloaded> getDLedNodes();                    //返回所有已下载完成的项组成的结构体列表

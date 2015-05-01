@@ -7,24 +7,34 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import Singleton.MainController 1.0
 
 Item {
 	id: donePanel
 	property var dataModel: ListModel {}
 	property int buttomSpacing: 20
 
+    Connections {
+        target: MainController
+        onSignalTaskFinished: {
+            addToModel(itemInfo)
+        }
+    }
 
-	Component.onCompleted: {
-		addToModel("1","DoneFile1",10924000)
-		addToModel("2","DoneFIle2",450906432)
-	}
+    function getItemCount(){
+        return dataModel.count
+    }
 
-	function addToModel(fileId, fileName, fileSize){
-		if (indexOfModel(fileId) == -1){//not in nodel, add it
+    function addToModel(dataObj){
+        if (indexOfModel(dataObj.fileId) == -1){//not in nodel, add it
 			dataModel.append({
-				"fileId": fileId,
-				"fileName": fileName,
-				"fileSize": fileSize,
+                "fileId": dataObj.fileID,
+                "fileName": dataObj.fileName,
+                "fileSize": dataObj.fileTotalSize,
+                "fileSavePath": dataObj.fileSavePath,
+                "fileExist": dataObj.fileExist,
+                "url": dataObj.url,
+                "toolType": dataObj.toolType
 			})
 		}
 	}
@@ -67,5 +77,4 @@ Item {
 			pFileSize: fileSize
 		}
 	}
-
 }

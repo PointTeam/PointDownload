@@ -25,9 +25,13 @@ Item {
             updateDataModel(itemInfo.fileID,itemInfo.taskState,itemInfo.taskDLSpeed,itemInfo.taskProgress / 100)
         }
         onSignalTaskFinished: {
-            print ("Task finishied:",taskID)
-            deleteFromModel(taskID)
+            print ("Task finishied:",itemInfo.fileName)
+            deleteFromModel(itemInfo.fileID)
         }
+    }
+
+    function getItemCount(){
+        return dataModel.count
     }
 
 	function addToModel(fileId, fileName, fileSize){

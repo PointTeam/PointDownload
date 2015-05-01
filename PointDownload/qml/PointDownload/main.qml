@@ -62,6 +62,12 @@ Window {
         width: parent.width
         height: 40
         z: 1
+
+        taskCount: contentPanel.taskCount
+        doneCount: contentPanel.doneCount
+        trashCount: contentPanel.trashCount
+        currentIndex: contentPanel.currentIndex
+
         onMenuClicked: {
             if (menuItemId == "Task")
                 contentPanel.gotoTaskPage()

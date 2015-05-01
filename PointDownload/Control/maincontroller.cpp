@@ -96,7 +96,27 @@ void MainController::slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo)
 
 void MainController::slotTaskFinished(const QString &taskID)
 {
-    emit signalTaskFinished(taskID);
+    DownloadXMLHandler tmpHandler;
+
+    SDownloading taskStruct = tmpHandler.getDLingNode(taskID);
+
+    //add done-xml-node
+    SDownloaded doneStruct;
+    doneStruct.fileID = taskStruct.fileID;
+    doneStruct.fileName = taskStruct.fileName;
+    doneStruct.fileTotalSize = taskStruct.fileTotalSize;
+    doneStruct.fileSavePath = taskStruct.fileSavePath;
+    doneStruct.completeDate = QDateTime::currentDateTime().toString( "yyyy:MM:dd:hh:mm" );
+    doneStruct.fileExist = true;
+    doneStruct.url = taskStruct.url;
+    doneStruct.toolType = taskStruct.toolType;
+    tmpHandler.insertDLedNode(doneStruct);
+
+    //delete task-xml-node
+    tmpHandler.removeDLingFileNode(taskID);
+
+    //update ui
+    emit signalTaskFinished(tmpHandler.getJsonObjFromSDownloaded(doneStruct));
 }
 
 void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadType dtype, PDataType::OperationType otype)
@@ -150,6 +170,46 @@ void MainController::startPointDownload(const TaskInfo &taskInfo)
 
 void MainController::startYougetDownload(const TaskInfo &taskInfo)
 {
+    DownloadXMLHandler tmpOpera;
+
+    if (!tmpOpera.fileIDExist(taskInfo.fileID, PDataType::PDLTypeDownloading))
+    {
+        SDownloadThread threadStruct;
+        threadStruct.startBlockIndex = 1;
+        threadStruct.endBlockIndex = 1;
+        threadStruct.completedBlockCount = 1;
+        QList<SDownloadThread> tmpList;
+        tmpList.append(threadStruct);
+
+        //插入xml文件
+        SDownloading taskStruct;
+
+        taskStruct.fileID = taskInfo.fileID;
+        taskStruct.fileName = taskInfo.getTaskName();
+        taskStruct.fileTotalSize = taskInfo.getTaskSize();
+        taskStruct.fileReadySize = 0;
+        taskStruct.fileSavePath = taskInfo.fileSavePath;
+        taskStruct.url = taskInfo.url;
+        taskStruct.toolType = PDataType::PToolTypeYouGet;
+        taskStruct.taskState = PDataType::PTaskStateDownloading;
+        taskStruct.taskMaxSpeed = taskInfo.maxSpeed;
+        taskStruct.averageSpeed = 0;
+        taskStruct.threadList = tmpList;
+        taskStruct.blockCount = 1;
+        taskStruct.blockSize = 1;
+        taskStruct.enableUpload = false;
+
+        qWarning() << "==>[Info] Inser new task record to config-file:" << tmpOpera.insertDLingNode(taskStruct);
+    }
+    else
+    {
+        //必须要及时改变状态
+        SDownloading tmpStruct = tmpOpera.getDLingNode(taskInfo.fileID);
+        tmpStruct.taskState = PDataType::PTaskStateDownloading;
+
+        tmpOpera.updateDLingNode(tmpStruct);
+    }
+
     YouGetTask::getInstance()->start(taskInfo);
 }
 

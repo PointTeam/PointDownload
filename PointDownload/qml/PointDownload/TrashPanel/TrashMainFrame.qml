@@ -21,6 +21,10 @@ Item {
 		addToModel("4","TrashFIle4",950906432)
 	}
 
+    function getItemCount(){
+        return dataModel.count
+    }
+
 	function addToModel(fileId, fileName, fileSize){
 		if (indexOfModel(fileId) == -1){//not in nodel, add it
 			dataModel.append({

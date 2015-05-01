@@ -8,54 +8,65 @@
 *************************************************************/
 import QtQuick 2.1
 import QtQuick.Controls 1.2
+import "./TaskPanel"
+import "./DonePanel"
+import "./TrashPanel"
+import "./SettingPanel"
 
 Item {
 	id: contentItem
 
-	property var stackViewPages: {
-		"taskPage": Qt.resolvedUrl("TaskPanel/TaskMainFrame.qml"),
-		"donePage": Qt.resolvedUrl("DonePanel/DoneMainFrame.qml"),
-		"trashPage": Qt.resolvedUrl("TrashPanel/TrashMainFrame.qml"),
-		"settingPage": Qt.resolvedUrl("SettingPanel/SettingFrame.qml")
-	}
+    property int taskCount: taskMainFrame.getItemCount()
+    property int doneCount: doneMainFrame.getItemCount()
+    property int trashCount: trashMainFrame.getItemCount()
+    property int currentIndex: contentListView.currentIndex
 
-	function gotoTaskPage(){
-		stackView.push({
-			"item": stackViewPages["taskPage"],
-			"properties": {"width": contentItem.width}
-		})
+    function gotoTaskPage(){
+        contentListView.currentIndex = 0
 	}
 
 	function gotoDonePage(){
-		stackView.push({
-			"item": stackViewPages["donePage"],
-			"properties": {"width": contentItem.width}
-		})
+        contentListView.currentIndex = 1
 	}
 
 	function gotoTrashPage(){
-		stackView.push({
-			"item": stackViewPages["trashPage"],
-			"properties": {"width": contentItem.width}
-		})
+        contentListView.currentIndex = 2
 	}
 
 	function gotoSettingPage(){
-		stackView.push({
-			"item": stackViewPages["settingPage"],
-			"properties": {"width": contentItem.width}
-		})
+        contentListView.currentIndex = 3
 	}
 
-	StackView {
-		id: stackView
-		width: parent.width
-		height: parent.height
+    ListView {
+        id:contentListView
 
-		function reset(){
-			stackView.pop(null)
-		}
+        width: parent.width
+        height: parent.height
 
-		Component.onCompleted: gotoTaskPage()
-	}
+        model: itemModel
+        snapMode: ListView.SnapToItem
+        orientation: ListView.Horizontal
+        boundsBehavior: Flickable.StopAtBounds
+        flickDeceleration: 5000
+        highlightFollowsCurrentItem: true
+        highlightMoveDuration:500
+        highlightRangeMode: ListView.StrictlyEnforceRange
+        currentIndex: 0
+
+        clip: true
+
+        VisualItemModel
+        {
+            id: itemModel
+            TaskMainFrame {id:taskMainFrame; width: contentItem.width; height: contentItem.height}
+            DoneMainFrame {id:doneMainFrame; width: contentItem.width; height: contentItem.height}
+            TrashMainFrame {id:trashMainFrame; width: contentItem.width; height: contentItem.height}
+            SettingFrame {id:settingFrame; width: contentItem.width; height: contentItem.height}
+        }
+
+        function refresh()
+        {
+            currentItem.refresh();
+        }
+    }
 }

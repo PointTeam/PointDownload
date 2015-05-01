@@ -68,7 +68,7 @@ public:
     Q_INVOKABLE void pResumeAllTask();
 
 public slots:
-    void slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo);
+    void slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo);//please update xmlfile in every single task progress or thread
     void slotTaskFinished(const QString & taskID);
     void slotControlFileItem(QString & fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
     void slotGetError(const QString & fileID,const QString & errorMessage, PDataType::ToolType toolType);
@@ -79,7 +79,7 @@ Q_SIGNALS:
     void signalAddDownloadedItem(QObject * taskInfo);
     void signalAddDownloadTrashItem(QObject * taskInfo);
     void signalTaskItemInfoUpdate(QJsonObject itemInfo); //实时数据更新
-    void signalTaskFinished(const QString & taskID);
+    void signalTaskFinished(QJsonObject itemInfo);
     void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
 
 private slots:

@@ -340,6 +340,33 @@ bool DownloadXMLHandler::fileIDExist(const QString & fileID, PDataType::Download
     return false;
 }
 
+QJsonObject DownloadXMLHandler::getJsonObjFromSDownloaded(const SDownloaded &data)
+{
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",data.fileID);
+    tmpObj.insert("fileName",data.fileName);
+    tmpObj.insert("fileTotalSize",data.fileTotalSize);
+    tmpObj.insert("fileSavePath",data.fileSavePath);
+    tmpObj.insert("completeDate",data.completeDate);
+    tmpObj.insert("fileExist",data.fileExist);
+    tmpObj.insert("url",data.url);
+    tmpObj.insert("toolType",data.toolType);
+
+    return tmpObj;
+}
+
+QJsonObject DownloadXMLHandler::getJsonObjFromSDownloadTrash(const SDownloadTrash &data)
+{
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",data.fileID);
+    tmpObj.insert("fileName",data.fileName);
+    tmpObj.insert("fileTotalSize",data.fileTotalSize);
+    tmpObj.insert("url",data.url);
+    tmpObj.insert("toolType",data.toolType);
+
+    return tmpObj;
+}
+
 QList<SDownloading> DownloadXMLHandler::getDLingNodes()
 {
     QList<SDownloading> tmpNodeList;

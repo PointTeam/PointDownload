@@ -11,9 +11,9 @@ import QtQuick 2.1
 Item {
     id:middleMenu
 
-    property int dingTaskCount: 9
-    property int ddoneTaskCount: 20
-    property int dtrashTaskCount: 5
+    property int dingTaskCount: 0
+    property int ddoneTaskCount: 0
+    property int dtrashTaskCount: 0
 	property int activeIndex: 0
 
 	signal menuClicked(string menuItemId)

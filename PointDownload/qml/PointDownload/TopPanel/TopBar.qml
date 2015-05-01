@@ -15,6 +15,11 @@ Rectangle {
     color: "#0d0e0f"
     opacity: 0.8
 
+    property int taskCount: 0
+    property int doneCount: 0
+    property int trashCount: 0
+    property int currentIndex: 0
+
 	signal menuClicked(string menuItemId)
 
     Rectangle {
@@ -42,6 +47,12 @@ Rectangle {
         width: 210
         height: parent.height
         anchors.centerIn: parent
+
+        dingTaskCount: taskCount
+        ddoneTaskCount: doneCount
+        dtrashTaskCount: trashCount
+        activeIndex: currentIndex
+
 		onMenuClicked: {
 			topBar.menuClicked(menuItemId)
 		}

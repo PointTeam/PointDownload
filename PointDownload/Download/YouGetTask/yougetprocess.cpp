@@ -56,13 +56,16 @@ void YouGetProcess::startDownload()
 
 void YouGetProcess::stopDownload()
 {
+    if (tmpProcess == NULL || updateTimer == NULL)
+        return;
     tmpProcess->kill();
+    updateTimer->stop();
 }
 
 void YouGetProcess::yougetStarted()
 {
     //进程启动完成后再启动定时器
-    updateTimer = new QTimer();
+    updateTimer = new QTimer(this);
     connect(updateTimer, SIGNAL(timeout()), this, SLOT(getTimerUpdate()));
     updateTimer->start(UPDATE_INTERVAL);
 }
@@ -87,7 +90,7 @@ void YouGetProcess::getTimerUpdate()
     double downloadSize = currentDataSize.toDouble() - lastDataSize.toDouble();                   //MB
     lastDataSize = currentDataSize;
     tmpInfo.taskDLSpeed = (downloadSize * 1024 * 1024) / (UPDATE_INTERVAL / 1000);              //B/S
-    tmpInfo.taskProgress = gFeedBackInfo.mid(0,perIndex).toDouble();                        //下载百分比
+    tmpInfo.taskProgress = gFeedBackInfo.mid(0,perIndex).toDouble() / 100;                        //下载百分比
     tmpInfo.taskState = PDataType::PTaskStateDownloading;
     tmpInfo.fileID = taskInfo.fileID;
 

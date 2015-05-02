@@ -45,8 +45,8 @@ public slots:
     void suspend(const QString & fileID);
     void resume(const QString & fileID);
     void finishDownload(const QString & fileID);
-    void deleteTask(const QString & fileID, const bool removeFile);
-    void trashTask(const QString & fileID, const bool removeFile);
+    void deleteTask(const QString & fileID);
+    void trashTask(const QString & fileID);
 
 private:
     explicit YouGetTask(QObject *parent = 0);

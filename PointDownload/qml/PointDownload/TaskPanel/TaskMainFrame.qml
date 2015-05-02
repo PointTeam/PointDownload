@@ -22,11 +22,31 @@ Item {
             addToModel(itemInfo)
         }
         onSignalTaskItemInfoUpdate: {
-            updateDataModel(itemInfo.fileID,itemInfo.taskState,itemInfo.taskDLSpeed,itemInfo.taskProgress / 100)
+            updateDataModel(itemInfo.fileID,itemInfo.taskState,itemInfo.taskDLSpeed,itemInfo.taskProgress)
         }
         onSignalTaskFinished: {
             print ("Task finishied:",fileID)
             deleteFromModel(fileID)
+        }
+        onSignalControlResult: {
+            if (controlResult.result && controlResult.dlType == PDataType.PDLTypeDownloading){
+                switch (controlResult.operaType){
+                case PDataType.PCtrlTypeDelete:
+                case PDataType.PCtrlTypeTrash:
+                    deleteFromModel(controlResult.fileID)
+                    break
+                case PDataType.PCtrlTypeSuspend:
+                    updateDataModel(controlResult.fileID, PDataType.PTaskStateSuspend, 0, -1)
+                    break
+                case PDataType.PCtrlTypeResume:
+                    updateDataModel(controlResult.fileID, PDataType.PTaskStateDownloading, 0, -1)
+                    break
+                case PDataType.PCtrlTypeRaise:
+                    break
+                default:
+                    break;
+                }
+            }
         }
     }
 
@@ -66,7 +86,7 @@ Item {
 			dataModel.set(tmpIndex,{
 				"taskState": taskState,
 				"taskSpeed": taskSpeed,
-				"taskProgress": taskProgress
+                "taskProgress": taskProgress > 0 ? taskProgress : dataModel.get(tmpIndex).taskProgress
 			})
 		}
 		else

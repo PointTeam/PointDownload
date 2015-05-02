@@ -105,7 +105,6 @@ private:
 
     //对正在下载的处理
     void dlingDelete(const QString &fileID);
-    void dlingFinish(const QString &fileID);
     void dlingSuspend(const QString &fileID);
     void dlingResume(const QString &fileID);
     void dlingRaise(const QString &fileID);

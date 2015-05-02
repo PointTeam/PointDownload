@@ -25,8 +25,8 @@ public slots:
     virtual void suspend(const QString & fileID) = 0;
     virtual void resume(const QString & fileID) = 0;
     virtual void finishDownload(const QString & fileID) = 0;
-    virtual void deleteTask(const QString & fileID, const bool removeFile) = 0;
-    virtual void trashTask(const QString & fileID, const bool removeFile) = 0;
+    virtual void deleteTask(const QString & fileID) = 0;
+    virtual void trashTask(const QString & fileID) = 0;
 
 signals:
     void taskFinished(const QString & taskID);

@@ -266,9 +266,6 @@ void MainController::handleDownloadingControl(const QString &fileID, PDataType::
     case PDataType::PCtrlTypeDelete:
         dlingDelete(fileID);
         break;
-    case PDataType::PCtrlTypeFinishDownload:
-        dlingFinish(fileID);
-        break;
     case PDataType::PCtrlTypeHightSpeedChannel:
         dlingHightSpeedChannel(fileID);
         break;
@@ -345,8 +342,7 @@ void MainController::dlingDelete(const QString &fileID)
         //TODO
         break;
     case PDataType::PToolTypeYouGet:
-        //TODO
-        YouGetTask::getInstance()->deleteTask(fileID, true);
+        YouGetTask::getInstance()->deleteTask(fileID);
         break;
     case PDataType::PToolTypeXware:
         //TODO
@@ -355,11 +351,20 @@ void MainController::dlingDelete(const QString &fileID)
         //TODO
         break;
     }
-}
 
-void MainController::dlingFinish(const QString &fileID)
-{
+    //clear record and file after task stop
+    DownloadXMLHandler tmpOpera;
+    SDownloading tmpStruct = tmpOpera.getDLingNode(fileID);
+    deleteFileFromDisk(tmpStruct.fileSavePath, tmpStruct.fileName);
+    tmpOpera.removeDLingFileNode(fileID);// 把待删除项从XML文件中移除
 
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",tmpStruct.fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloading);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeDelete);
+
+    emit signalControlResult(tmpObj);
 }
 
 void MainController::dlingHightSpeedChannel(const QString &fileID)
@@ -374,40 +379,23 @@ void MainController::dlingOfflineDownload(const QString &fileID)
 
 void MainController::dlingOpenFolder(const QString &fileID)
 {
+    DownloadXMLHandler tmpOpera;
+    QString tmpPath = tmpOpera.getDLingNode(fileID).fileSavePath;
 
+    if (tmpPath.isEmpty() || !QDesktopServices::openUrl(QUrl::fromLocalFile(tmpPath))){
+        QJsonObject tmpObj;
+        tmpObj.insert("fileID",fileID);
+        tmpObj.insert("result",false);
+        tmpObj.insert("dlType", PDataType::PDLTypeDownloading);
+        tmpObj.insert("operaType",PDataType::PCtrlTypeOpenFolder);
+
+        emit signalControlResult(tmpObj);
+    }
 }
 
 void MainController::dlingRaise(const QString &fileID)
 {
 
-}
-
-void MainController::dlingResume(const QString &fileID)
-{
-    switch (taskListMap.value(fileID))
-    {
-    case PDataType::PToolTypePoint:
-        //TODO
-        break;
-    case PDataType::PToolTypeAria2:
-        //TODO
-        break;
-    case PDataType::PToolTypeYouGet:
-        YouGetTask::getInstance()->resume(fileID);
-        break;
-    case PDataType::PToolTypeXware:
-        //TODO
-        break;
-    case PDataType::PToolTypeUndefined:
-        //TODO
-        break;
-    }
-
-    DownloadXMLHandler downloadXMLHandler;
-    SDownloading taskStruct = downloadXMLHandler.getDLingNode(fileID);
-    taskStruct.taskState = PDataType::PTaskStateDownloading;
-    //恢复成正在下载状态
-    downloadXMLHandler.updateDLingNode(taskStruct);
 }
 
 void MainController::dlingSuspend(const QString &fileID)
@@ -437,6 +425,53 @@ void MainController::dlingSuspend(const QString &fileID)
     taskStruct.taskState = PDataType::PTaskStateSuspend;
     //更新状态为暂停
     downloadXMLHandler.updateDLingNode(taskStruct);
+
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloading);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeSuspend);
+
+    emit signalControlResult(tmpObj);
+}
+
+void MainController::dlingResume(const QString &fileID)
+{
+    DownloadXMLHandler downloadXMLHandler;
+    //确保退出时处于暂停状态的任务也能恢复下载
+    taskListMap.insert(fileID,downloadXMLHandler.getDLingNode(fileID).toolType);
+
+    switch (taskListMap.value(fileID))
+    {
+    case PDataType::PToolTypePoint:
+        //TODO
+        break;
+    case PDataType::PToolTypeAria2:
+        //TODO
+        break;
+    case PDataType::PToolTypeYouGet:
+        YouGetTask::getInstance()->resume(fileID);
+        break;
+    case PDataType::PToolTypeXware:
+        //TODO
+        break;
+    case PDataType::PToolTypeUndefined:
+        //TODO
+        break;
+    }
+
+    SDownloading taskStruct = downloadXMLHandler.getDLingNode(fileID);
+    taskStruct.taskState = PDataType::PTaskStateDownloading;
+    //恢复成正在下载状态
+    downloadXMLHandler.updateDLingNode(taskStruct);
+
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloading);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeResume);
+
+    emit signalControlResult(tmpObj);
 }
 
 void MainController::dlingTrash(const QString &fileID)
@@ -451,7 +486,7 @@ void MainController::dlingTrash(const QString &fileID)
         break;
     case PDataType::PToolTypeYouGet:
         //TODO
-        YouGetTask::getInstance()->trashTask(fileID, true);
+        YouGetTask::getInstance()->trashTask(fileID);
         break;
     case PDataType::PToolTypeXware:
         //TODO
@@ -460,6 +495,29 @@ void MainController::dlingTrash(const QString &fileID)
         //TODO
         break;
     }
+
+    DownloadXMLHandler tmpOpera;
+    SDownloading tmpStruct = tmpOpera.getDLingNode(fileID);
+    deleteFileFromDisk(tmpStruct.fileSavePath, tmpStruct.fileName);
+    tmpOpera.removeDLingFileNode(fileID);// 把待删除项从XML文件中移除
+
+    //add record to trash xml file
+    SDownloadTrash trashStruct;
+    trashStruct.fileID = tmpStruct.fileID;
+    trashStruct.fileName = tmpStruct.fileName;
+    trashStruct.fileTotalSize = tmpStruct.fileTotalSize;
+    trashStruct.toolType = tmpStruct.toolType;
+    trashStruct.url = tmpStruct.url;
+    tmpOpera.insertDLtrashNode(trashStruct);
+
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",tmpStruct.fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloading);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeTrash);
+
+    emit signalControlResult(tmpObj);
+    emit signalAddDownloadTrashItem(tmpOpera.getJsonObjFromSDownloadTrash(trashStruct));
 }
 
 void MainController::dledDelete(const QString &fileID)
@@ -480,7 +538,6 @@ void MainController::dledDelete(const QString &fileID)
 
 void MainController::dledOpenFolder(const QString &fileID)
 {
-
     DownloadXMLHandler tmpOpera;
     QString tmpPath = tmpOpera.getDLedNode(fileID).fileSavePath;
 

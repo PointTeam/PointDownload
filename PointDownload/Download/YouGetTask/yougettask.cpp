@@ -86,14 +86,20 @@ void YouGetTask::finishDownload(const QString & fileID)
     emit taskFinished(fileID);
 }
 
-void YouGetTask::deleteTask(const QString &fileID, const bool removeFile)
+void YouGetTask::deleteTask(const QString &fileID)
 {
-
+    if (gProcessMap.value(fileID) == NULL)
+        return;
+    gProcessMap.value(fileID)->deleteLater();
+    gProcessMap.remove(fileID);
 }
 
-void YouGetTask::trashTask(const QString &fileID, const bool removeFile)
+void YouGetTask::trashTask(const QString &fileID)
 {
-
+    if (gProcessMap.value(fileID) == NULL)
+        return;
+    gProcessMap.value(fileID)->deleteLater();
+    gProcessMap.remove(fileID);
 }
 
 TaskInfo YouGetTask::getPrepareInfoFromXML(const QString & fileID)

@@ -23,7 +23,7 @@ Item {
 	}
 	property real showIntervalOfSpeed: 9000
 	property real showIntervalOfSize: 3000
-	property double taskProgress: 0		//0~1
+    property double taskProgress: 0		//0~1
     property real taskSpeed: -1	//Byte/Second
 	property bool shouldShowSpeed: false
 

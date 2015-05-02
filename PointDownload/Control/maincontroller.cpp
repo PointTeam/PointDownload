@@ -24,8 +24,10 @@ QObject * MainController::dataObj(QQmlEngine *engine, QJSEngine *scriptEngine)
 
 void MainController::pStartDownload(const TaskInfo &taskInfo)
 {
-    //确保将要下载的文件不会重复
+    //clear record and file
     deleteFileFromDisk(taskInfo.fileSavePath, taskInfo.fileList.at(0).fileName);
+    dledDelete(taskInfo.fileID);
+    dltrashDelete(taskInfo.fileID);
 
 //    //弹出窗口才使用这个接口，每次新建连接前要先检查是否达到最大限制
 //    SettingXMLHandler tmphandler;
@@ -56,7 +58,6 @@ void MainController::pStartDownload(const TaskInfo &taskInfo)
         qWarning() << "taskInfo.toolType not defined! At: void UnifiedInterface::startDownload(const TaskInfo &taskInfo)";
     }
 
-    DownloadXMLHandler tmpOpera;
     SDownloading taskStruct;
     taskStruct.fileID = taskInfo.fileID;
     taskStruct.fileName = taskInfo.getTaskName();
@@ -67,6 +68,7 @@ void MainController::pStartDownload(const TaskInfo &taskInfo)
     taskStruct.toolType = taskInfo.toolType;
     taskStruct.taskState = PDataType::PTaskStateDownloading;
 
+    DownloadXMLHandler tmpOpera;
     emit signalAddDownloadingItem(tmpOpera.getJsonObjFromSDownloading(taskStruct));
 }
 
@@ -130,18 +132,18 @@ void MainController::slotTaskFinished(const QString &taskID)
     emit signalTaskFinished(taskID);
 }
 
-void MainController::slotControlFileItem(QString &fileID, PDataType::DownloadType dtype, PDataType::OperationType otype)
+void MainController::pControlFileItem(QString fileID, int dtype, int otype)
 {
-    switch (dtype)
+    switch (PDataType::DownloadType(dtype))
     {
     case PDataType::PDLTypeDownloading:
-        handleDownloadingControl(fileID,otype);
+        handleDownloadingControl(fileID,PDataType::OperationType(otype));
         break;
     case PDataType::PDLTypeDownloaded:
-        handleDownloadedControl(fileID,otype);
+        handleDownloadedControl(fileID,PDataType::OperationType(otype));
         break;
     case PDataType::PDLTypeDownloadTrash:
-        handleDownloadTrashControl(fileID,otype);
+        handleDownloadTrashControl(fileID,PDataType::OperationType(otype));
         break;
     default:
         break;
@@ -462,22 +464,78 @@ void MainController::dlingTrash(const QString &fileID)
 
 void MainController::dledDelete(const QString &fileID)
 {
+    DownloadXMLHandler tmpOpera;
+    SDownloaded tmpStruct = tmpOpera.getDLedNode(fileID);
+    deleteFileFromDisk(tmpStruct.fileSavePath, tmpStruct.fileName);
+    tmpOpera.removeDLedFileNode(tmpStruct.fileID);// 把待删除项从XML文件中移除
 
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",tmpStruct.fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloaded);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeDelete);
+
+    emit signalControlResult(tmpObj);
 }
 
 void MainController::dledOpenFolder(const QString &fileID)
 {
 
+    DownloadXMLHandler tmpOpera;
+    QString tmpPath = tmpOpera.getDLedNode(fileID).fileSavePath;
+
+    if (tmpPath.isEmpty() || !QDesktopServices::openUrl(QUrl::fromLocalFile(tmpPath))){
+        QJsonObject tmpObj;
+        tmpObj.insert("fileID",fileID);
+        tmpObj.insert("result",false);
+        tmpObj.insert("dlType", PDataType::PDLTypeDownloaded);
+        tmpObj.insert("operaType",PDataType::PCtrlTypeOpenFolder);
+
+        emit signalControlResult(tmpObj);
+    }
 }
 
 void MainController::dledRedownload(const QString &fileID)
 {
+    DownloadXMLHandler tmpOpera;
+    SDownloaded tmpStruct = tmpOpera.getDLedNode(fileID);
 
+    startPopUpProgram(tmpStruct.url);
+
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",tmpStruct.fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloaded);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeReDownload);
+
+    emit signalControlResult(tmpObj);
 }
 
 void MainController::dledTrash(const QString &fileID)
 {
 
+    DownloadXMLHandler tmpOpera;
+    SDownloaded tmpStruct = tmpOpera.getDLedNode(fileID);
+    deleteFileFromDisk(tmpStruct.fileSavePath, tmpStruct.fileName);
+    tmpOpera.removeDLedFileNode(tmpStruct.fileID);// 把待删除项从XML文件中移除
+
+    //add record to trash xml file
+    SDownloadTrash trashStruct;
+    trashStruct.fileID = tmpStruct.fileID;
+    trashStruct.fileName = tmpStruct.fileName;
+    trashStruct.fileTotalSize = tmpStruct.fileTotalSize;
+    trashStruct.toolType = tmpStruct.toolType;
+    trashStruct.url = tmpStruct.url;
+    tmpOpera.insertDLtrashNode(trashStruct);
+
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",tmpStruct.fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloaded);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeTrash);
+
+    emit signalControlResult(tmpObj);
+    emit signalAddDownloadTrashItem(tmpOpera.getJsonObjFromSDownloadTrash(trashStruct));
 }
 
 void MainController::dltrashDelete(const QString &fileID)
@@ -526,9 +584,33 @@ void MainController::initDLtrashList()
     }
 }
 
-void MainController::deleteFileFromDisk(QString path, QString fileName)
+void MainController::deleteFileFromDisk(const QString & path, const QString & fileName)
 {
+    QDir tmpDir(path);
+    tmpDir.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    tmpDir.setSorting(QDir::Size | QDir::Reversed);
 
+    QFileInfoList fileNameList = tmpDir.entryInfoList();
+    for (int i = 0; i < fileNameList.size(); ++i)
+    {
+        QFileInfo fileInfo = fileNameList.at(i);
+        if (fileInfo.fileName().contains(fileName))
+        {
+            QFile::remove(path + "/" + fileInfo.fileName());
+        }
+    }
+}
+
+void MainController::startPopUpProgram(const QString &url)
+{
+    QStringList arguments;
+    arguments << QString(url + "#..#FIREFOX");//仿照firefox格式发送数据
+
+    QProcess * popupProcess = new QProcess();
+    popupProcess->start(POPUP_PROGRAM_EXEC, arguments);
+
+    // delete when process finish
+    connect(popupProcess, SIGNAL(finished(int)), popupProcess, SLOT(deleteLater()));
 }
 
 

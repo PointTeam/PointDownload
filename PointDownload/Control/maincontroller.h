@@ -47,6 +47,7 @@ History:
 #include <QUrl>
 #include <QQmlEngine>
 #include <QJsonObject>
+#include <QProcess>
 #include <QDebug>
 #include "pdatatype.h"
 #include "taskinfo.h"
@@ -66,11 +67,11 @@ public:
     Q_INVOKABLE int pGetJobCount();
     Q_INVOKABLE void pSuspendAllTask();
     Q_INVOKABLE void pResumeAllTask();
+    Q_INVOKABLE void pControlFileItem(QString fileID,int dtype, int otype);
 
 public slots:
     void slotTaskItemInfoUpdate(const TaskItemInfo & itemInfo);//please update xmlfile in every single task progress or thread
     void slotTaskFinished(const QString & taskID);
-    void slotControlFileItem(QString & fileID,PDataType::DownloadType dtype, PDataType::OperationType otype);
     void slotGetError(const QString & fileID,const QString & errorMessage, PDataType::ToolType toolType);
 
 Q_SIGNALS:
@@ -80,7 +81,7 @@ Q_SIGNALS:
     void signalAddDownloadTrashItem(QJsonObject itemInfo);
     void signalTaskItemInfoUpdate(QJsonObject itemInfo); //实时数据更新
     void signalTaskFinished(const QString &fileID);
-    void signalControlResult(const QString &fileID, bool result, PDataType::DownloadType dtype,PDataType::OperationType otype);  //动作反馈信号
+    void signalControlResult(QJsonObject controlResult);  //动作反馈信号
 
 private slots:
     //获取初始化信息，显示到界面
@@ -128,7 +129,8 @@ private:
     void initDLingList();
     void initDLtrashList();
 
-    void deleteFileFromDisk(QString path, QString fileName);
+    void deleteFileFromDisk(const QString & path, const QString & fileName);
+    void startPopUpProgram(const QString & url);
 
 //    //把当前下载列表中最慢的一个暂停
 //    void dropSlowest();
@@ -142,6 +144,8 @@ private:
     //Map:fileID,toolType
     QMap<QString, PDataType::ToolType>  taskListMap;
 
+    //DO NOT CHANGE THIS PROPERTY
+    const QString POPUP_PROGRAM_EXEC = "/opt/Point/PopupWindow/PointPopup";
 };
 
 #endif // MAINCONTROLLER_H

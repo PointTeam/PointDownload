@@ -13,14 +13,14 @@ Item {
 
     state: "hideInBottom"
 
-	property string pButtonId: ""
+    property int pButtonId: 0
 	property bool pButtonDisable: false
 	property string pButtonIconNormalPath: ""
 	property string pButtonIconHoverPath: ""
 	property string pButtonIconPressPath: ""
 	property string pButtonIconDisablePath: ""
 
-	signal buttonClicked(string buttonId)
+    signal buttonClicked(int buttonId)
     signal showed
     signal hided
 

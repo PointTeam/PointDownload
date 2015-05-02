@@ -17,7 +17,7 @@ Item {
     property bool showing: false
     property var buttonModel
 
-	signal buttonClicked(string buttonId)
+    signal buttonClicked(int buttonId, int buttonIndex)
     signal buttonAllHided
 
     function show(){
@@ -35,7 +35,7 @@ Item {
 		width: parent.width
 		height: parent.height
 		anchors.left: parent.left
-		anchors.leftMargin: 20
+        anchors.leftMargin: 20
 		anchors.verticalCenter: parent.verticalCenter
         spacing: 20
         clip: true
@@ -50,7 +50,7 @@ Item {
 				pButtonIconNormalPath: buttonIconNormalPath
 				pButtonIconHoverPath: buttonIconHoverPath
 				pButtonIconPressPath: buttonIconPressPath
-				pButtonIconDisablePath: typeof(buttonIconDisablePat) == "undefined" ? "" : buttonIconDisablePath
+                pButtonIconDisablePath: typeof(buttonIconDisablePath) == "undefined" ? "" : buttonIconDisablePath
 				pButtonDisable: typeof(buttonDisable) == "undefined" ? false : buttonDisable
 
                 Connections {
@@ -65,9 +65,9 @@ Item {
                     }
                 }
 
-				onButtonClicked: {
-					print ("==>[Info] %1 button has been clicked!".arg(buttonId))
-					buttonLine.buttonClicked(buttonId)
+                onButtonClicked: {
+                    print ("==>[Info] %1 button has been clicked!".arg(buttonId))
+                    buttonLine.buttonClicked(buttonId,index)
 				}
                 onShowed: buttonShowedIndex = index + 1
                 onHided: {

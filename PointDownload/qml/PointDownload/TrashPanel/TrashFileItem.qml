@@ -7,6 +7,7 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import PDataType 1.0
 import "../Widgets"
 
 Item {
@@ -22,7 +23,7 @@ Item {
 
 	Component.onCompleted: {
 		append({
-				"buttonId": "redownload",
+                "buttonId": PDataType.PCtrlTypeReDownload,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-download-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-download-hover.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-download-press.png",
@@ -30,7 +31,7 @@ Item {
 				"buttonDisable": false
 				})
 		append({
-				"buttonId": "delete",
+                "buttonId": PDataType.PCtrlTypeDelete,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-delete-normal.png"

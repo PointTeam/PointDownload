@@ -27,6 +27,7 @@ include(../PInterface/Task/Task.pri)
 include(../PInterface/PDataType/PDataType.pri)
 
 DISTFILES += \
+    qml/PointDownload/Widgets/ArrowTipButton.qml \
     qml/PointDownload/Widgets/ControlButtonLine.qml \
     qml/PointDownload/Widgets/FileControlButton.qml \
     qml/PointDownload/Widgets/FileListPanel.qml \

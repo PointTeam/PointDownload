@@ -7,8 +7,8 @@
 *
 *************************************************************/
 import QtQuick 2.1
-import "../Widgets"
 import PDataType 1.0
+import "../Widgets"
 
 Item {
 	id: taskItem
@@ -36,7 +36,7 @@ Item {
 
 	Component.onCompleted: {
 		append({
-				"buttonId": "download",
+                "buttonId": PDataType.PCtrlTypeResume,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-download-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-download-hover.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-download-press.png",
@@ -44,7 +44,7 @@ Item {
 				"buttonDisable": false
 				})
 		append({
-				"buttonId": "suspend",
+                "buttonId": PDataType.PCtrlTypeSuspend,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-suspend-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-suspend-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-suspend-normal.png",
@@ -52,25 +52,25 @@ Item {
                 "buttonDisable": false
                 })
         append({
-                "buttonId": "raise",
+                "buttonId": PDataType.PCtrlTypeRaise,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-raise-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-raise-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-raise-normal.png"
                 })
         append({
-                "buttonId": "folder",
+                "buttonId": PDataType.PCtrlTypeOpenFolder,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-folder-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-folder-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-folder-normal.png"
                 })
 		append({
-				"buttonId": "trash",
+                "buttonId": PDataType.PCtrlTypeTrash,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-trash-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-trash-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-trash-normal.png"
 				})
 		append({
-				"buttonId": "delete",
+                "buttonId": PDataType.PCtrlTypeDelete,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconHoverPath": "qrc:/FileItem/images/button-delete-normal.png",
                 "buttonIconPressPath": "qrc:/FileItem/images/button-delete-normal.png"

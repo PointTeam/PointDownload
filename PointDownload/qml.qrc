@@ -20,5 +20,6 @@
         <file>qml/PointDownload/Widgets/HeadInfoItem.qml</file>
         <file>qml/PointDownload/Widgets/ImageButton.qml</file>
         <file>qml/PointDownload/Widgets/RotatingRectangle.qml</file>
+        <file>qml/PointDownload/Widgets/ArrowTipButton.qml</file>
     </qresource>
 </RCC>

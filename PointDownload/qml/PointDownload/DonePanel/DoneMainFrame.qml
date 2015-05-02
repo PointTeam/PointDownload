@@ -29,6 +29,7 @@ Item {
                 case PDataType.PCtrlTypeDelete:
                 case PDataType.PCtrlTypeTrash:
                     deleteFromModel(controlResult.fileID)
+                    break
                 default:
                     break;
                 }

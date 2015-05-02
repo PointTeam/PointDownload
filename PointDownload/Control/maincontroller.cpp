@@ -540,12 +540,23 @@ void MainController::dledTrash(const QString &fileID)
 
 void MainController::dltrashDelete(const QString &fileID)
 {
+    DownloadXMLHandler tmpOpera;
+    tmpOpera.removeDLtrashFileNode(fileID);// 把待删除项从XML文件中移除
 
+    QJsonObject tmpObj;
+    tmpObj.insert("fileID",fileID);
+    tmpObj.insert("result",true);
+    tmpObj.insert("dlType", PDataType::PDLTypeDownloadTrash);
+    tmpObj.insert("operaType",PDataType::PCtrlTypeDelete);
+
+    emit signalControlResult(tmpObj);
 }
 
 void MainController::dltrashRedownload(const QString &fileID)
 {
+    DownloadXMLHandler tmpOpera;
 
+    startPopUpProgram(tmpOpera.getDLtrashNode(fileID).url);
 }
 
 void MainController::initDLedList()

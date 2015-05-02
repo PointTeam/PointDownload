@@ -8,6 +8,7 @@
 *************************************************************/
 import QtQuick 2.1
 import PDataType 1.0
+import Singleton.MainController 1.0
 import "../Widgets"
 
 Item {
@@ -25,8 +26,8 @@ Item {
 		append({
                 "buttonId": PDataType.PCtrlTypeReDownload,
                 "buttonIconNormalPath": "qrc:/FileItem/images/button-download-normal.png",
-                "buttonIconHoverPath": "qrc:/FileItem/images/button-download-hover.png",
-                "buttonIconPressPath": "qrc:/FileItem/images/button-download-press.png",
+                "buttonIconHoverPath": "qrc:/FileItem/images/button-download-normal.png",
+                "buttonIconPressPath": "qrc:/FileItem/images/button-download-normal.png",
                 "buttonIconDisablePath": "qrc:/FileItem/images/button-download-disable.png",
 				"buttonDisable": false
 				})
@@ -89,11 +90,38 @@ Item {
 			buttonModel: controlButtonModel
             onButtonAllHided: fileText.opacity = 1
 			onButtonClicked: {
-				//TODO
+                warningButton.x = 20 + (20 + 24) * buttonIndex - (warningButton.width - 24) / 2
+
+                if (buttonId == PDataType.PCtrlTypeDelete){
+                    warningButton.buttonId = buttonId
+                    warningButton.buttonTitle = qsTr("Delete")
+                    warningButton.visible = !warningButton.visible
+                }
+                else{
+                    MainController.pControlFileItem(pFileId,PDataType.PDLTypeDownloadTrash, buttonId)
+                    controlButtonLine.hide()
+                    controlMouseArea.buttonShowed = false
+                    warningButton.visible = false
+                }
 			}
 		}
 
+        ArrowTipButton {
+            id: warningButton
+            visible: false
+            z: 5
+            width: 60
+            height: 30
+            anchors.top: parent.top
+            anchors.topMargin: parent.height - arrowHeight
+            property int buttonId: -1
+            onClicked: {
+                MainController.pControlFileItem(pFileId,PDataType.PDLTypeDownloadTrash, buttonId)
+            }
+        }
+
         MouseArea {
+            id: controlMouseArea
             z: -1
             anchors.fill: parent
             hoverEnabled: true
@@ -110,6 +138,8 @@ Item {
                     controlButtonLine.hide()
                     buttonShowed = false
                 }
+
+                warningButton.visible = false
             }
         }
 	}

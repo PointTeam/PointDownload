@@ -102,7 +102,6 @@ Item {
 			buttonModel: controlButtonModel
             onButtonAllHided: fileText.opacity = 1
             onButtonClicked: {
-
                 warningButton.x = 20 + (20 + 24) * buttonIndex - (warningButton.width - 24) / 2
 
                 if (buttonId == PDataType.PCtrlTypeDelete){

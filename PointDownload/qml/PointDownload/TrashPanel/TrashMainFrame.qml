@@ -7,6 +7,7 @@
 *
 *************************************************************/
 import QtQuick 2.1
+import PDataType 1.0
 import Singleton.MainController 1.0
 
 Item {
@@ -18,6 +19,20 @@ Item {
         target: MainController
         onSignalAddDownloadTrashItem: {
             addToModel(itemInfo)
+        }
+        onSignalAddDownloadingItem: {
+            deleteFromModel(itemInfo.fileID)
+        }
+        onSignalControlResult: {
+            if (controlResult.result && controlResult.dlType == PDataType.PDLTypeDownloadTrash){
+                switch (controlResult.operaType){
+                case PDataType.PCtrlTypeDelete:
+                    deleteFromModel(controlResult.fileID)
+                    break
+                default:
+                    break;
+                }
+            }
         }
     }
 

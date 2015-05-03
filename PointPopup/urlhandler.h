@@ -6,6 +6,10 @@
 #include <QStringList>
 #include <QProcess>
 #include <QList>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QEventLoop>
 #include "pdatatype.h"
 #include "settingxmlhandler.h"
 #include "taskfileinfo.h"
@@ -50,6 +54,7 @@ public:
 signals:
     void finish();
     void getFileInfoListDone(QList<TaskFileInfo> infoList);
+    void analyzeError();
 
 public slots:
 

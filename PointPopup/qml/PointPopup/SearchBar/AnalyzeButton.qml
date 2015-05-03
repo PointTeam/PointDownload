@@ -69,8 +69,8 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         onClicked: {
-            analyzeButton.doAnalyze()
             analyzeButton.state = "analyzing"
+            analyzeButton.doAnalyze()
             textGlow.opacity = 0
         }
         onEntered: {

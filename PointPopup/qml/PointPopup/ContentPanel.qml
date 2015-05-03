@@ -13,6 +13,7 @@ import "./ControlPanel"
 Item {
     width: parent.width
     height: parent.height
+    clip: true
 
     function getFileList(){
         return fileListPage.getSelectedFileList()

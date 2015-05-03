@@ -93,7 +93,68 @@ bool URLHandler::isYouGetSupportSite(const QString &url)
 
 void URLHandler::getHTTPFileList(const QString &url)
 {
+    qint64 fileTotalSize = -1;
+    QString fileMIMEType = "";
+    QNetworkAccessManager * tmpManager = new QNetworkAccessManager;
+    QNetworkReply*  headReply = NULL;
+    QNetworkRequest headReq(url);
+    headReq.setRawHeader("User-Agent", "");  //Content-Length
 
+    headReply =  tmpManager->head(headReq);
+
+    if(!headReply)
+    {
+        emit analyzeError();
+        return;
+    }
+
+    QEventLoop loop;
+    connect(headReply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if(headReply->error() != QNetworkReply::NoError)
+    {
+        qWarning() << "[Error]: Get url info error:" << headReply->errorString();
+        emit analyzeError();
+        return;
+    }
+
+    int statusCode = headReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qWarning() << "[Info] Status code:" << statusCode;
+    qWarning()<< "[Info] File type:" << headReply->header(QNetworkRequest::ContentTypeHeader).toString();
+
+    if(statusCode == 302)
+    {
+        QUrl redirectUrl = headReply->header(QNetworkRequest::LocationHeader).toUrl();
+        if(redirectUrl.isValid())
+        {
+            qWarning()<<"Redirect："<<redirectUrl;
+            delete tmpManager;
+            return getHTTPFileList(redirectUrl.toString());
+        }
+    }
+    else if (statusCode == 200)
+    {
+        fileTotalSize = headReply->header(QNetworkRequest::ContentLengthHeader).toLongLong();
+        fileMIMEType =  headReply->header(QNetworkRequest::ContentTypeHeader).toString();
+        delete tmpManager;
+    }
+    else
+    {
+        qWarning() << "[Error]: Get url info error:" << headReply->errorString();
+        emit analyzeError();
+        return;
+    }
+
+    const QString fileName(QUrl(url).fileName());
+    QList<TaskFileInfo> tmpList;
+    TaskFileInfo tmpinfo;
+    tmpinfo.fileName = fileName.isEmpty() ? "UnknownName" : fileName;
+    tmpinfo.fileSize = fileTotalSize;
+    tmpinfo.fileType = "File";//fileMIMEType;
+    tmpList.append(tmpinfo);
+
+    emit getFileInfoListDone(tmpList);
 }
 
 void URLHandler::getHTTPSFileList(const QString &url)

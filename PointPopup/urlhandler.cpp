@@ -8,7 +8,7 @@ URLHandler::URLHandler(QObject *parent) : QObject(parent)
 //HTTP(S)
 bool URLHandler::isPointSupportURL(const QString &url)
 {
-    if (getProtocolType(url) == URLHandler::HTTP)
+    if (getProtocolType(url) == PDataType::HTTP)
         return true;
     else
         return false;
@@ -16,7 +16,7 @@ bool URLHandler::isPointSupportURL(const QString &url)
 
 bool URLHandler::isYouGetSupportURL(const QString &url)
 {
-    if (getProtocolType(url) == URLHandler::YouGet)
+    if (getProtocolType(url) == PDataType::YouGet)
         return true;
     else
         return false;
@@ -25,11 +25,11 @@ bool URLHandler::isYouGetSupportURL(const QString &url)
 //HTTP(S), FTP, BitTorrent, and Metalink
 bool URLHandler::isAria2SupportURL(const QString &url)
 {
-    if (getProtocolType(url) == URLHandler::HTTP ||
-            getProtocolType(url) == URLHandler::HTTPS ||
-            getProtocolType(url) == URLHandler::FTP ||
-            getProtocolType(url) == URLHandler::BitTorrent ||
-            getProtocolType(url) == URLHandler::Metalink)
+    if (getProtocolType(url) == PDataType::HTTP ||
+            getProtocolType(url) == PDataType::HTTPS ||
+            getProtocolType(url) == PDataType::FTP ||
+            getProtocolType(url) == PDataType::BitTorrent ||
+            getProtocolType(url) == PDataType::Metalink)
         return true;
     else
         return false;
@@ -37,36 +37,36 @@ bool URLHandler::isAria2SupportURL(const QString &url)
 
 bool URLHandler::isXwareSupportURL(const QString &url)
 {
-    if (getProtocolType(url) == URLHandler::HTTP ||
-            getProtocolType(url) == URLHandler::HTTPS ||
-            getProtocolType(url) == URLHandler::FTP ||
-            getProtocolType(url) == URLHandler::BitTorrent ||
-            getProtocolType(url) == URLHandler::Metalink ||
-            getProtocolType(url) == URLHandler::Magnet ||
-            getProtocolType(url) == URLHandler::Ed2k)
+    if (getProtocolType(url) == PDataType::HTTP ||
+            getProtocolType(url) == PDataType::HTTPS ||
+            getProtocolType(url) == PDataType::FTP ||
+            getProtocolType(url) == PDataType::BitTorrent ||
+            getProtocolType(url) == PDataType::Metalink ||
+            getProtocolType(url) == PDataType::Magnet ||
+            getProtocolType(url) == PDataType::Ed2k)
         return true;
     else
         return false;
 }
 
-URLHandler::ProtocolType URLHandler::getProtocolType(const QString &url)
+PDataType::ProtocolType URLHandler::getProtocolType(const QString &url)
 {
     if (isYouGetSupportSite(url))
-        return URLHandler::YouGet;
+        return PDataType::YouGet;
     else if (url.startsWith("http://"))
-        return URLHandler::HTTP;
+        return PDataType::HTTP;
     else if (url.startsWith("https://"))
-        return URLHandler::HTTPS;
+        return PDataType::HTTPS;
     else if (url.startsWith("ftp://"))
-        return URLHandler::FTP;
+        return PDataType::FTP;
     else if (url.endsWith(".torrent"))//url is file path
-        return URLHandler::BitTorrent;
+        return PDataType::BitTorrent;
     else if (url.endsWith(".meta4"))//url is file path
-        return URLHandler::Metalink;
+        return PDataType::Metalink;
     else if (url.startsWith("magnet:?xt"))
-        return URLHandler::Magnet;
+        return PDataType::Magnet;
     else if (url.startsWith("ed2k://"))
-        return URLHandler::Ed2k;
+        return PDataType::Ed2k;
 }
 
 bool URLHandler::isYouGetSupportSite(const QString &url)
@@ -159,7 +159,7 @@ void URLHandler::getHTTPFileList(const QString &url)
 
 void URLHandler::getHTTPSFileList(const QString &url)
 {
-
+    getHTTPFileList(url);
 }
 
 void URLHandler::getFTPFileList(const QString &url)
@@ -259,31 +259,31 @@ QList<TaskFileInfo> URLHandler::getMultiFileInfo(const QString &data)
 
 void URLHandler::analyzeURL(const QString &url)
 {
-    URLHandler::ProtocolType tmpType = getProtocolType(url);
+    PDataType::ProtocolType tmpType = getProtocolType(url);
     switch(tmpType)
     {
-    case URLHandler::YouGet:
+    case PDataType::YouGet:
         getYouGetFileList(url);
         break;
-    case URLHandler::HTTP:
+    case PDataType::HTTP:
         getHTTPFileList(url);
         break;
-    case URLHandler::HTTPS:
+    case PDataType::HTTPS:
         getHTTPSFileList(url);
         break;
-    case URLHandler::FTP:
+    case PDataType::FTP:
         getFTPFileList(url);
         break;
-    case URLHandler::BitTorrent:
+    case PDataType::BitTorrent:
         getBTFileList(url);
         break;
-    case URLHandler::Metalink:
+    case PDataType::Metalink:
         getMetaLinkFileList(url);
         break;
-    case URLHandler::Magnet:
+    case PDataType::Magnet:
         getMagnetFileList(url);
         break;
-    case URLHandler::Ed2k:
+    case PDataType::Ed2k:
         getEd2kFileList(url);
         break;
     default:

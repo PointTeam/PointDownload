@@ -18,17 +18,6 @@ class URLHandler : public QObject
 {
     Q_OBJECT
 public:
-    enum ProtocolType{
-        HTTP,
-        HTTPS,
-        FTP,
-        BitTorrent,
-        Metalink,
-        Magnet,
-        Ed2k,
-        YouGet
-    };
-
     explicit URLHandler(QObject *parent = 0);
     ~URLHandler();
 
@@ -37,7 +26,7 @@ public:
     bool isAria2SupportURL(const QString &url);
     bool isXwareSupportURL(const QString &url);
 
-    URLHandler::ProtocolType getProtocolType(const QString &url);
+    PDataType::ProtocolType getProtocolType(const QString &url);
 
     //目前使用其他程序分析bt文件等其他信息，所以不能马上返回，
     //即使后面使用线程自行分析也不能马上返回，所以以信号形式返回

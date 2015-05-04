@@ -72,6 +72,17 @@ public:
         PTaskStateError
     };
 
+    enum ProtocolType{
+        HTTP,
+        HTTPS,
+        FTP,
+        BitTorrent,
+        Metalink,
+        Magnet,
+        Ed2k,
+        YouGet
+    };
+
     enum OperationType
     {
         PCtrlTypeFinishDownload,

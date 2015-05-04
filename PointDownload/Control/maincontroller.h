@@ -52,6 +52,7 @@ History:
 #include "pdatatype.h"
 #include "taskinfo.h"
 #include "Download/YouGetTask/yougettask.h"
+#include "Download/PointTask/pointtask.h"
 
 class MainController : public QObject
 {

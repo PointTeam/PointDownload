@@ -201,7 +201,7 @@ MainController::~MainController()
 
 void MainController::startPointDownload(const TaskInfo &taskInfo)
 {
-
+    PointTask::getInstance()->start(taskInfo);
 }
 
 void MainController::startYougetDownload(const TaskInfo &taskInfo)
@@ -336,7 +336,7 @@ void MainController::dlingDelete(const QString &fileID)
     switch (taskListMap.value(fileID))
     {
     case PDataType::PToolTypePoint:
-        //TODO
+        PointTask::getInstance()->deleteTask(fileID);
         break;
     case PDataType::PToolTypeAria2:
         //TODO
@@ -367,12 +367,12 @@ void MainController::dlingDelete(const QString &fileID)
     emit signalControlResult(tmpObj);
 }
 
-void MainController::dlingHightSpeedChannel(const QString &fileID)
+void MainController::dlingOfflineDownload(const QString &fileID)
 {
 
 }
 
-void MainController::dlingOfflineDownload(const QString &fileID)
+void MainController::dlingHightSpeedChannel(const QString &fileID)
 {
 
 }
@@ -403,7 +403,7 @@ void MainController::dlingSuspend(const QString &fileID)
     switch (taskListMap.value(fileID))
     {
     case PDataType::PToolTypePoint:
-        //TODO
+        PointTask::getInstance()->suspend(fileID);
         break;
     case PDataType::PToolTypeAria2:
         //TODO
@@ -444,7 +444,7 @@ void MainController::dlingResume(const QString &fileID)
     switch (taskListMap.value(fileID))
     {
     case PDataType::PToolTypePoint:
-        //TODO
+        PointTask::getInstance()->resume(fileID);
         break;
     case PDataType::PToolTypeAria2:
         //TODO
@@ -479,7 +479,7 @@ void MainController::dlingTrash(const QString &fileID)
     switch (taskListMap.value(fileID))
     {
     case PDataType::PToolTypePoint:
-        //TODO
+        PointTask::getInstance()->trashTask(fileID);
         break;
     case PDataType::PToolTypeAria2:
         //TODO

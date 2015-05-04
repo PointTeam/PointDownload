@@ -6,7 +6,11 @@ SOURCES += main.cpp \
     Control/maincontroller.cpp \
     Download/YouGetTask/yougetprocess.cpp \
     Download/YouGetTask/yougettask.cpp \
-    Control/taskreceiverserver.cpp
+    Control/taskreceiverserver.cpp \
+    Download/PointTask/pointtask.cpp \
+    Download/PointTask/HttpTask/httptask.cpp \
+    Download/PointTask/HttpTask/httpthread.cpp \
+    Download/PointTask/HttpTask/httpthreadmanager.cpp
 
 RESOURCES += qml.qrc \
     image.qrc \
@@ -53,7 +57,11 @@ HEADERS += \
     Control/maincontroller.h \
     Download/YouGetTask/yougetprocess.h \
     Download/YouGetTask/yougettask.h \
-    Control/taskreceiverserver.h
+    Control/taskreceiverserver.h \
+    Download/PointTask/pointtask.h \
+    Download/PointTask/HttpTask/httptask.h \
+    Download/PointTask/HttpTask/httpthread.h \
+    Download/PointTask/HttpTask/httpthreadmanager.h
 
 isEmpty(PREFIX){
     PREFIX = /opt/Point

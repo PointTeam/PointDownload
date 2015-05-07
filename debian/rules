@@ -8,13 +8,13 @@
 	dh $@ 
 
 override_dh_auto_install:
+	dch -bv `git log --pretty=oneline | wc -l` ""
 	dh_auto_install --destdir=debian/pointdownload
 	make INSTALL_ROOT=debian/pointdownload install
 	mkdir -p debian/pointdownload/opt/Point/PointDownload
 	mkdir -p debian/pointdownload/opt/Point/PopupWindow
-	mv debian/pointdownload/opt/PointDownload/bin/PointDownload debian/pointdownload/opt/Point/PointDownload
-	mv debian/pointdownload/opt/XwareStartUp/bin/XwareStartUp debian/pointdownload/opt/Point/PointDownload
-	mv debian/pointdownload/opt/PointPopup/bin/PointPopup debian/pointdownload/opt/Point/PopupWindow
-	rm -r debian/pointdownload/opt/PointDownload
-	rm -r debian/pointdownload/opt/PointPopup
-	rm -r debian/pointdownload/opt/XwareStartUp
+	mv debian/pointdownload/usr/PointDownload/PointDownload debian/pointdownload/opt/Point/PointDownload/
+	mv debian/pointdownload/usr/PointDownload/XwareStartUp debian/pointdownload/opt/Point/PointDownload/
+	mv debian/pointdownload/usr/PopupWindow/PointPopup debian/pointdownload/opt/Point/PopupWindow/
+	rm -r debian/pointdownload/usr/PointDownload/
+	rm -r debian/pointdownload/usr/PopupWindow/

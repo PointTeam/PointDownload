@@ -86,8 +86,10 @@ static struct XwareConstants
         // by sbwtw <sbw@sbw.so>:
         // 为了兼容发行版和各个平台，应该不要使用硬编码的文件位置，
         // 这里可以由打包者统一做一个环境变量或者软链接来访问,
-        XWARE_START_UP_PATH = "pointxware";
-//        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
+//        XWARE_START_UP_PATH = "pointxware";
+
+        // by Choldrim   现在还没做兼容模式，修改基本变量时需谨慎  bug#21
+        XWARE_START_UP_PATH = "/opt/Point/PointDownload/XwareStartUp";
 
         // file
         XWARE_MOUNTS_FILE = XWARE_MOUNTS_DIR + "mounts";

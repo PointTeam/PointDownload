@@ -14,8 +14,8 @@ import "../Widgets"
 Item {
 	id: trashItem
 
-	width: parent.width
-	height: 40
+    width: parent.width
+    height: 40
 
 	property string pFileId: ""
 	property string pFileName: ""
@@ -42,7 +42,7 @@ Item {
 
 	RotatingRectangle {
 		id: headRec
-		width: 70
+        width: 80
 		height: parent.height
 		fileSize: pFileSize
 		taskProgress: 1
@@ -63,7 +63,7 @@ Item {
 		anchors.left: headRec.right
 		anchors.verticalCenter: parent.verticalCenter
 		width: parent.width - headRec.width
-		height: parent.height
+        height: parent.height
 
 		Text {
 			id: fileText

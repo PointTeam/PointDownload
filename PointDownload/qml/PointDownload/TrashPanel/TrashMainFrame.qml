@@ -74,20 +74,33 @@ Item {
 	ListView {
 		anchors.top: parent.top
 		anchors.horizontalCenter: parent.horizontalCenter
-		width: parent.width - 20 * 2
+        width: parent.width
 		height: parent.height
 		topMargin: 25
 		bottomMargin: 25
-		leftMargin: 20
+        leftMargin: 40
 		rightMargin: 20
 		spacing: 25
 
 		model: dataModel
 		delegate: TrashFileItem {
-			width: parent.width - 20 * 2
+            id: trashFileItem
+            width: parent.width
 			pFileId: fileId
 			pFileName: fileName
 			pFileSize: fileSize
+
+            ListView.onAdd: SequentialAnimation {
+                PropertyAction { target: trashFileItem; property: "opacity"; value: 0 }
+                NumberAnimation { target: trashFileItem; property: "opacity"; to: 1 ; duration: 260; easing.type: Easing.InOutQuad }
+            }
+
+            ListView.onRemove: SequentialAnimation {
+                PropertyAction { target: trashFileItem; property: "ListView.delayRemove"; value: true }
+                NumberAnimation { target: trashFileItem; property: "opacity"; to: 0; duration: 260; easing.type: Easing.InOutQuad }
+                // Make sure delayRemove is set back to false so that the item can be destroyed
+                PropertyAction { target: trashFileItem; property: "ListView.delayRemove"; value: false }
+            }
 		}
 	}
 

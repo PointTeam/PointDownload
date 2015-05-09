@@ -14,8 +14,8 @@ import "../Widgets"
 Item {
 	id: doneItem
 
-	width: parent.width
-	height: 40
+    width: parent.width
+    height: 40
 
 	property string pFileId: ""
 	property string pFileName: ""
@@ -54,7 +54,7 @@ Item {
 
 	RotatingRectangle {
 		id: headRec
-		width: 70
+        width: 80
 		height: parent.height
 		fileSize: pFileSize
         taskProgress: 1
@@ -75,7 +75,7 @@ Item {
 		anchors.left: headRec.right
 		anchors.verticalCenter: parent.verticalCenter
 		width: parent.width - headRec.width
-		height: parent.height
+        height: parent.height
 
 		Text {
 			id: fileText
@@ -86,7 +86,7 @@ Item {
 			anchors.left: parent.left
 			anchors.leftMargin: 15
 			anchors.verticalCenter : parent.verticalCenter
-			verticalAlignment: Text.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
             Behavior on opacity {
                 NumberAnimation {duration: 200}
             }

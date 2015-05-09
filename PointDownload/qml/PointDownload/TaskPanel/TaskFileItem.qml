@@ -14,8 +14,8 @@ import "../Widgets"
 Item {
 	id: taskItem
 
-	width: parent.width
-	height: 40
+    width: parent.width
+    height: 40
 
 	property string pFileId: ""
 	property string pFileName: ""
@@ -114,7 +114,7 @@ Item {
 		anchors.left: headRec.right
 		anchors.verticalCenter: parent.verticalCenter
 		width: parent.width - headRec.width
-		height: parent.height
+        height: parent.height
 
 		Text {
 			id: fileText

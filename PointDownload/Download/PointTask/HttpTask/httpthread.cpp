@@ -21,79 +21,55 @@
 
 #include "httpthread.h"
 
-//#define SECOND 500  //每秒写入文件一次
-
-#include <qdebug.h>
-
-HttpThread::HttpThread(const ThreadData &threadData)
+HttpThread::HttpThread(const ThreadData &data):
+    threadData(data)
 {
-    moveToThread(this);
-    threadIndex = threadData.threadIndex;
-    startIndex = threadData.startIndex;
-    endIndex = threadData.endIndex;
-    completeBytes = threadData.completeBytesCount > endIndex - startIndex + 1 ? endIndex - startIndex + 1
-                                                                              : threadData.completeBytesCount;
+    threadIndex = data.threadIndex;
+    qint64 startIndex = data.startIndex;
+    qint64  endIndex = data.endIndex;
+    completeBytes = data.completeBytesCount > endIndex - startIndex + 1 ? endIndex - startIndex + 1
+                                                                              : data.completeBytesCount;
     doneBytes = 0;
-    url = QUrl(threadData.url);
+    url = QUrl(data.url);
 }
 
 void HttpThread::run()
 {
-    if (getStartByte() >= endIndex)
+    if (getStartByte() >= threadData.endIndex)
     {
         emit finish(206);
         return;
     }
 
-    manager = new QNetworkAccessManager;
-    request = new QNetworkRequest(url);
+    QNetworkAccessManager * manager = new QNetworkAccessManager;
 
-    QString strData = QString("bytes=%1-%2").arg(QString::number(getStartByte())).arg(QString::number(endIndex));
+    QString strData = QString("bytes=%1-%2").arg(QString::number(getStartByte())).arg(QString::number(threadData.endIndex));
 
-    request->setRawHeader("Range", strData.toLatin1() );
-    request->setRawHeader("Connection", "keep-alive");
+    QNetworkRequest request(url);
+    request.setRawHeader("Range", strData.toLatin1() );
+    request.setRawHeader("Connection", "keep-alive");
 
-    reply = manager->get(*request);
+    QNetworkReply * reply = manager->get(request);
     if(!reply)
     {
         return;
     }
 
+    FileWriter * writer = new FileWriter(threadData, reply);
+    writer->setParent(manager);
     connect(manager,SIGNAL(finished(QNetworkReply*)),this,SLOT(managerFnish(QNetworkReply*)));
-    connect( reply, SIGNAL( readyRead() ), this, SLOT( writeToFile() ) );
-
-    initDownloadFile();
+    connect(reply, SIGNAL(readyRead()), writer, SLOT(writeToFile()));
+    connect(writer, SIGNAL(progressChanged(qint64)), this, SLOT(slotProgressChanged(qint64)));
 
     this->exec();
 }
 
-void HttpThread::initDownloadFile()
-{
-    QDir::setCurrent( xmlOpera.getDLingNode(taskID).fileSavePath);
-    downloadFile.setFileName(xmlOpera.getDLingNode(taskID).fileName + POINT_FILE_FLAG);
-    downloadFile.open( QIODevice::ReadWrite );
-}
-
-void HttpThread::writeToFile()
-{
-    if ( reply->bytesAvailable() > 30000 )  //100000
-    {
-        QByteArray tempArry = reply->readAll();
-        lock.lockForWrite();
-        downloadFile.seek( getStartByte() + getDoneByte());
-        downloadFile.write( tempArry );
-        lock.unlock();
-        doneBytes += tempArry.size();
-        emit this->progressChanged( tempArry.size() );
-    }
-}
-
 void HttpThread::managerFnish(QNetworkReply *tmpReply)
 {
-    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    int statusCode = tmpReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     if(statusCode == 302)
     {
-        QUrl newUrl = reply->header(QNetworkRequest::LocationHeader).toUrl();
+        QUrl newUrl = tmpReply->header(QNetworkRequest::LocationHeader).toUrl();
         if(newUrl.isValid())
         {
             qDebug()<<"重定向："<<newUrl;
@@ -111,29 +87,45 @@ void HttpThread::managerFnish(QNetworkReply *tmpReply)
 
     if (tmpReply->size() > 0)
     {
-        QByteArray tempArry = tmpReply->readAll();
+        //write last data
+        DownloadXMLHandler tmpHandler;
+        QString savePath = tmpHandler.getDLingNode(threadData.taskID).fileSavePath;
+        QString filename = tmpHandler.getDLingNode(threadData.taskID).fileName + POINT_FILE_FLAG;
+        QDir::setCurrent(savePath);
 
+        QFile downloadFile(filename);
+        if (!downloadFile.open(QIODevice::ReadWrite))
+            return;
+
+        QReadWriteLock lock;
+        QByteArray tempArry = tmpReply->readAll();
         lock.lockForWrite();
-        downloadFile.seek( getStartByte() + getDoneByte() );
-        downloadFile.write( tempArry );
+        downloadFile.seek(getStartByte() + doneBytes);
+        downloadFile.write(tempArry);
         lock.unlock();
         doneBytes += tempArry.size();
-        emit this->progressChanged( tempArry.size() );
+        emit this->progressChanged(tempArry.size());
+
+        downloadFile.close();
     }
 
-    downloadFile.close();
-    emit finish( statusCode );
+    emit finish(statusCode);
+}
+
+void HttpThread::slotProgressChanged(qint64 value)
+{
+    doneBytes += value;
+    emit this->progressChanged(value);
 }
 
 void HttpThread::stopDownload()
 {
-    downloadFile.close();
     this->quit();
 }
 
 qint64 HttpThread::getStartByte()
 {
-    return startIndex + completeBytes;
+    return threadData.startIndex + completeBytes;
 }
 
 qint64 HttpThread::getCompleteBytes()
@@ -148,7 +140,46 @@ qint64 HttpThread::getDoneByte()
 
 HttpThread::~HttpThread()
 {
+
+}
+
+FileWriter::FileWriter(const HttpThread::ThreadData &data, QNetworkReply * reply):
+    networkReply(reply)
+{
+    DownloadXMLHandler tmpHandler;
+    savePath = tmpHandler.getDLingNode(data.taskID).fileSavePath;
+    filename = tmpHandler.getDLingNode(data.taskID).fileName + POINT_FILE_FLAG;
+    QDir::setCurrent(savePath);
+
+    startIndex = data.startIndex;
+    endIndex = data.endIndex;
+    doneBytes = 0;
+    completeBytes = data.completeBytesCount > endIndex - startIndex + 1 ? endIndex - startIndex + 1
+                                                                              : data.completeBytesCount;
+}
+
+void FileWriter::writeToFile()
+{
+    QFile downloadFile(filename);
+    if (!downloadFile.open(QIODevice::ReadWrite))
+        return;
+
+    if ( networkReply->bytesAvailable() > 30000 )  //100000
+    {
+        QReadWriteLock lock;
+        QByteArray tempArry = networkReply->readAll();
+        lock.lockForWrite();
+        downloadFile.seek(getStartByte() + doneBytes);
+        downloadFile.write(tempArry);
+        lock.unlock();
+        doneBytes += tempArry.size();
+        emit this->progressChanged( tempArry.size() );
+    }
+
     downloadFile.close();
-    reply->deleteLater();
-    manager->deleteLater();
+}
+
+qint64 FileWriter::getStartByte()
+{
+    return startIndex + completeBytes;
 }

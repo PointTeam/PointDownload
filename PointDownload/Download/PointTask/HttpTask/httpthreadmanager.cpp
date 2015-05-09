@@ -50,6 +50,8 @@ void HttpThreadManager::startDownload()
         changeStateToDownloading(taskInfo.fileID);
     }
 
+    totalDoneSize = xmlOpera.getDLingNode(taskInfo.fileID).fileReadySize;
+
     //开始下载，全新下载和断点续传操作相同
     QList<SDownloadThread> tmpList = xmlOpera.getDLingNode(taskInfo.fileID).threadList;
     for( int i = 0; i < tmpList.count(); i ++)
@@ -86,7 +88,6 @@ void HttpThreadManager::stopDownload()
     for (int i = 0; i < threadList.count(); i ++)
     {
         threadList.at(i)->stopDownload();
-//        threadList.at(i)->deleteLater();
     }
 
     threadList.clear();
@@ -183,9 +184,6 @@ void HttpThreadManager::slotThreadFinish(int statusCode)
 
 void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
 {
-    updateXMLTimer->stop();
-    updateDataTimer->stop();
-
     SDownloading tmpStruct = xmlOpera.getDLingNode(taskInfo.fileID);
     if (tmpStruct.url == URL.toString())
         return;
@@ -193,6 +191,9 @@ void HttpThreadManager::slotGetNewRedirectURL(QUrl URL)
     tmpStruct.url = URL.toString();
 
     xmlOpera.updateDLingNode(tmpStruct);
+
+    updateXMLTimer->stop();
+    updateDataTimer->stop();
 
     stopDownload();
     taskInfo = getPrepareInfoFromXML(taskInfo.fileID);
@@ -245,7 +246,7 @@ void HttpThreadManager::initUpdateTimer()
 void HttpThreadManager::initData()
 {
     finishThreadCount = 0;
-    totalDoneSize = xmlOpera.getDLingNode(taskInfo.fileID).fileReadySize;
+    totalDoneSize = 0;
     receiveBytesPerSecond = 0;
 
     changeLimited = false;
@@ -343,11 +344,6 @@ int HttpThreadManager::getDownloadSpeed()
 
 double HttpThreadManager::getDownloadPercent()
 {
-//    if (totalDoneSize < 0 || totalDoneSize > taskInfo.getTaskSize()){
-//        totalDoneSize = 0;
-//        return 0;
-//    }
-
     if (!taskInfo.fileList.at(0).fileSize)
         return 0;
 

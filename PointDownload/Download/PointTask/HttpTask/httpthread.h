@@ -38,7 +38,6 @@
 #include "downloadxmlhandler.h"
 #include <QDebug>
 
-
 class HttpThread : public QThread
 {
     Q_OBJECT
@@ -53,7 +52,7 @@ public:
         qint64 completeBytesCount;
     };
 
-    HttpThread(const ThreadData &threadData);
+    HttpThread(const ThreadData &data);
     ~HttpThread();
     void run();
     void stopDownload();
@@ -69,27 +68,44 @@ signals:
     void finish(int statusCode);
 
 public slots:
-    void writeToFile();
     void managerFnish(QNetworkReply * tmpReply);
+    void slotProgressChanged(qint64 value);
 
 private:
-    void initDownloadFile();
-
-private:
+    ThreadData threadData;
     QString taskID;
     QUrl url;
     short threadIndex;
+    qint64 completeBytes;
+    qint64 doneBytes;
+
+    const QString POINT_FILE_FLAG = ".Point";
+};
+
+class FileWriter : public QObject
+{
+    Q_OBJECT
+public:
+    FileWriter(const HttpThread::ThreadData &data, QNetworkReply * reply);
+
+public slots:
+    void writeToFile();
+
+signals:
+    void progressChanged(qint64 value);
+
+private:
+    qint64 getStartByte();
+
+private:
     qint64 startIndex;
     qint64 endIndex;
     qint64 completeBytes;
     qint64 doneBytes;
 
-    QFile downloadFile;
-    QReadWriteLock lock;
-    QNetworkReply * reply;
-    QNetworkRequest * request;
-    QNetworkAccessManager * manager;
-    DownloadXMLHandler  xmlOpera;
+    QNetworkReply * networkReply;
+    QString savePath;
+    QString filename;
 
     const QString POINT_FILE_FLAG = ".Point";
 };

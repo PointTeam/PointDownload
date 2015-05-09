@@ -39,7 +39,7 @@ private slots:
 private:
     explicit DataController(QObject *parent = 0);
 
-    QString getFileIdFromUrl();
+    QString getFileIdFromFileName();
     bool isDownloading(const QString &fileID);
     bool isDownloaded(const QString &fileID);
     bool isTrash(const QString &fileID);

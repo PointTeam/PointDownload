@@ -70,7 +70,7 @@ void DataController::analyzeURL(const QString &url)
 
 void DataController::startDownload(int threads, int speed, QString savePath, int toolType)
 {
-    QString fileID = getFileIdFromUrl();
+    QString fileID = getFileIdFromFileName();
 
     if (isDownloading(fileID))
     {
@@ -117,9 +117,14 @@ void DataController::analyzeURLDone(QList<TaskFileInfo> infoList)
     emit signalFileInfoListChanged(infoMap);
 }
 
-QString DataController::getFileIdFromUrl()
+QString DataController::getFileIdFromFileName()
 {
-    return QString(currentUrl.toUtf8().toBase64());
+    QString idStr = "";
+    for (int i = 0; i < currentFileList.count(); i ++)
+    {
+        idStr += currentFileList.at(i).fileName;
+    }
+    return QString(idStr.toUtf8().toBase64());
 }
 
 bool DataController::isDownloading(const QString &fileID)

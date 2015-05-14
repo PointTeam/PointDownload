@@ -2,7 +2,7 @@
 
 **点载,是一个能帮助你方便地从网络上下载各种文件的软件。现在已经支持主流的各种下载协议，包括迅雷的thunder://和QQ旋风的下载协议。
 当前提供的软件安装包支持的操作系统有：LinuxDeepin2014, Ubuntu14.04, UbuntuKy14.04.
-安装包在[LinuxDeepin论坛页面](http://www.linuxdeepin.com/forum/23/21124) 发布，提供下载
+安装包在[LinuxDeepin论坛页面](http://bbs.deepin.org/forum.php?mod=viewthread&tid=21124) 发布，提供下载
 其他Linux发行版本的安装包暂时没有提供，因为开发和维护人员有限，如果您能帮助我们打包和维护其他Linux发行版本的安装包，请与我们联系！**
 
 ##程序截图

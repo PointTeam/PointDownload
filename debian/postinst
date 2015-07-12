@@ -19,6 +19,8 @@ if [ "$1" = "configure" ]; then
     xdg-mime default pointpopup.desktop x-scheme-handler/ed2k
     xdg-mime default pointpopup.desktop x-scheme-handler/thunder
     xdg-mime default pointpopup.desktop x-scheme-handler/magnet
+    ln -s /opt/Point/PointDownload/PointDownload /usr/bin/pointdownload
+    ln -s /opt/Point/PopupWindow/PointPopup /usr/bin/pointpopup
     echo "更多使用技巧，请访问：https://github.com/PointTeam/PointDownload/wiki"
 fi
 

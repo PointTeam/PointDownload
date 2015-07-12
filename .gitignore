@@ -2,6 +2,11 @@
 PointDownload/debian/
 PointPopup/debian/
 debian/pointdownload/
+XwareStartUp/XwareStartUp
+XwareStartUp/debian/
+debian/pointdownload.debhelper.log
+debian/pointdownload.substvars
+
 #backup file
 *~
 #just for Poin

@@ -495,8 +495,6 @@ void UnifiedInterface::suspendDownloading(QString URL)
         PointTask::getInstance()->suspendDownloading(URL);
         break;
     case TOOL_XWARE:
-        if(XWARE_CONSTANTS_STRUCT.DEBUG)
-            qDebug()<<" xxxxxxx UnifiedInterface  suspend  xxxxxxx";
         XwareTask::getInstance()->suspendDownloading(URL);
         break;
     default:
@@ -548,8 +546,6 @@ void UnifiedInterface::resumeDownloading(QString URL)
         PointTask::getInstance()->resumeDownloading(URL);
         break;
     case TOOL_XWARE:
-        if(XWARE_CONSTANTS_STRUCT.DEBUG)
-            qDebug()<<"xxxxxxx UnifiedInterface resume  xxxxxxx";
         XwareTask::getInstance()->resumeDownloading(URL);
         break;
     default:

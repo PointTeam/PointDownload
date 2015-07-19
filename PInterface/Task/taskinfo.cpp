@@ -211,9 +211,29 @@ int TaskInfo::convertDownStateToInt(const QString state)
 */
 int TaskInfo::convertDownloadSpeedToInt(const QString speed)
 {
+    /*
     QRegExp reg("^-?(\\d+(?:.\\d+)?) KB/S$");
     if (reg.indexIn(speed) != -1)
         return (int)(reg.cap(1).toFloat() * 1024);
+     */
+
+    // updated by Choldrim  20150719
+    QRegExp reg("^-?(\\d+(?:.\\d+)?)( )?(B|KB|MB)/(S|s)$");
+    int mutiple = 1;
+    if (reg.indexIn(speed) != -1)
+    {
+        int base = (int)(reg.cap(1).toFloat());
+        if (speed.contains("K", Qt::CaseInsensitive))
+        {
+            mutiple = mutiple * 1024;
+        }
+        else if (speed.contains("M", Qt::CaseInsensitive))
+        {
+            mutiple = mutiple * 1024 * 1024;
+        }
+
+        return base * mutiple;
+    }
 
     qDebug() << "Not match speed string: " << speed;
     return 0;

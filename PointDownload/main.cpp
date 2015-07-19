@@ -87,9 +87,14 @@ int main(int argc, char *argv[])
    app.installEventFilter(PEventFilter::getInstance());
 
    // Xware Test View
-   if(XWARE_CONSTANTS_STRUCT.DEBUG_2)
+   for (int i = 0; i < argc; i++)
    {
-       WebCtrlViewTest::getInstance()->show();
+       if (QString(argv[i]).trimmed() == "-debug")
+       {
+           qDebug()<<" entry  debug mode ";
+           XWARE_CONSTANTS_STRUCT.DEBUG = true;
+           WebCtrlViewTest::getInstance()->show();
+       }
    }
 
    return app.exec();

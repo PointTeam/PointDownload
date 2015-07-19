@@ -28,11 +28,9 @@
 
 static struct XwareConstants
 {
-    // is output the debug info
-    static const bool DEBUG = false;
-
-      // show the test webview
-    static const bool DEBUG_2 = false;
+    // debug mode
+//    static const bool DEBUG = true;
+    bool DEBUG;   // whether to enter debug mode, decided by boot argv (it is not a constant now)
 
     int  ETM_PORT;
 
@@ -97,7 +95,6 @@ static struct XwareConstants
 
         // xware firmware location
         XWARE_FIRMWARE_LOCATION = "https://gitcafe.com/choldrim/PointXwareFirmware/raw/master/XwareFirmxware.zip";
-//        XWARE_FIRMWARE_LOCATION = "http://www.linuxdeepin.com/forum/download?id=9303";
         XWARE_FIRMWARE_NAME = "XwareFirmxware.zip";
 
         // url

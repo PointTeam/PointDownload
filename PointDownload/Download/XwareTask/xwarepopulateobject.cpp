@@ -206,11 +206,48 @@ void XwarePopulateObject::btParse(QString btFilePath)
 
 void XwarePopulateObject::feedbackDownloadList(QString tasksInfo)
 {
-    emit sFeedbackDownloadList(tasksInfo);
+    //emit sFeedbackDownloadList(tasksInfo);
 }
 
 void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
 {
+    qDebug()<<" feedback url parse from webkit";
+    qDebug()<<">>>>> "<<taskInfoList;
+
+    QString taskJsonStr = taskInfoList;
+    QJsonParseError jsonErr;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(taskJsonStr.toUtf8(), &jsonErr);
+
+    TaskInfo info;
+    info.toolType = TOOL_XWARE;
+    if (jsonErr.error == QJsonParseError::NoError)
+    {
+        QJsonObject jsonObj = jsonDoc.object();
+        if (jsonObj.take("Error").toBool(true))
+        {
+            qDebug()<<" parse url error, msg: "<<jsonObj.take("ErrMsg");
+            return;
+        }
+
+        QJsonValue jsonVal = jsonObj.take("FileList");
+        if (jsonVal.isArray())
+        {
+           QJsonArray jsonArray =  jsonVal.toArray();
+           //foreach(QJsonObject obj , jsonArray.)
+           for (int i = 0; i < jsonArray.size(); i++)
+           {
+               QJsonObject fileObj = jsonArray[i].toObject();
+               TaskFileItem item;
+               item.fileName = fileObj.take("Name").toString("");
+               QString fileSizeStr = fileObj.take("Size").toString("0");
+               item.fileSize =  (qint64)convertToByteUnit(fileSizeStr).toDouble();
+
+               info.fileList.append(item);
+           }
+        }
+    }
+
+    /*
     QStringList list = taskInfoList.split(XWARE_CONSTANTS_STRUCT.SPLITER_END);
     TaskInfo info;
     info.toolType = TOOL_XWARE;
@@ -227,7 +264,7 @@ void XwarePopulateObject::feedbackURLParse(QString taskInfoList)
 
         info.fileList.append(item);
     }
-
+    */
 
     emit sFeedbackURLParse(info);
 }

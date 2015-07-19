@@ -61,7 +61,8 @@ void URLServer::socketReadyReadHandler()
     {
          // take URL from msg
         taskParseHandle(taskInfo->rawUrl);
-        qDebug() << "Xware is parsing the URL";
+        qDebug() << "Xware is parsing the URL:";
+        qDebug()<<taskInfo->rawUrl;
         return ;
     }
 
@@ -76,8 +77,11 @@ void URLServer::taskParseFeedback(TaskInfo taskInfo)
     taskInfo.rawUrl = tmp_url;
     taskInfo.parseUrl = tmp_url;
     qDebug()<<taskInfo;
-    tmp_socket->write(taskInfo.toQByteArray());
-    tmp_socket->flush();
+    if (tmp_socket)
+    {
+        tmp_socket->write(taskInfo.toQByteArray());
+        tmp_socket->flush();
+    }
 }
 
 void URLServer::taskParseHandle(QString url)

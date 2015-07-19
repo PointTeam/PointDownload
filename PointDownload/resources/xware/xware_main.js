@@ -7,11 +7,9 @@ var pointIsReflashDownloadListTimerStarted = false;  // is the timer start
 
 // ======================= Bind Singals ======================= //
 Point.sJSGetAllBindedPeerIds.connect(pointSlotGetAllBindedPeerIds);
-Point.sJSReflashDownloadList.connect(pointSlotReflashDownloadList);
 
 // add new task
 Point.sJSAddNewDownloadTask.connect(pointAddNewDownloadTask);
-//Point.sAddNewBTDownloadTask.connect(pointAddNewBTDownloadTask);
 
 // task controller
 Point.sJSSuspendDownloadingTask.connect(pointSuspendDownloadingTask);
@@ -95,16 +93,32 @@ App.bind("si.urlInfo",
         // parse url
         else
         {
-            var taskFileList = "";
-            var fileName = "";
-            var fileSize = "";
+            var obj = {};
+            /*  json format
+                task:
+                {
+                    FileList:[
+                        {Name:"", size:123445},
+                        {Name:"", size:123445}
+                    ],
+                    Error:false,
+                    ErrMsg:""
+                }
+              */
+            obj.FileList = [];
+            obj.Error = false;
+            obj.ErrMsg = "";
+
+            var fileName , fileSize;
 
             // add bt name
             if(App.get("si.urlInfoHash"))
             {
                 fileName = e.name;
                 fileSize = "-1";
-                taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
+                //taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
+                file = {"Name":fileName, "Size":fileSize};
+                obj.FileList[obj.FileList.length] = file;
             }
 
             $("#d-create-task-file-list > li").each
@@ -123,10 +137,18 @@ App.bind("si.urlInfo",
                     }
 
                     fileSize = $(this).find(".pop_al_03").html();
-                    taskFileList += fileName + spliterBtwData + fileSize + spliterEnd;
+                    file = {"Name":fileName, "Size":fileSize};
+                    obj.FileList[obj.FileList.length] = file;
                 }
             );
-            Point.feedbackURLParse(taskFileList);
+            Point.justForJSTest("4");
+            if (obj.FileList.length === 0)
+            {
+                obj.Error = true;
+                obj.ErrMsg = "can not get any task file from thunder web";
+            }
+            var taskJsonStr = JSON.stringify(obj);
+            Point.feedbackURLParse(taskJsonStr);
             App.set("dialogs.createTask.show", false);
 
             Point.justForJSTest("-------------- feedback url parse ---------------");
@@ -167,31 +189,6 @@ function pointAddNewDownloadTask(url, storage, fileList)
 
 function pointLogout()
 {
-/*
-    // ======================= disconnect Singals ======================= //
-    Point.sJSGetAllBindedPeerIds.disconnect(pointSlotGetAllBindedPeerIds);
-    Point.sJSReflashDownloadList.disconnect(pointSlotReflashDownloadList);
-
-    // add new task
-    Point.sJSAddNewDownloadTask.disconnect(pointAddNewDownloadTask);
-    //Point.sAddNewBTDownloadTask.disconnect(pointAddNewBTDownloadTask);
-
-    // task controller
-    Point.sJSSuspendDownloadingTask.disconnect(pointSuspendDownloadingTask);
-    Point.sJSResumeDownloadingTask.disconnect(pointResumeDownloadingTask);
-    Point.sJSRemoveDownloadingTask.disconnect(pointRemoveDownloadingTask);
-    Point.sJSEntryOfflineChannel.disconnect(pointEntryOfflineChannel);
-    Point.sJSEntryHighSpeedChannel.disconnect(pointEntryHighSpeedChannel);
-    Point.sJSUrlParse.disconnect(pointUrlParse);
-
-    // set default downloader
-    Point.sSetDefaultDownloader.disconnect(pointSetDefaultDownloader);
-
-    // logout
-    Point.sJSLogout.disconnect(pointLogout);
-    // ======================================================== //
-*/
-
     // debugger
     Point.justForJSTest("----------------- logOut -----------------------");
 
@@ -243,6 +240,7 @@ function pointEntryHighSpeedChannel(tid)
 
 // ================================================================================== //
 
+
 function pointSlotGetAllBindedPeerIds()
 {
     var peerList = "";
@@ -253,52 +251,6 @@ function pointSlotGetAllBindedPeerIds()
     });
 
     Point.setAllBindedPeerIds(peerList);
-}
-
-// @Deprecated, Replace by json on XwareTaskEntity
-function pointRefashDloadListTimer()
-{
-    var allTaskInfo = '';
-
-    $("#task-list>div").each(
-    function()
-    {
-        var $taskDiv, tid, taskName, size, progress, speed, remain, state, url, highSpeed, offlineSpeed, ta = G("task.all");;
-        tid = $(this).attr("data-tid");
-        $taskDiv = $("#task-list > div[data-tid="+tid+"]");
-        taskName = $taskDiv.find(".rw_u02").find(".rw_p_name").html();
-        size = $taskDiv.find(".rw_u02").find(".rw_sp_size").html();
-        progress = $taskDiv.find(".rw_u03").find(".rw_pr_num").html();
-        speed = $taskDiv.find(".rw_u03").find(".rw_pr_speed").html();
-        remain = $taskDiv.find(".rw_u03").find(".rw_pr_time").html();
-        state = $taskDiv.find(".rw_u02>div>i").attr("class");
-        url = ta[tid].url;
-
-        var $taskDiv2 = $("#task-list > div[data-tid="+tid+"] > div.rw_u_add > div.rw_u03 > div.rw_u_btn");
-        highSpeed = $taskDiv2.find("span.fail_gs > span").html();
-        offlineSpeed = $taskDiv2.find("span.fail_lx > span").html();
-
-        var allTaskInfo_temp = tid+spliterBtwData+taskName+spliterBtwData+size+spliterBtwData+progress
-                +spliterBtwData+speed+spliterBtwData+remain+spliterBtwData+state+spliterBtwData+url
-                +spliterBtwData+highSpeed+spliterBtwData+offlineSpeed+spliterEnd;
-        allTaskInfo += allTaskInfo_temp;
-    }
-    );
-
-    Point.feedbackDownloadList(allTaskInfo);
-}
-
-
-function pointSlotReflashDownloadList()
-{
-    Point.justForJSTest("... start feedbacking task info ...");
-
-    if(!pointIsReflashDownloadListTimerStarted)
-    {
-        // setInterval
-        pointReflashDownloadListIntervalId = setInterval("pointRefashDloadListTimer()", feedbackTaskInfoInterval);
-        pointIsReflashDownloadListTimerStarted = true;
-    }
 }
 
 // stop feedback the task content

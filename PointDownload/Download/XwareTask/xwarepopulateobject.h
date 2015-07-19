@@ -29,6 +29,9 @@
 #include <QThread>
 #include <QMutex>
 #include <QImage>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
 
 #include "XwareDataType.h"
 #include "xwarewebcontroller.h"

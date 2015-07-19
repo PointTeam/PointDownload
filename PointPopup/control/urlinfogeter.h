@@ -31,9 +31,9 @@ private:
 private:
     QLocalSocket * mLocalSocket;
     QString mURL;
-    const QString xwareSpliterBtwData = "#..#";
-    const QString xwareSpliterEnd = "#.^_^.#";
-    const QString xwareParseURLHander = "XwareParseURLOrBT:";
+    //const QString xwareSpliterBtwData = "#..#";
+    //const QString xwareSpliterEnd = "#.^_^.#";
+    //const QString xwareParseURLHander = "XwareParseURLOrBT:";
     const QString ITEM_INFO_SPLIT_CHAR = "@:@";
 };
 

@@ -12,7 +12,7 @@
 
 ##开发指南
 
-###开发环境：>=Qt5.2.1
+###开发环境：>=Qt5.2.0
 ###项目模块：
 - 此项目共分为PointDownload、PointPopup、PointChromeExtension和PointFirefoxExtension4个模块，未来可能还会增加或者删除其他模块以支持更多功能的需要。
 - PointDownload是主程序部分，负责下载和管理的工作，更详细信息请查阅该模块[说明页面](https://github.com/PointTeam/PointDownload/wiki/PointDownload%E4%B8%BB%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97) ；
